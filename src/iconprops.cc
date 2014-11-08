@@ -1,0 +1,83 @@
+// ----------------------------------------------------------------
+// leibniz
+//
+// Copyright (c) 2009  Andreas Bauer <baueran@gmail.com>
+//
+// This is not free software.  See COPYING for further information.
+// ----------------------------------------------------------------
+
+#include <iostream>
+#include "iconprops.hh"
+
+IconProps::IconProps()
+{
+  _icon = 0;
+  _next_anim = -1;
+  _flags = FULLY_TRANS + WALK_FULLSPEED;
+  _name = "nothing special";
+  _seffect = "";
+}
+
+IconProps::~IconProps()
+{
+}
+
+void IconProps::set_icon(unsigned no)
+{
+  _icon = no;
+}
+
+unsigned IconProps::get_icon(void)
+{
+  return _icon;
+}
+
+int IconProps::flags(void) const
+{
+  return _flags;
+}
+
+void IconProps::set_flags(int flags)
+{
+  _flags = flags;
+}
+
+void IconProps::add_flags(int flags)
+{
+  _flags += flags;
+}
+
+void IconProps::rm_flags(int flags)
+{
+  _flags -= flags;
+}
+
+std::string IconProps::get_name(void)
+{
+  return _name;
+}
+
+void IconProps::set_name(const char* newname)
+{
+    _name = newname;
+}
+
+void IconProps::set_next_anim(int next)
+{
+    _next_anim = next;
+}
+
+int IconProps::next_anim()
+{
+    return _next_anim;
+}
+
+std::string IconProps::sound_effect()
+{
+    return _seffect;
+}
+
+void IconProps::set_sound_effect(std::string se)
+{
+    _seffect = se;
+}

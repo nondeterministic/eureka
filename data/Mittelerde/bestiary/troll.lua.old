@@ -1,0 +1,110 @@
+-- -----------------------------------------------
+-- Orc definition file for simplicissimus
+-- Copyright (c) Andreas Bauer <baueran@gmail.com>
+-- -----------------------------------------------
+
+do
+   local hp
+   local hp_max
+   local weapon
+   local strength
+   local luck
+   local distance
+
+   local name        = "Troll"
+   local plural_name = "Trolls"
+   local distance    = 0
+
+   local combat      = ""
+   local nth_foe     = 0
+
+   function create_instance()
+      math.randomseed(os.time())
+      
+      hp_max   = 2 -- math.random(5, 24) + 4
+      hp       = hp_max
+      weapon   = Weapons.axe
+      strength = math.random(5, 14) + 4
+      luck     = math.random(5,12)
+   end
+
+   function set_combat_ptr(ptr, number)
+      combat  = ptr
+      nth_foe = number
+
+      print("Lua: pointer " .. ptr)
+      print("Lua: number " .. number)
+   end
+
+   function get_name()
+      return name
+   end
+
+   function get_plural_name()
+      return plural_name
+   end
+
+   function get_distance()
+      return distance
+   end
+
+   function set_distance(new_dist)
+      distance = new_dist
+   end
+
+   function img_path()
+      return simpl_datapath() .. "bestiary/orc.png"
+   end
+   
+   function dummy()
+      simpl_get_hp(combat, nth_foe)
+   end
+   
+   function get_hp()
+      return hp
+   end
+
+   function get_hp_max()
+      return hp_max
+   end
+
+   function get_strength()
+      return strength
+   end
+
+   function get_luck()
+      return luck
+   end
+
+   function get_weapon()
+      return weapon.name
+   end
+
+   function advance()
+      distance = distance - 10
+   end
+   
+   function fight()
+      print("Lalalalalala\n")
+      -- simpl_printcon("+++++++++++++++++ Troll attacking!")
+
+      return 1
+   end
+   
+   function flee()
+      print("Fleeing")
+   end
+   
+   function attack()
+      if (distance > 10) then
+	 advance()
+      else
+	 if (hp > 5) then
+	    fight()
+	 else
+	    flee()
+	 end
+      end
+   end
+
+end

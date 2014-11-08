@@ -1,0 +1,104 @@
+Some good Tolkien design notes:
+
+ http://www.glyphweb.com/arda/miscitem.html
+
+This file should not be part of the simplicissimus distribution!  It
+is for design and development purposes only.
+
+GAMEPLAY, GENERAL
+
+- Nature inspired (e.g., watch birds fly away in winter, hunt animals
+  to survive, collect honey, etc.)
+
+- Long passages in the wilderness are such that there is not much food;
+  party has to travel near water or forest in order to fish and/or hunt
+  for food
+
+- If you have a dog as NPC, you almost always can hear monsters before
+  they can hear you
+
+RACES
+
+- Human
+
+- Elf
+
+- Half-Elf
+
+- Hobbit
+
+- Dwarf
+
+PROFESSIONS
+
+- Fighter
+
+  Skills: later: multiple attacks per round
+
+- Paladin
+
+  Skills: Some magic
+
+- Ranger
+
+  Skills: Hunting, path finding (e.g., to find monsters) & orientation
+          fishing
+
+- Thief
+
+  Skills: Disarm, hide in shadows, stab in back
+
+- Tinker
+
+  Skills: Repair weapons
+
+- Bard
+
+  Skills: Magic
+
+- Cleric
+
+  Skills: Magic, no blade weapons
+
+- Sorceror
+
+  Skills: Magic
+
+ACTIONS & EVENTS
+
+- Each icon can have exactly one action associated with it.
+
+- Each action can trigger several events.
+
+- While the editor supports setting actions, events have to be
+  handcoded.  To see how, check out the parser functions in map.cc.
+
+MAP
+
+- Lots of islands; makes the game more interesting (see black 
+  D&D manual)
+
+CITIES
+
+- Closed at night, say, btw. 8pm - 6am
+
+- No time passes in city
+
+- No camping possible, only renting a room at night
+
+  -> This avoids having to make people go to bed at night, etc.
+
+DISPLAY
+
+- Show icons for effects of spells, torches, etc. siilar to Bard's
+  Tale
+
+- Show in the bottom of window a graphic that shows weather,
+  state of sun, moon, etc.
+
+BATTLE
+
+- At night, monsters have advantage over players (in day it is
+  inverted)
+
+

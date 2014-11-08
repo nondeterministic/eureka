@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<creatures>
+  <creature name="Ork" plural_name="Orks" image="ork.png" hp="25" str="23" sp="0" luck="5" dxt="8" wis="2" char="0" iq="4" end="23" lvl="3" gold="25" group="6" ep="15">
+    <poss_weapon>0</poss_weapon>
+    <poss_weapon>4</poss_weapon>
+    <poss_arms>0</poss_arms>
+  </creature>
+</creatures>

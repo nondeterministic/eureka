@@ -1,0 +1,84 @@
+===================================
+Battle system
+===================================
+
+Determine when someone is hit:
+------------------------------
+- A number, R, is generated as follows:
+
+  R = random(1, 20) - weapon/magic/etc.-bonus - attacker's dexterity bonus - attacker's luck bonus
+
+  If R < AC, where AC is the armour class of the attacked, the attack is
+  successful.
+
+  * The armour class, AC, is computed as follows:
+
+       The player's primary AC - bonus from ring/magic/armour/shield/etc. - player's luck bonus - player's dexterity bonus
+
+  * The dexterity bonus, BONd, is compued as follows:
+
+       If dexterity >= 12, BONd = -1
+
+       If dexterity >= 15, BONd = -2
+
+       If dexterity >= 17, BONd = -3
+
+       If dexterity >= 19, BONd = -4
+
+       The bonus can also work against the character:
+
+       If dexterity <= 8, BONd = +1
+       
+       If dexterity <= 5, BONd = +2
+
+       If dexterity <= 3, BONd = +3
+
+  * The luck bonus, BONl, is computed like BONd, with values replaced,
+    respectively.
+
+- Note that it can be the case that R <= 0, if the attacker uses magic
+  or has a special skill bonus, etc.  This way even negative armour
+  classes can be beaten.
+
+Determine damage:
+-----------------
+- (First check if attack was successful, see above.)
+
+- The damage that is done, D, is determined by the weapon's max and min
+  damage property, and a potential magic bonus, etc., and a character's
+  strength bonus (see dexterity bonus):
+
+     D = weapon's damage (or random(1, 3) if no weapon available) + spell/potion/etc. bonuses + character's strength bonus + daytime bonus if the attackers are undead, orks, etc.
+
+  where daytime bonus is as follows:
+
+     If it is night, then daytime bonus +20% for foes and -20% for the party.
+     (If it is day, it is the other way round.)
+
+===================================
+Races
+===================================
+
+Human:
+
+- AC: 13
+
+- 
+
+Elf:
+
+- AC: 11
+
+Hobbit
+
+- AC: 11
+
+Half-Elf
+
+- AC: 11
+
+Dwarf
+
+- AC: 14
+
+- Damage bonus: +1 (0 <= level < 3), +2 (3 <= level < 5), +3 (5 <= level 7), +4 (7 <= level 8)

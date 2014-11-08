@@ -1,0 +1,13 @@
+Game development started in ca. 2009
+
+This package contains
+
+- simplicissimus, an old-fashioned CRPG
+
+- leibniz, a buggy editor, which has been used to create simplicissimus
+
+Leibniz is intended to be used only by the programmer of simplicissimus
+and will not be supported.
+
+
+    - Andreas Bauer, January 26, 2010.

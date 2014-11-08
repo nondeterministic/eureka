@@ -1,0 +1,238 @@
+// ----------------------------------------------------------------
+// leibniz
+//
+// Copyright (c) 2009  Andreas Bauer <baueran@gmail.com>
+//
+// This is not free software.  See COPYING for further information.
+// ----------------------------------------------------------------
+
+#include <gtkmm/image.h>
+
+// See http://www.boost.org/doc/libs/1_46_1/libs/filesystem/v3/doc/index.htm
+#define BOOST_FILESYSTEM_VERSION 3
+
+// See http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
+#define BOOST_NO_SCOPED_ENUMS
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include "boost/filesystem.hpp"
+
+#include <iostream>
+#include <memory>
+#include <string>
+#include "startupwin.hh"
+#include "newworldwin.hh"
+#include "editorwin.hh"
+#include "../world.hh"
+
+StartupWin::StartupWin(void)
+  : logo((std::string)DATADIR + "/simplicissimus/data/leibniz/logo.png"),
+    bnew("_Start new world..."),
+    bcancel(Gtk::Stock::CANCEL),
+    breopen("_Reopen old world")
+{
+  set_title("Welcome to Leibniz interactive world builder!");
+  set_resizable(false);
+
+  bcancel.
+    signal_clicked().
+    connect(sigc::mem_fun(*this, &StartupWin::on_button_close));
+  bcancel.set_use_underline();
+
+  breopen.
+    signal_clicked().
+    connect(sigc::mem_fun(*this, &StartupWin::on_button_reopen));    
+
+  bnew.
+    signal_clicked().
+    connect(sigc::mem_fun(*this, &StartupWin::on_button_new));
+  bnew.set_use_underline();
+
+  align.set_padding(10, 10, 10, 10);
+  add(align);
+  
+  vbox.set_spacing(10);
+  vbox.add(logo);
+  vbox.add(sep);
+
+  hbox.pack_start(bcancel);
+  hbox.pack_start(breopen, Gtk::PACK_EXPAND_WIDGET, 10);
+  hbox.pack_start(bnew);
+
+  vbox.add(hbox);
+  align.add(vbox);
+  
+  breopen.set_image(*Gtk::manage
+		    (new Gtk::Image(Gtk::Stock::REDO, Gtk::ICON_SIZE_BUTTON)));
+
+  // Grab default calls should always be late, or
+  // we get "widget not within a GtkWindow errror - God knows why.
+  bnew.set_can_default();
+  bnew.set_image(*Gtk::manage
+		 (new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_BUTTON)));
+  bnew.grab_default();
+
+  show_all_children();
+}
+
+void StartupWin::on_button_close(void)
+{
+  hide();
+}
+
+void StartupWin::on_button_reopen(void)
+{
+  Gtk::FileChooserDialog dialog("Please choose a world XML-file",
+          Gtk::FILE_CHOOSER_ACTION_OPEN);
+  dialog.set_transient_for(*this);
+
+  dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+  dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);
+
+  Glib::RefPtr<Gtk::FileFilter> filter_xml = Gtk::FileFilter::create();
+  filter_xml->set_name("XML files");
+  filter_xml->add_mime_type("text/xml");
+  dialog.add_filter(filter_xml);
+
+  Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+  filter_any->set_name("Any files");
+  filter_any->add_pattern("*");
+  dialog.add_filter(filter_any);
+
+  dialog.set_show_hidden(true);
+  
+  // TODO: remove this later and read subsequent TODO as well
+  // std::string filename = "/home/baueran/.leibniz/worlds/test.xml";
+
+  // Show the dialog and wait for a user response
+  switch (dialog.run())
+    {
+    case(Gtk::RESPONSE_OK):
+      {
+	// TODO: uncomment later!!
+	std::string filename = dialog.get_filename();
+	if (World::Instance().xml_load_world_data(filename.c_str()))
+	  {
+	    dialog.hide();
+	    hide();
+
+	    // Now start editor
+	    EditorWin editor_win;
+	    Gtk::Main::run(editor_win);
+	  }
+	else
+	  std::cerr << "Error loading world xml data." << std::endl;
+	break;
+      }
+    case(Gtk::RESPONSE_CANCEL):
+      {
+	break;
+      }
+    default:
+      {
+	std::cout << "Unexpected button clicked." << std::endl;
+	break;
+      }
+    }
+}
+
+void StartupWin::on_button_new(void)
+{
+  // First ask for the basic properties of the new world
+  NewWorldWin newworld_win;
+  if (!newworld_win.run())
+    return;
+
+  std::string data_dir = World::Instance().get_path().c_str();
+  std::string world_dir  =  data_dir
+    + (std::string)World::Instance().get_name().c_str();
+  std::string world_file = world_dir + ".xml";
+
+  // Set up dialog window, we may need it if the user selects a path
+  // that doesn't exist (see below)
+  Gtk::MessageDialog 
+    dirrerr_dlg("Error creating directory.", 
+		true,
+		Gtk::MESSAGE_ERROR,
+		Gtk::BUTTONS_OK);
+  dirrerr_dlg.set_title("Error");
+  
+  if (!(boost::filesystem::exists(data_dir)))
+    {
+      Gtk::MessageDialog 
+	msgdlg("Directory does not exist.", 
+	       true,
+	       Gtk::MESSAGE_QUESTION,
+	       Gtk::BUTTONS_YES_NO);
+      msgdlg.set_secondary_text("Do you want to create it?");
+      msgdlg.set_title("Directory does not exist");
+      
+      if (msgdlg.run() == Gtk::RESPONSE_YES)
+	{
+	  try
+	    {
+	      msgdlg.hide();
+	      boost::filesystem::create_directories(data_dir);
+	    }
+	  catch (...)
+	    {
+	      dirrerr_dlg.set_secondary_text(data_dir);
+	      dirrerr_dlg.run();
+	      dirrerr_dlg.hide();
+	    }
+	}
+    }
+
+  // Try to create world dir inside data dir and other required
+  // directories within.
+  try {
+    if (boost::filesystem::exists(data_dir)) {
+      boost::filesystem::create_directories(world_dir);
+      boost::filesystem::create_directories(world_dir + "/maps");
+      boost::filesystem::create_directories(world_dir + "/images");
+    }
+  // } catch (boost::filesystem::basic_filesystem_error<boost::filesystem::path>& e) {
+  } catch (boost::filesystem::filesystem_error& e) {
+    dirrerr_dlg.set_secondary_text(e.path1().string());
+    dirrerr_dlg.run();
+    dirrerr_dlg.hide();
+  }
+
+  // Start world's main XML file
+  World::Instance().xml_write_world_data();
+
+  // If all files and required directories are created, Go!
+  try
+    {
+      if (World::Instance().get_name().length() > 0 
+	  && boost::filesystem::exists(world_file)
+	  && boost::filesystem::exists(world_dir + "/maps")
+	  && boost::filesystem::exists(world_dir + "/images")
+	  )
+	{
+	  // Copy media data into world directory
+	  boost::filesystem::copy_file((std::string)DATADIR + 
+				       "/leibniz/data/icons_indoors.png",
+				       world_dir +
+				       "/images/icons_indoors.png");
+	  boost::filesystem::copy_file((std::string)DATADIR + 
+				       "/leibniz/data/icons_outdoors.png",
+				       world_dir + 
+				       "/images/icons_outdoors.png");
+
+	  // Remove start-up window
+	  hide();
+	  
+	  // Now start editor
+	  EditorWin editor_win;
+	  Gtk::Main::run(editor_win);
+	}
+    }
+  catch (...)
+    {
+      std::cerr << "startupwin.cc:on_button_new() failed." << std::endl;
+    }
+}
+
+StartupWin::~StartupWin(void)
+{
+}

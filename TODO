@@ -1,0 +1,69 @@
+TODO
+=====
+
+- Magic system
+
+- Level up
+
+- Buy remedies for magic and healing
+
+- Save/load game.  Store modified city maps?
+
+- NPCs
+
+- Switches and other items that are scripted.
+
+- Locks
+
+- Inventory weight, etc.
+
+- Consume/buy food
+
+- Close cities at night, make radius smaller
+
+- Rest party
+
+- Good battle music?
+  http://www.youtube.com/watch?v=GGU1P6lBW6Q
+  https://musopen.org/music/488/richard-wagner/fantasie-from-die-walkure-wwv-86b/
+
+- Good outside music?
+  Wagner: Tannhaeuser Overture
+  http://www.youtube.com/watch?v=SRmCEGHt-Qk
+
+  like Ultima's: George Frideric Handel - The Arrival of the Queen of Sheba
+  http://www.youtube.com/watch?v=-TGKJ9MgCOQ&list=PL42406BABC6D65EB8
+  
+- Good Dungeon/Battle music?
+  Liszt Totentanz?  Perhaps battle-suitable.
+  http://www.youtube.com/watch?v=7nVmFlSV1ok&list=PLCA8137EE9E44A5A8
+
+  PERFECT for Dungeon: http://www.youtube.com/watch?v=2s-Kz8S4dYw&list=PLCA8137EE9E44A5A8&index=3
+  Edvard Grieg: In the hall of the mountain king
+  
+  Dark organ piece by Bach: J. S. Bach Toccata and Fugue in D minor
+  http://www.youtube.com/watch?v=bkUUjUJ4wHg
+  
+  PERFECT: Ask this guy: https://www.facebook.com/AdrianvonZiegler/timeline?ref=page_internal
+  http://www.youtube.com/watch?v=UYp05hm9zWo
+  
+- Good Town music: Adrian von Ziegler, Spring Charm
+  http://www.youtube.com/watch?v=YGkuJlEZy04&list=TLHOC89kBKlWPvcfX8C2pUTudab_ybAlYk&index=11
+ 
+  Lord Wind:
+  http://www.youtube.com/watch?v=vn5jQUd_hss&index=3&list=PL41E5F2706C7B4529
+ 
+- Add weapons, arms, etc. from elements.xml.old to main elements.xml
+  and extend world.cc to read and use these properties.  [DONE]
+
+- Add icon property which is a number in the sequence of animations,
+  so that icons animate automatically.  Store the animation sequences
+  in hash table.  [DONE]
+
+- Leibniz does not yet save monster data and similar game data,
+  so far only reading of data is possible via world.cc. 
+
+  Put such files in separate XML file which is NOT read by editor
+  but only by game.  So nothing gets overwritten inside the world
+  file. [DONE - elements.xml]
+

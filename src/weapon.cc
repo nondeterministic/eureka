@@ -1,0 +1,118 @@
+//
+//
+// Copyright (c) 2012  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
+#include <iostream>
+#include "weapon.hh"
+#include "item.hh"
+
+using namespace std;
+
+Weapon::Weapon()
+{
+  std::cout << "Weapon()\n";
+  _range = 10;
+  _hands = 1;
+  _dmg_bonus = 0;
+  icon = 0;
+}
+
+Weapon::Weapon(const Weapon& w): Item(w)
+{
+  std::cout << "Weapon(const Weapon&): " << name() << "\n";
+  _range = w._range;
+  _hands = w._hands;
+  _dmg_min = w._dmg_min;
+  _dmg_max = w._dmg_max;
+  _dmg_bonus = w._dmg_bonus;
+  icon = w.icon;
+}
+
+// Weapon& Weapon::operator=(const Weapon& w)
+// {
+//   std::cout << "Weapon::=operator: " << name() << "\n";
+//   _range = w._range;
+//   _hands = w._hands;
+//   _dmg_min = w._dmg_min;
+//   _dmg_max = w._dmg_max;
+//   _dmg_bonus = w._dmg_bonus;
+// }
+
+Weapon::~Weapon()
+{
+  std::cout << "~Weapon(): " << name() << "\n";
+}
+
+std::string Weapon::luaName()
+{
+	return "weapons::" + name();
+}
+
+int Weapon::range()
+{
+  return _range;
+}
+
+void Weapon::range(int h)
+{
+  _range = h;
+}
+
+int Weapon::hands()
+{
+  return _hands;
+}
+
+void Weapon::hands(int h)
+{
+  _hands = h;
+}
+
+int Weapon::dmg_min()
+{
+  return _dmg_min;
+}
+
+void Weapon::dmg_min(int d)
+{
+  _dmg_min = d;
+  // return *this;
+}
+
+int Weapon::dmg_max()
+{
+  return _dmg_max;
+}
+
+void Weapon::dmg_max(int d)
+{
+  _dmg_max = d;
+  // return *this;
+}
+
+int Weapon::dmg_bonus()
+{
+  return _dmg_bonus;
+}
+
+void Weapon::dmg_bonus(int d)
+{
+  _dmg_bonus = d;
+  // return *this;
+}
+
