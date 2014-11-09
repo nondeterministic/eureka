@@ -193,7 +193,7 @@ void GameControl::draw_status(bool update_status_image)
   // twin.blit();
 }
 
-int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
+int GameControl::set_arena(Arena* new_arena)
 {
   arena = new_arena;
   return 0;
