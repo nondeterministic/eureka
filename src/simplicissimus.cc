@@ -119,9 +119,10 @@ int main(int argc, char *argv[])
   World::Instance().load_world_elements(_lua_state);
 
   // Create an arena and load a map
-  Arena* arena = NULL;
-  try {
-    arena = Arena::create("outdoors", "Landschaft");
+  std::shared_ptr<Arena> arena;
+  try { //make_shared<Song>(L"Elton John", L"I'm Still Standing");
+	  arena = std::make_shared<Arena>(Arena::create("outdoors", "Landschaft"));
+    // arena = Arena::create("outdoors", "Landschaft");
   }
   catch (const MapNotFound& e) {
     std::cerr << "Error: MapNotFound exception." << std::endl;
@@ -244,7 +245,5 @@ int main(int argc, char *argv[])
   gc->close_win();
   lua_close(_lua_state);
   
-  delete arena;
-
   return 0;
 }

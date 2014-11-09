@@ -193,7 +193,7 @@ void GameControl::draw_status(bool update_status_image)
   // twin.blit();
 }
 
-int GameControl::set_arena(Arena* new_arena)
+int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
 {
   arena = new_arena;
   return 0;
@@ -1256,12 +1256,12 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 		boost::filesystem::path dir((std::string(getenv("HOME")) + "/.simplicissimus/" + World::Instance().get_name() + "/maps/"));
 		std::string old_map_file = dir.string() + arena->get_map()->get_name() + ".xml";
 
-//		IndoorsMap* saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
-//		if (saved_map != NULL)
-//			arena->set_map(*saved_map);
-//		else if (boost::filesystem::exists(old_map_file))
-//			arena->get_map()->xml_load_map_data(old_map_file);
-//		else
+		IndoorsMap* saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
+		if (saved_map != NULL)
+			arena->set_map(*saved_map);
+		else if (boost::filesystem::exists(old_map_file))
+			arena->get_map()->xml_load_map_data(old_map_file);
+		else
 			arena->get_map()->xml_load_map_data();
 
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());

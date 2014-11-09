@@ -65,7 +65,7 @@ TOD Clock::tod()
     return EVENING;
   else if (h >= 21 && h < 0)
     return NIGHT;
-  else if (h >= 0 && h < 2)
+  else // if (h >= 0 && h < 2)
     return MIDNIGHT;
 }
 
