@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <vector>
+#include <memory>
 #include <utility>
 #include "map.hh"
 
@@ -34,7 +35,7 @@ public:
 
   // Does the return type need to be static to ensure only one object
   // is created?
-  static Arena* create(std::string, std::string);
+  static std::shared_ptr<Arena> create(std::string, std::string);
 
   void adjust_offsets(int = 0, int = 0, int = 0, int = 0);
   void set_offsets(unsigned = 0, unsigned = 0, unsigned = 0, unsigned = 0);
@@ -44,10 +45,10 @@ public:
   void refresh();
   void moving(bool);
   bool is_moving();
-  void set_map(Map&);
+  void set_map(std::shared_ptr<Map>);
 
   virtual void show_map() = 0;
-  virtual Map* get_map() const = 0;
+  virtual std::shared_ptr<Map> get_map() const = 0;
   // Moves the map into a direction defined via integer argument, and
   // returns the new map offset.
   virtual Offsets move(int) = 0;
@@ -69,7 +70,7 @@ public:
 
 protected:
   SDL_Surface* _sdl_surf;
-  Map* _map;
+  std::shared_ptr<Map> _map;
   bool _show_grid, _show_map, _show_obj, _show_act;  
   unsigned _top_hidden, _bot_hidden, _left_hidden, _right_hidden;
   bool _party_is_moving;

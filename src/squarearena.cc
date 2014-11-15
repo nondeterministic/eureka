@@ -12,7 +12,7 @@
 #include "playlist.hh"
 #include "config.h"
 
-SquareArena::SquareArena(Map* map)
+SquareArena::SquareArena(std::shared_ptr<Map> map)
 {
   _map = map;
   _top_hidden = 0;
@@ -84,7 +84,7 @@ SDL_Rect SquareArena::get_tile_coords(int x, int y) const
   return rect;
 }
 
-Map* SquareArena::get_map(void) const
+std::shared_ptr<Map> SquareArena::get_map(void) const
 {
   return _map;
 }

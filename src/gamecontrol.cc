@@ -193,7 +193,7 @@ void GameControl::draw_status(bool update_status_image)
   // twin.blit();
 }
 
-int GameControl::set_arena(Arena* new_arena)
+int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
 {
   arena = new_arena;
   return 0;
@@ -912,58 +912,13 @@ void GameControl::look()
 		printcon("There is nothing to see");
 }
 
-// Returns true if the player entered "Y" to the question of whether she
-// would like to leave a map.  Otherwise false is returned.
-
-bool GameControl::leave_map()
-{
-	printcon("Do you wish to leave? (y/n)");
-
-	switch (em->get_key("yn")) {
-	case 'y':
-		// Before leaving, store map changes in GameState object
-		if (!(arena->get_map()->is_outdoors())) {
-			IndoorsMap new_map = *(dynamic_cast<IndoorsMap*>(arena->get_map()));
-			GameState::Instance().add_map(new_map);
-		}
-
-		// Now leave, clean up, etc.
-		arena->get_map()->unload_map_data();
-		delete arena;
-		arena = NULL;
-
-		// Restore previously saved state to remember party position,
-		// etc. in old map.
-		party->restore_state();
-
-		// Now change maps over...
-		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
-		if (!arena->get_map())
-			std::cout << "Warning arena->get_map NULL\n";
-
-		arena->get_map()->xml_load_map_data();
-		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
-		arena->determine_offsets();
-		arena->show_map();
-		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-
-		// Stop sound
-		Playlist::Instance().clear();
-
-		return true;
-	case 'n':
-		return false;
-	}
-
-	return false;
-}
-
-// Returns true if the current arena is an outdoors arena, false
-// otherwise.
+/**
+ *  Returns true if the current arena is an outdoors arena, false otherwise.
+ */
 
 bool GameControl::is_arena_outdoors()
 {
-  return dynamic_cast<HexArena*>(arena);
+  return std::dynamic_pointer_cast<HexArena>(arena) != NULL;
 }
 
 bool GameControl::walk_fullspeed(int x, int y)
@@ -1201,6 +1156,9 @@ void GameControl::move_party(LDIR dir)
 			}
 			break;
 			}
+		case DIR_NONE:
+			; // TODO
+			break;
 		}
 	}
 
@@ -1211,6 +1169,55 @@ void GameControl::move_party(LDIR dir)
 	std::cout << "Party: " << party->x << ", " << party->y << "\n";
 
 	do_turn();
+}
+
+// Returns true if the player entered "Y" to the question of whether she
+// would like to leave a map.  Otherwise false is returned.
+
+bool GameControl::leave_map()
+{
+	printcon("Do you wish to leave? (y/n)");
+
+	switch (em->get_key("yn")) {
+	case 'y':
+		// Before leaving, store map changes in GameState object
+		if (!(arena->get_map()->is_outdoors())) {
+			// TODO: This is a bit of a clumsy shared pointer conversion...
+			std::shared_ptr<Map> new_map = arena->get_map();
+			std::shared_ptr<IndoorsMap> ind_map = std::dynamic_pointer_cast<IndoorsMap>(new_map);
+
+			GameState::Instance().add_map(ind_map);
+		}
+
+		// Now leave, clean up, etc.
+		// arena->get_map()->unload_map_data();
+		// delete arena;
+		arena = NULL;
+
+		// Restore previously saved state to remember party position,
+		// etc. in old map.
+		party->restore_state();
+
+		// Now change maps over...
+		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
+		if (!arena->get_map())
+			std::cout << "Warning arena->get_map NULL\n";
+
+		arena->get_map()->xml_load_map_data();
+		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
+		arena->determine_offsets();
+		arena->show_map();
+		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
+
+		// Stop sound
+		Playlist::Instance().clear();
+
+		return true;
+	case 'n':
+		return false;
+	}
+
+	return false;
 }
 
 void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
@@ -1235,7 +1242,7 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 		party->store_state();
 
 		arena->get_map()->unload_map_data();
-		delete arena;
+		// delete arena;
 		arena = NULL;
 
 		// There is only one landscape which can not be entered, but
@@ -1256,13 +1263,19 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 		boost::filesystem::path dir((std::string(getenv("HOME")) + "/.simplicissimus/" + World::Instance().get_name() + "/maps/"));
 		std::string old_map_file = dir.string() + arena->get_map()->get_name() + ".xml";
 
-		IndoorsMap* saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
-		if (saved_map != NULL)
-			arena->set_map(*saved_map);
-		else if (boost::filesystem::exists(old_map_file))
+		std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
+		if (saved_map != NULL) {
+			std::cout << "INFO: gamecontrol.cc: Entering map stored in memory.\n";
+			arena->set_map(saved_map);
+		}
+		else if (boost::filesystem::exists(old_map_file)) {
+			std::cout << "INFO: gamecontrol.cc: Entering map stored on disk.\n";
 			arena->get_map()->xml_load_map_data(old_map_file);
-		else
+		}
+		else {
+			std::cout << "INFO: gamecontrol.cc: Entering fresh map.\n";
 			arena->get_map()->xml_load_map_data();
+		}
 
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();

@@ -86,7 +86,7 @@ void World::set_world_path(const char* new_path)
     _path = new_path;
 }
 
-bool World::add_map(Map* new_map)
+bool World::add_map(std::shared_ptr<Map> new_map)
 {
     try {
       _maps.push_back(new_map);
@@ -112,39 +112,39 @@ bool World::add_map(Map* new_map)
     return true;
 }
 
-bool World::delete_map(Map* the_map)
+bool World::delete_map(std::shared_ptr<Map> the_map)
 {
     if (the_map == NULL)
         return false;
 
-    for (std::vector<Map*>::iterator curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
-    {
-        if (*curr_map == the_map)
-        {
+    for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++) {
+        if (*curr_map == the_map) {
             _maps.erase(curr_map);
-            delete the_map;
+            // delete the_map;
             return true;
         }
     }
+
+    std::cerr << "ERROR: world.cc:delete_map(): NOT DELETING! CHECK THIS!\n";
     return false;
 }
 
-Map* World::get_map(const char* map_name)
+std::shared_ptr<Map> World::get_map(const char* map_name)
 {
-    for (std::vector<Map*>::iterator curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
+    for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
         if ((*curr_map)->get_name() == map_name)
             return *curr_map;
     throw MapNotFound("MapNotFound exception in World::get_open_map(" + (std::string)map_name + ")");
 }
 
-std::vector<Map*>* World::get_maps(void)
+std::vector<std::shared_ptr<Map>>* World::get_maps(void)
 {
     return &_maps;
 }
 
 bool World::exists_map(const char* map_name)
 {
-    for (std::vector<Map*>::iterator curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
+    for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
         if ((*curr_map)->get_name() == map_name)
             return true;
     return false;
@@ -187,37 +187,26 @@ bool World::xml_load_world_data(const char* filename)
                 _path = filepath.parent_path().string() + "/";
                 reader.next();
             }
-            else if (reader.get_name() == "map")
-            {
-                Map* new_map = NULL;
+            else if (reader.get_name() == "map") {
+                std::shared_ptr<Map> new_map; //  = NULL;
                 std::string new_map_name = reader.read_string();
                 std::string new_map_path;
 
-                std::cout << "Name: " << new_map_name << std::endl;
-
                 reader.move_to_first_attribute();
-                do
-                {
-                    if (reader.get_name() == "href")
-                    {
+                do {
+                    if (reader.get_name() == "href") {
                         new_map_path = reader.get_value();
-                        std::cout << "href: " << new_map_path << std::endl;
                     }
-                    else if (reader.get_name() == "type")
-                    {
+                    else if (reader.get_name() == "type") {
                         if (reader.get_value() == "indoors")
-                            new_map = new IndoorsMap(new_map_name.c_str(),
-                                                     new_map_path.c_str());
+                            new_map = std::make_shared<IndoorsMap>(new_map_name.c_str(), new_map_path.c_str());
                         else if (reader.get_value() == "outdoors")
-                            new_map = new OutdoorsMap(new_map_name.c_str(),
-                                                      new_map_path.c_str());
-                        std::cout << "type: " << reader.get_value() << std::endl;
+                            new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str(), new_map_path.c_str());
                     }
                 }
                 while (reader.move_to_next_attribute());
                 reader.move_to_element();
 
-                std::cout << "Add map" << std::endl;
                 new_map->set_notmodified();
                 World::Instance().add_map(new_map);
                 reader.next();
@@ -316,7 +305,7 @@ void World::xml_write_world_data(std::string path)
 		xml_world_name->add_child_text(_name);
 
 		// Add map information
-		for (std::vector<Map*>::iterator curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++) {
+		for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++) {
 			xmlpp::Element* map_node = _main_world_xml_root->add_child("map");
 			map_node->set_attribute("href", "./" + _name + "/maps/" + (*curr_map)->get_name() + ".xml");
 			map_node->set_attribute("type", ((*curr_map)->is_outdoors() ? "outdoors" : "indoors"));

@@ -39,14 +39,14 @@ SDLEditor::~SDLEditor()
 
 SDLEditor* SDLEditor::create(std::string type, std::string name)
 {
-  try {
-    if (type == "indoors") 
-      return new IndoorsSDLEditor(World::Instance().get_map(name.c_str()));
-    return new OutdoorsSDLEditor(World::Instance().get_map(name.c_str()));
-  }
-  catch(...) {
-    return NULL;
-  }
+	try {
+		if (type == "indoors")
+			return new IndoorsSDLEditor(World::Instance().get_map(name.c_str()));
+		return new OutdoorsSDLEditor(World::Instance().get_map(name.c_str()));
+	}
+	catch(...) {
+		return NULL;
+	}
 }
 
 void SDLEditor::set_show_map(bool status)

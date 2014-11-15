@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include <gtkmm/socket.h>
 #include <vector>
+#include <memory>
 #include <SDL.h>
 #include "../map.hh"
 #include "sdleditor.hh"
@@ -31,7 +32,7 @@
 class IndoorsSDLEditor : public SDLEditor
 {
 public:
-  IndoorsSDLEditor(Map*);
+  IndoorsSDLEditor(std::shared_ptr<Map>);
   ~IndoorsSDLEditor();
 
   // Overriding virtual methods
@@ -39,7 +40,7 @@ public:
   void show_map();
   void open_display(Gtk::Socket*, unsigned, unsigned);
   void resize(unsigned, unsigned);
-  Map* get_map() const;
+  std::shared_ptr<Map> get_map() const;
   void set_offset(int, int);
   bool grid_on() const;
   void set_grid(bool = true);

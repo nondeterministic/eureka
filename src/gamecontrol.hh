@@ -51,7 +51,7 @@ protected:
   Party* party;
   int _turn_passed;
   std::pair<int, int> screen_pos_party;
-  Arena* arena;
+  std::shared_ptr<Arena> arena;
   Charset normal_font;
   std::string input;
   unsigned _turns;
@@ -66,7 +66,7 @@ public:
   int tick_event_handler();
   int tick_event_turn_handler();
   int key_event_handler(SDL_Event* = NULL);
-  int set_arena(Arena*);
+  int set_arena(std::shared_ptr<Arena>);
   int show_win();
   int close_win();
   int set_party(int, int);

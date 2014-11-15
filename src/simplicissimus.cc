@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
   World::Instance().load_world_elements(_lua_state);
 
   // Create an arena and load a map
-  Arena* arena = NULL;
+  std::shared_ptr<Arena> arena;
   try {
     arena = Arena::create("outdoors", "Landschaft");
   }
@@ -246,8 +246,6 @@ int main(int argc, char *argv[])
   // Close the game
   gc->close_win();
   lua_close(_lua_state);
-
-  delete arena;
 
   return 0;
 }

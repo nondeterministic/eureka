@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include <memory>
 #include "hexarena.hh"
 #include "world.hh"
 #include "map.hh"
@@ -7,7 +8,7 @@
 #include "outdoorsicons.hh"
 #include "simplicissimus.hh"
 
-HexArena::HexArena(Map* map)
+HexArena::HexArena(std::shared_ptr<Map> map)
 {
   _map = map;
   _top_hidden = 0;
@@ -97,7 +98,7 @@ SDL_Rect HexArena::get_tile_coords(int x, int y) const
   return rect;
 }
 
-Map* HexArena::get_map(void) const
+std::shared_ptr<Map> HexArena::get_map(void) const
 {
   return _map;
 }

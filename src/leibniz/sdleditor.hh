@@ -20,6 +20,7 @@
 #ifndef SDLEDITOR_HH
 #define SDLEDITOR_HH
 
+#include <memory>
 #include <string>
 #include <gtkmm.h>
 #include <gtkmm/socket.h>
@@ -61,7 +62,7 @@ public:
   virtual void show_map() = 0;
   virtual void open_display(Gtk::Socket*, unsigned, unsigned) = 0;
   virtual void resize(unsigned, unsigned) = 0;
-  virtual Map* get_map() const = 0;
+  virtual std::shared_ptr<Map> get_map() const = 0;
   virtual bool grid_on() const = 0;
   virtual void set_grid(bool = true) = 0;
   virtual void pixel_to_map(int, int, int&, int&) = 0;
@@ -82,7 +83,7 @@ public:
 
 protected:
   SDL_Surface* _sdl_surf;
-  Map* _map;
+  std::shared_ptr<Map> _map;
   bool _show_grid, _show_map, _show_obj, _show_act;
 };
 

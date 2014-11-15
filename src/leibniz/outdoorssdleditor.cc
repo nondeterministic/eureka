@@ -30,7 +30,7 @@
 #include "../map.hh"
 #include "../config.h"
 
-OutdoorsSDLEditor::OutdoorsSDLEditor(Map* map)
+OutdoorsSDLEditor::OutdoorsSDLEditor(std::shared_ptr<Map> map)
 {
   _map = map;
   _top_hidden = 0;
@@ -246,7 +246,7 @@ bool OutdoorsSDLEditor::grid_on(void) const
   return true;
 }
 
-Map* OutdoorsSDLEditor::get_map(void) const
+std::shared_ptr<Map> OutdoorsSDLEditor::get_map(void) const
 {
   return _map;
 }
@@ -259,8 +259,7 @@ void OutdoorsSDLEditor::adjust_offsets(int top, int bot, int left, int right)
   _right_hidden += right;
 }
 
-void OutdoorsSDLEditor::set_offsets(unsigned top,  unsigned bot, 
-				   unsigned left, unsigned right)
+void OutdoorsSDLEditor::set_offsets(unsigned top,  unsigned bot, unsigned left, unsigned right)
 {
   _top_hidden = top;
   _bot_hidden = bot;

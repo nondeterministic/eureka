@@ -93,7 +93,7 @@ protected:
   void write_action_node(xmlpp::Element*, Action*);
 
   // Map data and stuff...
-  std::vector<std::vector<unsigned> >                              _data;
+  std::vector<std::vector<unsigned>>                               _data;
   boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj> _map_objects;
   std::vector<std::shared_ptr<Action>>                             _actions;
 };

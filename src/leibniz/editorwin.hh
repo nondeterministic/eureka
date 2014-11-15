@@ -14,6 +14,7 @@
 #include <gdkmm/pixbuf.h>
 #include <glibmm/refptr.h>
 #include <vector>
+#include <memory>
 #include "sdleditor.hh"
 #include "../indoorsmap.hh"
 #include "tabcontext.hh"
@@ -54,7 +55,7 @@ public:
   void add_action(int, int);
   void add_object(int, int);
   void del_action(int, int);
-  Map* get_curr_map() const;
+  std::shared_ptr<Map> get_curr_map() const;
   TabContext* context();
   Glib::RefPtr<Gdk::Pixbuf> get_selected_icon_pb();
 

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #include "boost/lexical_cast.hpp"
+#include <memory>
 #include <glibmm.h>
 #include <cstdlib>
 #include <iostream>
@@ -148,7 +149,7 @@ void NewMapWin::on_button_ok(void)
       return;
     }
 
-  Map* new_map;
+  std::shared_ptr<Map> new_map;
 
   unsigned width = 0;
   unsigned height = 0;
@@ -163,9 +164,9 @@ void NewMapWin::on_button_ok(void)
     }
 
   if (rb_indoors.get_active())
-    new_map = new IndoorsMap(width, height);
+    new_map = std::make_shared<IndoorsMap>(width, height);
   else
-    new_map = new OutdoorsMap(width, height);
+    new_map = std::make_shared<OutdoorsMap>(width, height);
 
   new_map->set_name(name_entry.get_text().c_str());
   

@@ -29,6 +29,7 @@
 #include <string>
 #include <exception>
 #include <vector>
+#include <memory>
 #include "map.hh"
 #include "creature.hh"
 
@@ -58,11 +59,11 @@ public:
   std::string get_path(void);
   void set_name(const char*);
   void set_world_path(const char*);
-  bool add_map(Map*);
-  bool delete_map(Map*);
+  bool add_map(std::shared_ptr<Map>);
+  bool delete_map(std::shared_ptr<Map>);
   bool exists_map(const char*);
-  Map* get_map(const char*);
-  std::vector<Map*>* get_maps();
+  std::shared_ptr<Map> get_map(const char*);
+  std::vector<std::shared_ptr<Map>>* get_maps();
   unsigned get_indoors_tile_size() const;
   unsigned get_outdoors_tile_size() const;
   void set_indoors_tile_size(unsigned);
@@ -81,7 +82,7 @@ protected:
   // Override copy constructor
   World(const World&);
 
-  std::vector<Map*> _maps;
+  std::vector<std::shared_ptr<Map>> _maps;
   std::vector<std::string> _map_names;
   std::vector<Creature> _creatures;
   std::string _name, _path;

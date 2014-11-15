@@ -10,11 +10,12 @@
 
 #include "indoorsmap.hh"
 #include <vector>
+#include <memory>
 
 class GameState
 {
 protected:
-	std::vector<IndoorsMap> _maps;
+	std::vector<std::shared_ptr<IndoorsMap>> _maps;
 	GameState();
 
 public:
@@ -22,8 +23,8 @@ public:
 	virtual ~GameState();
 	bool save(std::string = "");
 	bool load(std::string = "");
-	void add_map(IndoorsMap);
-	IndoorsMap* get_map(std::string);
+	void add_map(std::shared_ptr<IndoorsMap>);
+	std::shared_ptr<IndoorsMap> get_map(std::string);
 };
 
 #endif /* GAMESTATE_HH_ */

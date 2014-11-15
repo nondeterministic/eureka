@@ -29,7 +29,7 @@
 #include "../mapobj.hh"
 #include "../action.hh"
 
-IndoorsSDLEditor::IndoorsSDLEditor(Map* map)
+IndoorsSDLEditor::IndoorsSDLEditor(std::shared_ptr<Map> map)
 {
   _map = map;
   _top_hidden = 0;
@@ -103,7 +103,7 @@ bool IndoorsSDLEditor::grid_on(void) const
   return _show_grid;
 }
 
-Map* IndoorsSDLEditor::get_map(void) const
+std::shared_ptr<Map> IndoorsSDLEditor::get_map(void) const
 {
   return _map;
 }

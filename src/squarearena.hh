@@ -3,19 +3,20 @@
 
 #include <SDL.h>
 #include <utility>
+#include <memory>
 #include "map.hh"
 #include "arena.hh"
 
 class SquareArena : public Arena
 {
 public:
-  SquareArena(Map*);
+  SquareArena(std::shared_ptr<Map>);
   ~SquareArena();
 
   // Overriding virtual methods
   void show_grid();
   void show_map();
-  Map* get_map() const;
+  std::shared_ptr<Map> get_map() const;
   void set_offset(int, int);
   Offsets move(int);
   Offsets determine_offsets();

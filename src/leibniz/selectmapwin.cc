@@ -48,17 +48,16 @@ SelectMapWin::SelectMapWin(void)
   _tview.set_model(_tmodel);
 
   // Prepare tree view data
-  std::vector<Map*>* vmaps = World::Instance().get_maps();
-  for (std::vector<Map*>::iterator curr_map = vmaps->begin(); 
-       curr_map != vmaps->end(); curr_map++)
-    {
-      if ((*curr_map)->exists_on_disk())
-	{
-	  Gtk::TreeModel::Row row = *(_tmodel->append());
-	  row[_cols.m_col_name] = (*curr_map)->get_name();
-	  row[_cols.m_col_outdoors] = (*curr_map)->is_outdoors();
-	}
-    }
+  std::vector<std::shared_ptr<Map>>* vmaps = World::Instance().get_maps();
+  for (auto curr_map = vmaps->begin(); curr_map != vmaps->end(); curr_map++)
+  {
+	  if ((*curr_map)->exists_on_disk())
+	  {
+		  Gtk::TreeModel::Row row = *(_tmodel->append());
+		  row[_cols.m_col_name] = (*curr_map)->get_name();
+		  row[_cols.m_col_outdoors] = (*curr_map)->is_outdoors();
+	  }
+  }
 
   // Shove tree view data into actual tree view and do some cosmetics
   _tview.append_column("Map name", _cols.m_col_name);

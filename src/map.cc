@@ -58,13 +58,14 @@ Map::Map()
 Map::~Map()
 {
 	unload_map_data();
-	std::cout << "~Map()" << std::endl;
 
 	// Memory was new'ed in EditorWin::add_event().
 	//	for (std::vector<Action*>::iterator curr_act = _actions.begin(); curr_act != _actions.end(); curr_act++)
 	//		delete *curr_act;
 
 	_actions.clear();
+
+	std::cout << "WARNING: map.cc::~Map(): Also destroyed all objects the map contained!" << std::endl;
 }
 
 void Map::unload_map_data(void)

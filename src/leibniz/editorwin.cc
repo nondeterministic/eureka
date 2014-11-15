@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #include <iostream>
+#include <memory>
 #include <cmath>
 #include <sstream>
 #include <gtkmm/stock.h>
@@ -226,10 +227,7 @@ void EditorWin::on_tb_show_act_toggled(void)
 
 void EditorWin::on_menu_file_save(void)
 {
-  for (std::vector<Map*>::iterator curr_map =
-         World::Instance().get_maps()->begin();
-       curr_map != World::Instance().get_maps()->end();
-       curr_map++)
+  for (auto curr_map = World::Instance().get_maps()->begin(); curr_map != World::Instance().get_maps()->end(); curr_map++)
     if ((*curr_map)->modified())
       if ((*curr_map)->xml_write_map_data())
         (*curr_map)->set_notmodified();
@@ -258,11 +256,10 @@ void EditorWin::on_menu_map_open(void)
 {
   SelectMapWin selectmap_win;
   Gtk::Main::run(selectmap_win);
-  Map* the_map = NULL;
+  std::shared_ptr<Map> the_map;
 
   try {
-    the_map =
-      World::Instance().get_map(selectmap_win.get_selected_map().c_str());
+    the_map = World::Instance().get_map(selectmap_win.get_selected_map().c_str());
     if (the_map->xml_load_map_data())
       add_sdleditor_tab(the_map->get_name().c_str());
     else
@@ -320,7 +317,7 @@ void EditorWin::on_menu_map_close(void)
 
     if (_sdleditor != NULL) {
       // Store pointer to map data temporarily
-      Map* tmp_map = get_curr_map();
+      std::shared_ptr<Map> tmp_map = get_curr_map();
 
       // Free some RAM
       tmp_map->unload_map_data();
@@ -393,7 +390,7 @@ void EditorWin::on_menu_map_close(void)
 
     if (_sdleditor != NULL) {
       // Store pointer to map data temporarily
-      Map* tmp_map = get_curr_map();
+      std::shared_ptr<Map> tmp_map = get_curr_map();
 
       // Free some RAM
       tmp_map->unload_map_data();
@@ -402,8 +399,7 @@ void EditorWin::on_menu_map_close(void)
       _sdleditor = NULL;
       std::cout << "Deleted sdleditor" << std::endl;
 
-      // If the map has never been saved before, remove it for
-      // good
+      // If the map has never been saved before, remove it for good
       if (!tmp_map->exists_on_disk())
         World::Instance().delete_map(tmp_map);
     }
@@ -419,9 +415,8 @@ void EditorWin::on_menu_map_close(void)
     ref_actiongr->get_action("MapMenuExpand")->set_sensitive(false);
   }
 
-  std::vector<Map*>* vmaps = World::Instance().get_maps();
-  for (std::vector<Map*>::iterator curr_map = vmaps->begin();
-       curr_map != vmaps->end(); curr_map++) {
+  std::vector<std::shared_ptr<Map>>* vmaps = World::Instance().get_maps();
+  for (auto curr_map = vmaps->begin(); curr_map != vmaps->end(); curr_map++) {
     if ((*curr_map)->exists_on_disk()) {
       // There is now at least one unopened map that can be
       // reopened, hence activate menu entry for that
@@ -898,7 +893,7 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
 
   // Create new editor, depending on whether the map is indoors or
   // outdoors, and connect it to the map accordingly.
-  Map* curr_map = NULL;
+  std::shared_ptr<Map> curr_map; //  = NULL;
   try {
     curr_map = World::Instance().get_map(new_curr_map_name.c_str());
   }
@@ -1047,7 +1042,7 @@ bool EditorWin::grid_on(void) const
   return _show_grid;
 }
 
-Map* EditorWin::get_curr_map(void) const
+std::shared_ptr<Map> EditorWin::get_curr_map(void) const
 {
   if (_sdleditor == NULL)
     return NULL;

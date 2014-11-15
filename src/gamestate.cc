@@ -10,6 +10,7 @@
 #include "world.hh"
 #include "party.hh"
 #include <vector>
+#include <memory>
 #include <boost/filesystem.hpp>
 
 GameState::GameState()
@@ -28,11 +29,11 @@ GameState& GameState::Instance()
 	return _inst;
 }
 
-void GameState::add_map(IndoorsMap map)
+void GameState::add_map(std::shared_ptr<IndoorsMap> map)
 {
 	// First delete map, if already exists in game state
-	for (std::vector<IndoorsMap>::iterator b = _maps.begin(); b != _maps.end(); b++) {
-		if (b->get_name() == map.get_name()) {
+	for (auto b = _maps.begin(); b != _maps.end(); b++) {
+		if ((*b)->get_name() == map->get_name()) {
 			_maps.erase(b);
 			break;
 		}
@@ -41,11 +42,11 @@ void GameState::add_map(IndoorsMap map)
 	_maps.push_back(map);
 }
 
-IndoorsMap* GameState::get_map(std::string map_name)
+std::shared_ptr<IndoorsMap> GameState::get_map(std::string map_name)
 {
-	for (IndoorsMap& map: _maps) {
-		if (map.get_name() == map_name)
-			return &map;
+	for (auto map: _maps) {
+		if (map->get_name() == map_name)
+			return map;
 	}
 
 	return NULL;
@@ -71,8 +72,8 @@ bool GameState::save(std::string fullFilePath)
 		std::cout << "gamestate.cc: Could not create config directory: " << (dir.string() + World::Instance().get_name() + "/maps/") << std::endl;
 
 	// Store indoors maps
-	for (Map& map: _maps) {
-		std::string file = dir.string() + "maps/" + map.get_name() + ".xml";
+	for (auto map: _maps) {
+		std::string file = dir.string() + "maps/" + map->get_name() + ".xml";
 
 		if (boost::filesystem::exists(file)) {
 			std::cout << "gamestate.cc: Removing file " << file << ".\n";
@@ -80,7 +81,7 @@ bool GameState::save(std::string fullFilePath)
 		}
 
 		std::cout << "gamestate.cc: Writing " << file << ".\n";
-		map.xml_write_map_data(dir.string());
+		map->xml_write_map_data(dir.string());
 		std::cout << "gamestate.cc: Written.\n";
 	}
 

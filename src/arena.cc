@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <memory>
 #include "arena.hh"
 #include "world.hh"
 #include "map.hh"
@@ -31,14 +32,14 @@ Arena::~Arena()
 {
 }
 
-Arena* Arena::create(std::string type, std::string name)
+std::shared_ptr<Arena> Arena::create(std::string type, std::string name)
 {
   try {
     if (type == "indoors") {
-      return new SquareArena(World::Instance().get_map(name.c_str()));
+      return std::make_shared<SquareArena>(World::Instance().get_map(name.c_str()));
     }
     else {
-      return new HexArena(World::Instance().get_map(name.c_str()));
+      return std::make_shared<HexArena>(World::Instance().get_map(name.c_str()));
     }
   }
   catch (MapNotFound& e) {
@@ -51,9 +52,9 @@ Arena* Arena::create(std::string type, std::string name)
   }
 }
 
-void Arena::set_map(Map& map)
+void Arena::set_map(std::shared_ptr<Map> map)
 {
-	_map = &map;
+	_map = map;
 }
 
 void Arena::set_show_map(bool status)
@@ -94,8 +95,7 @@ void Arena::adjust_offsets(int top, int bot, int left, int right)
   _right_hidden += right;
 }
 
-void Arena::set_offsets(unsigned top,  unsigned bot, 
-			unsigned left, unsigned right)
+void Arena::set_offsets(unsigned top,  unsigned bot, unsigned left, unsigned right)
 {
   _top_hidden = top;
   _bot_hidden = bot;
