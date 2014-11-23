@@ -1,9 +1,13 @@
 #ifndef PARTY_HH
 #define PARTY_HH
 
+#include <libxml++/libxml++.h>
+
 #include <utility>
 #include <string>
 #include <vector>
+#include <memory>
+
 #include "playercharacter.hh"
 #include "weapon.hh"
 #include "inventory.hh"
@@ -47,6 +51,7 @@ public:
   void set_gold(int);
   int food();
   void set_food(int);
+  std::string to_xml();
 };
 
 #endif

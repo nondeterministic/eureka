@@ -1,6 +1,10 @@
 #include "party.hh"
+
 #include <utility>
 #include <iostream>
+#include <memory>
+
+#include <libxml++/libxml++.h>
 
 void Party::set_coords(int x, int y)
 {
@@ -119,6 +123,73 @@ unsigned Party::party_alive()
     if (player->hp() > 0)
       i++;
   return i;
+}
+
+/**
+ * Convert party to XML document so that it can be saved to disk for save-game.
+ *
+ * TODO: It seems I cannot return a node as it somehow auto-deletes itself,
+ * even if used within a shared_ptr. So I return a string which then needs to
+ * be parsed again, alas.
+ */
+
+std::string Party::to_xml()
+{
+	xmlpp::Document xml_doc;
+	xmlpp::Element* partyNd = xml_doc.create_root_node("party");
+
+	// Add general party stuff
+	partyNd->add_child("x")->add_child_text(std::to_string(x));
+	partyNd->add_child("y")->add_child_text(std::to_string(y));
+	partyNd->add_child("map")->add_child_text(map_name());
+	partyNd->add_child("indoors")->add_child_text(indoors()? "1":"0");
+	partyNd->add_child("gold")->add_child_text(std::to_string(gold()));
+	partyNd->add_child("food")->add_child_text(std::to_string(food()));
+
+	// Add players
+	xmlpp::Element* playersEl = partyNd->add_child("players");
+	for (auto &player: _players) {
+		xmlpp::Element* playerEl(playersEl->add_child("player"));
+		playerEl->set_attribute("name", player.name());
+
+		playerEl->add_child("profession")->add_child_text(std::to_string(player.profession()));
+		playerEl->add_child("ep")->add_child_text(std::to_string(player.ep()));
+		playerEl->add_child("hp")->add_child_text(std::to_string(player.hp()));
+		playerEl->add_child("hpm")->add_child_text(std::to_string(player.hpm()));
+		playerEl->add_child("sp")->add_child_text(std::to_string(player.sp()));
+		playerEl->add_child("spm")->add_child_text(std::to_string(player.spm()));
+		playerEl->add_child("str")->add_child_text(std::to_string(player.str()));
+		playerEl->add_child("luck")->add_child_text(std::to_string(player.luck()));
+		playerEl->add_child("dxt")->add_child_text(std::to_string(player.dxt()));
+		playerEl->add_child("wis")->add_child_text(std::to_string(player.wis()));
+		playerEl->add_child("charr")->add_child_text(std::to_string(player.charr()));
+		playerEl->add_child("iq")->add_child_text(std::to_string(player.iq()));
+		playerEl->add_child("end")->add_child_text(std::to_string(player.end()));
+		playerEl->add_child("sex")->add_child_text(player.sex()? "1":"0");
+		playerEl->add_child("race")->add_child_text(std::to_string(player.race()));
+
+		if (player.weapon() != NULL)
+			playerEl->add_child("weapon")->add_child_text(player.weapon()->luaName());
+		else
+			playerEl->add_child("weapon");
+
+		if (player.shield() != NULL)
+			playerEl->add_child("shield")->add_child_text(player.shield()->luaName());
+		else
+			playerEl->add_child("shield");
+	}
+
+	// Add inventory
+	xmlpp::Element* invEl = partyNd->add_child("inventory");
+	for (unsigned i = 0; i < Party::Instance().inventory()->size(); i++) {
+		Item* item = Party::Instance().inventory()->get_item(i);
+		xmlpp::Element* itemEl(invEl->add_child("item"));
+
+		itemEl->set_attribute("how_many", std::to_string(Party::Instance().inventory()->how_many_at(i)));
+		itemEl->add_child_text(item->luaName());
+	}
+
+	return xml_doc.write_to_string_formatted().c_str();
 }
 
 std::vector<PlayerCharacter>::iterator Party::party_begin()

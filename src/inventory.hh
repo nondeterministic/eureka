@@ -19,6 +19,7 @@ public:
   ~Inventory();
   int weight();
   Item* get_item(int);
+  int how_many_at(int);
   std::vector<Item*>* get(int);
   std::map<std::string, int> list_wearables();
   std::map<std::string, int> list_all();

@@ -10,6 +10,8 @@
 #include "world.hh"
 #include "party.hh"
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include <memory>
 #include <boost/filesystem.hpp>
 
@@ -52,6 +54,27 @@ std::shared_ptr<IndoorsMap> GameState::get_map(std::string map_name)
 	return NULL;
 }
 
+// protected, called by save()
+
+bool GameState::save_party(std::string fullFilePath)
+{
+	boost::filesystem::path the_file = fullFilePath + "party.xml";
+	std::string party_xml = Party::Instance().to_xml();
+
+	if (boost::filesystem::exists(the_file)) {
+		std::cout << "gamestate.cc: Removing file " << the_file.c_str() << ".\n";
+		boost::filesystem::remove(the_file);
+	}
+
+	std::cout << "Writring to " << the_file.string() << std::endl;
+    std::ofstream out;
+    out.open(the_file.string());
+    out << party_xml;
+    out.close();
+
+	return true;
+}
+
 bool GameState::save(std::string fullFilePath)
 {
 	boost::filesystem::path dir; // (std::string(getenv("HOME")) + "/.simplicissimus/");  // TODO: Does this use of dir ensure platform-independence?
@@ -84,6 +107,9 @@ bool GameState::save(std::string fullFilePath)
 		map->xml_write_map_data(dir.string());
 		std::cout << "gamestate.cc: Written.\n";
 	}
+
+	// Store party state
+	save_party(dir.string());
 
 	// Clear map state again
 	_maps.clear();

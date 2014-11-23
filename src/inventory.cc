@@ -29,6 +29,27 @@ int Inventory::weight()
 	return (int)(_w/6.35);
 }
 
+// Return how many items are in position n in the inventory.
+//
+// For example, inventory contains 5 bows and 3 arrows.  So _items.size() is only 2,
+// whereas the first entry's size is 5 and the second entry's is 3.
+//
+// Returns 0 if n points to non-existent slot in the inventory, otherwise the size
+// of that slot.
+
+int Inventory::how_many_at(int n)
+{
+	if (n < (int)_items.size()) {
+		int i = 0;
+		for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, i++) {
+			if (i == n)
+				return ptr->second.size();
+		}
+	}
+
+	return 0;
+}
+
 Item* Inventory::get_item(int n)
 {
 	if (n < (int)_items.size()) {
@@ -42,6 +63,9 @@ Item* Inventory::get_item(int n)
 	else
 		return NULL;
 }
+
+// To be used in combination with zwin.select_item().  See gamecontrol::drop_items
+// for an example.
 
 std::vector<Item*>* Inventory::get(int n)
 {
@@ -155,7 +179,7 @@ int Inventory::remove_all(std::string item_name)
     _items.erase(item_name);
   }
   catch (std::out_of_range& oor) {
-    std::cout << "+++++++++++ Failed to remove " << item_name << "\n";
+    std::cerr << "+++++++++++ Failed to remove " << item_name << "\n";
   }
 
   return how_many;

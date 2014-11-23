@@ -17,6 +17,7 @@ class GameState
 protected:
 	std::vector<std::shared_ptr<IndoorsMap>> _maps;
 	GameState();
+	bool save_party(std::string);
 
 public:
 	static GameState& Instance();

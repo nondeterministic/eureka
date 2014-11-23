@@ -1189,10 +1189,12 @@ bool GameControl::leave_map()
 			GameState::Instance().add_map(ind_map);
 		}
 
-		// Now leave, clean up, etc.
+		// ***************************** TODO *****************************
+		// I disabled the following unload call and am now not sure if there's a leak...
 		// arena->get_map()->unload_map_data();
 		// delete arena;
 		arena = NULL;
+		// ****************************************************************
 
 		// Restore previously saved state to remember party position,
 		// etc. in old map.
