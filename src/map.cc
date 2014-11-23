@@ -128,6 +128,8 @@ std::vector<MapObj*> Map::get_objs(unsigned x, unsigned y)
 
 std::shared_ptr<Action> Map::get_action(unsigned x, unsigned y)
 {
+	std:: cout << "Actions: " << _actions.size() << std::endl;
+
 	for (auto curr_act: _actions) {
 		if (curr_act->get_x() == x && curr_act->get_y() == y) {
 			return curr_act;
@@ -135,7 +137,7 @@ std::shared_ptr<Action> Map::get_action(unsigned x, unsigned y)
 	}
 
 	std::cerr << "ERROR: map.cc::get_action(): returning empty shared_ptr (NULL) for an action.\n";
-	exit(-1);
+	// exit(-1);
 
 	std::shared_ptr<Action> nullinger;
 	return nullinger;
