@@ -2,6 +2,11 @@
 #include "playercharacter.hh"
 #include "profession.hh"
 
+PlayerCharacter::PlayerCharacter()
+{
+	_ep = 0;  // Because it is the only class member variable that is not inherited!
+}
+
 PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm, 
 				 int str, int luck, int dxt, int wis, 
 				 int charr, int iq, int end, bool sex,
@@ -34,11 +39,6 @@ int PlayerCharacter::ep()
 void PlayerCharacter::inc_ep(int ne)
 {
   _ep += ne;
-}
-
-std::string PlayerCharacter::name()
-{
-  return _name;
 }
 
 PROFESSION PlayerCharacter::profession()

@@ -39,16 +39,15 @@ enum PlayerState {
 class PlayerCharacter : public GameCharacter
 {
 private:
-  std::string _name;
   PROFESSION  _prof;
   int           _ep;
 
 public:
+  PlayerCharacter();
   PlayerCharacter(const char*, int hpm = 0, int spm = 0, int str = 0, 
 		  int luck = 0, int dxt = 0, int wis = 0, int charr = 0,
 		  int iq = 0, int end = 0, bool sex = true,
 		  RACE = HUMAN, PROFESSION = FIGHTER);
-  std::string name();
   PROFESSION profession();
   void set_profession(PROFESSION);
   int ep();

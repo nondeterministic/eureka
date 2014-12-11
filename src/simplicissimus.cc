@@ -35,6 +35,7 @@
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "util.hh"
+#include "profession.hh"
 
 #include <iostream>
 #include <cstdlib>
@@ -42,9 +43,13 @@
 #include <ctime>
 #include <vector>
 #include <memory>
+
 #include <boost/filesystem.hpp>
 #include <boost/signals.hpp>
 #include <boost/unordered_map.hpp>
+
+#include <libxml++/libxml++.h>
+#include <libxml++/parsers/textreader.h>
 
 extern "C" {
 #include "SDL.h"
@@ -83,8 +88,12 @@ int main(int argc, char *argv[])
   Party* party     = &Party::Instance();
   SDLWindow* win   = &SDLWindow::Instance();
   GameControl* gc  = &GameControl::Instance();
+  Charset normalFont;
 
   int res_w = 1024, res_h=768;
+
+  // int x = 13, y = 21; // Some default values for starting position in wilderness
+  int x = 3, y = 1; // Some default values for starting position in wilderness
 
   // Initialise random number generator
   std::srand(std::time(NULL));
@@ -138,40 +147,182 @@ int main(int argc, char *argv[])
   // 20 x 24 is the IDEAL arena dimension for the wilderness when the
   // resolution of the game is 1024x768.  Since the resolution is kept
   // dynamic, we have to calculate the arena dimension as follows.
-  if (win->draw_frame((int)(20.0*((float)res_w)/1024.0), (int)(24.0*((float)res_h)/768.0)) != 0) 
-    {
+  if (win->draw_frame((int)(20.0*((float)res_w)/1024.0), (int)(24.0*((float)res_h)/768.0)) != 0) {
       std::cerr << "Error: Canot create main window.\n";
       exit(EXIT_FAILURE);
-    }
+  }
   
   // Create in-game text console for textual user interaction and game
   // output
-  if (win->create_console_surface() != 0)
-    {
+  if (win->create_console_surface() != 0) {
       std::cerr << "Error: Canot create console window.\n";
       exit(EXIT_FAILURE);
-    }
- 
+  }
+
   // Create surface for ztats display
-  if (win->create_ztats_surface() != 0)
-    {
+  if (win->create_ztats_surface() != 0) {
       std::cerr << "Error: Canot create ztats window.\n";
       exit(EXIT_FAILURE);
-    }
+  }
  
   // Create surface for mini stats display
-  if (win->create_mini_win_surface() != 0)
-    {
+  if (win->create_mini_win_surface() != 0) {
       std::cerr << "Error: Canot create mini window.\n";
       exit(EXIT_FAILURE);
-    }
+  }
 
   // Create surface for mini stats display
-  if (win->create_tiny_win_surface() != 0)
-    {
+  if (win->create_tiny_win_surface() != 0) {
       std::cerr << "Error: Canot create tiny window.\n";
       exit(EXIT_FAILURE);
-    }
+  }
+
+  // Path to saved game
+  boost::filesystem::path dir(std::string(getenv("HOME")) + "/.simplicissimus/");
+
+  // Check if there's a saved game to return to and load it, if there is.
+  if (boost::filesystem::exists(dir)) {
+	  Console::Instance().print(&normalFont, "Restoring previous game state.", false);
+	  Console::Instance().print(&normalFont, "", false);
+
+	  dir /= "party.xml";
+	  xmlpp::TextReader reader(dir.string());
+      std::cout << "INFO: Loading game data from file " << dir.string() << std::endl;
+
+      while (reader.read()) {
+		  if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+			  if (reader.get_name() == "x")
+				  x = std::stoi(reader.read_string());
+			  else if (reader.get_name() == "y")
+				  y = std::stoi(reader.read_string());
+			  else if (reader.get_name() == "map")
+				  gc->set_map_name(reader.read_string().c_str());
+			  else if (reader.get_name() == "indoors")
+				  gc->set_outdoors(reader.read_string() == "0"? true : false);
+			  else if (reader.get_name() == "gold")
+				  party->set_gold(std::stoi(reader.read_string().c_str()));
+			  else if (reader.get_name() == "food")
+				  party->set_food(std::stoi(reader.read_string().c_str()));
+			  // Inventory
+			  else if (reader.get_name() == "inventory") {
+				  while (reader.read() && reader.get_name() != "inventory") {
+					  if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+						  if (reader.get_name() == "item") {
+							  reader.move_to_next_attribute();
+							  int how_many = std::atoi(reader.get_value().c_str());
+
+							  reader.move_to_element();
+							  std::string item_name = reader.read_string();
+							  std::string short_name = item_name.substr(item_name.find("::") + 2);
+							  bool is_weapon = item_name.substr(0, item_name.find("::")) == "weapons";
+
+							  // TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
+							  if (is_weapon) {
+								  for (int i = 0; i < how_many; i++)
+									  party->inventory()->add(WeaponHelper::createFromLua(short_name));
+							  }
+							  else {
+								  for (int i = 0; i < how_many; i++)
+									  party->inventory()->add(ShieldHelper::createFromLua(short_name));
+							  }
+
+							  std::cout << "Items: " << reader.read_string() << how_many << std::endl;
+						  }
+					  }
+				  }
+			  }
+			  // Players
+			  else if (reader.get_name() == "players") {
+				  while (reader.read() && reader.get_name() != "players") {
+					  if (reader.get_name() == "player") {
+						  PlayerCharacter player;
+
+						  // Set player name from attribute
+						  reader.move_to_next_attribute();
+						  player.set_name(reader.get_value());
+
+						  // Parse properties of player until </player> tag is found
+						  while (reader.read() && reader.get_name() != "player") {
+							  if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+								  if (reader.get_name() == "profession")
+									  player.set_profession(static_cast<PROFESSION>(std::atoi(reader.get_value().c_str())));
+								  else if (reader.get_name() == "ep")
+									  player.inc_ep(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "hp")
+									  player.set_hp(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "hpm")
+									  player.set_hpm(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "sp")
+									  player.set_sp(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "spm")
+									  player.set_spm(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "str")
+									  player.set_str(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "luck")
+									  player.set_luck(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "dxt")
+									  player.set_dxt(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "wis")
+									  player.set_wis(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "charr")
+									  player.set_char(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "iq")
+									  player.set_iq(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "end")
+									  player.set_end(std::atoi(reader.read_string().c_str()));
+								  else if (reader.get_name() == "sex") {
+									  int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
+									  player.set_sex(sex);
+								  }
+								  else if (reader.get_name() == "race")
+									  player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
+								  else if (reader.get_name() == "weapon") {
+									  std::string weap_name = reader.read_string();
+									  std::string short_name = weap_name.substr(weap_name.find("::") + 2);
+									  player.set_weapon(WeaponHelper::createFromLua(short_name));
+								  }
+								  else if (reader.get_name() == "shield") {
+									  std::string shield_name = reader.read_string();
+									  std::string short_name = shield_name.substr(shield_name.find("::") + 2);
+									  player.set_shield(ShieldHelper::createFromLua(short_name));
+								  }
+							  }
+						  } // player-while-end
+
+						  party->add_player(player);
+					  }
+				  } // players-while-end
+			  } // players-else-if-end
+		  }
+      }
+
+      ZtatsWin::Instance().update_player_list();
+  }
+  // Start fresh game with some dummy values
+  else {
+	  // TODO: For testing, add some party members.  All have an axe - how handy!
+	  PlayerCharacter p1("Bilbo Baggins", 20, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
+	  party->add_player(p1);
+	  party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
+	  PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
+	  party->add_player(p2);
+	  party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
+	  PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
+	  party->add_player(p3);
+	  party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
+	  ZtatsWin::Instance().update_player_list();
+
+	  // Add some stuff to the inventory
+	  party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	  party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	  party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	  party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	  party->inventory()->add(WeaponHelper::createFromLua("axe"));
+	  party->inventory()->add(ShieldHelper::createFromLua("small shield"));
+
+	  party->set_food(200);
+	  party->set_gold(11);
+  }
 
   // Load map data
   arena->get_map()->xml_load_map_data();
@@ -182,7 +333,7 @@ int main(int argc, char *argv[])
 
   // Set up game window and game control
   gc->set_arena(arena);
-  gc->set_party(13, 21);  
+  gc->set_party(x,y);
   gc->set_outdoors(true);
   gc->set_map_name("Landschaft");
   gc->show_win();
@@ -190,14 +341,13 @@ int main(int argc, char *argv[])
 
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-  Charset normalFont;
   Console::Instance().
-    print(&normalFont, 
+    print(&normalFont,
 	  "Welcome to Simplicissimus!\nA game (c) Copyright by Working Dog Software.\nComments to baueran@gmail.com. Thanks!\n\n",
 	  false);
 
   Console::Instance().
-    print(&normalFont, 
+    print(&normalFont,
 	  "This is pre-alpha software! Currently supported commands are:\n(d)rop item, "
 	  "(e)nter, (i)nventory, (l)ook, (q)uit, (r)eady item, (t)alk, (y)ield item, (z)tats.\n",
 	  false);
@@ -208,37 +358,6 @@ int main(int argc, char *argv[])
     std::cerr << "Could not initialize timer.\n";
     return -1;
   }
-
-  // TODO: For testing, add some party members.  All have an axe - how handy!
-  PlayerCharacter p1("Bilbo Baggins", 20, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
-  party->add_player(p1);
-  party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
-  PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
-  party->add_player(p2);
-  party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
-  PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
-  party->add_player(p3);
-  party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
-  ZtatsWin::Instance().update_player_list();
-
-/*
-  std::cout<< "$$$$$$$$$$$$$$$$: Found: " << WeaponHelper::exists("axe") << std::endl;
-  std::cout<< "$$$$$$$$$$$$$$$$: Found: " << WeaponHelper::exists("axe2") << std::endl;
-  std::cout<< "$$$$$$$$$$$$$$$$: Found: " << WeaponHelper::exists("sword") << std::endl;
-  std::cout<< "$$$$$$$$$$$$$$$$: Found: " << ShieldHelper::exists("small shield") << std::endl;
-  std::cout<< "$$$$$$$$$$$$$$$$: Found: " << ShieldHelper::exists("small shield") << std::endl;
-*/
-
-  // Add some stuff to the inventory
-  party->inventory()->add(WeaponHelper::createFromLua("sword"));
-  party->inventory()->add(WeaponHelper::createFromLua("sword"));
-  party->inventory()->add(WeaponHelper::createFromLua("sword"));
-  party->inventory()->add(WeaponHelper::createFromLua("sword"));
-  party->inventory()->add(WeaponHelper::createFromLua("axe"));
-  party->inventory()->add(ShieldHelper::createFromLua("small shield"));
-
-  party->set_food(200);
-  party->set_gold(11);
 
   // Start event handling
   gc->key_event_handler();

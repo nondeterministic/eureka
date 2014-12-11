@@ -23,7 +23,8 @@
 
 Shield::Shield()
 {
-  _protection = 0;
+	std::cout << "Shield()\n";
+	_protection = 0;
 }
 
 Shield::~Shield()
