@@ -40,7 +40,8 @@ class PlayerCharacter : public GameCharacter
 {
 private:
   PROFESSION  _prof;
-  int           _ep;
+  int         _ep;
+  int         _level;
 
 public:
   PlayerCharacter();
@@ -52,6 +53,9 @@ public:
   void set_profession(PROFESSION);
   int ep();
   void inc_ep(int);
+  int level();
+  void set_level(int);
+  int potential_level();
 };
 
 #endif

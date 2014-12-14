@@ -456,7 +456,7 @@ void ZtatsWin::build_ztats_player(int p, int lines_hidden)
   lines.push_back(line_tuple(temps.str(), LEFTALIGN));
 
   temps.str(""); temps.clear();
-  temps << "       Level: "; // TODO: Compute level via EP points, do not explicitly store Level value!
+  temps << "       Level: " << player->level();
   for (int i = temps.str().length(); i < second_col; i++)
     temps << " ";
   temps << "Dexterity: " << player->dxt();

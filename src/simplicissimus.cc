@@ -274,6 +274,8 @@ int main(int argc, char *argv[])
 									  int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
 									  player.set_sex(sex);
 								  }
+								  else if (reader.get_name() == "level")
+									  player.set_level(std::atoi(reader.read_string().c_str()));
 								  else if (reader.get_name() == "race")
 									  player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
 								  else if (reader.get_name() == "weapon") {
