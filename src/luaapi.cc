@@ -547,6 +547,35 @@ int l_get_gold(lua_State* L)
 	return 1;
 }
 
+int l_party_size(lua_State* L)
+{
+	lua_pushnumber(L, Party::Instance().party_size());
+	return 1;
+}
+
+int l_join(lua_State* L)
+{
+	if (Party::Instance().party_size() >= 6)
+		return 0;
+
+	// ... TODO
+	std::cout << "JOIN\n";
+
+	return 0;
+}
+
+// Item id is on the Lua stack at calling time.  Item will then be removed from the map,
+// because either it died in battle, joined the party, etc.  Map is usually indoors as outdoors,
+// we don't show detailed icon view.
+
+int l_remove_from_current_map(lua_State* L)
+{
+	std::string id = lua_tostring(L, 1); // This is the id used inside the current map XML-file!
+	GameControl::Instance().get_map()->pop_obj(id);
+
+	return 0;
+}
+
 void publicize_api(lua_State* L)
 {
   // Lua 5.1
@@ -619,8 +648,17 @@ void publicize_api(lua_State* L)
   lua_pushcfunction(L, l_get_gold);
   lua_setglobal(L, "simpl_get_gold");
 
+  lua_pushcfunction(L, l_party_size);
+  lua_setglobal(L, "simpl_partysize");
+
+  lua_pushcfunction(L, l_remove_from_current_map);
+  lua_setglobal(L, "simpl_remove_from_current_map");
+
   lua_pushcfunction(L, l_buyitem);
   lua_setglobal(L, "simpl_buyitem");
+
+  lua_pushcfunction(L, l_join);
+  lua_setglobal(L, "simpl_join");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

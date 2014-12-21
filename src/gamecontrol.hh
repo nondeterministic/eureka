@@ -91,6 +91,7 @@ public:
   void printcon(const std::string, bool = false);
   bool walk_fullspeed(int, int);
   bool walkable(int, int);
+  std::shared_ptr<Map> get_map();
 };
 
 #endif

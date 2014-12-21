@@ -213,6 +213,25 @@ void Map::pop_obj(int x, int y)
 	}
 }
 
+void Map::pop_obj(std::string pop_id)
+{
+	bool done = false;
+
+	while (!done) {
+		done = true;
+
+		for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
+			MapObj& mo = (curr_obj->second);
+			if (mo.id == pop_id) {
+				_map_objects.erase(curr_obj);
+				_modified = true;
+				done = false;
+				break;
+			}
+		}
+	}
+}
+
 void Map::push_obj(MapObj obj)
 {
 	std::pair<unsigned, unsigned> coords;

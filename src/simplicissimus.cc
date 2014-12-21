@@ -92,8 +92,7 @@ int main(int argc, char *argv[])
 
   int res_w = 1024, res_h=768;
 
-  // int x = 13, y = 21; // Some default values for starting position in wilderness
-  int x = 3, y = 1; // Some default values for starting position in wilderness
+  int x = 13, y = 21; // Some default values for starting position in wilderness
 
   // Initialise random number generator
   std::srand(std::time(NULL));

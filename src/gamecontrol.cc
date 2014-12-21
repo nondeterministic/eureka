@@ -733,6 +733,11 @@ void GameControl::talk()
 	printcon("No around to talk to");
 }
 
+std::shared_ptr<Map> GameControl::get_map()
+{
+	return arena->get_map();
+}
+
 void GameControl::get_item()
 {
 	printcon("Get - from which direction?");

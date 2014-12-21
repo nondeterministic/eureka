@@ -38,11 +38,15 @@ void Conversation::initiate()
 	LuaWrapper lua(_lua_state);
 	std::string lua_conversation_file = obj.get_init_script_path();
 
+	std::string testpath = 		(std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
+	        boost::algorithm::to_lower_copy(lua_conversation_file);
+	 std::cout << "DIR: " << testpath << std::endl;
+
 	// Load corresponding Lua conversation file
 	if (luaL_dofile(_lua_state, ((std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
 			        boost::algorithm::to_lower_copy(lua_conversation_file)).c_str()))
 	{
-		cerr << "Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+		std::cerr << "ERROR: conversation.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -59,6 +63,10 @@ void Conversation::initiate()
 		else if (reply == "name") {
 			printcon(reply + " ");
 			lua.call_void_fn("name");
+		}
+		else if (reply == "join") {
+			printcon(reply + " ");
+			lua.call_void_fn("join");
 		}
 		else if (!(reply == "bye" || reply.length() == 0)) {
 			printcon(reply + " ");
