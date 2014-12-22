@@ -38,10 +38,6 @@ void Conversation::initiate()
 	LuaWrapper lua(_lua_state);
 	std::string lua_conversation_file = obj.get_init_script_path();
 
-	std::string testpath = 		(std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
-	        boost::algorithm::to_lower_copy(lua_conversation_file);
-	 std::cout << "DIR: " << testpath << std::endl;
-
 	// Load corresponding Lua conversation file
 	if (luaL_dofile(_lua_state, ((std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
 			        boost::algorithm::to_lower_copy(lua_conversation_file)).c_str()))

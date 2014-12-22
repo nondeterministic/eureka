@@ -5,13 +5,13 @@
 
 do
 	-- --------------------------------------------------------
-	-- Define character values for either party join or a fight
+	-- Define character values for either party-join or a fight
 	-- --------------------------------------------------------
-	-- NAME, RACE, EP, HP, HPM, SP, SPM, STR, LUCK, DXT, WIS, CHARR, IQ, END, SEX, PROFESSION,
-	-- SHIELD, WEAPON
 
-	c_values = { "Fips", "HUMAN", 0, 10, 10, 0, 0, 7, 15, 15, 4, 14, 15, 7, "MALE", "BARD", 
-		     Weapons["axe"], Shields["small shield"] } 
+	c_values = { 
+		name = "Fips", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
+		iq = 15, endd = 7, sex = "MALE", profession = "SHEPHERD", weapon = Weapons["axe"], shield = Shields["small shield"] 
+	} 
 
 	-- -----------------------------------------------
 	-- Standard terms
@@ -50,13 +50,13 @@ do
 	end
 
 	function join()
-		 if (simpl_partysize() < 6) then
-		 	 simpl_printcon("I'm honoured and will join thee.")
-			 simpl_join(c_values)
-			 simpl_remove_from_current_map("boy")
-	         else
-		 	 simpl_printcon("I'm honoured and will join thee, but you seem to have no space in your party.")
-		 end
+		if (simpl_partysize() < 6) then
+			simpl_printcon("I'm honoured and will join thee.")
+			simpl_join(c_values)
+			simpl_remove_from_current_map("boy")
+        else
+		 	simpl_printcon("I'm honoured and will join thee, but you seem to have no space in your party.")
+		end
 	end
 	
 	function bye()

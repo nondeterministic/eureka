@@ -41,6 +41,7 @@
 #include "itemfactory.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "race.hh"
 
 extern "C" {
 #include <lua.h>
@@ -553,13 +554,79 @@ int l_party_size(lua_State* L)
 	return 1;
 }
 
+// TODO:
+// Accessing table like this:
+// http://www.wellho.net/mouth/1845_Passing-a-table-from-Lua-into-C.html
+
 int l_join(lua_State* L)
 {
 	if (Party::Instance().party_size() >= 6)
 		return 0;
 
-	// ... TODO
-	std::cout << "JOIN\n";
+	PlayerCharacter player;
+
+	lua_pushstring(L, "name");
+	lua_gettable(L, -2);
+	player.set_name(lua_tostring(L, -1)); // Extract result, which is now on the stack
+	lua_pop(L,1);                         // Tidy up stack by getting rid of the extra we just put on
+
+	lua_pushstring(L, "race");
+	lua_gettable(L, -2);
+	std::string race = lua_tostring(L, -1);
+	if (race == "HUMAN")
+		player.set_race(HUMAN);
+	else if (race == "ELF")
+		player.set_race(ELF);
+	else if (race == "HALF_ELF")
+		player.set_race(HALF_ELF);
+	else if (race == "HOBBIT")
+		player.set_race(HOBBIT);
+	else // if (race == "DWARF")
+		player.set_race(DWARF);
+	lua_pop(L,1);
+
+	lua_pushstring(L, "ep");
+	lua_gettable(L, -2);
+	player.inc_ep(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "hp");
+	lua_gettable(L, -2);
+	player.set_hp(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "hpm");
+	lua_gettable(L, -2);
+	player.set_hpm(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "sp");
+	lua_gettable(L, -2);
+	player.set_sp(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "spm");
+	lua_gettable(L, -2);
+	player.set_spm(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "str");
+	lua_gettable(L, -2);
+	player.set_str(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "luck");
+	lua_gettable(L, -2);
+	player.set_luck(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "dxt");
+	lua_gettable(L, -2);
+	player.set_dxt(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	Party::Instance().add_player(player);
+    ZtatsWin::Instance().update_player_list();
 
 	return 0;
 }
