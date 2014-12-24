@@ -26,6 +26,7 @@ Arena::Arena()
   _show_grid = true;
   _show_act = true;
   _party_is_moving = false;
+  _sdl_surf = NULL;
 }
 
 Arena::~Arena()

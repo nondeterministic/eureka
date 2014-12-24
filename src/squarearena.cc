@@ -38,9 +38,11 @@ SquareArena::SquareArena(std::shared_ptr<Map> map)
 
 SquareArena::~SquareArena(void)
 {
-  SDL_FreeSurface(_sdl_surf);
-  _drawn_icons.clear();
-  // SDL_Quit();
+	if (_sdl_surf != NULL)
+		SDL_FreeSurface(_sdl_surf);
+
+	_drawn_icons.clear();
+	// SDL_Quit();
 }
 
 void SquareArena::set_SDL_surface(SDL_Surface* s)

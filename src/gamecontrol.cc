@@ -38,6 +38,7 @@
 
 #include "simplicissimus.hh"
 #include "gamecontrol.hh"
+#include "clock.hh"
 #include "combat.hh"
 #include "weapon.hh"
 #include "weaponhelper.hh"
@@ -204,11 +205,26 @@ void GameControl::do_turn()
   _turns++;
   _turn_passed = 0;
 
+  // Consume food
+  if (is_arena_outdoors()) {
+	  if (_turns%20 == 0) {
+		Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size() * 2);
+		// No need to redraw as it happens further down when outdoors...
+	  }
+  }
+  else {
+	  if (_turns%40 == 0) {
+		  Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size());
+		  draw_status(false);
+	  }
+  }
+
   // Check if random combat ensues and handle it in case
   if (is_arena_outdoors()) {
     // Increment clock by 5 minutes every turn when outdoors, time doesn't elapse indoors
     if (_turns % 2 == 0) {
-      _clock.inc(5);
+      _clock.inc(30);
+      // _clock.inc(5);
       draw_status();
     }
 
@@ -288,17 +304,13 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					// Check if party is on enterable icon, i.e., if there is an enter-action associated to it.
 					std::shared_ptr<Action> act = arena->get_map()->get_action(party->x, party->y);
 
-					std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$\n";
-
 					if (act != NULL) {
 						std::shared_ptr<ActionOnEnter> act_on_enter = std::dynamic_pointer_cast<ActionOnEnter>(act);
 
 						if (act_on_enter == NULL)
 							printcon("Nothing to enter");
-						else {
-							std::cout << "Entering at x: " << act_on_enter->get_x() << ".\n";
+						else
 							action_on_enter(act_on_enter);
-						}
 					}
 					else
 						printcon("Nothing to enter");
@@ -1239,6 +1251,17 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 			exit(-1);
 		}
 
+		// TODO: It is not nice to create an entire map just to test for a flag, but it works...
+		std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
+		tmp_map->xml_load_map_data();
+		if (tmp_map->guarded_city &&
+				(_clock.tod() == NIGHT || _clock.tod() == EARLY_MORNING || _clock.tod() == MIDNIGHT))
+		{
+			printcon("No entry. At this ungodly hour, " + enter_event->get_map_name() + " is under lock and key.");
+			do_turn();
+			return;
+		}
+
 		std::cout << "Entering " << enter_event->get_map_name() << ".\n";
 		printcon("Entering " + enter_event->get_map_name());
 
@@ -1272,15 +1295,12 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 
 		std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
 		if (saved_map != NULL) {
-			std::cout << "INFO: gamecontrol.cc: Entering map stored in memory.\n";
 			arena->set_map(saved_map);
 		}
 		else if (boost::filesystem::exists(old_map_file)) {
-			std::cout << "INFO: gamecontrol.cc: Entering map stored on disk.\n";
 			arena->get_map()->xml_load_map_data(old_map_file);
 		}
 		else {
-			std::cout << "INFO: gamecontrol.cc: Entering fresh map.\n";
 			arena->get_map()->xml_load_map_data();
 		}
 

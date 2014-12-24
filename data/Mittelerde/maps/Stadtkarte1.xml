@@ -2,6 +2,7 @@
 <map>
   <name>Stadtkarte1</name>
   <outdoors>false</outdoors>
+  <guarded_city>true</guarded_city>
   <data>
     <row>5 5 5 2 2 4 4 4 109 89 89 109 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 82 4 4 4 5 5 5 5 5 5 5</row>
     <row>5 5 5 2 2 4 4 4 109 89 89 109 4 4 4 4 109 109 109 109 109 109 109 109 109 109 4 4 4 4 4 82 4 4 4 4 5 5 5 5</row>

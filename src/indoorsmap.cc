@@ -23,26 +23,25 @@
 #include <string>
 #include "indoorsmap.hh"
 
+// TODO: What about newpath, Einstein?
 IndoorsMap::IndoorsMap(const char* newname, const char* newpath)
 {
-  set_name(newname);
-  std::cout << newpath << std::endl;
+	set_name(newname);
 }
 
 IndoorsMap::IndoorsMap(unsigned columns, unsigned rows)
 {
-  std::vector<unsigned> row;
+	std::vector<unsigned> row;
 
-  for (unsigned i = 0; i < rows; i++)
-    {
-        for (unsigned i = 0; i < columns; i++)
-	  row.push_back(0);
-	_data.push_back(row);
-	row.clear();
-    }
+	for (unsigned i = 0; i < rows; i++) {
+		for (unsigned i = 0; i < columns; i++)
+			row.push_back(0);
+		_data.push_back(row);
+		row.clear();
+	}
 
-  _modified = true;
-};
+	_modified = true;
+}
 
 IndoorsMap::~IndoorsMap()
 {

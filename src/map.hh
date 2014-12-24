@@ -79,6 +79,8 @@ public:
   void del_action(unsigned, unsigned);
   boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* objs();
 
+  bool guarded_city;
+
 protected:
   // Variables
   std::string _name;

@@ -40,6 +40,7 @@
 
 Map::Map()
 {
+	guarded_city = false;
 	_modified = true;
 	// _main_map_xml_root = NULL;
 	// _main_map_xml_file = NULL;
@@ -410,10 +411,8 @@ void Map::parse_data_node(const xmlpp::Node* node)
 
 void Map::parse_node(const xmlpp::Node* node)
 {
-	const xmlpp::ContentNode* nodeContent =
-			dynamic_cast<const xmlpp::ContentNode*>(node);
-	const xmlpp::Element* nodeElement =
-			dynamic_cast<const xmlpp::Element*>(node);
+	const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
+	const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
 
 	if (nodeElement) {
 		// TODO: This is not very nice design, perhaps:
@@ -421,6 +420,8 @@ void Map::parse_node(const xmlpp::Node* node)
 		// an indoors or outdoors map was already created by World().
 		if (nodeElement->get_name() == "name")
 			_name = nodeElement->get_child_text()->get_content();
+		else if (nodeElement->get_name() == "guarded_city")
+			guarded_city = nodeElement->get_child_text()->get_content() == "true"? true : false;
 		else if (nodeElement->get_name() == "objects")
 			parse_objects_node(node);
 		else if (nodeElement->get_name() == "data")

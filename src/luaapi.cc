@@ -625,6 +625,9 @@ int l_join(lua_State* L)
 	player.set_dxt(lua_tonumber(L, -1));
 	lua_pop(L,1);
 
+	// TODO
+	/// ....
+
 	Party::Instance().add_player(player);
     ZtatsWin::Instance().update_player_list();
 
