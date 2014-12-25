@@ -92,7 +92,8 @@ public:
   bool walk_fullspeed(int, int);
   bool walkable(int, int);
   std::shared_ptr<Map> get_map();
+  Clock* get_clock();
+  std::pair<int,int> get_viewport();
 };
 
 #endif
-

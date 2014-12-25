@@ -47,7 +47,7 @@ public:
   bool is_moving();
   void set_map(std::shared_ptr<Map>);
 
-  virtual void show_map() = 0;
+  virtual void show_map(int = 0, int = 0) = 0;
   virtual std::shared_ptr<Map> get_map() const = 0;
   // Moves the map into a direction defined via integer argument, and
   // returns the new map offset.

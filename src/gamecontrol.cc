@@ -97,7 +97,7 @@ int GameControl::set_party(int x, int y)
 
 int GameControl::show_win()
 {
-  arena->show_map();
+  arena->show_map(get_viewport().first, get_viewport().second);
   arena->show_party(screen_pos_party.first, screen_pos_party.second);
   arena->update();
   SDLWindow::Instance().blit_interior();
@@ -202,35 +202,34 @@ int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
 
 void GameControl::do_turn()
 {
-  _turns++;
-  _turn_passed = 0;
+	_turns++;
+	_turn_passed = 0;
 
-  // Consume food
-  if (is_arena_outdoors()) {
-	  if (_turns%20 == 0) {
-		Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size() * 2);
-		// No need to redraw as it happens further down when outdoors...
-	  }
-  }
-  else {
-	  if (_turns%40 == 0) {
-		  Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size());
-		  draw_status(false);
-	  }
-  }
+	// Consume food
+	if (is_arena_outdoors()) {
+		if (_turns%20 == 0)
+			Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size() * 2);
+	}
+	else {
+		if (_turns%40 == 0)
+			Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size());
+	}
 
-  // Check if random combat ensues and handle it in case
-  if (is_arena_outdoors()) {
-    // Increment clock by 5 minutes every turn when outdoors, time doesn't elapse indoors
-    if (_turns % 2 == 0) {
-      _clock.inc(30);
-      // _clock.inc(5);
-      draw_status();
-    }
+	// Check if random combat ensues and handle it in case
+	if (is_arena_outdoors()) {
+		// Increment clock by 5 minutes every turn when outdoors, time doesn't elapse indoors
+		if (_turns % 2 == 0)
+			_clock.inc(30);
 
-    Combat combat;
-    combat.initiate();
-  }
+		Combat combat;
+		//combat.initiate();
+	}
+	else {
+		if (_turns%20 == 0)
+			_clock.inc(30);
+	}
+
+	draw_status();
 }
 
 int GameControl::tick_event_handler()
@@ -352,7 +351,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				}
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
-				arena->show_map();
+				arena->show_map(get_viewport().first, get_viewport().second);
 				arena->show_party(screen_pos_party.first, screen_pos_party.second);
 				arena->update();
 				SDLWindow::Instance().blit_interior();
@@ -1183,7 +1182,7 @@ void GameControl::move_party(LDIR dir)
 	party->y += y_diff;
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
-	std::cout << "Party: " << party->x << ", " << party->y << "\n";
+	std::cout << "Info: Party: " << party->x << ", " << party->y << "\n";
 
 	do_turn();
 }
@@ -1225,7 +1224,7 @@ bool GameControl::leave_map()
 		arena->get_map()->xml_load_map_data();
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();
-		arena->show_map();
+		arena->show_map(get_viewport().first, get_viewport().second);
 		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
 		// Stop sound
@@ -1237,6 +1236,38 @@ bool GameControl::leave_map()
 	}
 
 	return false;
+}
+
+/**
+ * Return viewport size for night, torches, etc.
+ */
+
+std::pair<int, int> GameControl::get_viewport()
+{
+	int x = 0; // Default: maximum viewport, bright as day!
+
+	switch (_clock.tod()) {
+	case EARLY_MORNING:
+		x = 8 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
+		break;
+	case MORNING:
+		x = 16 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
+		break;
+	case NOON:
+		break;
+	case AFTERNOON:
+		break;
+	case EVENING:
+	case NIGHT:
+		x = max(6, 24 - (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1) + 10);
+		break;
+	case MIDNIGHT:
+		x = 4;
+		break;
+	}
+
+	// It's a square view!
+	return std::make_pair(x,x);
 }
 
 void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
@@ -1252,14 +1283,18 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 		}
 
 		// TODO: It is not nice to create an entire map just to test for a flag, but it works...
-		std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
-		tmp_map->xml_load_map_data();
-		if (tmp_map->guarded_city &&
-				(_clock.tod() == NIGHT || _clock.tod() == EARLY_MORNING || _clock.tod() == MIDNIGHT))
 		{
-			printcon("No entry. At this ungodly hour, " + enter_event->get_map_name() + " is under lock and key.");
-			do_turn();
-			return;
+			std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
+			tmp_map->unload_map_data();
+			tmp_map->xml_load_map_data();
+			if (tmp_map->guarded_city &&
+					(_clock.tod() == NIGHT || _clock.tod() == EARLY_MORNING || _clock.tod() == MIDNIGHT))
+			{
+				printcon("No entry. At this ungodly hour, " + enter_event->get_map_name() + " is under lock and key.");
+				do_turn();
+				return;
+			}
+			tmp_map->unload_map_data();
 		}
 
 		std::cout << "Entering " << enter_event->get_map_name() << ".\n";
@@ -1340,4 +1375,9 @@ int GameControl::random(int min, int max)
 void GameControl::printcon(const std::string s, bool wait)
 {
   Console::Instance().print(&normal_font, s, wait);
+}
+
+Clock* GameControl::get_clock()
+{
+	return &_clock;
 }

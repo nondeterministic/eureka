@@ -299,7 +299,13 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
   return true;
 }
 
-void SquareArena::show_map(void)
+/**
+ * x_width and y_width define how large the viewing rectangle should be. Default is 0 for both which means
+ * as large as the window allows.  Other values, such as 4 or 6, etc. are there to reflect an increasingly
+ * shrinking view port when the night comes on and the player has no torch lit.
+ */
+
+void SquareArena::show_map(int x_width, int y_width)
 {
 	// std::cout << "Left hidden: " << _left_hidden
 	//        << ", Right hidden: " << _right_hidden
@@ -362,7 +368,10 @@ void SquareArena::show_map(void)
 			screen_to_map(party_x, party_y, party_x, party_y);
 
 			if (_show_map) {
-				if (in_los(x, y, party_x, party_y)) {
+				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.
+				if (in_los(x, y, party_x, party_y) &&
+					(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)))
+				{
 					if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
 						std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
 				}
@@ -373,23 +382,14 @@ void SquareArena::show_map(void)
 				coords.first = x;
 				coords.second = y;
 
-				std::pair
-				<boost::unordered_multimap
-				<std::pair<unsigned, unsigned>, MapObj>::iterator,
-				boost::unordered_multimap
-				<std::pair<unsigned, unsigned>, MapObj>::iterator>
-				found_obj = _map->objs()->equal_range(coords);
+				auto found_obj = _map->objs()->equal_range(coords);
 
 				// Now draw the objects
-				for (boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::const_iterator curr_obj = found_obj.first;
-						curr_obj != found_obj.second;
-						curr_obj++)
-				{
+				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
 					if (in_los(x, y, party_x, party_y)) {
 						int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
-						if ((puttile_errno =
-								put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
+						if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
 							std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
 					}
 				}

@@ -22,7 +22,7 @@ public:
 
   // Overriding virtual methods
   void show_grid();
-  void show_map();
+  void show_map(int = 0, int = 0);
   std::shared_ptr<Map> get_map() const;
   void set_offset(int, int);
   Offsets move(int);

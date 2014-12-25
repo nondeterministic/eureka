@@ -288,28 +288,29 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
   //   " xp: " << xp <<
   //   " yp: " << yp << "\n";
 
-  if (abs(xi - xp) <= 1 && abs(yi - yp) <=1)
-    return true;
+	// Immediate neighbourhood is always visible
+	if (abs(xi - xp) <= 1 && abs(yi - yp) <=1)
+		return true;
 
-  int delta_x = xi - xp;
-  int delta_y = yi - yp;
-  float m = (float)delta_y/(float)delta_x;
+	int delta_x = xi - xp;
+	int delta_y = yi - yp;
+	float m = (float)delta_y/(float)delta_x;
 
-  std::vector<int> row;
-  int icon_no = 0;
+	std::vector<int> row;
+	int icon_no = 0;
 
 #ifndef ADD_ICON
 #define ADD_ICON(local_x, local_y)			\
-  { icon_no = get_map()->get_tile(local_x, local_y);	\
-    row.push_back(icon_no); }
+		{ icon_no = get_map()->get_tile(local_x, local_y);	\
+		row.push_back(icon_no); }
 #endif
 
-  int ystep = -1; int xstep = -1;
+	int ystep = -1; int xstep = -1;
 
-  bool steep = abs(((float)yi - (float)yp)/2) > abs(xi - xp);
+	bool steep = abs(((float)yi - (float)yp)/2) > abs(xi - xp);
 
-  SIGN xsign = GRTR;
-  SIGN ysign = GRTR;
+	SIGN xsign = GRTR;
+	SIGN ysign = GRTR;
 
   // /////////////////////////////////////////////////////
   // Determine octant according to the following picture
@@ -325,187 +326,177 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
   // the x or y coordinate as the line expands.
   // /////////////////////////////////////////////////////
 
-  if (delta_y <= 0 && delta_x <= 0) {
-    // std::cout << "3 & 4\n";
-    ystep = -1; xstep = -1;
-    ysign = GRTR;
-    xsign = GRTR;
-  }
-  else if (delta_y >= 0 && delta_x >= 0) {
-    // std::cout << "7 & 8\n";
-    ystep = 1; xstep = 1;
-    ysign = LOWR;
-    xsign = LOWR;
-  }
-  else if (delta_y >= 0 && delta_x <= 0) {
-    // std::cout << "6 & 5\n";
-    ystep = 1; xstep = -1;
-    ysign = LOWR;
-    xsign = GRTR;
-  }
-  else if (delta_y <= 0 && delta_x >= 0) {
-    // std::cout << "2 & 1\n";
-    ystep = -1; xstep = 1;
-    ysign = GRTR;
-    xsign = LOWR;
-  }
-  else
-    exit(0);
+	if (delta_y <= 0 && delta_x <= 0) {
+		// std::cout << "3 & 4\n";
+		ystep = -1; xstep = -1;
+		ysign = GRTR;
+		xsign = GRTR;
+	}
+	else if (delta_y >= 0 && delta_x >= 0) {
+		// std::cout << "7 & 8\n";
+		ystep = 1; xstep = 1;
+		ysign = LOWR;
+		xsign = LOWR;
+	}
+	else if (delta_y >= 0 && delta_x <= 0) {
+		// std::cout << "6 & 5\n";
+		ystep = 1; xstep = -1;
+		ysign = LOWR;
+		xsign = GRTR;
+	}
+	else if (delta_y <= 0 && delta_x >= 0) {
+		// std::cout << "2 & 1\n";
+		ystep = -1; xstep = 1;
+		ysign = GRTR;
+		xsign = LOWR;
+	}
+	else
+		exit(0);
 
-  if (steep) {
-    for (int x_temp = xp, y_temp = yp; 
-	 cond_cmp(x_temp, xi, xsign) || cond_cmp(y_temp, yi, ysign);) {
-      // Treat current coordinate.
-      // When a steep line is drawn, it is possible that the y-part
-      // overtakes the end point, so an additional check is added.
-      // The overtaking stems from the correction below.
-      if (cond_cmp(y_temp, yi, ysign))
-	  ADD_ICON(x_temp, y_temp);
-      
-      // Determine next coordinates
-      y_temp += ystep;
-      x_temp = ((float)y_temp - (float)yp) / m + (float)xp;
-      
-      if ( (x_temp%2 != 0 && y_temp%2 == 0) 
-	   || (x_temp%2 == 0 && y_temp%2 != 0) )
-	y_temp += ystep;
-    }
-  }
-  else {
-    int last_x = xp, last_y = yp;
-    for (int x_temp = xp, y_temp = yp; 
-	 cond_cmp(x_temp, xi, xsign) || cond_cmp(y_temp, yi, ysign);) {
-      // Treat current coordinate
-      ADD_ICON(x_temp, y_temp);
-            
-      // Determine next coordinates
-      x_temp += xstep;
-      y_temp = m*((float)x_temp - (float)xp) + (float)yp;
-      
-      if ( (x_temp%2 != 0 && y_temp%2 == 0) 
-	   || (x_temp%2 == 0 && y_temp%2 != 0) )
-	y_temp += ystep;
+	if (steep) {
+		for (int x_temp = xp, y_temp = yp;
+				cond_cmp(x_temp, xi, xsign) || cond_cmp(y_temp, yi, ysign);) {
+			// Treat current coordinate.
+			// When a steep line is drawn, it is possible that the y-part
+			// overtakes the end point, so an additional check is added.
+			// The overtaking stems from the correction below.
+			if (cond_cmp(y_temp, yi, ysign))
+				ADD_ICON(x_temp, y_temp);
 
-      // Check if the current coordinates differ too much from the
-      // previous ones, if so, treat adjacent coordinates in between
-      if (abs(last_y - y_temp) > 2)
-	ADD_ICON(x_temp, last_y + ystep);
-      last_x = x_temp; last_y = y_temp;
-    }
-  }
+			// Determine next coordinates
+			y_temp += ystep;
+			x_temp = ((float)y_temp - (float)yp) / m + (float)xp;
 
-  // Now do the actual check for transparency in the row,
-  // we just built.
-  int semitrans = 0;
-  for (unsigned i = 0; i < row.size(); i++) {
-    IconProps *props = OutdoorsIcons::Instance().get_props(row[i]);
-    if (props) {
-      if (props->flags() & NOT_TRANS) {
+			if ( (x_temp%2 != 0 && y_temp%2 == 0)
+					|| (x_temp%2 == 0 && y_temp%2 != 0) )
+				y_temp += ystep;
+		}
+	}
+	else {
+		int last_x = xp, last_y = yp;
+		for (int x_temp = xp, y_temp = yp;
+				cond_cmp(x_temp, xi, xsign) || cond_cmp(y_temp, yi, ysign);) {
+			// Treat current coordinate
+			ADD_ICON(x_temp, y_temp);
+
+			// Determine next coordinates
+			x_temp += xstep;
+			y_temp = m*((float)x_temp - (float)xp) + (float)yp;
+
+			if ( (x_temp%2 != 0 && y_temp%2 == 0)
+					|| (x_temp%2 == 0 && y_temp%2 != 0) )
+				y_temp += ystep;
+
+			// Check if the current coordinates differ too much from the
+			// previous ones, if so, treat adjacent coordinates in between
+			if (abs(last_y - y_temp) > 2)
+				ADD_ICON(x_temp, last_y + ystep);
+			last_x = x_temp; last_y = y_temp;
+		}
+	}
+
+	// Now do the actual check for transparency in the row, we just built.
+	int semitrans = 0;
+	for (unsigned i = 0; i < row.size(); i++) {
+		IconProps *props = OutdoorsIcons::Instance().get_props(row[i]);
+		if (props) {
+			if (props->flags() & NOT_TRANS) {
+				row.clear();
+				return false;
+			}
+			else if (i > 0 && (props->flags() & SEMI_TRANS)) {
+				// Decrease viewing distance by 4 on semi transparent icons, but
+				// not when standing on one (i.e., i > 0), rather only when
+				// those icons block the view, i.e., are in front of the player.
+				if (row.size() - ++semitrans > 4)
+					return false;
+			}
+		}
+		else {
+			row.clear();
+			// std::cerr << "OutdoorsIcons IconProps == null!\n";
+			return true;
+		}
+	}
+
 	row.clear();
-	return false;
-      }
-      else if (i > 0 && (props->flags() & SEMI_TRANS)) {
-	// Decrease viewing distance by 4 on semi transparent icons, but
-	// not when standing on one (i.e., i > 0), rather only when
-	// those icons block the view, i.e., are in front of the player.
-	if (row.size() - ++semitrans > 4)
-	  return false;
-      }
-    }
-    else {
-      row.clear();
-      // std::cerr << "OutdoorsIcons IconProps == null!\n";
-      return true;
-    }
-  }
-  
-  row.clear();
-  return true;
+	return true;
 }
 
-void HexArena::show_map(void)
+/**
+ * x_width and y_width define how large the viewing rectangle should be. Default is 0 for both which means
+ * as large as the window allows.  Other values, such as 4 or 6, etc. are there to reflect an increasingly
+ * shrinking view port when the night comes on and the player has no torch lit.
+ */
+
+void HexArena::show_map(int x_width, int y_width)
 {
-  _show_obj = true;
+	_show_obj = true;
 
-  if (!_show_map && !_show_act)
-    return;
+	if (!_show_map && !_show_act)
+		return;
 
-  // Don't show icons for actions.
-  _show_act = false;
+	// Don't show icons for actions.
+	_show_act = false;
 
-  // Recall: x and y are absolute map coordinates on the hex!  x2 and
-  // y2 are the relative coordinates to draw hexes on the screen.
+	// Recall: x and y are absolute map coordinates on the hex!  x2 and
+	// y2 are the relative coordinates to draw hexes on the screen.
 
-  for (unsigned x = _left_hidden/(tile_size()-10), 
-	 x2 = corner_tile_uneven_offset(); 
-       x < _map->width()-_right_hidden/(tile_size() - 10); 
-       x++, x2++)
-    {
-      for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1), 
-	     y2 = (x2%2 == 0)? 0 : 1;
-	   y < (_map->height()*2)-(_bot_hidden/(tile_size()-1)); 
-	   y += 2, y2 += 2)
+	for (unsigned x = _left_hidden / (tile_size() - 10),
+			x2 = corner_tile_uneven_offset();
+			x < _map->width()-_right_hidden / (tile_size() - 10);
+			x++, x2++)
 	{
-	  // std::cout << "Drawing (" << x << ", " << y << ")" << std::endl;
-	  if (_show_map) {
-	    int tileno = _map->get_tile(x, y);
-	    int puttile_errno = 0;
-	    
-	    if (tileno < 0)
-	      std::cerr 
-		<< "Invalid tile number in HexArena::show_map(): "
-		<< tileno
-		<< std::endl;
-	    
-	    int party_x, party_y;
-	    map_to_screen(Party::Instance().x, Party::Instance().y,
-			  party_x, party_y);
-	    screen_to_map(party_x, party_y, party_x, party_y);
-	    if (in_los(x, y, party_x, party_y)) {
+		for (unsigned y = _top_hidden/(tile_size() - 1) * 2 + ((x2%2 == 0)? 0 : 1),
+				y2 = (x2%2 == 0)? 0 : 1;
+				y < (_map->height() * 2) - (_bot_hidden/(tile_size() - 1));
+				y += 2, y2 += 2)
+		{
+			if (_show_map) {
+				int tileno = _map->get_tile(x, y);
+				int puttile_errno = 0;
 
-	      // TODO: Animate icons
-	      // ...
+				if (tileno < 0)
+					std::cerr << "Invalid tile number in HexArena::show_map(): " << tileno << std::endl;
 
-	      if ((puttile_errno = 
-		   put_tile_hex(x2, y2, OutdoorsIcons::Instance().
-				get_sdl_icon(tileno))) != 0)
-		std::cerr << "put_tile() returned " <<  puttile_errno
-			  << " in HexArena::show_map()." << std::endl;
-	    }
-	    else {
-	      if ((puttile_errno = 
-		   put_tile_hex(x2, y2, OutdoorsIcons::Instance().
-				get_sdl_icon(10))) != 0)
-		std::cerr << "put_tile() returned " <<  puttile_errno
-			  << " in HexArena::show_map()." << std::endl;
-	    }
-	  }
+				int party_x, party_y;
+				map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
+				screen_to_map(party_x, party_y, party_x, party_y);
 
-	  if (_show_obj) {
-	    std::pair<unsigned, unsigned> coords(x, y);
-	    
-	    std::pair
-	      <boost::unordered_multimap
-	      <std::pair<unsigned, unsigned>, MapObj>::iterator,
-	      boost::unordered_multimap 
-	      <std::pair<unsigned, unsigned>, MapObj>::iterator> 
-	      found_obj = _map->objs()->equal_range(coords);
-	    
-	    for (boost::unordered_multimap 
-		   <std::pair<unsigned, unsigned>, MapObj>::const_iterator 
-		   curr_obj = found_obj.first; 
-		 curr_obj != found_obj.second;
-		 curr_obj++)
-	      put_tile_hex(x2, y2, 
-			   OutdoorsIcons::Instance().
-			   get_sdl_icon(((MapObj)curr_obj->second).get_icon()));
-	  }
+				// The second line says that if full viewport available OR
+				// the party coordinates x_/y_width away from the party + x_/y_width / 2 (party is not the center, so we need to add the offset)
+				//
+				// In other words, if we run the next if with only the top line it will work as expected but not be able
+				// to display night without torch, etc.
+
+				if (in_los(x, y, party_x, party_y) &&
+						(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)))
+				{
+					// TODO: Animate icons
+					// ...
+
+					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
+						std::cerr << "put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
+				}
+				else {
+					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(10))) != 0)
+						std::cerr << "put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
+				}
+			}
+
+			if (_show_obj) {
+				std::pair<unsigned, unsigned> coords(x, y);
+				auto found_obj = _map->objs()->equal_range(coords);
+
+				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++)
+					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(((MapObj)curr_obj->second).get_icon()));
+			}
+		}
 	}
-    }
 
-  // int xp, yp;
-  // map_to_screen(Party::Instance().x, Party::Instance().y, xp, yp);
-  // in_los(xp, yp, 7, 9);
+	// int xp, yp;
+	// map_to_screen(Party::Instance().x, Party::Instance().y, xp, yp);
+	// in_los(xp, yp, 7, 9);
 }
 
 unsigned HexArena::tile_size(void) const
@@ -527,9 +518,9 @@ Offsets HexArena::offsets(void)
 
 void HexArena::get_center_coords(int& x, int& y)
 {
-  x = _clipped_surf->w / 2 / (tile_size() - 11);
-  y = _clipped_surf->h / tile_size() + corner_tile_uneven_offset();
-  // std::cout << "Center: " << x << ", " << y << std::endl;
+	x = _clipped_surf->w / 2 / (tile_size() - 11);
+	y = _clipped_surf->h / tile_size() + corner_tile_uneven_offset();
+	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
 std::pair<int, int> HexArena::show_party(int x, int y)
