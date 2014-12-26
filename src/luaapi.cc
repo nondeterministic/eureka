@@ -23,7 +23,10 @@
 #include <sstream>
 #include <type_traits>
 #include <cstdio>
+
 #include <boost/unordered_set.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include "config.h"
 #include "weapon.hh"
 #include "shield.hh"
@@ -557,11 +560,13 @@ int l_party_size(lua_State* L)
 // TODO:
 // Accessing table like this:
 // http://www.wellho.net/mouth/1845_Passing-a-table-from-Lua-into-C.html
+//
+// Returns true if join successful, false otherwise
 
 int l_join(lua_State* L)
 {
 	if (Party::Instance().party_size() >= 6)
-		return 0;
+		lua_pushboolean(L, false);
 
 	PlayerCharacter player;
 
@@ -625,13 +630,76 @@ int l_join(lua_State* L)
 	player.set_dxt(lua_tonumber(L, -1));
 	lua_pop(L,1);
 
-	// TODO
-	/// ....
+	lua_pushstring(L, "wis");
+	lua_gettable(L, -2);
+	player.set_wis(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "charr");
+	lua_gettable(L, -2);
+	player.set_char(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "iq");
+	lua_gettable(L, -2);
+	player.set_iq(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "endd");
+	lua_gettable(L, -2);
+	player.set_end(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "sex");
+	lua_gettable(L, -2);
+	std::string sex_str = lua_tostring(L, -1);
+	bool sex = false;
+	if (boost::to_upper(sex) == "MALE")
+		sex = true;
+	player.set_sex(sex);
+	lua_pop(L,1);
+
+	lua_pushstring(L, "profession");
+	lua_gettable(L, -2);
+	std::string prof_string = lua_tostring(L, -1);
+	prof_string = boost::to_upper(prof_string);
+	PROFESSION prof;
+	if (prof_string == "FIGHTER")
+		prof = FIGHTER;
+	else if (prof_string == "PALADIN")
+		prof = PALADIN;
+	else if (prof_string == "THIEF")
+		prof = THIEF;
+	else if (prof_string == "BARD")
+		prof = BARD;
+	else if (prof_string == "MAGE")
+		prof = MAGE;
+	else if (prof_string == "CLERIC")
+		prof = CLERIC;
+	else if (prof_string == "DRUID")
+		prof = DRUID;
+	else if (prof_string == "NECROMANCER")
+		prof = NECROMANCER;
+	else if (prof_string == "ARCHMAGE")
+		prof = ARCHMAGE;
+	else if (prof_string == "GEOMANCER")
+		prof = GEOMANCER;
+	else if (prof_string == "SHEPHERD")
+		prof = SHEPHERD;
+	else // if (prof_string == "PALADIN")
+		prof = TINKER;
+	player.set_profession(prof);
+	lua_pop(L,1);
+
+
+	// TODO...
+
 
 	Party::Instance().add_player(player);
     ZtatsWin::Instance().update_player_list();
 
-	return 0;
+    lua_pushboolean(L, true);
+    return 1;
 }
 
 // Item id is on the Lua stack at calling time.  Item will then be removed from the map,

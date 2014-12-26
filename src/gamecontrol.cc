@@ -1282,7 +1282,8 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 			exit(-1);
 		}
 
-		// TODO: It is not nice to create an entire map just to test for a flag, but it works...
+		// Code I am not proud of:
+		// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
 		{
 			std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
 			tmp_map->unload_map_data();

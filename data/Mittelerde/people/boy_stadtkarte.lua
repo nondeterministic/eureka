@@ -52,10 +52,12 @@ do
 	function join()
 		if (simpl_partysize() < 6) then
 			simpl_printcon("I'm honoured and will join thee.")
-			simpl_join(c_values)
+			join_successful = simpl_join(c_values)
 			simpl_remove_from_current_map("boy")
+		    return true
         else
 		 	simpl_printcon("I'm honoured and will join thee, but you seem to have no space in your party.")
+		 	return false
 		end
 	end
 	

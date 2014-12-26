@@ -62,7 +62,8 @@ void Conversation::initiate()
 		}
 		else if (reply == "join") {
 			printcon(reply + " ");
-			lua.call_void_fn("join");
+			if (lua.call_fn<bool>("join"))
+				return;
 		}
 		else if (!(reply == "bye" || reply.length() == 0)) {
 			printcon(reply + " ");
