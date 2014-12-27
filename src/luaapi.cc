@@ -45,6 +45,7 @@
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "race.hh"
+#include "luawrapper.hh"
 
 extern "C" {
 #include <lua.h>
@@ -654,7 +655,7 @@ int l_join(lua_State* L)
 	lua_gettable(L, -2);
 	std::string sex_str = lua_tostring(L, -1);
 	bool sex = false;
-	if (boost::to_upper(sex) == "MALE")
+	if (boost::to_upper_copy(sex_str) == "MALE")
 		sex = true;
 	player.set_sex(sex);
 	lua_pop(L,1);
@@ -662,7 +663,7 @@ int l_join(lua_State* L)
 	lua_pushstring(L, "profession");
 	lua_gettable(L, -2);
 	std::string prof_string = lua_tostring(L, -1);
-	prof_string = boost::to_upper(prof_string);
+	prof_string = boost::to_upper_copy(prof_string);
 	PROFESSION prof;
 	if (prof_string == "FIGHTER")
 		prof = FIGHTER;
@@ -691,9 +692,9 @@ int l_join(lua_State* L)
 	player.set_profession(prof);
 	lua_pop(L,1);
 
-
-	// TODO...
-
+	LuaWrapper lua(L);
+    player.set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon")));
+    player.set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield")));
 
 	Party::Instance().add_player(player);
     ZtatsWin::Instance().update_player_list();

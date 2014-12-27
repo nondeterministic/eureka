@@ -14,6 +14,18 @@ do
 	} 
 
 	-- -----------------------------------------------
+	-- Standard functions
+	-- -----------------------------------------------
+
+	function get_weapon()
+		return c_values["weapon"].name
+	end
+
+	function get_shield()
+		return c_values["shield"].name
+	end
+	
+	-- -----------------------------------------------
 	-- Standard terms
 	-- -----------------------------------------------
 
