@@ -36,6 +36,7 @@
 #include "shieldhelper.hh"
 #include "util.hh"
 #include "profession.hh"
+#include "simplicissimus.hh"
 
 #include <iostream>
 #include <cstdlib>
@@ -59,14 +60,10 @@ extern "C" {
 #include <lauxlib.h>
 }
 
+// ******************************************************************************
+// Global variables
+// ******************************************************************************
 
-// TODO: I know, global variables suck, but this makes the integration
-// of Lua straightforward at least.
-
-/*
-boost::unordered_map< std::string, Weapon > weapons_map;
-boost::unordered_map< std::string, Shield > shields_map;
-*/
 lua_State* _lua_state = NULL;
 
 Uint32 tick_callback(Uint32 interval, void *param)
@@ -81,6 +78,10 @@ Uint32 tick_callback(Uint32 interval, void *param)
   SDL_PushEvent(&event);
   return(interval);
 }
+
+// ******************************************************************************
+// Main
+// ******************************************************************************
 
 int main(int argc, char *argv[])
 {
@@ -243,8 +244,10 @@ int main(int argc, char *argv[])
 						  // Parse properties of player until </player> tag is found
 						  while (reader.read() && reader.get_name() != "player") {
 							  if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
-								  if (reader.get_name() == "profession")
-									  player.set_profession(static_cast<PROFESSION>(std::atoi(reader.get_value().c_str())));
+								  if (reader.get_name() == "profession") {
+									  std::string prof = reader.read_string();
+									  player.set_profession(stringToProfession.at(prof));
+								  }
 								  else if (reader.get_name() == "ep")
 									  player.inc_ep(std::atoi(reader.read_string().c_str()));
 								  else if (reader.get_name() == "hp")

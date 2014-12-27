@@ -8,7 +8,7 @@ TODO
 - Buy remedies for magic and healing
 
 - DONE: Save/load game.  Store modified city maps?
-  (Add additional items)
+  (Add additional items, TOD)
 
 - NPCs
 
@@ -20,7 +20,7 @@ TODO
 
 - Consume (DONE)/buy (TODO) food
 
-- Close cities at night, make radius smaller
+- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
 
 - Rest party
 
