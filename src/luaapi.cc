@@ -569,7 +569,7 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_pushstring(L, "name");
 	lua_gettable(L, -2);
 	player->set_name(lua_tostring(L, -1)); // Extract result, which is now on the stack
-	lua_pop(L,1);                         // Tidy up stack by getting rid of the extra we just put on
+	lua_pop(L,1);                          // Tidy up stack by getting rid of the extra we just put on
 
 	lua_pushstring(L, "race");
 	lua_gettable(L, -2);
@@ -674,6 +674,8 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 // http://www.wellho.net/mouth/1845_Passing-a-table-from-Lua-into-C.html
 //
 // Returns true if join successful, false otherwise
+//
+// IMPORTANT: This sunction has the c_values table on the Lua stack when called!
 
 int l_join(lua_State* L)
 {

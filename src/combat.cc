@@ -410,72 +410,141 @@ void Combat::victory()
   // No need to clean bounty items as they are destroyed when combat is over!
 }
 
+int Combat::foes_fight2()
+{
+	LuaWrapper lua(_lua_state);
+	boost::unordered_set<std::string> moved;
+	for (int i = 0; i < foes.size(); i++) {
+		Creature* foe = foes.get()->at(i).get();
+
+		// Load corresponding Lua monster definition
+		if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
+				(std::string)PACKAGE + "/data/" +
+				(std::string)WORLD_NAME + "/bestiary/" +
+				boost::algorithm::to_lower_copy(foe->name()) +
+				(std::string)".lua").c_str()))
+		{
+			cerr << "ERROR: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			exit(EXIT_FAILURE);
+		}
+
+		// Convert the this-pointer to string and push it to Lua-Land
+		// along with i, such that Lua knows which monster is referred
+		// to.  (I know, this is very crazy code, but life is crazy.)
+		std::ostringstream thiss;
+		thiss << (void const *)this;
+		lua.push_fn_arg((double)i);
+		lua.push_fn_arg((std::string)thiss.str());
+		lua.call_void_fn("set_combat_ptr");
+
+		lua.push_fn_arg((double)foe->gold());
+		lua.call_void_fn("set_gold");
+
+		lua.push_fn_arg((std::string)foe->weapon()->name());
+		lua.call_void_fn("set_weapon");
+
+		lua.push_fn_arg((double)foe->luck());
+		lua.call_void_fn("set_luck");
+
+		lua.push_fn_arg((double)foe->dxt());
+		lua.call_void_fn("set_dxt");
+
+		lua.push_fn_arg((double)foe->hp());
+		lua.call_void_fn("set_hp");
+
+		lua.push_fn_arg((double)foe->hpm());
+		lua.call_void_fn("set_hp_max");
+
+		lua.push_fn_arg((double)foe->distance());
+		lua.call_void_fn("set_distance");
+
+		if (lua.call_fn<bool>("advance") &&            // Foes want to advance? - as opposed to, say, fight from the distance
+				moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
+			moved = advance_foes();                      // Attempt to move
+
+		if (moved.find(foe->name()) == moved.end() &&
+				lua.call_fn<bool>("attack") &&
+				!fled)
+			lua.call_fn<double>("fight");
+
+		if (fled)
+			i--;
+		fled = false;
+
+		ZtatsWin::Instance().update_player_list();
+	}
+
+	return 0;
+}
+
+/*
 int Combat::foes_fight()
 {
-  LuaWrapper lua(_lua_state);
-  boost::unordered_set<std::string> moved;
-  for (int i = 0; i < foes.size(); i++) {
-    Creature* foe = foes.get()->at(i).get();
+	LuaWrapper lua(_lua_state);
+	boost::unordered_set<std::string> moved;
+	for (int i = 0; i < foes.size(); i++) {
+		Creature* foe = foes.get()->at(i).get();
 
-    // Load corresponding Lua monster definition
-    if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
-                                 (std::string)PACKAGE + "/data/" +
-                                 (std::string)WORLD_NAME + "/bestiary/" +
-                                 boost::algorithm::to_lower_copy(foe->name()) +
-                                 (std::string)".lua").c_str()))
-      {
-        cerr << "Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
-        exit(EXIT_FAILURE);
-      }
+		// Load corresponding Lua monster definition
+		if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
+				(std::string)PACKAGE + "/data/" +
+				(std::string)WORLD_NAME + "/bestiary/" +
+				boost::algorithm::to_lower_copy(foe->name()) +
+				(std::string)".lua").c_str()))
+		{
+			cerr << "ERROR: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			exit(EXIT_FAILURE);
+		}
 
-    // Convert the this-pointer to string and push it to Lua-Land
-    // along with i, such that Lua knows which monster is referred
-    // to.  (I know, this is very crazy code, but life is crazy.)
-    std::ostringstream thiss;
-    thiss << (void const *)this;
-    lua.push_fn_arg((double)i);
-    lua.push_fn_arg((std::string)thiss.str());
-    lua.call_void_fn("set_combat_ptr");
+		// Convert the this-pointer to string and push it to Lua-Land
+		// along with i, such that Lua knows which monster is referred
+		// to.  (I know, this is very crazy code, but life is crazy.)
+		std::ostringstream thiss;
+		thiss << (void const *)this;
+		lua.push_fn_arg((double)i);
+		lua.push_fn_arg((std::string)thiss.str());
+		lua.call_void_fn("set_combat_ptr");
 
-    lua.push_fn_arg((double)foe->gold());
-    lua.call_void_fn("set_gold");
+		lua.push_fn_arg((double)foe->gold());
+		lua.call_void_fn("set_gold");
 
-    lua.push_fn_arg((std::string)foe->weapon()->name());
-    lua.call_void_fn("set_weapon");
+		lua.push_fn_arg((std::string)foe->weapon()->name());
+		lua.call_void_fn("set_weapon");
 
-    lua.push_fn_arg((double)foe->luck());
-    lua.call_void_fn("set_luck");
+		lua.push_fn_arg((double)foe->luck());
+		lua.call_void_fn("set_luck");
 
-    lua.push_fn_arg((double)foe->dxt());
-    lua.call_void_fn("set_dxt");
+		lua.push_fn_arg((double)foe->dxt());
+		lua.call_void_fn("set_dxt");
 
-    lua.push_fn_arg((double)foe->hp());
-    lua.call_void_fn("set_hp");
+		lua.push_fn_arg((double)foe->hp());
+		lua.call_void_fn("set_hp");
 
-    lua.push_fn_arg((double)foe->hpm());
-    lua.call_void_fn("set_hp_max");
+		lua.push_fn_arg((double)foe->hpm());
+		lua.call_void_fn("set_hp_max");
 
-    lua.push_fn_arg((double)foe->distance());
-    lua.call_void_fn("set_distance");
+		lua.push_fn_arg((double)foe->distance());
+		lua.call_void_fn("set_distance");
 
-    if (lua.call_fn<bool>("advance") &&            // Foes want to advance? - as opposed to, say, fight from the distance
-        moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
-      moved = advance_foes();                      // Attempt to move
+		if (lua.call_fn<bool>("advance") &&            // Foes want to advance? - as opposed to, say, fight from the distance
+				moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
+			moved = advance_foes();                      // Attempt to move
 
-    if (moved.find(foe->name()) == moved.end() &&
-        lua.call_fn<bool>("attack") &&
-        !fled)
-      lua.call_fn<double>("fight");
+		if (moved.find(foe->name()) == moved.end() &&
+				lua.call_fn<bool>("attack") &&
+				!fled)
+			lua.call_fn<double>("fight");
 
-    if (fled)
-      i--;
-    fled = false;
+		if (fled)
+			i--;
+		fled = false;
 
-    ZtatsWin::Instance().update_player_list();
-  }
+		ZtatsWin::Instance().update_player_list();
+	}
 
-  return 0;
+	return 0;
 }
+*/
 
 // Returns which monster is going to be attacked in the next round by
 // player player_no.
@@ -562,21 +631,34 @@ boost::unordered_set<std::string> Combat::advance_foes()
 // Then we need to initiate battle, too, but create the "monsters", so to speak, rather
 // differently.  Script_path is the path to the Lua script defining the person in the town.
 
-bool Combat::create_monsters_from(std::string script_path)
+bool Combat::create_monsters_from(std::string script_file)
 {
 	LuaWrapper lua(_lua_state);
+	std::string lua_scripts_path = (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/";
 
 	// Load corresponding Lua conversation file
-	if (luaL_dofile(_lua_state, ((std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
-			        boost::algorithm::to_lower_copy(script_path)).c_str()))
-	{
-		std::cerr << "ERROR: combat.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+	if (luaL_dofile(_lua_state, (lua_scripts_path + boost::algorithm::to_lower_copy(script_file)).c_str())) {
+		std::cerr << "ERROR: combat.cc::create_monsters_from(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
+	// Load generic Lua script for fighting which is referenced by every town folk
+	// Town folk don't have dedicated combat functions as it's not the norm that the party will attack town people.
+	lua.push_fn_arg(lua_scripts_path + (std::string)"people/generic_fight.lua");
+	lua.call_fn_leave_ret_alone("load_generic_fight_file");
+
+	// Push c_values table onto Lua stack...
+	lua_getglobal(_lua_state, "c_values");
+
+	// ...then access its values
     std::shared_ptr<GameCharacter> foe = std::static_pointer_cast<GameCharacter>(create_character_values_from_lua(_lua_state));
+
     foes.count()->insert(std::make_pair(foe->name(), 1));
     foes.add(std::static_pointer_cast<Creature>(foe));
+
+    // Set distance of foe to 10'
+    for (auto f: foes)
+    	f->set_distance(10);
 
 	return true;
 }
@@ -645,7 +727,7 @@ bool Combat::create_random_monsters()
                                    (string) WORLD_NAME + "/bestiary/" +
                                    boost::algorithm::to_lower_copy(__name) +
                                    (string) ".lua").c_str())) {
-        cerr << "Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+        cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
         exit(EXIT_FAILURE);
       }
 
