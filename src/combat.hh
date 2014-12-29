@@ -54,6 +54,7 @@ public:
   void advance_party();
   std::string noticed_monsters();
   bool create_random_monsters();
+  bool create_monsters_from(std::string);
   void printcon(const std::string, bool wait = false);
   bool vowel(const char);
   boost::unordered_set<std::string> advance_foes();

@@ -352,7 +352,7 @@ int main(int argc, char *argv[])
 
   Console::Instance().
     print(&normalFont,
-	  "This is pre-alpha software! Currently supported commands are:\n(d)rop item, "
+	  "This is pre-alpha software! Currently supported commands are:\n(a)ttack, (d)rop item, "
 	  "(e)nter, (i)nventory, (l)ook, (q)uit, (r)eady item, (t)alk, (y)ield item, (z)tats.\n",
 	  false);
 

@@ -30,7 +30,7 @@ public:
   int x, y;
   
   static Party& Instance();
-  void add_player(PlayerCharacter&);
+  void add_player(PlayerCharacter);
   PlayerCharacter* get_player(int);
   PlayerCharacter* get_player(std::string);
   std::vector<PlayerCharacter>::iterator party_begin();

@@ -558,6 +558,29 @@ boost::unordered_set<std::string> Combat::advance_foes()
   return moved;
 }
 
+// Used for town folk, when the player attacks, e.g. a guard or runs amok otherwise.
+// Then we need to initiate battle, too, but create the "monsters", so to speak, rather
+// differently.  Script_path is the path to the Lua script defining the person in the town.
+
+bool Combat::create_monsters_from(std::string script_path)
+{
+	LuaWrapper lua(_lua_state);
+
+	// Load corresponding Lua conversation file
+	if (luaL_dofile(_lua_state, ((std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
+			        boost::algorithm::to_lower_copy(script_path)).c_str()))
+	{
+		std::cerr << "ERROR: combat.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+    std::shared_ptr<GameCharacter> foe = std::static_pointer_cast<GameCharacter>(create_character_values_from_lua(_lua_state));
+    foes.count()->insert(std::make_pair(foe->name(), 1));
+    foes.add(std::static_pointer_cast<Creature>(foe));
+
+	return true;
+}
+
 bool Combat::create_random_monsters()
 {
   LuaWrapper lua(_lua_state);

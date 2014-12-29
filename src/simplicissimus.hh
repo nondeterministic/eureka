@@ -36,7 +36,7 @@ const boost::unordered_map<PROFESSION, std::string> professionToString =
     (NECROMANCER, "NECROMANCER")
     (ARCHMAGE, "ARCHMAGE")
     (GEOMANCER, "GEOMANCER")
-    (SHEPHERD, "SHEPHER")
+    (SHEPHERD, "SHEPHERD")
     (TINKER, "TINKER");
 
 const boost::unordered_map<std::string, PROFESSION> stringToProfession =

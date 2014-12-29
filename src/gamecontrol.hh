@@ -74,6 +74,7 @@ public:
   void action_on_enter(std::shared_ptr<ActionOnEnter>);
   bool leave_map();
   void talk();
+  void attack();
   void quit();
   void ztats();
   void drop_items();

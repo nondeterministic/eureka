@@ -21,9 +21,13 @@
 #ifndef __LUAAPI_HH
 #define __LUAAPI_HH
 
+#include "playercharacter.hh"
+
 #include <type_traits>
-#include "boost/lexical_cast.hpp"
 #include <string>
+
+#include <boost/lexical_cast.hpp>
+
 extern "C" 
 {
 #include <lua.h>
@@ -35,6 +39,8 @@ extern "C"
 // int l_datapath(lua_State*);
 
 void publicize_api(lua_State*);
+std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L);
+
 
 extern lua_State* _lua_state;
 

@@ -24,7 +24,11 @@ do
 	function get_shield()
 		return c_values["shield"].name
 	end
-	
+
+	function load_generic_fight_file(name)
+		dofile(name) -- To enable combat, must be inserted AFTER c_values is defined!
+	end
+
 	-- -----------------------------------------------
 	-- Standard terms
 	-- -----------------------------------------------
@@ -76,8 +80,6 @@ do
 	function bye()
 		simpl_printcon("I better get going, too. Can't stand around chatting with you all day.")
 	end
-	
-	-- -----------------------------------------------
 	
 	function otherwise(item)
 		if (item == "wendy") then

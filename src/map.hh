@@ -36,7 +36,7 @@ class Map
 {
 public:
   Map();
-  //  Map(const Map&);
+  Map(const Map&);
   virtual ~Map();
 
   void unload_map_data();

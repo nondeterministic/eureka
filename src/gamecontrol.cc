@@ -222,7 +222,7 @@ void GameControl::do_turn()
 			_clock.inc(30);
 
 		Combat combat;
-		//combat.initiate();
+		combat.initiate();
 	}
 	else {
 		if (_turns%20 == 0)
@@ -316,6 +316,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 
 					break;
 				}
+				case SDLK_a:
+					attack();
+					break;
 				case SDLK_d:
 					drop_items();
 					break;
@@ -703,6 +706,43 @@ void GameControl::drop_items()
 	}
 
 	mwin.display_last();
+}
+
+void GameControl::attack()
+{
+	if (!party->indoors()) {
+		printcon("Attack - no one is around.");
+		return;
+	}
+
+	printcon("Attack - in which direction?");
+	std::pair<int,int> coords = select_coords();
+
+	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+
+	// Strictly speaking this loop should not be necessary as we don't want monsters/ppl to walk over
+	// objects, but in case we're changing our minds later, we're looking for them in a list of objects
+	// rather than checking the first one only.
+
+	if (avail_objects.first != avail_objects.second) {
+		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+			MapObj& the_obj = curr_obj->second;
+
+			if (the_obj.get_type() == MAPOBJ_MONSTER) {
+				if (the_obj.get_init_script_path().length() > 0) {
+					Combat combat;
+					combat.create_monsters_from(the_obj.get_init_script_path());
+					combat.initiate();
+					return;
+				}
+				else {
+					printcon("You use your charms, but there is no response");
+					return;
+				}
+			}
+		}
+	}
+	printcon("No one there. Try taking a deep breath instead.");
 }
 
 void GameControl::talk()
@@ -1282,20 +1322,19 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 			exit(-1);
 		}
 
-		// Code I am not proud of:
-		// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
+		// TODO: Code I am not proud of:
+		// It is not nice to create an entire map just to test for a flag, but it works for now...
 		{
 			std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
-			tmp_map->unload_map_data();
-			tmp_map->xml_load_map_data();
-			if (tmp_map->guarded_city &&
+			IndoorsMap tmp_map2 = *((IndoorsMap*)tmp_map.get()); // Create deep copy of map because otherwise xml_load_data fucks up the map's state
+			tmp_map2.xml_load_map_data();
+			if (tmp_map2.guarded_city &&
 					(_clock.tod() == NIGHT || _clock.tod() == EARLY_MORNING || _clock.tod() == MIDNIGHT))
 			{
 				printcon("No entry. At this ungodly hour, " + enter_event->get_map_name() + " is under lock and key.");
 				do_turn();
 				return;
 			}
-			tmp_map->unload_map_data();
 		}
 
 		std::cout << "Entering " << enter_event->get_map_name() << ".\n";

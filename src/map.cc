@@ -46,15 +46,17 @@ Map::Map()
 	// _main_map_xml_file = NULL;
 }
 
-//Map::Map(const Map& p)
-//{
-//	_name = p._name;
-//	_modified = p._modified;
-//	_data = p._data;
-//	_map_objects = p._map_objects;
-//	_actions = p._actions;
-//	std::cout << "FUCKING COPY CONSTRUCTOR!!\n";
-//}
+Map::Map(const Map& p)
+{
+	guarded_city = p.guarded_city;
+	_name = p._name;
+	_modified = p._modified;
+	_data = p._data;
+	_map_objects = p._map_objects;
+	_actions = p._actions;
+
+	std::cout << "FUCKING COPY CONSTRUCTOR!!\n";
+}
 
 Map::~Map()
 {

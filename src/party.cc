@@ -93,7 +93,7 @@ std::string Party::map_name()
   return _map_name;
 }
 
-void Party::add_player(PlayerCharacter& player)
+void Party::add_player(PlayerCharacter player)
 {
   _players.push_back(player);
   std::cout << "Added player " << player.name() << " to rooster.\n";

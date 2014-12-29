@@ -558,6 +558,117 @@ int l_party_size(lua_State* L)
 	return 1;
 }
 
+// THIS METHOD IS NOT VISIBLE TO LUA.  IT IS USED INTERNALLY ONLY, e.g., by l_join().
+// Basically extracts the c_values field from a city person or the like and creates an
+// according PlayerCharacter.
+
+std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
+{
+	std::shared_ptr<PlayerCharacter> player(new PlayerCharacter());
+
+	lua_pushstring(L, "name");
+	lua_gettable(L, -2);
+	player->set_name(lua_tostring(L, -1)); // Extract result, which is now on the stack
+	lua_pop(L,1);                         // Tidy up stack by getting rid of the extra we just put on
+
+	lua_pushstring(L, "race");
+	lua_gettable(L, -2);
+	std::string race = lua_tostring(L, -1);
+	if (race == "HUMAN")
+		player->set_race(HUMAN);
+	else if (race == "ELF")
+		player->set_race(ELF);
+	else if (race == "HALF_ELF")
+		player->set_race(HALF_ELF);
+	else if (race == "HOBBIT")
+		player->set_race(HOBBIT);
+	else // if (race == "DWARF")
+		player->set_race(DWARF);
+	lua_pop(L,1);
+
+	lua_pushstring(L, "ep");
+	lua_gettable(L, -2);
+	player->inc_ep(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "hp");
+	lua_gettable(L, -2);
+	player->set_hp(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "hpm");
+	lua_gettable(L, -2);
+	player->set_hpm(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "sp");
+	lua_gettable(L, -2);
+	player->set_sp(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "spm");
+	lua_gettable(L, -2);
+	player->set_spm(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "str");
+	lua_gettable(L, -2);
+	player->set_str(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "luck");
+	lua_gettable(L, -2);
+	player->set_luck(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "dxt");
+	lua_gettable(L, -2);
+	player->set_dxt(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "wis");
+	lua_gettable(L, -2);
+	player->set_wis(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "charr");
+	lua_gettable(L, -2);
+	player->set_char(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "iq");
+	lua_gettable(L, -2);
+	player->set_iq(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "endd");
+	lua_gettable(L, -2);
+	player->set_end(lua_tonumber(L, -1));
+	lua_pop(L,1);
+
+	lua_pushstring(L, "sex");
+	lua_gettable(L, -2);
+	std::string sex_str = lua_tostring(L, -1);
+	bool sex = false;
+	if (boost::to_upper_copy(sex_str) == "MALE")
+		sex = true;
+	player->set_sex(sex);
+	lua_pop(L,1);
+
+	lua_pushstring(L, "profession");
+	lua_gettable(L, -2);
+	std::string prof_string = lua_tostring(L, -1);
+	prof_string = boost::to_upper_copy(prof_string);
+	player->set_profession(stringToProfession.at(prof_string));
+	lua_pop(L,1);
+
+	LuaWrapper lua(L);
+    player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon")));
+    player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield")));
+
+    return player;
+}
+
 // TODO:
 // Accessing table like this:
 // http://www.wellho.net/mouth/1845_Passing-a-table-from-Lua-into-C.html
@@ -569,134 +680,11 @@ int l_join(lua_State* L)
 	if (Party::Instance().party_size() >= 6)
 		lua_pushboolean(L, false);
 
-	PlayerCharacter player;
+	std::shared_ptr<PlayerCharacter> player = create_character_values_from_lua(L);
 
-	lua_pushstring(L, "name");
-	lua_gettable(L, -2);
-	player.set_name(lua_tostring(L, -1)); // Extract result, which is now on the stack
-	lua_pop(L,1);                         // Tidy up stack by getting rid of the extra we just put on
+	// TODO: Nothing.  Delete this comment.  :-)
 
-	lua_pushstring(L, "race");
-	lua_gettable(L, -2);
-	std::string race = lua_tostring(L, -1);
-	if (race == "HUMAN")
-		player.set_race(HUMAN);
-	else if (race == "ELF")
-		player.set_race(ELF);
-	else if (race == "HALF_ELF")
-		player.set_race(HALF_ELF);
-	else if (race == "HOBBIT")
-		player.set_race(HOBBIT);
-	else // if (race == "DWARF")
-		player.set_race(DWARF);
-	lua_pop(L,1);
-
-	lua_pushstring(L, "ep");
-	lua_gettable(L, -2);
-	player.inc_ep(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "hp");
-	lua_gettable(L, -2);
-	player.set_hp(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "hpm");
-	lua_gettable(L, -2);
-	player.set_hpm(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "sp");
-	lua_gettable(L, -2);
-	player.set_sp(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "spm");
-	lua_gettable(L, -2);
-	player.set_spm(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "str");
-	lua_gettable(L, -2);
-	player.set_str(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "luck");
-	lua_gettable(L, -2);
-	player.set_luck(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "dxt");
-	lua_gettable(L, -2);
-	player.set_dxt(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "wis");
-	lua_gettable(L, -2);
-	player.set_wis(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "charr");
-	lua_gettable(L, -2);
-	player.set_char(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "iq");
-	lua_gettable(L, -2);
-	player.set_iq(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "endd");
-	lua_gettable(L, -2);
-	player.set_end(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "sex");
-	lua_gettable(L, -2);
-	std::string sex_str = lua_tostring(L, -1);
-	bool sex = false;
-	if (boost::to_upper_copy(sex_str) == "MALE")
-		sex = true;
-	player.set_sex(sex);
-	lua_pop(L,1);
-
-	lua_pushstring(L, "profession");
-	lua_gettable(L, -2);
-	std::string prof_string = lua_tostring(L, -1);
-	prof_string = boost::to_upper_copy(prof_string);
-	PROFESSION prof;
-	if (prof_string == "FIGHTER")
-		prof = FIGHTER;
-	else if (prof_string == "PALADIN")
-		prof = PALADIN;
-	else if (prof_string == "THIEF")
-		prof = THIEF;
-	else if (prof_string == "BARD")
-		prof = BARD;
-	else if (prof_string == "MAGE")
-		prof = MAGE;
-	else if (prof_string == "CLERIC")
-		prof = CLERIC;
-	else if (prof_string == "DRUID")
-		prof = DRUID;
-	else if (prof_string == "NECROMANCER")
-		prof = NECROMANCER;
-	else if (prof_string == "ARCHMAGE")
-		prof = ARCHMAGE;
-	else if (prof_string == "GEOMANCER")
-		prof = GEOMANCER;
-	else if (prof_string == "SHEPHERD")
-		prof = SHEPHERD;
-	else // if (prof_string == "PALADIN")
-		prof = TINKER;
-	player.set_profession(prof);
-	lua_pop(L,1);
-
-	LuaWrapper lua(L);
-    player.set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon")));
-    player.set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield")));
-
-	Party::Instance().add_player(player);
+	Party::Instance().add_player(*(player.get()));
     ZtatsWin::Instance().update_player_list();
 
     lua_pushboolean(L, true);
