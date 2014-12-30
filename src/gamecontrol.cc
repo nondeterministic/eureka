@@ -1254,11 +1254,11 @@ bool GameControl::leave_map()
 		// I disabled the following unload call and am now not sure if there's a leak...
 		// arena->get_map()->unload_map_data();
 		// delete arena;
+		// TODO: Should be ok now as we use shared_ptr for map storing.
 		arena = NULL;
 		// ****************************************************************
 
-		// Restore previously saved state to remember party position,
-		// etc. in old map.
+		// Restore previously saved state to remember party position, etc. in old map.
 		party->restore_state();
 
 		// Now change maps over...

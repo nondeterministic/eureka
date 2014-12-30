@@ -59,10 +59,10 @@ void Party::set_food(int g)
 
 void Party::store_state()
 {
-  prev_x = x;
-  prev_y = y;
-  prev_indoors = _indoors;
-  prev_map_name = _map_name;
+	prev_x = x;
+	prev_y = y;
+	prev_indoors = _indoors;
+	prev_map_name = _map_name;
 }
 
 void Party::restore_state()

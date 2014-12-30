@@ -38,6 +38,7 @@ private:
 
 public:
 	LuaWrapper(lua_State* state);
+	~LuaWrapper();
 	bool hasEntry(std::string, std::string);
 	void push_fn_arg(LuaT arg);
 	template <class T> T call_fn(std::string fn_name, unsigned ret_vals = 1, bool handle_return = true);

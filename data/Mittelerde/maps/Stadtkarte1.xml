@@ -69,7 +69,13 @@
     <object x="11" y="4" icon_no="93" layer="0" id="" init_script="" removable="no" type="monster"/>
   </objects>
   <actions>
-    <action type="ACT_ON_ENTER" x="9" y="13"/>
+    <action type="ACT_ON_ENTER" x="9" y="13">
+      <event type="EVENT_ENTER_MAP">
+        <x>5</x>
+        <y>2</y>
+        <target_map>Dungeon1</target_map>
+      </event>
+    </action>
     <action type="ACT_ON_ENTER" x="17" y="2"/>
   </actions>
 </map>

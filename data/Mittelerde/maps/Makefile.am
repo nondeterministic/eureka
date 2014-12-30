@@ -1,4 +1,4 @@
-EXTRA_DIST = Landschaft.xml Stadtkarte1.xml
+EXTRA_DIST = *.xml
 
 mapsdir = $(datadir)/simplicissimus/data/Mittelerde/maps
 

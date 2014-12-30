@@ -3,7 +3,7 @@
   <name>Mittelerde</name>
   <map href="./Mittelerde/maps/Landschaft.xml" type="outdoors">Landschaft</map>
   <map href="./Mittelerde/maps/Stadtkarte1.xml" type="indoors">Stadtkarte1</map>
-  <map href="./Mittelerde/maps/test.xml" type="outdoors">test</map>
+  <map href="./Mittelerde/maps/Dungeon1.xml" type="indoors">Dungeon1</map>
   <iconprops>
     <indoors>
       <icon no="0" trans="full" walk="full">nothing special</icon>
