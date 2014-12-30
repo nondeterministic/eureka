@@ -44,7 +44,7 @@ protected:
 public:
   Combat();
   ~Combat();
-  void initiate();
+  bool initiate();
   int select_enemy(int);
   int fight(const std::vector<int>);
   int party_fight(const std::vector<int>);

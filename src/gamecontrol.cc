@@ -708,6 +708,8 @@ void GameControl::drop_items()
 	mwin.display_last();
 }
 
+// This attack is only called executed when indoors, cf. first if statement!
+
 void GameControl::attack()
 {
 	if (!party->indoors()) {
@@ -732,7 +734,10 @@ void GameControl::attack()
 				if (the_obj.get_init_script_path().length() > 0) {
 					Combat combat;
 					combat.create_monsters_from(the_obj.get_init_script_path());
-					combat.initiate();
+					if (combat.initiate())
+						get_map()->pop_obj(the_obj.id);
+					else
+						std::cout << "YOU LOST!!!\n";
 					return;
 				}
 				else {

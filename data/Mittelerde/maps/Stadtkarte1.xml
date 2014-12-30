@@ -62,9 +62,9 @@
     <object x="22" y="10" icon_no="136" layer="0" id="boy" init_script="people/boy_stadtkarte.lua" removable="no" type="monster"/>
     <object x="23" y="3" icon_no="308" layer="0" id="" init_script="" removable="no" type="monster"/>
     <object x="11" y="7" icon_no="93" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="7" y="4" icon_no="126" layer="0" id="guard" init_script="people/guard.lua" removable="no" type="monster"/>
+    <object x="7" y="4" icon_no="126" layer="0" id="guard1" init_script="people/guard.lua" removable="no" type="monster"/>
     <object x="31" y="7" icon_no="58" layer="0" id="" init_script="people/blacksmith.lua" removable="no" type="monster"/>
-    <object x="7" y="7" icon_no="126" layer="0" id="guard" init_script="people/guard.lua" removable="no" type="monster"/>
+    <object x="7" y="7" icon_no="126" layer="0" id="guard2" init_script="people/guard.lua" removable="no" type="monster"/>
     <object x="23" y="9" icon_no="137" layer="0" id="" init_script="" removable="no" type="monster"/>
     <object x="11" y="4" icon_no="93" layer="0" id="" init_script="" removable="no" type="monster"/>
   </objects>
