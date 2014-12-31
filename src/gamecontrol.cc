@@ -31,6 +31,13 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
 // *******************************************
 // *** Lookup keyboard symbols SDL_x here! ***
 #include "SDL_keysym.h"
@@ -230,6 +237,16 @@ void GameControl::do_turn()
 	}
 
 	draw_status();
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	// TODO: If we wanted to, we could garbage collect the Lua stack, say, every 100 turns or so.
+	// This code works and was tested before.
+	//	lua_close(_lua_state);
+	//	_lua_state = luaL_newstate();
+	//	luaL_openlibs(_lua_state);
+	//	publicize_api(_lua_state);
+	//	World::Instance().load_world_elements(_lua_state);
+	/////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 int GameControl::tick_event_handler()

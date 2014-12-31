@@ -33,13 +33,6 @@ LuaWrapper::LuaWrapper(lua_State* state)
 	l = state;
 }
 
-LuaWrapper::~LuaWrapper()
-{
-	// TODO: If we close Lua, we need to reopen it according to simplicissimus.cc!
-	// lua_close(l);
-	std::cerr << "~LuaWrapper().\n";
-}
-
 void LuaWrapper::push_fn_arg(LuaT arg)
 {
 	args.push_front(arg);
