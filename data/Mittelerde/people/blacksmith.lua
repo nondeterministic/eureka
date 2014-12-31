@@ -69,6 +69,11 @@ do
 	    job2()
 	end
 
+	function join()
+	        simpl_printcon("In your dreams matey.")
+		return false
+	end
+
 	function sell()
 		-- When selling you don't get the full price. Here, -25%.
         price_reduction = 25

@@ -171,7 +171,8 @@ void GameControl::draw_status(bool update_status_image)
     break;
   }
 
-  if (update_status_image) {
+
+  if (update_status_image && !party->indoors()) {
 	  static SDL_Surface* _tmp_surf = NULL;
 
 	  if (filename_old != filename) {
@@ -191,7 +192,7 @@ void GameControl::draw_status(bool update_status_image)
 	  if (_tmp_surf != NULL)
 		SDL_BlitSurface(_tmp_surf, NULL, mwin.get_surface(), NULL);
   }
-  
+
   TinyWin& twin = TinyWin::Instance();
   twin.clear();
   twin.println(0, ss.str());
@@ -753,8 +754,6 @@ void GameControl::attack()
 					combat.create_monsters_from(the_obj.get_init_script_path());
 					if (combat.initiate())
 						get_map()->pop_obj(the_obj.id);
-					else
-						std::cout << "YOU LOST!!!\n";
 					return;
 				}
 				else {

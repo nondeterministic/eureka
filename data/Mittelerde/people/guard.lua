@@ -53,6 +53,7 @@ do
 
 	function join()
 	        simpl_printcon("In your dreams matey.")
+		return false
 	end
 	
 	function bye()

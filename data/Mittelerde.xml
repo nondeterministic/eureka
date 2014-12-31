@@ -483,7 +483,7 @@
       <icon no="474" trans="full" walk="full">nothing special</icon>
       <icon no="475" trans="full" walk="full">nothing special</icon>
       <icon no="476" trans="full" walk="full">nothing special</icon>
-      <icon no="477" trans="full" walk="full">nothing special</icon>
+      <icon no="477" trans="not" walk="full">stone wall</icon>
       <icon no="478" trans="full" walk="full">nothing special</icon>
       <icon no="479" trans="full" walk="full">nothing special</icon>
       <icon no="480" trans="full" walk="full">nothing special</icon>
