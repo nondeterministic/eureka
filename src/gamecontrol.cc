@@ -1232,57 +1232,6 @@ void GameControl::move_party(LDIR dir)
 	do_turn();
 }
 
-// Returns true if the player entered "Y" to the question of whether she
-// would like to leave a map.  Otherwise false is returned.
-
-bool GameControl::leave_map()
-{
-	printcon("Do you wish to leave? (y/n)");
-
-	switch (em->get_key("yn")) {
-	case 'y':
-		// Before leaving, store map changes in GameState object
-		if (!(arena->get_map()->is_outdoors())) {
-			// TODO: This is a bit of a clumsy shared pointer conversion...
-			std::shared_ptr<Map> new_map = arena->get_map();
-			std::shared_ptr<IndoorsMap> ind_map = std::dynamic_pointer_cast<IndoorsMap>(new_map);
-
-			GameState::Instance().add_map(ind_map);
-		}
-
-		// ***************************** TODO *****************************
-		// I disabled the following unload call and am now not sure if there's a leak...
-		// arena->get_map()->unload_map_data();
-		// delete arena;
-		// TODO: Should be ok now as we use shared_ptr for map storing.
-		arena = NULL;
-		// ****************************************************************
-
-		// Restore previously saved state to remember party position, etc. in old map.
-		party->restore_state();
-
-		// Now change maps over...
-		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
-		if (!arena->get_map())
-			std::cout << "Warning arena->get_map NULL\n";
-
-		arena->get_map()->xml_load_map_data();
-		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
-		arena->determine_offsets();
-		arena->show_map(get_viewport().first, get_viewport().second);
-		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-
-		// Stop sound
-		Playlist::Instance().clear();
-
-		return true;
-	case 'n':
-		return false;
-	}
-
-	return false;
-}
-
 /**
  * Return viewport size for night, torches, etc.
  */
@@ -1327,8 +1276,15 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 			exit(-1);
 		}
 
-		// TODO: Code I am not proud of:
-		// It is not nice to create an entire map just to test for a flag, but it works for now...
+		// Before changing map, when indoors (e.g. climb down a ladder), store state
+		if (party->indoors()) {
+			std::shared_ptr<Map> new_map = arena->get_map(); // Get current map
+			IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
+			std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
+			GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
+		}
+
+		// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
 		{
 			std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
 			IndoorsMap tmp_map2 = *((IndoorsMap*)tmp_map.get()); // Create deep copy of map because otherwise xml_load_data fucks up the map's state
@@ -1349,7 +1305,8 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 		mwin.surface_from_file((std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" +
 							   (std::string)WORLD_NAME + "/images/indoors_city.png");
 
-		party->store_state();
+		if (!party->indoors())
+			party->store_outside_coords();
 
 		arena->get_map()->unload_map_data();
 		// delete arena;
@@ -1375,12 +1332,15 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 
 		std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
 		if (saved_map != NULL) {
+			// std::cout << "Using gamestate map.\n";
 			arena->set_map(saved_map);
 		}
 		else if (boost::filesystem::exists(old_map_file)) {
+			// std::cout << "Using save game map.\n";
 			arena->get_map()->xml_load_map_data(old_map_file);
 		}
 		else {
+			// std::cout << "Using fresh map.\n";
 			arena->get_map()->xml_load_map_data();
 		}
 
@@ -1392,6 +1352,57 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 	}
 
 	do_turn();
+}
+
+// TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!
+//
+// Returns true if the player entered "Y" to the question of whether she
+// would like to leave a map.  Otherwise false is returned.
+
+bool GameControl::leave_map()
+{
+	printcon("Do you wish to leave? (y/n)");
+
+	switch (em->get_key("yn")) {
+	case 'y': {
+		// Before leaving, store map changes in GameState object
+		std::shared_ptr<Map> new_map = arena->get_map();
+		std::shared_ptr<IndoorsMap> ind_map = std::dynamic_pointer_cast<IndoorsMap>(new_map);
+		GameState::Instance().add_map(ind_map);
+
+		// ***************************** TODO *****************************
+		// I disabled the following unload call and am now not sure if there's a leak...
+		// arena->get_map()->unload_map_data();
+		// delete arena;
+		// TODO: Should be ok now as we use shared_ptr for map storing.
+		arena = NULL;
+		// ****************************************************************
+
+		// Restore previously saved state to remember party position, etc. in old map.
+		party->restore_outside_coords();
+		party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
+
+		// Now change maps over...
+		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
+		if (!arena->get_map())
+			std::cout << "Warning arena->get_map NULL\n";
+
+		arena->get_map()->xml_load_map_data();
+		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
+		arena->determine_offsets();
+		arena->show_map(get_viewport().first, get_viewport().second);
+		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
+
+		// Stop sound
+		Playlist::Instance().clear();
+
+		return true;
+	}
+	case 'n':
+		return false;
+	}
+
+	return false;
 }
 
 int GameControl::close_win()

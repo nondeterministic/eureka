@@ -40,8 +40,8 @@ public:
   void set_coords(int, int);
   void set_coords(std::pair<int, int>);
   std::pair<int, int> get_coords();
-  void store_state();
-  void restore_state();
+  void store_outside_coords();
+  void restore_outside_coords();
   bool indoors();
   void set_indoors(bool);
   void set_map_name(const char*);

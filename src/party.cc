@@ -57,20 +57,20 @@ void Party::set_food(int g)
   _food = g;
 }
 
-void Party::store_state()
+void Party::store_outside_coords()
 {
 	prev_x = x;
 	prev_y = y;
-	prev_indoors = _indoors;
-	prev_map_name = _map_name;
+//	prev_indoors = _indoors;
+//	prev_map_name = _map_name;
 }
 
-void Party::restore_state()
+void Party::restore_outside_coords()
 {
   x = prev_x;
   y = prev_y;
-  _indoors = prev_indoors;
-  _map_name = prev_map_name;
+//  _indoors = prev_indoors;
+//  _map_name = prev_map_name;
 }
 
 bool Party::indoors()

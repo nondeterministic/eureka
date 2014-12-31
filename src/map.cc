@@ -54,12 +54,12 @@ Map::Map(const Map& p)
 	_data = p._data;
 	_map_objects = p._map_objects;
 	_actions = p._actions;
-
-	std::cout << "FUCKING COPY CONSTRUCTOR!!\n";
+	std::cout << "DEEP COPY MOTHERFUCKER\n";
 }
 
 Map::~Map()
 {
+	std::cout << "WARNING: map.cc::~Map(): Also destroyed all objects " << _name << " contained!" << std::endl;
 	unload_map_data();
 
 	// Memory was new'ed in EditorWin::add_event().
@@ -67,8 +67,6 @@ Map::~Map()
 	//		delete *curr_act;
 
 	_actions.clear();
-
-	std::cout << "WARNING: map.cc::~Map(): Also destroyed all objects the map contained!" << std::endl;
 }
 
 void Map::unload_map_data(void)
