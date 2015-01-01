@@ -13,7 +13,7 @@ Weapons["axe"]  = {
    damage_min   = 2,
    damage_max   = 3,
    damage_bonus = 0,
-   weight       = 2,
+   weight       = 1,
    icon         = 571,
    gold         = 7
 }

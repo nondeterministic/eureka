@@ -39,6 +39,7 @@ Weapon* WeaponHelper::createFromLua(std::string array_name)
 		w->dmg_max((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_max")));
 		w->dmg_bonus((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_bonus")));
 		w->icon = (int)(lua.get_item_prop<double>("Weapons", array_name, "icon"));
+		w->weight((int)(lua.get_item_prop<double>("Weapons", array_name, "weight")));
 		w->gold((int)(lua.get_item_prop<double>("Weapons", array_name, "gold")));
 	} catch (...) {
 		throw;

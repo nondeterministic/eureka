@@ -52,6 +52,7 @@ public:
   int food();
   void set_food(int);
   std::string to_xml();
+  int max_carrying_capacity();
 };
 
 #endif

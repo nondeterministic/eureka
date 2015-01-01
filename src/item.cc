@@ -27,6 +27,7 @@ Item::Item()
 {
 	std::cout << "Item()" << std::endl;
 	icon = 0;
+	_weight = 0;
 }
 
 Item::Item(const Item& i)

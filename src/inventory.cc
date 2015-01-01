@@ -23,8 +23,10 @@ int Inventory::weight()
 {
 	int _w = 0;
 
-	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
 		_w += ptr->second.at(0)->weight() * ptr->second.size();
+		std::cout << ptr->second.at(0)->name() << " weighs " << ptr->second.at(0)->weight() << "\n";
+	}
 
 	return (int)(_w/6.35);
 }

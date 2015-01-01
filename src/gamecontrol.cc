@@ -432,8 +432,8 @@ void GameControl::inventory()
   mwin.clear();
   mwin.println(0, "Inventory", CENTERALIGN);
   std::stringstream ss;
-  ss << "Weight: " << party->inventory()->weight() << (party->inventory()->weight() <= 1? " stone" : " stones");
-  ss << "   Max. capacity: ... stones";
+  ss << "Weight: " << party->inventory()->weight() << (party->inventory()->weight() == 1? " stone" : " stones");
+  ss << "   Max. capacity: " << party->max_carrying_capacity() << " stones";
   mwin.println(1, ss.str());
 
   std::map<std::string, int> tmp = party->inventory()->list_wearables();

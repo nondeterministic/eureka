@@ -13,7 +13,7 @@ Weapons["sword"]  = {
    damage_min   = 2,
    damage_max   = 6,
    damage_bonus = 0,
-   weight       = 2,
+   weight       = 1,
    icon         = 593,
    gold         = 10
 }

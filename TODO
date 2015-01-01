@@ -7,16 +7,14 @@ TODO
 
 - Buy remedies for magic and healing
 
-- DONE: Save/load game.  Store modified city maps?
-  (Add additional items, TOD)
-
 - NPCs
 
 - Switches and other items that are scripted.
 
 - Locks
 
-- Inventory weight, etc.
+- DONE: Save/load game.  Store modified city maps?
+  (Add additional items, TODO)
 
 - Consume (DONE)/buy (TODO) food
 
@@ -53,6 +51,9 @@ TODO
  
   Lord Wind:
   http://www.youtube.com/watch?v=vn5jQUd_hss&index=3&list=PL41E5F2706C7B4529
+
+DONE
+=====
  
 - Add weapons, arms, etc. from elements.xml.old to main elements.xml
   and extend world.cc to read and use these properties.  [DONE]
@@ -68,3 +69,4 @@ TODO
   but only by game.  So nothing gets overwritten inside the world
   file. [DONE - elements.xml]
 
+- Inventory weight, etc. (DONE)

@@ -213,3 +213,22 @@ Inventory* Party::inventory()
 {
   return &_inv;
 }
+
+// Return max carrying capacity in stones.
+
+int Party::max_carrying_capacity()
+{
+	int max_weight = 0;
+
+	// First, calculate in KGs, strong ppl can carry 30, less strong 20, and weak ones 10
+	for (auto &player: _players) {
+		if (player.str() >= 12)
+			max_weight += 30;
+		else if (player.str() >= 7)
+			max_weight += 20;
+		else
+			max_weight += 10;
+	}
+
+	return max_weight / 6.35;
+}
