@@ -1,6 +1,6 @@
 bin_PROGRAMS = leibniz
 
-AM_CXXFLAGS = -g -Wall -std=c++11 \
+AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \
@@ -21,11 +21,14 @@ leibniz_SOURCES = leibniz.cc \
 		obj.cc obj.hh \
 		../action.cc ../action.hh \
 		../actiononenter.cc ../actiononenter.hh \
+		../actionpullpush.cc ../actionpullpush.hh \
 		addactionwin.cc addactionwin.hh \
 		addobjectwin.cc addobjectwin.hh \
 		../mapobj.cc ../mapobj.hh \
 		../gameevent.cc ../gameevent.hh \
 		../eventermap.cc ../eventermap.hh \
+		../eventprintcon.cc ../eventprintcon.hh \ 
+		../eventchangeicon.cc ../eventchangeicon.hh \
 		eventwin.cc eventwin.hh \
 		../outdoorsmap.cc ../outdoorsmap.hh \
 		../indoorsmap.cc ../indoorsmap.hh \

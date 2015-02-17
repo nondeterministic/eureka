@@ -39,9 +39,7 @@
 
 typedef boost::uniform_int<> NumberDistribution; 
 typedef boost::mt19937       RandomNumberGenerator; 
-typedef boost::variate_generator<RandomNumberGenerator&, 
-				 NumberDistribution> 
-                             Generator; 
+typedef boost::variate_generator<RandomNumberGenerator&, NumberDistribution> Generator;
 
 class GameControl
 {
@@ -67,6 +65,7 @@ public:
   int tick_event_turn_handler();
   int key_event_handler(SDL_Event* = NULL);
   int set_arena(std::shared_ptr<Arena>);
+  std::shared_ptr<Arena> get_arena();
   int show_win();
   int close_win();
   int set_party(int, int);
@@ -79,6 +78,7 @@ public:
   void ztats();
   void drop_items();
   void inventory();
+  void pull_push();
   std::string ready_item(int);
   std::string yield_item(int);
   void look();

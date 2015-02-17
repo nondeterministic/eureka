@@ -46,6 +46,9 @@
   </data>
   <actions>
     <action type="ACT_ON_ENTER" x="13" y="17">
+   	  <event type="EVENT_PRINTCON">
+	  	You feel uneasy somehow...
+      </event>
       <event type="EVENT_ENTER_MAP">
         <x>1</x>
         <y>5</y>

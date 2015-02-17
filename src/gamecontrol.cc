@@ -61,6 +61,7 @@ extern "C" {
 #include "console.hh"
 #include "eventmanager.hh"
 #include "actiononenter.hh"
+#include "actionpullpush.hh"
 #include "eventermap.hh"
 #include "hexarena.hh"
 #include "world.hh"
@@ -74,6 +75,7 @@ extern "C" {
 #include "util.hh"
 #include "conversation.hh"
 #include "gamestate.hh"
+#include "gameeventhandler.hh"
 #include "config.h"
 
 using namespace std;
@@ -204,8 +206,13 @@ void GameControl::draw_status(bool update_status_image)
 
 int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
 {
-  arena = new_arena;
-  return 0;
+	arena = new_arena;
+	return 0;
+}
+
+std::shared_ptr<Arena> GameControl::get_arena()
+{
+	return arena;
 }
 
 void GameControl::do_turn()
@@ -348,6 +355,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_l:
 					look();
+					break;
+				case SDLK_p:
+					pull_push();
 					break;
 				case SDLK_q:
 					quit();
@@ -1016,11 +1026,8 @@ bool GameControl::walkable(int x, int y)
 
 	if (is_arena_outdoors())
 		return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
-	else {
-		std::cout << "Arena tile size: " << arena->tile_size() << ".\n";
-		std::cout << "Tile: " << arena->get_map()->get_tile(x, y) << ".\n";
+	else
 		return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
-	}
 
 	return !return_value;
 }
@@ -1057,6 +1064,10 @@ void GameControl::move_party(LDIR dir)
 				if (screen_pos_party.first < screen_center_x)
 					arena->move(DIR_LEFT);
 			}
+			else {
+				printcon("Blocked");
+				sample.play(HIT);
+			}
 			break;
 		case DIR_RIGHT:
 			if (walkable(party->x + 1, party->y)) {
@@ -1075,6 +1086,10 @@ void GameControl::move_party(LDIR dir)
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
 				}
+			}
+			else {
+				printcon("Blocked");
+				sample.play(HIT);
 			}
 			break;
 		case DIR_DOWN:
@@ -1098,6 +1113,10 @@ void GameControl::move_party(LDIR dir)
 					arena->move(DIR_DOWN);
 				}
 			}
+			else {
+				printcon("Blocked");
+				sample.play(HIT);
+			}
 			break;
 		case DIR_UP:
 			if (walkable(party->x, party->y - 1)) {
@@ -1115,6 +1134,10 @@ void GameControl::move_party(LDIR dir)
 				if (screen_pos_party.second < screen_center_y) {
 					arena->move(DIR_UP);
 				}
+			}
+			else {
+				printcon("Blocked");
+				sample.play(HIT);
 			}
 			break;
 		default:
@@ -1280,6 +1303,41 @@ std::pair<int, int> GameControl::get_viewport()
 	return std::make_pair(x,x);
 }
 
+void GameControl::pull_push()
+{
+	printcon("Pull/push - which direction?");
+
+	std::pair<int, int> coords = select_coords();
+	std::shared_ptr<Action> act = arena->get_map()->get_action(coords.first, coords.second);
+
+	if (act == NULL) {
+		printcon("Nothing to pull or push here");
+		return;
+	}
+
+	std::shared_ptr<ActionPullPush> action = std::dynamic_pointer_cast<ActionPullPush>(act);
+
+	if (action == NULL) {
+		printcon("Nothing to pull or push here");
+		return;
+	}
+
+	GameEventHandler gh;
+
+	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+		gh.handle(*curr_ev, arena->get_map());
+}
+
+void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
+{
+	GameEventHandler gh;
+
+	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+		gh.handle(*curr_ev, arena->get_map());
+}
+
+/*
+ TODO: Leave this in until you are dead certain, that map change in the event handling functions works!
 void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 {
 	MiniWin& mwin = MiniWin::Instance();
@@ -1369,6 +1427,7 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 
 	do_turn();
 }
+*/
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!
 //

@@ -11,9 +11,10 @@
 
 enum ACTION_TYPES
 {
-  ACT_ON_ENTER,             // Triggers when player enters on a certain icon
-  ACT_ON_REACH,             // Triggers when player reaches a certain icon
-  ACT_ON_SEARCH             // Triggers when player searches icon
+	ACT_ON_PULLPUSH,          // Triggers when player pulls/pushes icon
+	ACT_ON_ENTER,             // Triggers when player enters on a certain icon
+	ACT_ON_REACH,             // Triggers when player reaches a certain icon
+	ACT_ON_SEARCH             // Triggers when player searches icon
 };
 
 class Action
@@ -33,7 +34,7 @@ public:
 
 protected:
   unsigned _x, _y;     // Map coordinates where the action sits
-  std::string _map_name;
+  std::string _name;
   // These are the events that are triggered by the action
   std::vector<std::shared_ptr<GameEvent>> _events;
 };

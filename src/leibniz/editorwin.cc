@@ -29,9 +29,11 @@
 #include "addobjectwin.hh"
 #include "../action.hh"
 #include "../actiononenter.hh"
+#include "../actionpullpush.hh"
 #include "eventwin.hh"
 #include "../gameevent.hh"
 #include "../eventermap.hh"
+#include "../eventchangeicon.hh"
 
 EditorWin::EditorWin(bool new_world)
   : _indoors_icon_pic(World::Instance().get_path() + "/" +
@@ -551,50 +553,65 @@ void EditorWin::del_action(int x, int y)
 
 void EditorWin::add_action(int x, int y)
 {
-  int map_x = 0;
-  int map_y = 0;
-  _sdleditor->pixel_to_map(x, y, map_x, map_y);
+	int map_x = 0;
+	int map_y = 0;
+	_sdleditor->pixel_to_map(x, y, map_x, map_y);
 
-  // If the current icon already hosts an action, then try to add
-  // events to the action.  Only one action per icon though, but many
-  // events per actions - if that makes sense.  :-)
-  if (get_curr_map()->get_action((unsigned)map_x, (unsigned)map_y)) {
-    EventWin event_win;
-    if (event_win.run()) {
-      if (event_win.get_type() == EVENT_ENTER_MAP) {
-        // Deleted by ~Action()
-        std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
+	// If the current icon already hosts an action, then try to add
+	// events to the action.  Only one action per icon though, but many
+	// events per actions - if that makes any sense.  :-)
+	if (get_curr_map()->get_action((unsigned)map_x, (unsigned)map_y)) {
+		EventWin event_win;
+		if (event_win.run()) {
+			if (event_win.get_type() == EVENT_ENTER_MAP) {
+				// Deleted by ~Action()
+				std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
 
-        new_ev->set_x(event_win.get_x());
-        new_ev->set_y(event_win.get_y());
-        new_ev->set_map_name(event_win.get_city().c_str());
+				new_ev->set_x(event_win.get_x());
+				new_ev->set_y(event_win.get_y());
+				new_ev->set_map_name(event_win.get_city().c_str());
 
-        get_curr_map()->add_event_to_action(map_x, map_y, new_ev);
-      }
-      else
-        std::cout << "Event not implemented yet!  :-(" << std::endl;
-    }
-    return;
-  }
+				get_curr_map()->add_event_to_action(map_x, map_y, new_ev);
+			}
+			else if (event_win.get_type() == EVENT_CHANGE_ICON) {
+				std::shared_ptr<EventChangeIcon> new_ev(new EventChangeIcon());
 
-  AddActionWin action_win;
-  if (action_win.run()) {
-    switch (action_win.get_action()) {
-    case ACT_ON_ENTER:
-      {
-        // ~Map() deletes the memory.
-    	std::shared_ptr<Action> new_act(new ActionOnEnter(map_x, map_y, "ACT_ON_ENTER"));
-        std::cout << "Added action at (" << map_x << ", " << map_y << ")" << std::endl;
-        get_curr_map()->add_action(new_act);
-        break;
-      }
-    default:
-      std::cout << "Action not implemented yet!  :-(" << std::endl;
-      break;
-    }
+				new_ev->x = event_win.get_x();
+				new_ev->y = event_win.get_y();
+				new_ev->icon_now = 0; // TODO: There is no GUI element to define this value, so one has to change it manually in the XML file!
+				new_ev->icon_new = 0; // TODO: There is no GUI element to define this value, so one has to change it manually in the XML file!
 
-    this->queue_draw();
-  }
+				get_curr_map()->add_event_to_action(map_x, map_y, new_ev);
+			}
+			else
+				std::cout << "Event not implemented yet!  :-(" << std::endl;
+		}
+		return;
+	}
+
+	AddActionWin action_win;
+	if (action_win.run()) {
+		switch (action_win.get_action()) {
+		case ACT_ON_ENTER: {
+			// ~Map() deletes the memory.
+			std::shared_ptr<Action> new_act(new ActionOnEnter(map_x, map_y, "ACT_ON_ENTER"));
+			std::cout << "Added action at (" << map_x << ", " << map_y << ")" << std::endl;
+			get_curr_map()->add_action(new_act);
+			break;
+		}
+		case ACT_ON_PULLPUSH: {
+			std::shared_ptr<Action> new_act(new ActionPullPush(map_x, map_y, "ACT_ON_PULLPUSH"));
+			std::cout << "Added action at (" << map_x << ", " << map_y << ")" << std::endl;
+			get_curr_map()->add_action(new_act);
+			break;
+		}
+		default:
+			std::cout << "Action not implemented yet!  :-(" << std::endl;
+			break;
+		}
+
+		this->queue_draw();
+	}
 }
 
 void EditorWin::rm_obj(int x, int y)

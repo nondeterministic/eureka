@@ -4,7 +4,7 @@ SUBDIRS = leibniz
 
 # -std=c++0x
 
-AM_CXXFLAGS = -g -O0 -Wall -std=c++11 \
+AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 \
 	$(LIBXMLPP_CFLAGS) \
 	$(SDL_CFLAGS) \
 	$(BOOST_CPPFLAGS) \
@@ -41,11 +41,15 @@ simplicissimus_SOURCES = \
 	mapobj.hh mapobj.cc \
 	action.hh action.cc \
 	actiononenter.hh actiononenter.cc \
+	actionpullpush.hh actionpullpush.cc \
 	playlist.hh playlist.cc \
 	soundsample.hh soundsample.cc \
 	eventmanager.hh eventmanager.cc \
 	gameevent.hh gameevent.cc \
 	eventermap.hh eventermap.cc \
+	eventchangeicon.hh eventchangeicon.cc \
+	eventprintcon.hh eventprintcon.cc \
+	gameeventhandler.hh gameeventhandler.cc \
 	iconprops.hh iconprops.cc \
 	icons.hh icons.cc \
 	indoorsicons.hh indoorsicons.cc \

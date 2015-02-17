@@ -2,7 +2,6 @@
 <map>
   <name>Stadtkarte1</name>
   <outdoors>false</outdoors>
-  <guarded_city>true</guarded_city>
   <data>
     <row>5 5 5 2 2 4 4 4 109 89 89 109 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 82 4 4 4 5 5 5 5 5 5 5</row>
     <row>5 5 5 2 2 4 4 4 109 89 89 109 4 4 4 4 109 109 109 109 109 109 109 109 109 109 4 4 4 4 4 82 4 4 4 4 5 5 5 5</row>
@@ -25,7 +24,7 @@
     <row>6 5 4 2 2 2 2 2 2 2 4 4 4 4 4 4 4 2 2 2 2 2 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
     <row>4 5 4 4 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
     <row>5 5 4 4 4 4 4 4 4 2 2 2 2 2 2 2 2 2 4 4 4 4 2 2 2 4 4 4 4 5 5 5 5 4 4 4 4 4 4 4</row>
-    <row>7 7 5 5 6 6 5 6 6 5 4 4 4 4 4 4 4 4 4 4 4 4 4 2 2 4 4 4 5 5 5 5 5 4 4 4 4 4 4 4</row>
+    <row>7 7 5 5 6 6 5 6 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 2 2 4 4 4 5 5 5 5 5 4 4 4 4 4 4 4</row>
     <row>7 7 7 5 5 5 6 6 6 6 6 6 5 5 5 5 5 4 4 4 4 4 4 2 2 4 4 5 5 5 5 5 5 4 4 5 5 4 4 4</row>
     <row>7 7 7 7 5 5 5 5 5 5 5 5 5 5 5 5 5 5 4 4 4 4 2 2 2 4 4 5 5 5 5 5 5 4 5 5 5 4 4 4</row>
     <row>7 7 7 7 7 7 7 7 5 7 5 5 5 4 4 5 5 5 4 4 4 4 2 2 4 4 4 5 5 5 5 5 5 5 5 5 5 4 4 4</row>
@@ -37,8 +36,8 @@
     <row>7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 5 5 2 2 5 5 5 5 5 5 5 6 6 6 6 6 5 5 5 5 5</row>
     <row>7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 2 2 5 5 5 5 5 5 5 6 6 6 6 6 5 5 5 5 5</row>
     <row>7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 2 2 5 5 5 5 5 5 6 6 6 6 6 6 6 6 5 5 5</row>
-    <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 2 2 4 4 4 5 5 5 6 6 6 6 6 6 6 6 6 5 5</row>
-    <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 2 2 4 4 4 5 5 6 6 6 6 6 6 6 6 6 6 5 5</row>
+    <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 4 2 2 4 4 4 5 5 5 6 6 6 6 6 6 6 6 6 5 5</row>
+    <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 4 2 2 4 4 4 5 5 6 6 6 6 6 6 6 6 6 6 5 5</row>
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 2 2 4 4 4 6 6 6 6 6 6 6 6 6 6 6 6 5 5</row>
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 2 2 4 4 6 6 6 6 6 6 6 6 6 6 6 6 6 5 5</row>
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 4 2 2 4 4 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6</row>
@@ -46,36 +45,54 @@
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 6 0 0 0 6 0 0 0 0</row>
   </data>
   <objects>
-    <object x="5" y="7" icon_no="571" layer="0" id="axe_of_doom" init_script="" removable="yes" lua_name="weapons::axe" type="item" how_many="2" />
-    <object x="2" y="8" icon_no="33" layer="0" id="balloon" init_script="" removable="no" type="item"/>
-    <object x="5" y="4" icon_no="33" layer="0" id="" init_script="" removable="no" type="item"/>
-    <object x="31" y="9" icon_no="594" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="26" y="19" icon_no="137" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="30" y="9" icon_no="593" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="23" y="17" icon_no="64" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="34" y="7" icon_no="647" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="31" y="5" icon_no="646" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="17" y="5" icon_no="125" layer="0" id="jail_guard" init_script="people/guard.lua" removable="no" type="monster"/>
-    <object x="26" y="17" icon_no="137" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="30" y="5" icon_no="642" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="20" y="16" icon_no="21" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="22" y="10" icon_no="136" layer="0" id="boy" init_script="people/boy_stadtkarte.lua" removable="no" type="monster"/>
-    <object x="23" y="3" icon_no="308" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="11" y="7" icon_no="93" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="7" y="4" icon_no="126" layer="0" id="guard1" init_script="people/guard.lua" removable="no" type="monster"/>
-    <object x="31" y="7" icon_no="58" layer="0" id="" init_script="people/blacksmith.lua" removable="no" type="monster"/>
-    <object x="7" y="7" icon_no="126" layer="0" id="guard2" init_script="people/guard.lua" removable="no" type="monster"/>
-    <object x="23" y="9" icon_no="137" layer="0" id="" init_script="" removable="no" type="monster"/>
-    <object x="11" y="4" icon_no="93" layer="0" id="" init_script="" removable="no" type="monster"/>
+    <object x="5" y="7" icon_no="571" layer="0" id="axe_of_doom" lua_name="weapons::axe" how_many="2" removable="yes" type="item"/>
+    <object x="2" y="8" icon_no="33" layer="0" id="balloon" lua_name="" how_many="1" removable="no" type="item"/>
+    <object x="5" y="4" icon_no="33" layer="0" id="" lua_name="" how_many="1" removable="no" type="item"/>
+    <object x="31" y="9" icon_no="594" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="26" y="19" icon_no="137" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="30" y="9" icon_no="593" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="23" y="17" icon_no="64" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="34" y="7" icon_no="647" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="31" y="5" icon_no="646" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="17" y="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
+    <object x="26" y="17" icon_no="137" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="30" y="5" icon_no="642" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="20" y="16" icon_no="21" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="22" y="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" type="monster" init_script="people/boy_stadtkarte.lua"/>
+    <object x="23" y="3" icon_no="308" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="11" y="7" icon_no="93" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="7" y="4" icon_no="126" layer="0" id="guard1" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
+    <object x="31" y="7" icon_no="58" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster" init_script="people/blacksmith.lua"/>
+    <object x="7" y="7" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
+    <object x="23" y="9" icon_no="137" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="11" y="4" icon_no="93" layer="0" id="" lua_name="" how_many="1" removable="no" type="monster"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="9" y="13">
+      <event type="EVENT_PRINTCON">Down in the deep dark dungeon...</event>
       <event type="EVENT_ENTER_MAP">
         <x>5</x>
         <y>2</y>
         <target_map>Dungeon1</target_map>
       </event>
     </action>
-    <action type="ACT_ON_ENTER" x="17" y="2"/>
+    <action type="ACT_ON_PULLPUSH" x="11" y="4">
+      <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
+      <event type="EVENT_CHANGE_ICON">
+        <change_icon x="11" y="5" icon_now="72" icon_new="71"/>
+      </event>
+      <event type="EVENT_CHANGE_ICON">
+        <change_icon x="11" y="6" icon_now="72" icon_new="71"/>
+      </event>
+    </action>
+    <action type="ACT_ON_PULLPUSH" x="11" y="7">
+      <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
+      <event type="EVENT_CHANGE_ICON">
+        <change_icon x="11" y="6" icon_now="71" icon_new="72"/>
+      </event>
+      <event type="EVENT_CHANGE_ICON">
+        <change_icon x="11" y="5" icon_now="71" icon_new="72"/>
+      </event>
+    </action>
   </actions>
 </map>

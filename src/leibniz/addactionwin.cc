@@ -22,6 +22,7 @@ AddActionWin::AddActionWin() : action_lbl("Select type of action:")
 
   actions_combo.append("ACT_ON_ENTER");
   actions_combo.append("ACT_ON_REACH");
+  actions_combo.append("ACT_ON_PULLPUSH");
   actions_combo.append("ACT_ON_SEARCH");
 
   hbox.set_spacing(10);
@@ -64,12 +65,14 @@ void AddActionWin::on_button_ok(void)
 
 int AddActionWin::get_action(void) const
 {
-  switch (_action_no) {
-  case 0:
-    return ACT_ON_ENTER;
-  case 1:
-    return ACT_ON_REACH;
-  default:
-    return ACT_ON_SEARCH;
-  }
+	switch (_action_no) {
+	case 0:
+		return ACT_ON_ENTER;
+	case 1:
+		return ACT_ON_REACH;
+	case 2:
+		return ACT_ON_PULLPUSH;
+	default:
+		return ACT_ON_SEARCH;
+	}
 }

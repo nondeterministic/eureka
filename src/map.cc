@@ -22,7 +22,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/trim.hpp>
+
 #include <libxml++/libxml++.h>
+
 #include <cstdlib>
 #include <string>
 #include <sstream>
@@ -30,13 +33,17 @@
 #include <utility>
 #include <memory>
 #include <vector>
+
 #include "map.hh"
 #include "world.hh"
 #include "mapobj.hh"
 #include "gameevent.hh"
 #include "eventermap.hh"
+#include "eventchangeicon.hh"
+#include "eventprintcon.hh"
 #include "action.hh"
 #include "actiononenter.hh"
+#include "actionpullpush.hh"
 
 Map::Map()
 {
@@ -129,15 +136,11 @@ std::vector<MapObj*> Map::get_objs(unsigned x, unsigned y)
 
 std::shared_ptr<Action> Map::get_action(unsigned x, unsigned y)
 {
-	std:: cout << "Actions: " << _actions.size() << std::endl;
-
-	for (auto curr_act: _actions) {
-		if (curr_act->get_x() == x && curr_act->get_y() == y) {
+	for (auto curr_act: _actions)
+		if (curr_act->get_x() == x && curr_act->get_y() == y)
 			return curr_act;
-		}
-	}
 
-	std::cerr << "ERROR: map.cc::get_action(): returning empty shared_ptr (NULL) for an action.\n";
+	// std::cerr << "ERROR: map.cc::get_action(): returning empty shared_ptr (NULL) for an action at " << x << ", " << y << ".\n";
 	// exit(-1);
 
 	std::shared_ptr<Action> nullinger;
@@ -335,47 +338,78 @@ void Map::parse_actions_node(const xmlpp::Node* node)
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*action);
 
 		if (nodeElement) {
-			if (nodeElement-> get_attribute_value("type") == "ACT_ON_ENTER") {
-				std::shared_ptr<ActionOnEnter> _act(new ActionOnEnter(atoi(nodeElement->get_attribute_value("x").c_str()),
-   	   	   	   	   	                                                  atoi(nodeElement->get_attribute_value("y").c_str()),
-   	   	   	   	   	                                                  "ACT_ON_ENTER"));
+			std::string curr_act_name = nodeElement->get_attribute_value("type");  // Name of action
+			std::shared_ptr<Action> _act;                                   // Actual action
 
-				// Get all event nodes for an action
-				xmlpp::Node::NodeList events = (*action)->get_children();
-				for (auto event = events.begin(); event != events.end(); ++event) {
-					const xmlpp::Element* eventElement = dynamic_cast<const xmlpp::Element*>(*event);
+			// Determine which action was parsed, if any
+			if (curr_act_name == "ACT_ON_ENTER")
+				_act = std::make_shared<ActionOnEnter>(atoi(nodeElement->get_attribute_value("x").c_str()),
+   	   	   	   	   	                     	 	 	   atoi(nodeElement->get_attribute_value("y").c_str()),
+													   "ACT_ON_ENTER");
+			else if (curr_act_name == "ACT_ON_PULLPUSH") {
+				_act = std::make_shared<ActionPullPush>(atoi(nodeElement->get_attribute_value("x").c_str()),
+							                            atoi(nodeElement->get_attribute_value("y").c_str()),
+														"ACT_ON_PULLPUSH");
+			}
+			else
+				continue;
 
-					if (eventElement) {
-						std::string event_type_s = eventElement->get_attribute_value("type");
 
-						if (event_type_s == "EVENT_ENTER_MAP") {
-							// Check if all the required properties of the tag are there.
-							std::cout << "Loaded node_list of length " << (*event)->get_children().size() << "\n";
+			// Get all the event nodes for an action
+			xmlpp::Node::NodeList events = (*action)->get_children();
+			for (auto event = events.begin(); event != events.end(); ++event) {
+				const xmlpp::Element* eventElement = dynamic_cast<const xmlpp::Element*>(*event);
 
-							const xmlpp::Element* event_x = (xmlpp::Element*)(*event)->get_children("x").front();
-							const xmlpp::Element* event_y = (xmlpp::Element*)(*event)->get_children("y").front();
-							const xmlpp::Element* event_target_map = (xmlpp::Element*)(*event)->get_children("target_map").front();
+				if (eventElement) {
+					std::string event_type_s = eventElement->get_attribute_value("type");
 
-							// If they are, add the event.
-							if (event_x && event_y && event_target_map) {
-								std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
+					if (event_type_s == "EVENT_ENTER_MAP") {
+						// Check if all the required properties of the tag are there.
+						const xmlpp::Element* event_x = (xmlpp::Element*)(*event)->get_children("x").front();
+						const xmlpp::Element* event_y = (xmlpp::Element*)(*event)->get_children("y").front();
+						const xmlpp::Element* event_target_map = (xmlpp::Element*)(*event)->get_children("target_map").front();
 
-								new_ev->set_x((unsigned)atoi(event_x->get_child_text()->get_content().c_str()));
-								new_ev->set_y((unsigned)atoi(event_y->get_child_text()->get_content().c_str()));
-								new_ev->set_map_name(event_target_map->get_child_text()->get_content().c_str());
+						// If they are, add the event.
+						if (event_x && event_y && event_target_map) {
+							std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
 
-								_act->add_event(new_ev);
-							}
-							else
-								std::cerr << "XML load error: EventEnterMap malformed?" << std::endl;
+							new_ev->set_x((unsigned)atoi(event_x->get_child_text()->get_content().c_str()));
+							new_ev->set_y((unsigned)atoi(event_y->get_child_text()->get_content().c_str()));
+							new_ev->set_map_name(event_target_map->get_child_text()->get_content().c_str());
+
+							_act->add_event(new_ev);
 						}
 						else
-							std::cerr << "XML load error: unsupported event type: " << event_type_s << std::endl;
+							std::cerr << "XML load error: EVENT_ENTER_MAP malformed?" << std::endl;
 					}
-				}
+					else if (event_type_s == "EVENT_CHANGE_ICON") {
+						const xmlpp::Element* event_change_icon = (xmlpp::Element*)(*event)->get_children("change_icon").front();
 
-				add_action(_act);
+						if (event_change_icon) {
+							std::shared_ptr<EventChangeIcon> new_ev(new EventChangeIcon());
+
+							new_ev->x = std::stoi(event_change_icon->get_attribute_value("x").c_str());
+							new_ev->y = std::stoi(event_change_icon->get_attribute_value("y").c_str());
+							new_ev->icon_now = std::stoi(event_change_icon->get_attribute_value("icon_now").c_str());
+							new_ev->icon_new = std::stoi(event_change_icon->get_attribute_value("icon_new").c_str());
+
+							_act->add_event(new_ev);
+						}
+						else
+							std::cerr << "XML load error: EVENT_CHANGE_ICON malformed?" << std::endl;
+					}
+					else if (event_type_s == "EVENT_PRINTCON") {
+						std::shared_ptr<EventPrintcon> new_ev(new EventPrintcon());
+						new_ev->text = eventElement->get_child_text()->get_content().c_str();
+						boost::algorithm::trim(new_ev->text);
+						_act->add_event(new_ev);
+					}
+					else
+						std::cerr << "XML load error: unsupported event type in map file: " << event_type_s << std::endl;
+				}
 			}
+
+			add_action(_act);
 		}
 	}
 }
@@ -475,15 +509,20 @@ bool Map::xml_load_map_data(std::string pathToFile)
 
 void Map::write_action_node(xmlpp::Element* node, Action* action)
 {
-	ActionOnEnter* action_on_enter = dynamic_cast<ActionOnEnter*>(action);
+	// ActionOnEnter* action_on_enter = dynamic_cast<ActionOnEnter*>(action);
 	std::stringstream s_x;
 	s_x << action->get_x();
 	std::stringstream s_y;
 	s_y << action->get_y();
 
 	// Create action node
-	if (action_on_enter) {
+	if (dynamic_cast<ActionOnEnter*>(action)) {
 		node->set_attribute("type", "ACT_ON_ENTER");
+		node->set_attribute("x", s_x.str());
+		node->set_attribute("y", s_y.str());
+	}
+	else if (dynamic_cast<ActionPullPush*>(action)) {
+		node->set_attribute("type", "ACT_ON_PULLPUSH");
 		node->set_attribute("x", s_x.str());
 		node->set_attribute("y", s_y.str());
 	}
@@ -494,15 +533,29 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++) {
 		xmlpp::Element* ev_node = node->add_child("event");
 
-		std::shared_ptr<EventEnterMap> event_enter_map = std::dynamic_pointer_cast<EventEnterMap>(*curr_ev);
-		ev_node->set_attribute("type", "EVENT_ENTER_MAP");
-		std::stringstream x_s;
-		x_s << event_enter_map->get_x();
-		std::stringstream y_s;
-		y_s << event_enter_map->get_y();
-		ev_node->add_child("x")->add_child_text(x_s.str());
-		ev_node->add_child("y")->add_child_text(y_s.str());
-		ev_node->add_child("target_map")->add_child_text(event_enter_map->get_map_name());
+		if (std::dynamic_pointer_cast<EventEnterMap>(*curr_ev)) {
+			std::shared_ptr<EventEnterMap> event_enter_map = std::dynamic_pointer_cast<EventEnterMap>(*curr_ev);
+
+			ev_node->set_attribute("type", "EVENT_ENTER_MAP");
+			ev_node->add_child("x")->add_child_text(std::to_string(event_enter_map->get_x()));
+			ev_node->add_child("y")->add_child_text(std::to_string(event_enter_map->get_y()));
+			ev_node->add_child("target_map")->add_child_text(event_enter_map->get_map_name());
+		}
+		else if (std::dynamic_pointer_cast<EventChangeIcon>(*curr_ev)) {
+			std::shared_ptr<EventChangeIcon> event_change_icon = std::dynamic_pointer_cast<EventChangeIcon>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_CHANGE_ICON");
+
+			xmlpp::Element* change_icon_el = ev_node->add_child("change_icon");
+			change_icon_el->set_attribute("x", std::to_string(event_change_icon->x));
+			change_icon_el->set_attribute("y", std::to_string(event_change_icon->y));
+			change_icon_el->set_attribute("icon_now", std::to_string(event_change_icon->icon_now));
+			change_icon_el->set_attribute("icon_new", std::to_string(event_change_icon->icon_new));
+		}
+		else if (std::dynamic_pointer_cast<EventPrintcon>(*curr_ev)) {
+			std::shared_ptr<EventPrintcon> event_printcon= std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_PRINTCON");
+			ev_node->set_child_text(event_printcon->text);
+		}
 	}
 }
 
