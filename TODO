@@ -9,7 +9,7 @@ TODO
 
 - NPCs
 
-- Switches and other items that are scripted.
+- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
 
 - Locks
 

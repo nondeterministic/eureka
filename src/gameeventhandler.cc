@@ -49,16 +49,11 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)
 {
-	GameControl& gc = GameControl::Instance();
-
-	std::cout << "Handling lua script for: " << gc.get_map()->get_name() << "\n";
-
 	std::string file_name = (std::string)DATADIR + "/" +
 			 	 	 	 	(std::string)PACKAGE + "/data/" +
 							(std::string)WORLD_NAME + "/maps/" +
 							event->file_name;
 
-	// Load corresponding Lua monster definition
 	if (luaL_dofile(_lua_state, file_name.c_str())) {
 		std::cerr << "gameeventhandler.cc: Couldn't execute lua file: " << file_name << "\n";
 		return false;
