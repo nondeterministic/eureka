@@ -1,4 +1,4 @@
-EXTRA_DIST = *.xml
+EXTRA_DIST = *.xml *.lua
 
 mapsdir = $(datadir)/simplicissimus/data/Mittelerde/maps
 

@@ -105,16 +105,17 @@ am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	addactionwin.$(OBJEXT) addobjectwin.$(OBJEXT) \
 	../mapobj.$(OBJEXT) ../gameevent.$(OBJEXT) \
 	../eventermap.$(OBJEXT) ../eventprintcon.$(OBJEXT) \
-	../eventchangeicon.$(OBJEXT) eventwin.$(OBJEXT) \
-	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
-	../outdoorsicons.$(OBJEXT) ../iconprops.$(OBJEXT) \
-	../icons.$(OBJEXT) ../indoorsicons.$(OBJEXT) \
-	../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
-	iconpropswin.$(OBJEXT) newworldwin.$(OBJEXT) \
-	startupwin.$(OBJEXT) newmapwin.$(OBJEXT) sdleditor.$(OBJEXT) \
-	indoorssdleditor.$(OBJEXT) outdoorssdleditor.$(OBJEXT) \
-	tabcontext.$(OBJEXT) selectmapwin.$(OBJEXT) \
-	expandmapwin.$(OBJEXT) editorwin.$(OBJEXT)
+	../eventchangeicon.$(OBJEXT) ../eventluascript.$(OBJEXT) \
+	eventwin.$(OBJEXT) ../outdoorsmap.$(OBJEXT) \
+	../indoorsmap.$(OBJEXT) ../outdoorsicons.$(OBJEXT) \
+	../iconprops.$(OBJEXT) ../icons.$(OBJEXT) \
+	../indoorsicons.$(OBJEXT) ../world.$(OBJEXT) \
+	../gamerules.$(OBJEXT) iconpropswin.$(OBJEXT) \
+	newworldwin.$(OBJEXT) startupwin.$(OBJEXT) newmapwin.$(OBJEXT) \
+	sdleditor.$(OBJEXT) indoorssdleditor.$(OBJEXT) \
+	outdoorssdleditor.$(OBJEXT) tabcontext.$(OBJEXT) \
+	selectmapwin.$(OBJEXT) expandmapwin.$(OBJEXT) \
+	editorwin.$(OBJEXT)
 leibniz_OBJECTS = $(am_leibniz_OBJECTS)
 leibniz_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -376,6 +377,7 @@ leibniz_SOURCES = leibniz.cc \
 		../eventermap.cc ../eventermap.hh \
 		../eventprintcon.cc ../eventprintcon.hh \
 		../eventchangeicon.cc ../eventchangeicon.hh \
+		../eventluascript.cc ../eventluascript.hh \
 		eventwin.cc eventwin.hh \
 		../outdoorsmap.cc ../outdoorsmap.hh \
 		../indoorsmap.cc ../indoorsmap.hh \
@@ -508,6 +510,8 @@ clean-binPROGRAMS:
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventchangeicon.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
+../eventluascript.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../outdoorsmap.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../indoorsmap.$(OBJEXT): ../$(am__dirstamp) \
@@ -540,6 +544,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/creature.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventchangeicon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventermap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventluascript.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventprintcon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gamecharacter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gameevent.Po@am__quote@

@@ -49,6 +49,7 @@ simplicissimus_SOURCES = \
 	eventermap.hh eventermap.cc \
 	eventchangeicon.hh eventchangeicon.cc \
 	eventprintcon.hh eventprintcon.cc \
+	eventluascript.hh eventluascript.cc \
 	gameeventhandler.hh gameeventhandler.cc \
 	iconprops.hh iconprops.cc \
 	icons.hh icons.cc \

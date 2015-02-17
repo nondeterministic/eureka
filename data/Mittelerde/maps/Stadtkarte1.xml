@@ -84,6 +84,7 @@
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="11" y="6" icon_now="72" icon_new="71"/>
       </event>
+      <event type="EVENT_LUA_SCRIPT">test.lua</event>      
     </action>
     <action type="ACT_ON_PULLPUSH" x="11" y="7">
       <event type="EVENT_PRINTCON">You hear a rattling sound...</event>

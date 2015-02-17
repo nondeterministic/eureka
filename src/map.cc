@@ -41,6 +41,7 @@
 #include "eventermap.hh"
 #include "eventchangeicon.hh"
 #include "eventprintcon.hh"
+#include "eventluascript.hh"
 #include "action.hh"
 #include "actiononenter.hh"
 #include "actionpullpush.hh"
@@ -404,6 +405,12 @@ void Map::parse_actions_node(const xmlpp::Node* node)
 						boost::algorithm::trim(new_ev->text);
 						_act->add_event(new_ev);
 					}
+					else if (event_type_s == "EVENT_LUA_SCRIPT") {
+						std::shared_ptr<EventLuaScript> new_ev(new EventLuaScript());
+						new_ev->file_name = eventElement->get_child_text()->get_content().c_str();
+						boost::algorithm::trim(new_ev->file_name);
+						_act->add_event(new_ev);
+					}
 					else
 						std::cerr << "XML load error: unsupported event type in map file: " << event_type_s << std::endl;
 				}
@@ -555,6 +562,11 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			std::shared_ptr<EventPrintcon> event_printcon= std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PRINTCON");
 			ev_node->set_child_text(event_printcon->text);
+		}
+		else if (std::dynamic_pointer_cast<EventLuaScript>(*curr_ev)) {
+			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_LUA_SCRIPT");
+			ev_node->set_child_text(event_lua_script->file_name);
 		}
 	}
 }

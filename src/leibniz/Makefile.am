@@ -29,6 +29,7 @@ leibniz_SOURCES = leibniz.cc \
 		../eventermap.cc ../eventermap.hh \
 		../eventprintcon.cc ../eventprintcon.hh \ 
 		../eventchangeicon.cc ../eventchangeicon.hh \
+		../eventluascript.cc ../eventluascript.hh \
 		eventwin.cc eventwin.hh \
 		../outdoorsmap.cc ../outdoorsmap.hh \
 		../indoorsmap.cc ../indoorsmap.hh \
