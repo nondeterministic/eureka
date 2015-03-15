@@ -74,6 +74,7 @@ public:
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);
   std::shared_ptr<Action> get_action(unsigned, unsigned);
+  void add_action(Action*);
   void add_action(std::shared_ptr<Action>);
   void add_event_to_action(unsigned, unsigned, std::shared_ptr<GameEvent>);
   void del_action(unsigned, unsigned);
@@ -92,7 +93,7 @@ protected:
   void parse_node(const xmlpp::Node*);
   void parse_objects_node(const xmlpp::Node*);
   void parse_data_node(const xmlpp::Node*);
-  void parse_actions_node(const xmlpp::Node*);
+  std::vector<std::shared_ptr<Action>> parse_actions_node(const xmlpp::Node*);
   void write_action_node(xmlpp::Element*, Action*);
 
   // Map data and stuff...

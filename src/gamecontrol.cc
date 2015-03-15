@@ -61,6 +61,7 @@ extern "C" {
 #include "console.hh"
 #include "eventmanager.hh"
 #include "actiononenter.hh"
+#include "actiontake.hh"
 #include "actionpullpush.hh"
 #include "eventermap.hh"
 #include "hexarena.hh"
@@ -891,6 +892,8 @@ void GameControl::get_item()
 		else
 			curr_obj = &(avail_objects.first->second);
 
+		GameEventHandler gh;
+
 		if (curr_obj->removable) {
 			if (curr_obj->lua_name.length() > 0) {
 				// Depending on the name the MapObj has, we look up in the Lua list of items, and create one accordingly for pick up.
@@ -923,6 +926,17 @@ void GameControl::get_item()
 					for (int i = 0; i < taking; i++)
 						party->inventory()->add(ItemFactory::create(curr_obj->lua_name));
 
+					// Perform action events
+					for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
+						std::cout << "Trying to perform action...\n";
+						if ((*action)->name() == "ACT_ON_TAKE") {
+							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+								gh.handle(*curr_ev, arena->get_map());
+						}
+						else
+							std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
+					}
+
 					// See if some items are leftover after taking...
 					if (curr_obj->how_many - taking == 0)
 						arena->get_map()->pop_obj(coords.first, coords.second);
@@ -933,6 +947,18 @@ void GameControl::get_item()
 				else {
 					printcon("Taking " + item->name());
 					party->inventory()->add(item);
+
+					// Perform action events
+					for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
+						std::cout << "Trying to perform action...\n";
+						if ((*action)->name() == "ACT_ON_TAKE") {
+							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+								gh.handle(*curr_ev, arena->get_map());
+						}
+						else
+							std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
+					}
+
 					arena->get_map()->pop_obj(coords.first, coords.second);
 				}
 			}

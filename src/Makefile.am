@@ -40,6 +40,7 @@ simplicissimus_SOURCES = \
 	outdoorsmap.hh outdoorsmap.cc \
 	mapobj.hh mapobj.cc \
 	action.hh action.cc \
+	actiontake.hh actiontake.cc \
 	actiononenter.hh actiononenter.cc \
 	actionpullpush.hh actionpullpush.cc \
 	playlist.hh playlist.cc \

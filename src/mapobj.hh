@@ -10,6 +10,9 @@
 #define __MAPOBJ_HH
 
 #include <string>
+#include <memory>
+#include <vector>
+#include "action.hh"
 
 enum MAPOBJ_TYPES
 {
@@ -36,6 +39,8 @@ public:
 	std::string id;
 	std::string lua_name;
 	int how_many;
+	void add_action(std::shared_ptr<Action>);
+	std::vector<std::shared_ptr<Action>>* actions();
 
 protected:
 	MAPOBJ_TYPES _type;
@@ -43,6 +48,7 @@ protected:
 	int _icon;
 	unsigned _x, _y;
 	std::string _init_script;
+	std::vector<std::shared_ptr<Action>> _actions;
 };
 
 #endif

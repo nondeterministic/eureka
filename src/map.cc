@@ -43,6 +43,7 @@
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
 #include "action.hh"
+#include "actiontake.hh"
 #include "actiononenter.hh"
 #include "actionpullpush.hh"
 
@@ -156,17 +157,18 @@ void Map::add_event_to_action(unsigned x, unsigned y, std::shared_ptr<GameEvent>
 			return;
 		}
 	}
-//	for (std::vector<Action>::iterator curr_act = _actions.begin(); curr_act != _actions.end(); curr_act++) {
-//		if (curr_act->get_x() == x && curr_act->get_y() == y) {
-//			curr_act->add_event(ev);
-//			return;
-//		}
-//	}
+}
+
+void Map::add_action(Action* new_act)
+{
+	std::shared_ptr<Action> ptr(new_act);
+	add_action(ptr);
 }
 
 void Map::add_action(std::shared_ptr<Action> new_act)
 {
-	// Only one action per icon is allowed!
+	// Only one action per icon is allowed!  Theoretically more could be done but then it's difficult in the editor
+	// and I cannot think of many examples, where multiple actions on a single icon are needed.
 	for (auto curr_act = _actions.begin(); curr_act != _actions.end(); curr_act++)
 		if ((*curr_act)->get_x() == new_act->get_x() && (*curr_act)->get_y() == new_act->get_y())
 			return;
@@ -325,14 +327,21 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 				else if (a_name == "how_many")
 					new_obj.how_many = atoi(attribute->get_value().c_str());
 			}
+
+			// Parse actions, if there are any associated to the object
+			for (auto action: parse_actions_node(nodeElement))
+				new_obj.add_action(action);
+
 			new_obj.set_coords(x, y);
 			push_obj(new_obj);
 		}
 	}
 }
 
-void Map::parse_actions_node(const xmlpp::Node* node)
+std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* node)
 {
+	std::vector<std::shared_ptr<Action>> parsed_actions;
+
 	// Get all action nodes
 	xmlpp::Node::NodeList actions = node->get_children();
 	for (auto action = actions.begin(); action != actions.end(); ++action) {
@@ -352,9 +361,10 @@ void Map::parse_actions_node(const xmlpp::Node* node)
 							                            atoi(nodeElement->get_attribute_value("y").c_str()),
 														"ACT_ON_PULLPUSH");
 			}
+			else if (curr_act_name == "ACT_ON_TAKE")
+				_act = std::make_shared<ActionOnTake>("ACT_ON_TAKE");
 			else
 				continue;
-
 
 			// Get all the event nodes for an action
 			xmlpp::Node::NodeList events = (*action)->get_children();
@@ -416,9 +426,12 @@ void Map::parse_actions_node(const xmlpp::Node* node)
 				}
 			}
 
-			add_action(_act);
+			parsed_actions.push_back(_act);
+			// add_action(_act);
 		}
 	}
+
+	return parsed_actions;
 }
 
 void Map::parse_data_node(const xmlpp::Node* node)
@@ -467,8 +480,11 @@ void Map::parse_node(const xmlpp::Node* node)
 			parse_objects_node(node);
 		else if (nodeElement->get_name() == "data")
 			parse_data_node(node);
-		else if (nodeElement->get_name() == "actions")
-			parse_actions_node(node);
+		else if (nodeElement->get_name() == "actions") {
+			std::vector<std::shared_ptr<Action>> actions = parse_actions_node(node);
+			for (auto action : actions)
+				add_action(action);
+		}
 	}
 
 	if (!nodeContent) {
@@ -687,25 +703,19 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 	if (top != 0 && bot != 0 && right != 0 && left != 0)
 		return;
 
-	try
-	{
-		if (top > 0)
-		{
-			for (int times = 0; times < top; times++)
-			{
+	try {
+		if (top > 0) {
+			for (int times = 0; times < top; times++) {
 				if (_data.size() > 0)
 					_data.insert(_data.begin(), row);
 				else
 					_data.push_back(row);
 			}
 		}
-		else if (top < 0)
-		{
-			for (int times = 0; times < abs(top); times++)
-			{
+		else if (top < 0) {
+			for (int times = 0; times < abs(top); times++) {
 				// You cannot completely remove the map!
-				if (_data.size() > 1)
-				{
+				if (_data.size() > 1) {
 					_data.begin()->clear();
 					_data.erase(_data.begin());
 				}
@@ -717,13 +727,10 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 		if (bot > 0)
 			for (int times = 0; times < bot; times++)
 				_data.push_back(row);
-		else if (bot < 0)
-		{
-			for (int times = 0; times < abs(bot); times++)
-			{
+		else if (bot < 0) {
+			for (int times = 0; times < abs(bot); times++) {
 				// You cannot completely remove the map!
-				if (_data.size() > 1)
-				{
+				if (_data.size() > 1) {
 					_data.end()->clear();
 					_data.pop_back();
 				}
@@ -736,12 +743,9 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 			for (unsigned col = 0; col < _data.size(); col++)
 				for (int times = 0; times < right; times++)
 					_data[col].push_back(0);
-		else if (right < 0)
-		{
-			for (unsigned col = 0; col < _data.size(); col++)
-			{
-				for (int times = 0; times < abs(right); times++)
-				{
+		else if (right < 0) {
+			for (unsigned col = 0; col < _data.size(); col++) {
+				for (int times = 0; times < abs(right); times++) {
 					if (_data[col].size() > 1)
 						_data[col].pop_back();
 					else
@@ -754,12 +758,9 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 			for (unsigned col = 0; col < _data.size(); col++)
 				for (int times = 0; times < left; times++)
 					_data[col].insert(_data[col].begin(), 0);
-		else if (left < 0)
-		{
-			for (unsigned col = 0; col < _data.size(); col++)
-			{
-				for (int times = 0; times < abs(left); times++)
-				{
+		else if (left < 0) {
+			for (unsigned col = 0; col < _data.size(); col++) {
+				for (int times = 0; times < abs(left); times++)	{
 					if (_data[col].size() > 1)
 						_data[col].erase(_data[col].begin());
 					else

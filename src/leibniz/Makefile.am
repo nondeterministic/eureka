@@ -20,6 +20,7 @@ leibniz_SOURCES = leibniz.cc \
 		../map.cc ../map.hh \
 		obj.cc obj.hh \
 		../action.cc ../action.hh \
+		../actiontake.cc ../actiontake.hh \
 		../actiononenter.cc ../actiononenter.hh \
 		../actionpullpush.cc ../actionpullpush.hh \
 		addactionwin.cc addactionwin.hh \

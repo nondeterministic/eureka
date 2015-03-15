@@ -101,21 +101,21 @@ am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	../item.$(OBJEXT) ../weapon.$(OBJEXT) ../shield.$(OBJEXT) \
 	../gamecharacter.$(OBJEXT) ../creature.$(OBJEXT) \
 	../map.$(OBJEXT) obj.$(OBJEXT) ../action.$(OBJEXT) \
-	../actiononenter.$(OBJEXT) ../actionpullpush.$(OBJEXT) \
-	addactionwin.$(OBJEXT) addobjectwin.$(OBJEXT) \
-	../mapobj.$(OBJEXT) ../gameevent.$(OBJEXT) \
-	../eventermap.$(OBJEXT) ../eventprintcon.$(OBJEXT) \
-	../eventchangeicon.$(OBJEXT) ../eventluascript.$(OBJEXT) \
-	eventwin.$(OBJEXT) ../outdoorsmap.$(OBJEXT) \
-	../indoorsmap.$(OBJEXT) ../outdoorsicons.$(OBJEXT) \
-	../iconprops.$(OBJEXT) ../icons.$(OBJEXT) \
-	../indoorsicons.$(OBJEXT) ../world.$(OBJEXT) \
-	../gamerules.$(OBJEXT) iconpropswin.$(OBJEXT) \
-	newworldwin.$(OBJEXT) startupwin.$(OBJEXT) newmapwin.$(OBJEXT) \
-	sdleditor.$(OBJEXT) indoorssdleditor.$(OBJEXT) \
-	outdoorssdleditor.$(OBJEXT) tabcontext.$(OBJEXT) \
-	selectmapwin.$(OBJEXT) expandmapwin.$(OBJEXT) \
-	editorwin.$(OBJEXT)
+	../actiontake.$(OBJEXT) ../actiononenter.$(OBJEXT) \
+	../actionpullpush.$(OBJEXT) addactionwin.$(OBJEXT) \
+	addobjectwin.$(OBJEXT) ../mapobj.$(OBJEXT) \
+	../gameevent.$(OBJEXT) ../eventermap.$(OBJEXT) \
+	../eventprintcon.$(OBJEXT) ../eventchangeicon.$(OBJEXT) \
+	../eventluascript.$(OBJEXT) eventwin.$(OBJEXT) \
+	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
+	../outdoorsicons.$(OBJEXT) ../iconprops.$(OBJEXT) \
+	../icons.$(OBJEXT) ../indoorsicons.$(OBJEXT) \
+	../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
+	iconpropswin.$(OBJEXT) newworldwin.$(OBJEXT) \
+	startupwin.$(OBJEXT) newmapwin.$(OBJEXT) sdleditor.$(OBJEXT) \
+	indoorssdleditor.$(OBJEXT) outdoorssdleditor.$(OBJEXT) \
+	tabcontext.$(OBJEXT) selectmapwin.$(OBJEXT) \
+	expandmapwin.$(OBJEXT) editorwin.$(OBJEXT)
 leibniz_OBJECTS = $(am_leibniz_OBJECTS)
 leibniz_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -368,6 +368,7 @@ leibniz_SOURCES = leibniz.cc \
 		../map.cc ../map.hh \
 		obj.cc obj.hh \
 		../action.cc ../action.hh \
+		../actiontake.cc ../actiontake.hh \
 		../actiononenter.cc ../actiononenter.hh \
 		../actionpullpush.cc ../actionpullpush.hh \
 		addactionwin.cc addactionwin.hh \
@@ -497,6 +498,8 @@ clean-binPROGRAMS:
 ../creature.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../map.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../action.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
+../actiontake.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../actiononenter.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../actionpullpush.$(OBJEXT): ../$(am__dirstamp) \
@@ -541,6 +544,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiononenter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actionpullpush.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiontake.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/creature.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventchangeicon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventermap.Po@am__quote@

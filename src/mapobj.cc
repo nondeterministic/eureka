@@ -9,6 +9,7 @@
 #include "mapobj.hh"
 
 #include <string>
+#include <iostream>
 
 MapObj::MapObj()
 {
@@ -23,6 +24,22 @@ MapObj::MapObj()
 
 MapObj::~MapObj()
 {
+	_actions.clear();
+}
+
+void MapObj::add_action(std::shared_ptr<Action> new_act)
+{
+	try {
+		_actions.push_back(std::shared_ptr<Action>(new_act));
+	}
+	catch(const std::exception& ex) {
+		std::cerr << "Exception upon adding action in MapObj: " << ex.what() << std::endl;
+	}
+}
+
+std::vector<std::shared_ptr<Action>>* MapObj::actions()
+{
+	return &_actions;
 }
 
 void MapObj::set_type(MAPOBJ_TYPES mt)
