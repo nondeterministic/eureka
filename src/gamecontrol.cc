@@ -923,20 +923,19 @@ void GameControl::get_item()
 					}
 
 					// Let's now create the n new items to be taken individually via a factory...
-					for (int i = 0; i < taking; i++)
+					for (int i = 0; i < taking; i++) {
 						party->inventory()->add(ItemFactory::create(curr_obj->lua_name));
 
-					// Perform action events
-					for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
-						std::cout << "Trying to perform action...\n";
-						if ((*action)->name() == "ACT_ON_TAKE") {
-							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-								gh.handle(*curr_ev, arena->get_map());
+						// Perform action events
+						for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
+							if ((*action)->name() == "ACT_ON_TAKE") {
+								for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+									gh.handle(*curr_ev, arena->get_map());
+							}
+							else
+								std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
 						}
-						else
-							std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
 					}
-
 					// See if some items are leftover after taking...
 					if (curr_obj->how_many - taking == 0)
 						arena->get_map()->pop_obj(coords.first, coords.second);

@@ -48,11 +48,7 @@
     <object x="5" y="7" icon_no="571" layer="0" id="axe_of_doom" lua_name="weapons::axe" how_many="1" removable="yes" type="item">
 	    <action type="ACT_ON_TAKE">
 	      <event type="EVENT_PRINTCON">Picking stuff up is fun!</event>
-	      <event type="EVENT_PRINTCON">Great fun, indeed.</event>
-	    </action>
-	    <action type="ACT_ON_TAKE">
-	      <event type="EVENT_PRINTCON">Picking stuff up is fun!</event>
-	      <event type="EVENT_PRINTCON">Great fun, indeed.</event>
+	      <event type="EVENT_PRINTCON">Great fun, indeed!</event>
 	    </action>
     </object>
     <object x="2" y="8" icon_no="33" layer="0" id="balloon" lua_name="" how_many="1" removable="no" type="item"/>
