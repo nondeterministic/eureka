@@ -76,127 +76,125 @@ Combat::~Combat()
 
 bool Combat::initiate()
 {
-  if (foes.size() > 0) {
-    std::stringstream ss;
-    ss << "\nYou're faced with "
-       << foes.to_string() << ".\n"
-       << "Do you wish to "
-       << (foes.closest_range() > 10 ? "(a)dvance, " : "")
-       << "(f)ight or attempt to (r)un?";
-    printcon(ss.str());
+	if (foes.size() > 0) {
+		std::stringstream ss;
+		ss << "\nYou're faced with "
+				<< foes.to_string() << ".\n"
+				<< "Do you wish to "
+				<< (foes.closest_range() > 10 ? "(a)dvance, " : "")
+				<< "(f)ight or attempt to (r)un?";
+		printcon(ss.str());
 
-    switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
-    case 'a':
-      if (foes.closest_range() > 10) {
-        advance_party();
-        foes_fight();
-        return initiate();
-        // return false; // TODO is this return necessary?
-      }
-      break;
-    case 'f':
-      fight(attack_options());
+		switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
+		case 'a':
+			if (foes.closest_range() > 10) {
+				advance_party();
+				foes_fight();
+				return initiate();
+				// return false; // TODO is this return necessary?
+			}
+			break;
+		case 'f':
+			fight(attack_options());
 
-      if (foes.size() > 0) {
-        return initiate();
-        // return false; // TODO is this return necessary?
-      }
-      else {
-        victory();
-        return true;
-      }
-      break;
-    default:
-      printcon("You got away this time!");
-      MiniWin::Instance().display_last();
-      return false;
-    }
-  }
+			if (foes.size() > 0)
+				return initiate();
+			else {
+				victory();
+				return true;
+			}
+			break;
+		default:
+			printcon("You got away this time!");
+			MiniWin::Instance().display_last();
+			return false;
+		}
+	}
 
-  // Monster nearby...
-  if (create_random_monsters()) {
-    string _name = noticed_monsters();
-    if (_name.length() > 0) {
-      printcon(_name + (std::string)" heard some suspicious " +
-               (std::string)"noise nearby. Do you wish to " +
-               (std::string)"(i)nvestigate or (m)ove on?");
+	// Monster nearby...
+	if (create_random_monsters()) {
+		string _name = noticed_monsters();
+		if (_name.length() > 0) {
+			printcon(_name + (std::string)" heard some suspicious " +
+					(std::string)"noise nearby. Do you wish to " +
+					(std::string)"(i)nvestigate or (m)ove on?");
 
-      if (em->get_key("im") == 'm') {
-        printcon("You got away this time!");
-        MiniWin::Instance().display_last();
-        return false;
-      }
+			if (em->get_key("im") == 'm') {
+				printcon("You got away this time!");
+				MiniWin::Instance().display_last();
+				return false;
+			}
 
-      MiniWin::Instance().display_surf(foes.pic());
-      std::stringstream ss;
-      ss << "Upon getting closer you spotted "
-         << foes.to_string() << ".\n"
-         << "Do you wish to "
-         << (foes.closest_range() > 10 ? "(a)dvance, " : "")
-         << "(f)ight or attempt to (s)neak away?";
-      printcon(ss.str());
+			MiniWin::Instance().display_surf(foes.pic());
+			std::stringstream ss;
+			ss << "Upon getting closer you spotted "
+					<< foes.to_string() << ".\n"
+					<< "Do you wish to "
+					<< (foes.closest_range() > 10 ? "(a)dvance, " : "")
+					<< "(f)ight or attempt to (s)neak away?";
+			printcon(ss.str());
 
-      switch (em->get_key(foes.closest_range() > 10 ? "afs" : "fs")) {
-      case 'a':
-        if (foes.closest_range() > 10) {
-          advance_party();
-          foes_fight();
-          return initiate();
-        }
-        break;
-      case 'f':
-        fight(attack_options());
+			switch (em->get_key(foes.closest_range() > 10 ? "afs" : "fs")) {
+			case 'a':
+				if (foes.closest_range() > 10) {
+					advance_party();
+					foes_fight();
+					return initiate();
+				}
+				break;
+			case 'f':
+				fight(attack_options());
 
-        if (foes.size() <= 0) {
-          victory();
-          return true;
-        }
-        else
-          return initiate();
-        break;
-      default:
-        printcon("You got away this time!");
-        MiniWin::Instance().display_last();
-        return false;
-      }
-    }
-    else {
-      MiniWin::Instance().display_surf(foes.pic());
-      std::stringstream ss;
-      ss << "Your stalwart party is brought to a halt by ";
-      ss << foes.to_string() << ".\n";
-      ss << "Do you wish to ";
-      ss << (foes.closest_range() > 10 ? "(a)dvance, " : "");
-      ss << "(f)ight or attempt to (r)un?";
-      printcon(ss.str());
+				if (foes.size() <= 0) {
+					victory();
+					return true;
+				}
+				else
+					return initiate();
+				break;
+			default:
+				printcon("You got away this time!");
+				MiniWin::Instance().display_last();
+				return false;
+			}
+		}
+		else {
+			MiniWin::Instance().display_surf(foes.pic());
+			std::stringstream ss;
+			ss << "Your stalwart party is brought to a halt by ";
+			ss << foes.to_string() << ".\n";
+			ss << "Do you wish to ";
+			ss << (foes.closest_range() > 10 ? "(a)dvance, " : "");
+			ss << "(f)ight or attempt to (r)un?";
+			printcon(ss.str());
 
-      switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
-      case 'a':
-        if (foes.closest_range() > 10) {
-          advance_party();
-          foes_fight();
-          return initiate();
-        }
-        break;
-      case 'f':
-        fight(attack_options());
+			switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
+			case 'a':
+				if (foes.closest_range() > 10) {
+					advance_party();
+					foes_fight();
+					return initiate();
+				}
+				break;
+			case 'f':
+				fight(attack_options());
 
-        if (foes.size() <= 0) {
-          victory();
-          return true;
-        }
-        else
-          return initiate();
-        break;
-      default:
-        printcon("You got away this time!");
-        MiniWin::Instance().display_last();
-        return false;
-      }
-    }
-  }
+				if (foes.size() <= 0) {
+					victory();
+					return true;
+				}
+				else
+					return initiate();
+				break;
+			default:
+				printcon("You got away this time!");
+				MiniWin::Instance().display_last();
+				return false;
+			}
+		}
+	}
 
-  return false;
+	return false;
 }
 
 std::vector<int> Combat::attack_options()
@@ -491,75 +489,6 @@ int Combat::foes_fight()
 	return 0;
 }
 
-/*
-int Combat::foes_fight()
-{
-	LuaWrapper lua(_lua_state);
-	boost::unordered_set<std::string> moved;
-	for (int i = 0; i < foes.size(); i++) {
-		Creature* foe = foes.get()->at(i).get();
-
-		// Load corresponding Lua monster definition
-		if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
-				(std::string)PACKAGE + "/data/" +
-				(std::string)WORLD_NAME + "/bestiary/" +
-				boost::algorithm::to_lower_copy(foe->name()) +
-				(std::string)".lua").c_str()))
-		{
-			cerr << "ERROR: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
-			exit(EXIT_FAILURE);
-		}
-
-		// Convert the this-pointer to string and push it to Lua-Land
-		// along with i, such that Lua knows which monster is referred
-		// to.  (I know, this is very crazy code, but life is crazy.)
-		std::ostringstream thiss;
-		thiss << (void const *)this;
-		lua.push_fn_arg((double)i);
-		lua.push_fn_arg((std::string)thiss.str());
-		lua.call_void_fn("set_combat_ptr");
-
-		lua.push_fn_arg((double)foe->gold());
-		lua.call_void_fn("set_gold");
-
-		lua.push_fn_arg((std::string)foe->weapon()->name());
-		lua.call_void_fn("set_weapon");
-
-		lua.push_fn_arg((double)foe->luck());
-		lua.call_void_fn("set_luck");
-
-		lua.push_fn_arg((double)foe->dxt());
-		lua.call_void_fn("set_dxt");
-
-		lua.push_fn_arg((double)foe->hp());
-		lua.call_void_fn("set_hp");
-
-		lua.push_fn_arg((double)foe->hpm());
-		lua.call_void_fn("set_hp_max");
-
-		lua.push_fn_arg((double)foe->distance());
-		lua.call_void_fn("set_distance");
-
-		if (lua.call_fn<bool>("advance") &&            // Foes want to advance? - as opposed to, say, fight from the distance
-				moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
-			moved = advance_foes();                      // Attempt to move
-
-		if (moved.find(foe->name()) == moved.end() &&
-				lua.call_fn<bool>("attack") &&
-				!fled)
-			lua.call_fn<double>("fight");
-
-		if (fled)
-			i--;
-		fled = false;
-
-		ZtatsWin::Instance().update_player_list();
-	}
-
-	return 0;
-}
-*/
-
 // Returns which monster is going to be attacked in the next round by
 // player player_no.
 
@@ -614,6 +543,16 @@ void Combat::advance_party()
   printcon("Your party advances.", true);
 }
 
+Attackers Combat::get_foes()
+{
+	return foes;
+}
+
+void Combat::set_foes(Attackers new_foes)
+{
+	foes = new_foes;
+}
+
 // Advances the foes by 10' and returns the name of the foes that have moved.
 
 boost::unordered_set<std::string> Combat::advance_foes()
@@ -645,14 +584,14 @@ boost::unordered_set<std::string> Combat::advance_foes()
 // Then we need to initiate battle, too, but create the "monsters", so to speak, rather
 // differently.  Script_path is the path to the Lua script defining the person in the town.
 
-bool Combat::create_monsters_from(std::string script_file)
+bool Combat::create_monsters_from_init_path(std::string script_file)
 {
 	LuaWrapper lua(_lua_state);
 	std::string lua_scripts_path = (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/";
 
 	// Load corresponding Lua conversation file
 	if (luaL_dofile(_lua_state, (lua_scripts_path + boost::algorithm::to_lower_copy(script_file)).c_str())) {
-		std::cerr << "ERROR: combat.cc::create_monsters_from(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+		std::cerr << "ERROR: combat.cc::create_monsters_from_init_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -680,6 +619,59 @@ bool Combat::create_monsters_from(std::string script_file)
 	return true;
 }
 
+// Usually used for monsters inside dungeons...
+
+bool Combat::create_monsters_from_combat_path(std::string script_file)
+{
+	LuaWrapper lua(_lua_state);
+	std::string lua_scripts_path = (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/";
+
+	// Load corresponding Lua combat file (i.e., a monster definition)
+	if (luaL_dofile(_lua_state, (lua_scripts_path + boost::algorithm::to_lower_copy(script_file)).c_str())) {
+		std::cerr << "ERROR: combat.cc::create_monsters_from_combat_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// TODO: here is some code missing to create a proper set of foes,
+	// consisting of different kinds of enemies, rather than just n of
+	// the same!
+
+	int number_of_enemies = random(1, 6);
+	int distance = random(1,3) * 10;
+	std::string name = lua.call_fn<std::string>("get_name");
+
+	for (int i = 0; i < number_of_enemies; i++) {
+		std::shared_ptr<Creature> monster(new Creature());
+
+		// Set distance
+		monster->set_distance(distance);
+		lua.push_fn_arg((double)distance);
+		lua.call_void_fn("set_distance");
+
+		// Set rest of params
+		monster->set_img(lua.call_fn<std::string>("img_path"));
+		monster->set_name(lua.call_fn<std::string>("get_name"));
+		monster->set_plural_name(lua.call_fn<std::string>("get_plural_name"));
+
+		// Create lua instance of monster and set further params
+		lua.call_void_fn("create_instance");
+		monster->set_hp(lua.call_fn<double>("get_hp"));
+		monster->set_hpm(lua.call_fn<double>("get_hp_max"));
+		monster->set_str(lua.call_fn<double>("get_strength"));
+		monster->set_luck(lua.call_fn<double>("get_luck"));
+		monster->set_gold(lua.call_fn<double>("get_gold"));
+		Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"));
+		monster->set_weapon(wep);
+
+		// Add monster to rooster of attackers
+		foes.add(monster);
+	}
+
+    foes.count()->insert(std::make_pair(name, number_of_enemies));
+
+	return true;
+}
+
 bool Combat::create_random_monsters()
 {
   LuaWrapper lua(_lua_state);
@@ -701,8 +693,8 @@ bool Combat::create_random_monsters()
       // Name of monster
       if (__key == "__name") {
         __name = lua_tostring(_lua_state, -1);
-      } // Distance, we only determine one and then derive the others
-      // below
+      }
+      // Distance, we only determine one and then derive the others below
       else if (__key == "__distance") {
         if (__distance < 0) {
           if (lua_tonumber(_lua_state, -1) > 0)
@@ -749,7 +741,6 @@ bool Combat::create_random_monsters()
       }
 
       // Set distance
-      cout << "Setting distance of " << __name << " to " << __distance << endl;
       monster->set_distance(__distance);
       lua.push_fn_arg((double)__distance);
       lua.call_void_fn("set_distance");

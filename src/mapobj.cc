@@ -27,6 +27,16 @@ MapObj::~MapObj()
 	_actions.clear();
 }
 
+void MapObj::set_foes(Attackers attackers)
+{
+	_foes = attackers;
+}
+
+Attackers MapObj::get_foes()
+{
+	return _foes;
+}
+
 void MapObj::add_action(std::shared_ptr<Action> new_act)
 {
 	try {
@@ -60,6 +70,16 @@ void MapObj::set_init_script_path(std::string np)
 std::string MapObj::get_init_script_path()
 {
   return _init_script;
+}
+
+void MapObj::set_combat_script_path(std::string np)
+{
+  _combat_script = np;
+}
+
+std::string MapObj::get_combat_script_path()
+{
+  return _combat_script;
 }
 
 void MapObj::set_coords(unsigned x, unsigned y)

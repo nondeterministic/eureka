@@ -737,7 +737,7 @@ void GameControl::drop_items()
 	mwin.display_last();
 }
 
-// This attack is only called executed when indoors, cf. first if statement!
+// This attack is only called executed when INDOORS, cf. first if statement!
 
 void GameControl::attack()
 {
@@ -760,11 +760,35 @@ void GameControl::attack()
 			MapObj& the_obj = curr_obj->second;
 
 			if (the_obj.get_type() == MAPOBJ_MONSTER) {
+				// Indoor monsters either have a combat_script OR a init_script attribute but *NEVER* both!
+				// Init script usually means the player can talk to them...
 				if (the_obj.get_init_script_path().length() > 0) {
 					Combat combat;
-					combat.create_monsters_from(the_obj.get_init_script_path());
+					combat.create_monsters_from_init_path(the_obj.get_init_script_path());
 					if (combat.initiate())
 						get_map()->pop_obj(the_obj.id);
+					return;
+				}
+				// We have foes from previous attack left, so do not initiate fresh combat
+				else if (the_obj.get_foes().size() > 0) {
+					Combat combat;
+					combat.set_foes(the_obj.get_foes());
+					if (combat.initiate()) {
+						get_map()->pop_obj(the_obj.id);
+						return;
+					}
+					the_obj.set_foes(combat.get_foes());
+					return;
+				}
+				// We initiate fresh combat
+				else if (the_obj.get_combat_script_path().length() > 0) {
+					Combat combat;
+					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
+					if (combat.initiate()) {
+						get_map()->pop_obj(the_obj.id);
+						return;
+					}
+					the_obj.set_foes(combat.get_foes());
 					return;
 				}
 				else {

@@ -164,13 +164,13 @@
     <object x="5" y="2" icon_no="36" layer="0" id="ladder" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="27" y="19" icon_no="148" layer="0" id="torch" lua_name="" how_many="1" removable="yes" type="item"/>
     <object x="15" y="9" icon_no="147" layer="0" id="torch" lua_name="" how_many="1" removable="yes" type="item"/>
-    <object x="13" y="8" icon_no="254" layer="0" id="orc_room" lua_name="" how_many="1" removable="no" type="monster"/>
-    <object x="24" y="9" icon_no="355" layer="0" id="skeleton_fighter" lua_name="" how_many="1" removable="no" type="monster"/>
-    <object x="11" y="38" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="13" y="8" icon_no="254" layer="0" id="orc_room" lua_name="" how_many="1" removable="no" type="monster" combat_script="bestiary/orc.lua"/>
+    <object x="24" y="9" icon_no="355" layer="0" id="skeleton_fighter" lua_name="" how_many="1" removable="no" type="monster" combat_script="bestiary/orc.lua"/>
+    <object x="11" y="38" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" type="monster" combat_script="bestiary/orc.lua"/>
     <object x="10" y="40" icon_no="583" layer="0" id="scroll" lua_name="" how_many="1" removable="yes" type="item"/>
     <object x="24" y="13" icon_no="171" layer="0" id="door1" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="24" y="16" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" removable="no" type="item"/>
-    <object x="7" y="37" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" type="monster"/>
+    <object x="7" y="37" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" type="monster" combat_script="bestiary/orc.lua"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="5" y="2">

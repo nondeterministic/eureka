@@ -312,6 +312,8 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 					new_obj.set_layer(atoi(attribute->get_value().c_str()));
 				else if (a_name == "init_script")
 					new_obj.set_init_script_path(attribute->get_value().c_str());
+				else if (a_name == "combat_script")
+					new_obj.set_combat_script_path(attribute->get_value().c_str());
 				else if (a_name == "id")
 					new_obj.id = attribute->get_value().c_str();
 				else if (a_name == "removable")
@@ -639,7 +641,6 @@ bool Map::xml_write_map_data(std::string path)
 				object_node->set_attribute("id", mapObj.id);
 				object_node->set_attribute("lua_name", mapObj.lua_name);
 				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
-				// object_node->set_attribute("init_script", mapObj.get_init_script_path());
 				object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
 				switch (mapObj.get_type()) {
 				case MAPOBJ_ITEM:
@@ -650,9 +651,10 @@ bool Map::xml_write_map_data(std::string path)
 					break;
 				}
 				tmp_coord.str("");
-				if (mapObj.get_init_script_path().length() > 0) {
+				if (mapObj.get_init_script_path().length() > 0)
 					object_node->set_attribute("init_script", mapObj.get_init_script_path());
-				}
+				if (mapObj.get_combat_script_path().length() > 0)
+					object_node->set_attribute("combat_script", mapObj.get_combat_script_path());
 			}
 		}
 

@@ -54,11 +54,14 @@ public:
   void advance_party();
   std::string noticed_monsters();
   bool create_random_monsters();
-  bool create_monsters_from(std::string);
+  bool create_monsters_from_init_path(std::string);
+  bool create_monsters_from_combat_path(std::string);
   void printcon(const std::string, bool wait = false);
   bool vowel(const char);
   boost::unordered_set<std::string> advance_foes();
   void flee_foe(int);
+  Attackers get_foes();
+  void set_foes(Attackers);
 };
 
 #endif
