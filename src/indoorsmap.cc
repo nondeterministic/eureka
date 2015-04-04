@@ -61,14 +61,17 @@ int IndoorsMap::get_tile(unsigned x, unsigned y)
 
 int IndoorsMap::set_tile(unsigned x, unsigned y, unsigned icon_no)
 {
-  if (y < _data.size() && x < (_data[0]).size())
-    {
-      (_data[y])[x] = icon_no;
+  if (y < _data.size() && x < (_data[0]).size()) {
+	  (_data[y])[x] = icon_no;
       _modified = true;
       return 0;
-    }
+  }
   return -1;
 }
+
+/**
+ * Makes the map bigger!
+ */
 
 void IndoorsMap::expand_map(int top, int bot, int right, int left)
 {

@@ -241,6 +241,9 @@ void GameControl::do_turn()
 		combat.initiate();
 	}
 	else {
+		// Move objects, e.g., attacking monsters hunting the party
+		move_objects();
+
 		if (_turns%20 == 0)
 			_clock.inc(30);
 	}
@@ -258,24 +261,54 @@ void GameControl::do_turn()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 }
 
+// TODO: Put this in a separate AI-class of sorts. This method moves objects, e.g., monsters hunting down the party
+
+void GameControl::move_objects()
+{
+	PathFinding pf(arena->get_map().get());
+
+	if (is_arena_outdoors())
+		return;
+
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj& map_obj = map_obj_pair->second;
+
+		if (map_obj.move_mode == NEUTRAL) {
+			continue;  // TODO: Maybe do some hovering around?
+		}
+
+		if (map_obj.move_mode == ATTACK) {
+			unsigned obj_x, obj_y;
+			map_obj.get_coords(obj_x, obj_y);
+
+			std::pair<unsigned,unsigned> new_coords = pf.follow_party(obj_x, obj_y, party->x, party->y);
+			map_obj.set_coords(new_coords.first, new_coords.second);
+		}
+
+		if (map_obj.move_mode == FLEE) {
+			// TODO
+		}
+	}
+}
+
 int GameControl::tick_event_handler()
 {
-  Console::Instance().animate_cursor(&normal_font);
+	Console::Instance().animate_cursor(&normal_font);
 
-  if (!arena->is_moving())
-    show_win();
+	if (!arena->is_moving())
+		show_win();
 
-  return 0;
+	return 0;
 }
 
 int GameControl::tick_event_turn_handler()
 {
-  if (++_turn_passed%25 == 0) {
-    do_turn();
-    printcon("Pass");
-  }
+	if (++_turn_passed%25 == 0) {
+		do_turn();
+		printcon("Pass");
+	}
 
-  return 0;
+	return 0;
 }
 
 int GameControl::key_event_handler(SDL_Event* remove_this_argument)
@@ -1384,99 +1417,6 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
 		gh.handle(*curr_ev, arena->get_map());
 }
-
-/*
- TODO: Leave this in until you are dead certain, that map change in the event handling functions works!
-void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
-{
-	MiniWin& mwin = MiniWin::Instance();
-
-	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++) {
-		std::shared_ptr<EventEnterMap> enter_event = std::dynamic_pointer_cast<EventEnterMap>(*curr_ev);
-
-		if (!enter_event) {
-			std::cerr << "ERROR: gamecontrol.cc:action_on_enter: enter_event is NULL.\n";
-			exit(-1);
-		}
-
-		// Before changing map, when indoors (e.g. climb down a ladder), store state
-		if (party->indoors()) {
-			std::shared_ptr<Map> new_map = arena->get_map(); // Get current map
-			IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
-			std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
-			GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
-		}
-
-		// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
-		{
-			std::shared_ptr<Map> tmp_map = World::Instance().get_map(enter_event->get_map_name().c_str());
-			IndoorsMap tmp_map2 = *((IndoorsMap*)tmp_map.get()); // Create deep copy of map because otherwise xml_load_data fucks up the map's state
-			tmp_map2.xml_load_map_data();
-			if (tmp_map2.guarded_city &&
-					(_clock.tod() == NIGHT || _clock.tod() == EARLY_MORNING || _clock.tod() == MIDNIGHT))
-			{
-				printcon("No entry. At this ungodly hour, " + enter_event->get_map_name() + " is under lock and key.");
-				do_turn();
-				return;
-			}
-		}
-
-		std::cout << "Entering " << enter_event->get_map_name() << ".\n";
-		printcon("Entering " + enter_event->get_map_name());
-
-		mwin.save_surf();
-		mwin.surface_from_file((std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" +
-							   (std::string)WORLD_NAME + "/images/indoors_city.png");
-
-		if (!party->indoors())
-			party->store_outside_coords();
-
-		arena->get_map()->unload_map_data();
-		// delete arena;
-		arena = NULL;
-
-		// There is only one landscape which can not be entered, but
-		// rather an indoors map may be left to it.  So it's safe to
-		// assume every enterable map is indoors.
-		set_arena(Arena::create("indoors", enter_event->get_map_name()));
-
-		if (arena == NULL) {
-			std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): Arena NULL.\n";
-			std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): Map name: " << enter_event->get_map_name() << ".\n";
-			exit(-1);
-		}
-		if (arena->get_map() == NULL)
-			std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): arena->get_map NULL.\n";
-
-		// If a map is stored inside the current game status, it means the player modified it in the past,
-		// and we should load it instead of loading it from the original game files.
-		boost::filesystem::path dir((std::string(getenv("HOME")) + "/.simplicissimus/" + World::Instance().get_name() + "/maps/"));
-		std::string old_map_file = dir.string() + arena->get_map()->get_name() + ".xml";
-
-		std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(arena->get_map()->get_name());
-		if (saved_map != NULL) {
-			// std::cout << "Using gamestate map.\n";
-			arena->set_map(saved_map);
-		}
-		else if (boost::filesystem::exists(old_map_file)) {
-			// std::cout << "Using save game map.\n";
-			arena->get_map()->xml_load_map_data(old_map_file);
-		}
-		else {
-			// std::cout << "Using fresh map.\n";
-			arena->get_map()->xml_load_map_data();
-		}
-
-		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
-		arena->determine_offsets();
-		set_party(enter_event->get_x(), enter_event->get_y());
-
-		party->set_indoors(true);
-	}
-
-	do_turn();
-}
-*/
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!
 //

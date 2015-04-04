@@ -17,8 +17,12 @@
 
 enum MAPOBJ_TYPES
 {
-	MAPOBJ_ITEM,
-	MAPOBJ_MONSTER
+	MAPOBJ_ITEM, MAPOBJ_MONSTER
+};
+
+enum MOVE_MODE
+{
+	ATTACK, FLEE, NEUTRAL
 };
 
 class MapObj
@@ -46,6 +50,8 @@ public:
 	std::vector<std::shared_ptr<Action>>* actions();
 	void set_foes(Attackers);
 	Attackers get_foes();
+
+	MOVE_MODE move_mode;
 
 protected:
 	MAPOBJ_TYPES _type;

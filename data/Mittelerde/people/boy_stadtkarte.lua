@@ -28,7 +28,7 @@ do
 	function load_generic_fight_file(name)
 		dofile(name) -- To enable combat, must be inserted AFTER c_values is defined!
 	end
-
+	
 	-- -----------------------------------------------
 	-- Standard terms
 	-- -----------------------------------------------

@@ -28,6 +28,7 @@
 #include "eventmanager.hh"
 #include "party.hh"
 #include "clock.hh"
+#include "pathfinding.hh"
 // #include "miniwin.hh"
 // #include "ztatswin.hh"
 #include <string>
@@ -60,6 +61,7 @@ public:
   static GameControl& Instance();
   bool is_arena_outdoors();
   void move_party(LDIR);
+  void move_objects();
   void draw_status(bool = true);
   int tick_event_handler();
   int tick_event_turn_handler();

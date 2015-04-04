@@ -330,6 +330,9 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 					new_obj.how_many = atoi(attribute->get_value().c_str());
 			}
 
+			// TODO: Add proper attribute: for now, set move_mode to neutral
+			new_obj.move_mode = NEUTRAL;
+
 			// Parse actions, if there are any associated to the object
 			for (auto action: parse_actions_node(nodeElement))
 				new_obj.add_action(action);

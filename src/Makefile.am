@@ -73,4 +73,5 @@ simplicissimus_SOURCES = \
 	shieldhelper.hh shieldhelper.cc \
 	attackers.hh attackers.cc \
 	conversation.hh conversation.cc \
+	pathfinding.hh pathfinding.cc \
 	gamestate.hh gamestate.cc
