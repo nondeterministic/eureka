@@ -241,9 +241,6 @@ void GameControl::do_turn()
 		combat.initiate();
 	}
 	else {
-		// Move objects, e.g., attacking monsters hunting the party
-		move_objects();
-
 		if (_turns%20 == 0)
 			_clock.inc(30);
 	}
@@ -265,29 +262,43 @@ void GameControl::do_turn()
 
 void GameControl::move_objects()
 {
-	PathFinding pf(arena->get_map().get());
-
 	if (is_arena_outdoors())
 		return;
 
-	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
-		MapObj& map_obj = map_obj_pair->second;
+	std::vector<MapObj> moved_objects;
 
-		if (map_obj.move_mode == NEUTRAL) {
-			continue;  // TODO: Maybe do some hovering around?
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj* map_obj = &(map_obj_pair->second);
+
+		if (map_obj->move_mode == NEUTRAL) {
+			// TODO: Maybe do some hovering around?
 		}
 
-		if (map_obj.move_mode == ATTACK) {
+		if (map_obj->move_mode == ATTACK) {
+			PathFinding pf(arena->get_map().get());
+
 			unsigned obj_x, obj_y;
-			map_obj.get_coords(obj_x, obj_y);
+			map_obj->get_coords(obj_x, obj_y);
 
 			std::pair<unsigned,unsigned> new_coords = pf.follow_party(obj_x, obj_y, party->x, party->y);
-			map_obj.set_coords(new_coords.first, new_coords.second);
+
+			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&             // If coordinates changed...
+					(new_coords.first != party->x || new_coords.second != party->y))     // If new coordinates aren't those of the party...
+			{
+				map_obj->set_coords(new_coords.first, new_coords.second);
+				moved_objects.push_back(*map_obj);
+			}
 		}
 
-		if (map_obj.move_mode == FLEE) {
+		if (map_obj->move_mode == FLEE) {
 			// TODO
 		}
+	}
+
+	// Now do the actual moving of objects on the map, i.e., remove them and reinsert them
+	for (MapObj mo: moved_objects) {
+		arena->get_map()->pop_obj(mo.id);
+		arena->get_map()->push_obj(mo);
 	}
 }
 
@@ -414,6 +425,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					printf("key_handler::default: %d (hex: %x)\n", event.key.keysym.sym, event.key.keysym.sym);
 					break;
 				}
+
+				// Move objects, e.g., attacking monsters hunting the party
+				move_objects();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);
@@ -1104,6 +1118,11 @@ bool GameControl::walk_fullspeed(int x, int y)
 
 bool GameControl::walkable(int x, int y)
 {
+	if (x >= arena->get_map()->width() || x < 0)
+		return false;
+	if (y >= arena->get_map()->height() || y < 0)
+		return false;
+
 	bool return_value = false;
 
 	if (is_arena_outdoors())
@@ -1180,7 +1199,6 @@ void GameControl::move_party(LDIR dir)
 				printcon("South");
 				sample.play(WALK);
 				y_diff = 1;
-				std::cout << "Y: " << party->y << std::endl;
 				// TODO: The -4 is necessary as show_map() creates some kind of
 				// border around the map to be displayed.  Might be able to
 				// reduce this border to 1, as 4 seems somewhat random.

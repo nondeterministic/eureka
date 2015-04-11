@@ -18,14 +18,15 @@
 class PathFinding
 {
 private:
-	unsigned _width, _height;
+	int _width, _height;
+	int**  _all_paths;
 	bool** _visited;
 
 public:
 	PathFinding(Map*);
 	~PathFinding();
-	std::pair<unsigned,unsigned> follow_party(unsigned ox, unsigned oy, unsigned px, unsigned py);
-	int has_path(unsigned ox, unsigned oy, unsigned px, unsigned py);
+	std::pair<unsigned,unsigned> follow_party(unsigned , unsigned , unsigned , unsigned );
+	int shortest_path(int, int, unsigned, unsigned);
 };
 
 #endif /* SRC_PATHFINDING_H_ */

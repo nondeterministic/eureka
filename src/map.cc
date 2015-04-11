@@ -321,17 +321,18 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 				else if (a_name == "type") {
 					if (attribute->get_value() == "item")
 						new_obj.set_type(MAPOBJ_ITEM);
-					else
+					else {
 						new_obj.set_type(MAPOBJ_MONSTER);
+
+						// TODO: Add proper attribute: for now, set move_mode to neutral
+						new_obj.move_mode = ATTACK;
+					}
 				}
 				else if (a_name == "lua_name")
 					new_obj.lua_name = attribute->get_value().c_str();
 				else if (a_name == "how_many")
 					new_obj.how_many = atoi(attribute->get_value().c_str());
 			}
-
-			// TODO: Add proper attribute: for now, set move_mode to neutral
-			new_obj.move_mode = NEUTRAL;
 
 			// Parse actions, if there are any associated to the object
 			for (auto action: parse_actions_node(nodeElement))
