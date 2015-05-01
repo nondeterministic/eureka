@@ -22,7 +22,12 @@ enum MAPOBJ_TYPES
 
 enum MOVE_MODE
 {
-	ATTACK, FLEE, NEUTRAL
+	STATIC, FLEE, FOLLOWING
+};
+
+enum PERSONALITY
+{
+	HOSTILE, NEUTRAL, RIGHTEOUS
 };
 
 class MapObj
@@ -52,6 +57,7 @@ public:
 	Attackers get_foes();
 
 	MOVE_MODE move_mode;
+	PERSONALITY personality;
 
 protected:
 	MAPOBJ_TYPES _type;

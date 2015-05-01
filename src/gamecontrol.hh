@@ -75,6 +75,7 @@ public:
   void action_on_enter(std::shared_ptr<ActionOnEnter>);
   bool leave_map();
   void talk();
+  void make_guards_hostile();
   void attack();
   void quit();
   void ztats();

@@ -20,7 +20,8 @@ MapObj::MapObj()
   removable = false;
   lua_name = "";
   how_many = 1;
-  move_mode = NEUTRAL;
+  move_mode = STATIC;
+  personality = NEUTRAL;
 }
 
 MapObj::~MapObj()

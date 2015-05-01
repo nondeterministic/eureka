@@ -269,12 +269,15 @@ void GameControl::move_objects()
 
 	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
+		unsigned obj_x, obj_y;
 
-		if (map_obj->move_mode == NEUTRAL) {
+		map_obj->get_coords(obj_x, obj_y);
+
+		if (map_obj->move_mode == STATIC) {
 			// TODO: Maybe do some hovering around?
 		}
 
-		if (map_obj->move_mode == ATTACK) {
+		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 6 && abs((int)obj_y - party->y) < 6 || map_obj->move_mode == FOLLOWING) {
 			PathFinding pf(arena->get_map().get());
 
 			unsigned obj_x, obj_y;
@@ -291,7 +294,30 @@ void GameControl::move_objects()
 		}
 
 		if (map_obj->move_mode == FLEE) {
-			// TODO
+			unsigned obj_x, obj_y;
+			map_obj->get_coords(obj_x, obj_y);
+
+			// Get list of furthest away fields from party (as the person flees...)
+			int longest_dist = abs(party->x - (int)obj_x) + abs(party->y - (int)obj_y);
+			int best_x = 0, best_y = 0;
+			int x = -1, y = -1;
+			for (; x < 2; x++) {
+				for (; y < 2; y++) {
+					if ((int)obj_x + x > 0 && (int)obj_x + x < arena->get_map()->width() - 1 &&
+							(int)obj_y + y > 0 && (int)obj_y + y < arena->get_map()->height() - 1 &&
+								walkable((int)obj_x + x, (int)obj_y + y))
+					{
+						int new_dist = abs(party->x - (int)obj_x - x) + abs(party->y - (int)obj_y - y);
+						if (new_dist >= longest_dist) {
+							longest_dist = new_dist;
+							best_x = x; best_y = y;
+						}
+					}
+				}
+			}
+
+			map_obj->set_coords((int)obj_x + best_x, (int)obj_y + best_y);
+			moved_objects.push_back(*map_obj);
 		}
 	}
 
@@ -784,6 +810,19 @@ void GameControl::drop_items()
 	mwin.display_last();
 }
 
+// Makes all guards of a town turn hostile (e.g., after committing a crime)
+
+void GameControl::make_guards_hostile()
+{
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj* map_obj = &(map_obj_pair->second);
+
+		// If MapObj ID contains the string "guard", it is a guard and will be set to hostile
+		if (map_obj->id.find("guard") != std::string::npos)
+			map_obj->personality = HOSTILE;
+	}
+}
+
 // This attack is only called executed when INDOORS, cf. first if statement!
 
 void GameControl::attack()
@@ -812,6 +851,11 @@ void GameControl::attack()
 				if (the_obj.get_init_script_path().length() > 0) {
 					Combat combat;
 					combat.create_monsters_from_init_path(the_obj.get_init_script_path());
+
+					// If a town folk is attacked, the guards are alerted, and folks flee afterwards
+					make_guards_hostile();
+					the_obj.move_mode = FLEE;
+
 					if (combat.initiate())
 						get_map()->pop_obj(the_obj.id);
 					return;

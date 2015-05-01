@@ -9,18 +9,16 @@ TODO
 
 - NPCs
 
-- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
-
 - Locks
-
-- DONE: Save/load game.  Store modified city maps?
-  (Add additional items, TODO)
 
 - Consume (DONE)/buy (TODO) food
 
 - Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
 
 - Rest party
+
+MISC
+=====
 
 - Good battle music?
   http://www.youtube.com/watch?v=GGU1P6lBW6Q
@@ -54,6 +52,11 @@ TODO
 
 DONE
 =====
+
+- DONE: Save/load game.  Store modified city maps?
+  (Add additional items, TODO)
+
+- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
  
 - Add weapons, arms, etc. from elements.xml.old to main elements.xml
   and extend world.cc to read and use these properties.  [DONE]

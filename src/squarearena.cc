@@ -386,7 +386,9 @@ void SquareArena::show_map(int x_width, int y_width)
 
 				// Now draw the objects
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
-					if (in_los(x, y, party_x, party_y)) {
+					if (in_los(x, y, party_x, party_y) &&
+							(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) // See comment above for this part of the if-statement!
+					{
 						int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
 						if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))

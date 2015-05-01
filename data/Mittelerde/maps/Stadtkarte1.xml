@@ -59,16 +59,21 @@
     <object x="23" y="17" icon_no="64" layer="0" id="4" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="34" y="7" icon_no="647" layer="0" id="5" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="31" y="5" icon_no="646" layer="0" id="6" lua_name="" how_many="1" removable="no" type="item"/>
-    <object x="17" y="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
+    <object x="17" y="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" type="monster" 
+    		personality="neutral" init_script="people/guard.lua"/>
     <object x="26" y="17" icon_no="137" layer="0" id="7" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="30" y="5" icon_no="642" layer="0" id="8" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="20" y="16" icon_no="21" layer="0" id="9" lua_name="" how_many="1" removable="no" type="item"/>
-    <object x="22" y="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" type="monster" init_script="people/boy_stadtkarte.lua"/>
+    <object x="22" y="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" type="monster"
+    		personality="righteous" init_script="people/boy_stadtkarte.lua"/>
     <object x="23" y="3" icon_no="308" layer="0" id="10" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="11" y="7" icon_no="93" layer="0" id="11" lua_name="" how_many="1" removable="no" type="item"/>
-    <object x="7" y="4" icon_no="126" layer="0" id="guard1" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
-    <object x="31" y="7" icon_no="58" layer="0" id="12" lua_name="" how_many="1" removable="no" type="monster" init_script="people/blacksmith.lua"/>
-    <object x="7" y="7" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1" removable="no" type="monster" init_script="people/guard.lua"/>
+    <object x="7" y="4" icon_no="126" layer="0" id="guard1" lua_name="" how_many="1" removable="no" type="monster"
+    		init_script="people/guard.lua"/>
+    <object x="31" y="7" icon_no="58" layer="0" id="12" lua_name="" 
+  			how_many="1" removable="no" type="monster" personality="righteous" init_script="people/blacksmith.lua"/>
+    <object x="7" y="7" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1" removable="no" type="monster" 
+    		init_script="people/guard.lua"/>
     <object x="23" y="9" icon_no="137" layer="0" id="13" lua_name="" how_many="1" removable="no" type="item"/>
     <object x="11" y="4" icon_no="93" layer="0" id="14" lua_name="" how_many="1" removable="no" type="item"/>
   </objects>

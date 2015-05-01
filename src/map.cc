@@ -294,6 +294,8 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 		MapObj new_obj;
 		int x = 0, y = 0;
 
+		// NOTE THAT default values for the below are set inside MapObj.cc.
+
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*iter);
 		if (nodeElement) {
 			const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
@@ -317,16 +319,24 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 				else if (a_name == "id")
 					new_obj.id = attribute->get_value().c_str();
 				else if (a_name == "removable")
-					new_obj.removable = attribute->get_value() == "yes";
+					new_obj.removable = attribute->get_value().uppercase() == "YES";
+				else if (a_name == "personality") {
+					if (attribute->get_value().uppercase() == "HOSTILE")
+						new_obj.personality = HOSTILE;
+					else if (attribute->get_value().uppercase() == "RIGHTEOUS")
+						new_obj.personality = RIGHTEOUS;
+				}
+				else if (a_name == "move_mode") {
+					if (attribute->get_value().uppercase() == "FLEE")
+						new_obj.move_mode = FLEE;
+					else if (attribute->get_value().uppercase() == "FOLLOWING")
+						new_obj.move_mode = FOLLOWING;
+				}
 				else if (a_name == "type") {
-					if (attribute->get_value() == "item")
+					if (attribute->get_value().uppercase() == "ITEM")
 						new_obj.set_type(MAPOBJ_ITEM);
-					else {
+					else
 						new_obj.set_type(MAPOBJ_MONSTER);
-
-						// TODO: Add proper attribute: for now, set move_mode to neutral
-						new_obj.move_mode = ATTACK;
-					}
 				}
 				else if (a_name == "lua_name")
 					new_obj.lua_name = attribute->get_value().c_str();
@@ -646,6 +656,21 @@ bool Map::xml_write_map_data(std::string path)
 				object_node->set_attribute("lua_name", mapObj.lua_name);
 				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
 				object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
+
+				if (mapObj.personality == HOSTILE)
+					object_node->set_attribute("personality","hostile");
+				else if (mapObj.personality == RIGHTEOUS)
+					object_node->set_attribute("personality","righteous");
+				else
+					object_node->set_attribute("personality","neutral");
+
+				if (mapObj.move_mode == FLEE)
+					object_node->set_attribute("move_mode","flee");
+				else if (mapObj.move_mode == FOLLOWING)
+					object_node->set_attribute("move_mode","following");
+				else
+					object_node->set_attribute("move_mode","static");
+
 				switch (mapObj.get_type()) {
 				case MAPOBJ_ITEM:
 					object_node->set_attribute("type", "item");

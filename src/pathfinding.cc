@@ -79,7 +79,7 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 
 int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 {
-	if (abs(ox - px) == 1 && abs(oy - py) == 1)
+	if (abs(ox - (int)px) == 1 && abs(oy - (int)py) == 1)
 		return 1;
 
 	if (ox == (int)px && oy == (int)py)
