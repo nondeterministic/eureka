@@ -292,7 +292,7 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 	xmlpp::Node::NodeList list = node->get_children();
 	for (xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 		MapObj new_obj;
-		int x = 0, y = 0;
+		int x = 0, y = 0, ox = 0, oy = 0;
 
 		// NOTE THAT default values for the below are set inside MapObj.cc.
 
@@ -308,6 +308,10 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 					x = atoi(attribute->get_value().c_str());
 				else if (a_name == "y")
 					y = atoi(attribute->get_value().c_str());
+				else if (a_name == "ox")
+					ox = atoi(attribute->get_value().c_str());
+				else if (a_name == "oy")
+					oy = atoi(attribute->get_value().c_str());
 				else if (a_name == "icon_no")
 					new_obj.set_icon(atoi(attribute->get_value().c_str()));
 				else if (a_name == "layer")
@@ -335,8 +339,12 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 				else if (a_name == "type") {
 					if (attribute->get_value().uppercase() == "ITEM")
 						new_obj.set_type(MAPOBJ_ITEM);
-					else
+					else if (attribute->get_value().uppercase() == "MONSTER")
 						new_obj.set_type(MAPOBJ_MONSTER);
+					else if (attribute->get_value().uppercase() == "PERSON")
+						new_obj.set_type(MAPOBJ_PERSON);
+					else
+						new_obj.set_type(MAPOBJ_ANIMAL);
 				}
 				else if (a_name == "lua_name")
 					new_obj.lua_name = attribute->get_value().c_str();
@@ -349,6 +357,13 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 				new_obj.add_action(action);
 
 			new_obj.set_coords(x, y);
+
+			if (ox != 0 || oy != 0)
+				new_obj.set_origin(ox, oy);
+
+			if (new_obj.get_type() != MAPOBJ_ITEM && (ox != 0 || oy != 0))
+				new_obj.set_coords(ox, oy);
+
 			push_obj(new_obj);
 		}
 	}
@@ -635,23 +650,19 @@ bool Map::xml_write_map_data(std::string path)
 
 			for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
 				xmlpp::Element* object_node = objects_node->add_child("object");
-				unsigned x, y;
 				MapObj mapObj = curr_obj->second;
+				unsigned x, y;
+				unsigned ox, oy;
 
 				mapObj.get_coords(x, y);
-				std::stringstream tmp_coord;
-				tmp_coord << x;
-				object_node->set_attribute("x", tmp_coord.str());
-				tmp_coord.str("");
-				tmp_coord << y;
-				object_node->set_attribute("y", tmp_coord.str());
-				tmp_coord.str("");
-				tmp_coord << mapObj.get_icon();
-				object_node->set_attribute("icon_no", tmp_coord.str());
-				tmp_coord.str("");
-				tmp_coord << mapObj.get_layer();
-				object_node->set_attribute("layer", tmp_coord.str());
-				tmp_coord.str("");
+				mapObj.get_origin(ox, oy);
+
+				object_node->set_attribute("x", std::to_string(x));
+				object_node->set_attribute("y", std::to_string(y));
+				object_node->set_attribute("ox", std::to_string(ox));
+				object_node->set_attribute("oy", std::to_string(oy));
+				object_node->set_attribute("icon_no", std::to_string(mapObj.get_icon()));
+				object_node->set_attribute("layer", std::to_string(mapObj.get_layer()));
 				object_node->set_attribute("id", mapObj.id);
 				object_node->set_attribute("lua_name", mapObj.lua_name);
 				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
@@ -675,11 +686,16 @@ bool Map::xml_write_map_data(std::string path)
 				case MAPOBJ_ITEM:
 					object_node->set_attribute("type", "item");
 					break;
+				case MAPOBJ_ANIMAL:
+					object_node->set_attribute("type", "animal");
+					break;
+				case MAPOBJ_PERSON:
+					object_node->set_attribute("type", "person");
+					break;
 				default:
 					object_node->set_attribute("type", "monster");
 					break;
 				}
-				tmp_coord.str("");
 				if (mapObj.get_init_script_path().length() > 0)
 					object_node->set_attribute("init_script", mapObj.get_init_script_path());
 				if (mapObj.get_combat_script_path().length() > 0)

@@ -4,6 +4,35 @@
 -- -----------------------------------------------
 
 do
+	-- --------------------------------------------------------
+	-- Define character values for either party-join or a fight
+	-- --------------------------------------------------------
+
+	c_values = { 
+		name = "Feltos", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
+		iq = 15, endd = 7, sex = "MALE", profession = "TINKER", weapon = Weapons["axe"], shield = Shields["small shield"] 
+	} 
+
+	-- -----------------------------------------------
+	-- Standard functions
+	-- -----------------------------------------------
+
+	function get_weapon()
+		return c_values["weapon"].name
+	end
+
+	function get_shield()
+		return c_values["shield"].name
+	end
+
+	function load_generic_fight_file(name)
+		dofile(name) -- To enable combat, must be inserted AFTER c_values is defined!
+	end
+	
+	-- -----------------------------------------------
+	-- Standard terms
+	-- -----------------------------------------------
+
     -- Items for sale
 	items = {}
 	items[0] = Weapons["axe"]

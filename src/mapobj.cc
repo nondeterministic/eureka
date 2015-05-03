@@ -16,6 +16,8 @@ MapObj::MapObj()
   _layer = 0;
   _x = 0; 
   _y = 0;
+  _ox = 0;
+  _oy = 0;
   _icon = 0;
   removable = false;
   lua_name = "";
@@ -93,6 +95,17 @@ void MapObj::get_coords(unsigned& x, unsigned& y)
 {
   x = _x;
   y = _y;
+}
+
+void MapObj::set_origin(unsigned x, unsigned y)
+{
+  _ox = x; _oy = y;
+}
+
+void MapObj::get_origin(unsigned& x, unsigned& y)
+{
+  x = _ox;
+  y = _oy;
 }
 
 void MapObj::set_icon(unsigned no)

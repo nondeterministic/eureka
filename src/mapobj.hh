@@ -17,7 +17,7 @@
 
 enum MAPOBJ_TYPES
 {
-	MAPOBJ_ITEM, MAPOBJ_MONSTER
+	MAPOBJ_ITEM, MAPOBJ_MONSTER, MAPOBJ_PERSON, MAPOBJ_ANIMAL
 };
 
 enum MOVE_MODE
@@ -35,6 +35,8 @@ class MapObj
 public:
 	MapObj();
 	~MapObj();
+	void set_origin(unsigned, unsigned);
+	void get_origin(unsigned&, unsigned&);
 	void set_coords(unsigned, unsigned);
 	void get_coords(unsigned&, unsigned&);
 	void set_icon(unsigned);
@@ -63,7 +65,8 @@ protected:
 	MAPOBJ_TYPES _type;
 	int _layer;
 	int _icon;
-	unsigned _x, _y;
+	unsigned _x, _y;  // current pos
+	unsigned _ox, _oy; // origin
 	std::string _init_script;
 	std::string _combat_script;
 	std::vector<std::shared_ptr<Action>> _actions;

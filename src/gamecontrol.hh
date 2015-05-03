@@ -29,6 +29,7 @@
 #include "party.hh"
 #include "clock.hh"
 #include "pathfinding.hh"
+#include "mapobj.hh"
 // #include "miniwin.hh"
 // #include "ztatswin.hh"
 #include <string>
@@ -75,8 +76,9 @@ public:
   void action_on_enter(std::shared_ptr<ActionOnEnter>);
   bool leave_map();
   void talk();
-  void make_guards_hostile();
+  void make_guards(PERSONALITY);
   void attack();
+  void get_attacked();
   void quit();
   void ztats();
   void drop_items();

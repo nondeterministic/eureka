@@ -64,6 +64,7 @@ extern "C" {
 #include "actiontake.hh"
 #include "actionpullpush.hh"
 #include "eventermap.hh"
+#include "mapobj.hh"
 #include "hexarena.hh"
 #include "world.hh"
 #include "miniwin.hh"
@@ -273,11 +274,19 @@ void GameControl::move_objects()
 
 		map_obj->get_coords(obj_x, obj_y);
 
+		// STATIC
 		if (map_obj->move_mode == STATIC) {
 			// TODO: Maybe do some hovering around?
 		}
 
-		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 6 && abs((int)obj_y - party->y) < 6 || map_obj->move_mode == FOLLOWING) {
+		// FOLLOW
+		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 6 && abs((int)obj_y - party->y) < 6 ||
+					map_obj->move_mode == FOLLOWING)
+		{
+			// Only follow each round with 70% probability or the following leaves the player no space to breathe
+			if (random(0,100) < 40)
+				break;
+
 			PathFinding pf(arena->get_map().get());
 
 			unsigned obj_x, obj_y;
@@ -293,18 +302,22 @@ void GameControl::move_objects()
 			}
 		}
 
+		// FLEE
 		if (map_obj->move_mode == FLEE) {
+			// Only flee each round with 70% probability or the fleeing leaves the player no chance to ever catch up
+			if (random(0,100) < 40)
+				break;
+
 			unsigned obj_x, obj_y;
 			map_obj->get_coords(obj_x, obj_y);
 
 			// Get list of furthest away fields from party (as the person flees...)
 			int longest_dist = abs(party->x - (int)obj_x) + abs(party->y - (int)obj_y);
 			int best_x = 0, best_y = 0;
-			int x = -1, y = -1;
-			for (; x < 2; x++) {
-				for (; y < 2; y++) {
-					if ((int)obj_x + x > 0 && (int)obj_x + x < arena->get_map()->width() - 1 &&
-							(int)obj_y + y > 0 && (int)obj_y + y < arena->get_map()->height() - 1 &&
+			for (int x = -1; x < 2; x++) {
+				for (int y = -1; y < 2; y++) {
+					if ((int)obj_x + x > 0 && (int)obj_x + x < arena->get_map()->width() - 3 &&
+							(int)obj_y + y > 0 && (int)obj_y + y < arena->get_map()->height() - 3 &&
 								walkable((int)obj_x + x, (int)obj_y + y))
 					{
 						int new_dist = abs(party->x - (int)obj_x - x) + abs(party->y - (int)obj_y - y);
@@ -454,6 +467,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 
 				// Move objects, e.g., attacking monsters hunting the party
 				move_objects();
+
+				// If there are hostile monsters next to the party, they may want to attack now...
+				get_attacked();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);
@@ -810,19 +826,69 @@ void GameControl::drop_items()
 	mwin.display_last();
 }
 
-// Makes all guards of a town turn hostile (e.g., after committing a crime)
+// Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.
 
-void GameControl::make_guards_hostile()
+void GameControl::make_guards(PERSONALITY pers)
 {
 	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 
 		// If MapObj ID contains the string "guard", it is a guard and will be set to hostile
 		if (map_obj->id.find("guard") != std::string::npos)
-			map_obj->personality = HOSTILE;
+			map_obj->personality = pers;
 	}
 }
 
+// The "opposite" of attack(), so to speak.
+// Lets those hostile objects attack the party if next to it.
+
+void GameControl::get_attacked()
+{
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj* map_obj = &(map_obj_pair->second);
+		unsigned obj_x, obj_y;
+		map_obj->get_coords(obj_x, obj_y);
+
+		if (map_obj->personality == HOSTILE) {
+			if (abs(party->x - (int)obj_x) <= 1 && abs(party->y - (int)obj_y) <= 1) {
+				if (map_obj->get_type() == MAPOBJ_PERSON) {
+					if (map_obj->get_init_script_path().length() > 0) {
+						Combat combat;
+						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
+						if (combat.initiate())
+							get_map()->pop_obj(map_obj->id);
+						return;
+					}
+				}
+				else if (map_obj->get_type() == MAPOBJ_MONSTER) {
+					// We have foes from previous attack left, so do not initiate fresh combat
+					if (map_obj->get_foes().size() > 0) {
+						Combat combat;
+						combat.set_foes(map_obj->get_foes());
+						if (combat.initiate()) {
+							get_map()->pop_obj(map_obj->id);
+							return;
+						}
+						map_obj->set_foes(combat.get_foes());
+						return;
+					}
+					else if (map_obj->get_combat_script_path().length() > 0) {
+						Combat combat;
+						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
+						if (combat.initiate()) {
+							get_map()->pop_obj(map_obj->id);
+							return;
+						}
+						map_obj->set_foes(combat.get_foes());
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
+// If the user pressed (a)...
 // This attack is only called executed when INDOORS, cf. first if statement!
 
 void GameControl::attack()
@@ -845,19 +911,37 @@ void GameControl::attack()
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
 
-			if (the_obj.get_type() == MAPOBJ_MONSTER) {
-				// Indoor monsters either have a combat_script OR a init_script attribute but *NEVER* both!
-				// Init script usually means the player can talk to them...
+			// Indoor monsters either have a combat_script OR a init_script attribute but *NEVER* both!
+			// Init script usually means the player can talk to them...
+			if (the_obj.get_type() == MAPOBJ_PERSON) {
+				// We initiate fresh combat
 				if (the_obj.get_init_script_path().length() > 0) {
 					Combat combat;
 					combat.create_monsters_from_init_path(the_obj.get_init_script_path());
 
 					// If a town folk is attacked, the guards are alerted, and folks flee afterwards
-					make_guards_hostile();
 					the_obj.move_mode = FLEE;
+					make_guards(HOSTILE);
 
 					if (combat.initiate())
 						get_map()->pop_obj(the_obj.id);
+					return;
+				}
+				else {
+					printcon("You use your charms, but there is no response");
+					return;
+				}
+			}
+			else if (the_obj.get_type() == MAPOBJ_MONSTER) {
+				// We initiate fresh combat
+				if (the_obj.get_combat_script_path().length() > 0) {
+					Combat combat;
+					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
+					if (combat.initiate()) {
+						get_map()->pop_obj(the_obj.id);
+						return;
+					}
+					the_obj.set_foes(combat.get_foes());
 					return;
 				}
 				// We have foes from previous attack left, so do not initiate fresh combat
@@ -871,25 +955,19 @@ void GameControl::attack()
 					the_obj.set_foes(combat.get_foes());
 					return;
 				}
-				// We initiate fresh combat
-				else if (the_obj.get_combat_script_path().length() > 0) {
-					Combat combat;
-					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
-					if (combat.initiate()) {
-						get_map()->pop_obj(the_obj.id);
-						return;
-					}
-					the_obj.set_foes(combat.get_foes());
-					return;
-				}
 				else {
 					printcon("You use your charms, but there is no response");
 					return;
 				}
 			}
+			else if (the_obj.get_type() == MAPOBJ_ANIMAL) {
+				the_obj.move_mode = FLEE;
+				printcon("Should you really attack an innocent animal?");
+				return;
+			}
 		}
 	}
-	printcon("No one there. Try taking a deep breath instead.");
+	printcon("No one there to attack. Try taking a deep breath instead.");
 }
 
 void GameControl::talk()
@@ -915,7 +993,7 @@ void GameControl::talk()
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
 
-			if (the_obj.get_type() == MAPOBJ_MONSTER) {
+			if (the_obj.get_type() == MAPOBJ_PERSON) {
 				if (the_obj.get_init_script_path().length() > 0) {
 					Conversation conv(the_obj);
 					conv.initiate();
@@ -1099,12 +1177,7 @@ void GameControl::look()
 		printcon("You see " + IndoorsIcons::Instance().get_props(icon_no)->get_name());
 
 		// Return range of found objects at given location
-		std::pair
-		<boost::unordered_multimap
-		<std::pair<unsigned, unsigned>, MapObj>::iterator,
-		boost::unordered_multimap
-		<std::pair<unsigned, unsigned>, MapObj>::iterator>
-		found_obj = arena->get_map()->objs()->equal_range(coords);
+		auto found_obj = arena->get_map()->objs()->equal_range(coords);
 
 		if (found_obj.first != found_obj.second) {
 			std::stringstream ss;
@@ -1162,17 +1235,35 @@ bool GameControl::walk_fullspeed(int x, int y)
 
 bool GameControl::walkable(int x, int y)
 {
-	if (x >= arena->get_map()->width() || x < 0)
+	if (x >= (int)(arena->get_map()->width()) || x < 0)
 		return false;
-	if (y >= arena->get_map()->height() || y < 0)
+	if (y >= (int)(arena->get_map()->height()) || y < 0)
 		return false;
 
 	bool return_value = false;
 
 	if (is_arena_outdoors())
 		return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
-	else
+	else {
 		return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
+
+		// Don't walk over monsters...
+		if (!return_value) {
+			auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+			if (found_obj.first != found_obj.second) {
+				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+					MapObj& map_obj = curr_obj->second;
+
+					if (map_obj.get_type() == MAPOBJ_MONSTER)
+						return false;
+					else if (map_obj.get_type() == MAPOBJ_ANIMAL)
+						return false;
+					else if (map_obj.get_type() == MAPOBJ_PERSON)
+						return false;
+				}
+			}
+		}
+	}
 
 	return !return_value;
 }
@@ -1491,6 +1582,42 @@ bool GameControl::leave_map()
 
 	switch (em->get_key("yn")) {
 	case 'y': {
+		// Put animate objects back to their origins, not their last x and y coordinates
+		{
+			std::vector<MapObj> tempObjs;
+			for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+				MapObj& map_obj = map_obj_pair->second;
+
+				if (map_obj.get_type() != MAPOBJ_ITEM) {
+					unsigned ox, oy;
+					map_obj.get_origin(ox, oy);
+					if (ox != 0 || oy != 0) {
+						cout << "Resetting coords for " << map_obj.id << "\n";
+						map_obj.set_coords(ox, oy);
+
+						// Make guards neutral on reentry
+						if (map_obj.id.find("guard") != std::string::npos)
+							map_obj.personality = NEUTRAL;
+
+						// TODO: Next three lines for testing only
+						unsigned x, y;
+						map_obj.get_coords(x, y);
+						cout << "Origin == current? " << (ox == x && oy == y) << "\n\n";
+					}
+				}
+
+				tempObjs.push_back(map_obj);
+			}
+
+			// Now reinsert objects into hash map...
+			arena->get_map()->objs()->clear();
+			for (auto mobj: tempObjs) {
+				unsigned x, y;
+				mobj.get_coords(x, y);
+				arena->get_map()->objs()->insert(std::make_pair(std::make_pair(x, y), mobj));
+			}
+		}
+
 		// Before leaving, store map changes in GameState object
 		std::shared_ptr<Map> new_map = arena->get_map();
 		std::shared_ptr<IndoorsMap> ind_map = std::dynamic_pointer_cast<IndoorsMap>(new_map);
