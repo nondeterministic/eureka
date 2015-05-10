@@ -81,6 +81,7 @@ public:
   boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* objs();
 
   bool guarded_city;
+  bool is_dungeon;
 
 protected:
   // Variables

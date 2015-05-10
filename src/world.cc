@@ -172,16 +172,13 @@ std::vector<Creature>* World::get_creatures()
 
 bool World::xml_load_world_data(const char* filename)
 {
-    try
-    {
-        xmlpp::TextReader reader(filename);
+	try {
+    	xmlpp::TextReader reader(filename);
 
         // The reader.next() is necessary to skip the closing tags.
         // Don't know how else to do it.
-        while (reader.read())
-        {
-            if (reader.get_name() == "name")
-            {
+        while (reader.read()) {
+            if (reader.get_name() == "name") {
                 _name = reader.read_string();
                 boost::filesystem::path filepath(filename);
                 _path = filepath.parent_path().string() + "/";
@@ -194,13 +191,13 @@ bool World::xml_load_world_data(const char* filename)
 
                 reader.move_to_first_attribute();
                 do {
-                    if (reader.get_name() == "href") {
+                    if (reader.get_name().uppercase() == "HREF") {
                         new_map_path = reader.get_value();
                     }
-                    else if (reader.get_name() == "type") {
-                        if (reader.get_value() == "indoors")
+                    else if (reader.get_name().uppercase() == "TYPE") {
+                        if (reader.get_value().uppercase() == "INDOORS")
                             new_map = std::make_shared<IndoorsMap>(new_map_name.c_str(), new_map_path.c_str());
-                        else if (reader.get_value() == "outdoors")
+                        else // if (reader.get_value().uppercase() == "OUTDOORS")
                             new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str(), new_map_path.c_str());
                     }
                 }

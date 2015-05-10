@@ -30,6 +30,7 @@ public:
   int x, y;
   
   static Party& Instance();
+  int current_light_source_radius();
   void add_player(PlayerCharacter);
   PlayerCharacter* get_player(int);
   PlayerCharacter* get_player(std::string);

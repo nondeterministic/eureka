@@ -47,7 +47,7 @@ OutdoorsMap::~OutdoorsMap()
 {
 }
 
-bool OutdoorsMap::is_outdoors(void) const
+bool OutdoorsMap::is_outdoors() const
 {
   return true;
 }

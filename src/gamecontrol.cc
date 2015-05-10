@@ -1514,6 +1514,11 @@ std::pair<int, int> GameControl::get_viewport()
 {
 	int x = 0; // Default: maximum viewport, bright as day!
 
+	if (arena->get_map()->is_dungeon) {
+		int rad = max(2, party->current_light_source_radius());
+		return std::make_pair(rad,rad);
+	}
+
 	switch (_clock.tod()) {
 	case EARLY_MORNING:
 		x = 8 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
@@ -1535,6 +1540,7 @@ std::pair<int, int> GameControl::get_viewport()
 	}
 
 	// It's a square view!
+
 	return std::make_pair(x,x);
 }
 
@@ -1599,10 +1605,7 @@ bool GameControl::leave_map()
 						if (map_obj.id.find("guard") != std::string::npos)
 							map_obj.personality = NEUTRAL;
 
-						// TODO: Next three lines for testing only
-						unsigned x, y;
-						map_obj.get_coords(x, y);
-						cout << "Origin == current? " << (ox == x && oy == y) << "\n\n";
+						// TODO: Should we reset the FLEEING flag as well?! I think so...
 					}
 				}
 

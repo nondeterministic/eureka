@@ -30,6 +30,8 @@ public:
   ~OutdoorsMap();
 
   bool is_outdoors() const;
+  bool is_dungeon() const;
+  void set_dungeon(bool);
   int get_tile(unsigned, unsigned);
   int set_tile(unsigned, unsigned, unsigned);
   void expand_map(int, int, int, int);

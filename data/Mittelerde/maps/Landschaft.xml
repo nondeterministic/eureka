@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <map>
   <name>Landschaft</name>
-  <outdoors>true</outdoors>
+  <dungeon>false</dungeon>
   <data>
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</row>
     <row>0 0 0 0 0 1 0 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 0 0 0 0 0 0 1 0 0 0 0</row>

@@ -24,15 +24,20 @@
 
 class IndoorsMap : public Map
 {
-public:
-  IndoorsMap(unsigned, unsigned);
-  IndoorsMap(const char*, const char*);
-  ~IndoorsMap();
+private:
+	bool _is_dungeon;
 
-  bool is_outdoors() const;
-  int get_tile(unsigned, unsigned);
-  int set_tile(unsigned, unsigned, unsigned);
-  void expand_map(int, int, int, int);
+public:
+	IndoorsMap(unsigned, unsigned);
+	IndoorsMap(const char*, const char*);
+	~IndoorsMap();
+
+	bool is_outdoors() const;
+	bool is_dungeon() const;
+	void set_dungeon(bool);
+	int get_tile(unsigned, unsigned);
+	int set_tile(unsigned, unsigned, unsigned);
+	void expand_map(int, int, int, int);
 };
 
 #endif

@@ -49,6 +49,7 @@
 
 Map::Map()
 {
+	is_dungeon = false;
 	guarded_city = false;
 	_modified = true;
 	// _main_map_xml_root = NULL;
@@ -57,6 +58,7 @@ Map::Map()
 
 Map::Map(const Map& p)
 {
+	is_dungeon = p.is_dungeon;
 	guarded_city = p.guarded_city;
 	_name = p._name;
 	_modified = p._modified;
@@ -497,21 +499,20 @@ void Map::parse_data_node(const xmlpp::Node* node)
 void Map::parse_node(const xmlpp::Node* node)
 {
 	const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
-	const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
+	const xmlpp::Element*     nodeElement = dynamic_cast<const xmlpp::Element*>(node);
 
 	if (nodeElement) {
-		// TODO: This is not very nice design, perhaps:
-		// We don't read the outdoors tag, because at this stage, either
-		// an indoors or outdoors map was already created by World().
-		if (nodeElement->get_name() == "name")
+		if (nodeElement->get_name().uppercase() == "NAME")
 			_name = nodeElement->get_child_text()->get_content();
-		else if (nodeElement->get_name() == "guarded_city")
-			guarded_city = nodeElement->get_child_text()->get_content() == "true"? true : false;
-		else if (nodeElement->get_name() == "objects")
+		else if (nodeElement->get_name().uppercase() == "DUNGEON")
+			is_dungeon = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
+		else if (nodeElement->get_name().uppercase() == "GUARDED_CITY")
+			guarded_city = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
+		else if (nodeElement->get_name().uppercase() == "OBJECTS")
 			parse_objects_node(node);
-		else if (nodeElement->get_name() == "data")
+		else if (nodeElement->get_name().uppercase() == "DATA")
 			parse_data_node(node);
-		else if (nodeElement->get_name() == "actions") {
+		else if (nodeElement->get_name().uppercase() == "ACTIONS") {
 			std::vector<std::shared_ptr<Action>> actions = parse_actions_node(node);
 			for (auto action : actions)
 				add_action(action);
@@ -629,9 +630,9 @@ bool Map::xml_write_map_data(std::string path)
 		// TODO: Check if _main_map_xml_root needs to be deleted again.
 		_main_map_xml_root = _main_map_xml_file->create_root_node("map");
 		_main_map_xml_root->add_child("name")->add_child_text(_name);
-		_main_map_xml_root->
-		add_child("outdoors")->
-		add_child_text((is_outdoors()? "true" : "false"));
+		_main_map_xml_root->add_child("outdoors")->add_child_text((is_outdoors()? "true" : "false"));
+		_main_map_xml_root->add_child("dungeon")->add_child_text((is_dungeon? "true" : "false"));
+		_main_map_xml_root->add_child("guarded_city")->add_child_text((guarded_city? "true" : "false"));
 		xmlpp::Element* data_entry = _main_map_xml_root->add_child("data");
 		std::ostringstream curr_row;
 

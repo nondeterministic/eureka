@@ -37,6 +37,11 @@ Party& Party::Instance()
   return inst;
 }
 
+int Party::current_light_source_radius()
+{
+	return 0;
+}
+
 int Party::gold()
 {
   return _gold;
