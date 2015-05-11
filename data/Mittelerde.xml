@@ -153,8 +153,8 @@
       <icon no="144" trans="full" walk="full">nothing special</icon>
       <icon no="145" trans="full" walk="full">nothing special</icon>
       <icon no="146" trans="full" walk="full">nothing special</icon>
-      <icon no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav">torch</icon>
-      <icon no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav">torch</icon>
+      <icon no="147" trans="not" walk="not" light_radius="4" next_anim="148" sound_effect="torch.wav">torch</icon>
+      <icon no="148" trans="not" walk="not" light_radius="4" next_anim="147" sound_effect="torch.wav">torch</icon>
       <icon no="149" trans="full" walk="full">nothing special</icon>
       <icon no="150" trans="full" walk="full">nothing special</icon>
       <icon no="151" trans="full" walk="full">nothing special</icon>

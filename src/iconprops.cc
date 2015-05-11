@@ -11,11 +11,12 @@
 
 IconProps::IconProps()
 {
-  _icon = 0;
-  _next_anim = -1;
-  _flags = FULLY_TRANS + WALK_FULLSPEED;
-  _name = "nothing special";
-  _seffect = "";
+	_radius = 0;
+	_icon = 0;
+	_next_anim = -1;
+	_flags = FULLY_TRANS + WALK_FULLSPEED;
+	_name = "nothing special";
+	_seffect = "";
 }
 
 IconProps::~IconProps()
@@ -50,6 +51,16 @@ void IconProps::add_flags(int flags)
 void IconProps::rm_flags(int flags)
 {
   _flags -= flags;
+}
+
+int IconProps::light_radius()
+{
+	return _radius;
+}
+
+void IconProps::set_light_radius(int r)
+{
+	_radius = r;
 }
 
 std::string IconProps::get_name(void)

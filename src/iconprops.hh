@@ -41,12 +41,15 @@ public:
   int next_anim();
   std::string sound_effect();
   void set_sound_effect(std::string);
+  void set_light_radius(int);
+  int light_radius();
   
 protected:
   unsigned _icon;
   std::string _name;
   int _flags;
   int _next_anim;
+  int _radius;
   std::string _seffect;
 };
 

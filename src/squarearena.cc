@@ -299,6 +299,26 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
   return true;
 }
 
+// Returns true if tile x,y is within the radius of a light source, false otherwise
+
+bool SquareArena::is_illuminated(int x, int y)
+{
+	for (auto map_obj_pair = _map->objs()->begin(); map_obj_pair != _map->objs()->end(); map_obj_pair++) {
+		MapObj& obj = map_obj_pair->second;
+		int radius  = IndoorsIcons::Instance().get_props(obj.get_icon())->light_radius();
+
+		if (radius > 0) {
+			unsigned objx, objy;
+			obj.get_coords(objx, objy);
+
+			if (abs((int)objx - radius) <= 4 && abs((int)objy - y) <= radius)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * x_width and y_width define how large the viewing rectangle should be. Default is 0 for both which means
  * as large as the window allows.  Other values, such as 4 or 6, etc. are there to reflect an increasingly
@@ -370,10 +390,12 @@ void SquareArena::show_map(int x_width, int y_width)
 			if (_show_map) {
 				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.
 				if (in_los(x, y, party_x, party_y) &&
-					(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)))
+						((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) ||
+							is_illuminated((int)x, (int)y)))
 				{
 					if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
 						std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+
 				}
 			}
 
@@ -386,13 +408,13 @@ void SquareArena::show_map(int x_width, int y_width)
 
 				// Now draw the objects
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
-					if (in_los(x, y, party_x, party_y) &&
-							(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) // See comment above for this part of the if-statement!
-					{
-						int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
+					if (in_los(x, y, party_x, party_y)) {
+						if ((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) || is_illuminated((int)x, (int)y)) {
+							int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
-						if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
-							std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
+								std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+						}
 					}
 				}
 			}

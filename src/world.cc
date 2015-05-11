@@ -208,67 +208,56 @@ bool World::xml_load_world_data(const char* filename)
                 World::Instance().add_map(new_map);
                 reader.next();
             }
-            else if (reader.get_name() == "outdoors" || reader.get_name() == "indoors")
-            {
+            else if (reader.get_name() == "outdoors" || reader.get_name() == "indoors") {
                 string parent_node = "indoors";
                 if (reader.get_name() == "outdoors")
                     parent_node = "outdoors";
 
                 // Read while </outdoors>/</indoors> isn't reached...
-                while (reader.read() && reader.get_name() != parent_node)
-                {
-                    if (reader.get_name() == "icon")
-                    {
+                while (reader.read() && reader.get_name() != parent_node) {
+                    if (reader.get_name() == "icon") {
                         IconProps new_props;
                         new_props.set_name(reader.read_string().c_str());
-                        do
-                        {
+                        do {
                             if (reader.get_name() == "no")
                                 new_props.set_icon(atoi(reader.get_value().c_str()));
-                            else if (reader.get_name() == "sound_effect")
-                            {
+                            else if (reader.get_name() == "sound_effect") {
                                 if (reader.get_value().length() > 0)
                                     new_props.set_sound_effect(reader.get_value().c_str());
                             }
-                            else if (reader.get_name() == "next_anim")
-                            {
+                            else if (reader.get_name().uppercase() == "LIGHT_RADIUS") {
+                                if (reader.get_value().length() > 0)
+                                    new_props.set_light_radius(atoi(reader.get_value().c_str()));
+                            }
+                            else if (reader.get_name() == "next_anim") {
                                 if (reader.get_value().length() > 0)
                                     new_props.set_next_anim(atoi(reader.get_value().c_str()));
                             }
-                            else if (reader.get_name() == "trans")
-                            {
+                            else if (reader.get_name() == "trans") {
                                 if (reader.get_value() == "full")
-                                {
                                     ; // do nothing as this is set by default in iconprops
-                                }
-                                else if (reader.get_value() == "semi")
-                                {
+                                else if (reader.get_value() == "semi") {
                                     new_props.add_flags(SEMI_TRANS);
                                     new_props.rm_flags(FULLY_TRANS);
                                 }
-                                else if (reader.get_value() == "not")
-                                {
+                                else if (reader.get_value() == "not") {
                                     new_props.add_flags(NOT_TRANS);
                                     new_props.rm_flags(FULLY_TRANS);
                                 }
                             }
-                            else if (reader.get_name() == "walk")
-                            {
+                            else if (reader.get_name() == "walk") {
                                 if (reader.get_value() == "full")
                                     ; // do nothing as this is set by default in iconprops
-                                else if (reader.get_value() == "slow")
-                                {
+                                else if (reader.get_value() == "slow") {
                                     new_props.add_flags(WALK_SLOW);
                                     new_props.rm_flags(WALK_FULLSPEED);
                                 }
-                                else if (reader.get_value() == "not")
-                                {
+                                else if (reader.get_value() == "not") {
                                     new_props.add_flags(WALK_NOT);
                                     new_props.rm_flags(WALK_FULLSPEED);
                                 }
                             }
-                        }
-                        while (reader.move_to_next_attribute());
+                        } while (reader.move_to_next_attribute());
 
                         if (parent_node == "outdoors")
                             OutdoorsIcons::Instance().add_props(new_props);
@@ -318,6 +307,10 @@ void World::xml_write_world_data(std::string path)
 			xmlpp::Element* icon_node = indoorsicons_node->add_child("icon");
 			std::stringstream icon_no_str;
 			icon_no_str << i;
+
+			if (IndoorsIcons::Instance().get_props(i)->light_radius() > 0)
+				icon_node->set_attribute("light_radius", std::to_string(IndoorsIcons::Instance().get_props(i)->light_radius()));
+
 			std::string sound_effect = IndoorsIcons::Instance().get_props(i)->sound_effect();
 			int next_anim = IndoorsIcons::Instance().get_props(i)->next_anim();
 			std::stringstream next_anim_str;

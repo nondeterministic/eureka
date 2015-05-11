@@ -36,6 +36,7 @@ public:
 protected:
   Offsets offsets();
   bool in_los(int, int, int, int);
+  bool is_illuminated(int,int);
 
   // only used inside los:
   void swap(int&, int&);
