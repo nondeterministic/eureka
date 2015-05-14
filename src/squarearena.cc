@@ -303,6 +303,14 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 
 bool SquareArena::is_illuminated(int x, int y)
 {
+	int party_light_radius = Party::Instance().light_radius();
+
+	// Party could carry a light source...
+	if (party_light_radius > 0)
+		if (abs(Party::Instance().x - x) <= party_light_radius && abs(Party::Instance().y - y) <= party_light_radius)
+			return true;
+
+	// There could be objects lying around that are light sources...
 	for (auto map_obj_pair = _map->objs()->begin(); map_obj_pair != _map->objs()->end(); map_obj_pair++) {
 		MapObj& obj = map_obj_pair->second;
 		int radius  = IndoorsIcons::Instance().get_props(obj.get_icon())->light_radius();

@@ -26,6 +26,8 @@ using namespace std;
 Weapon::Weapon()
 {
   std::cout << "Weapon()\n";
+  _destroy_after = 0;
+  _light_radius = 0;
   _range = 10;
   _hands = 1;
   _dmg_bonus = 0;
@@ -41,6 +43,8 @@ Weapon::Weapon(const Weapon& w): Item(w)
   _dmg_max = w._dmg_max;
   _dmg_bonus = w._dmg_bonus;
   icon = w.icon;
+  _light_radius = w._light_radius;
+  _destroy_after = w._destroy_after;
 }
 
 // Weapon& Weapon::operator=(const Weapon& w)
@@ -91,7 +95,6 @@ int Weapon::dmg_min()
 void Weapon::dmg_min(int d)
 {
   _dmg_min = d;
-  // return *this;
 }
 
 int Weapon::dmg_max()
@@ -102,7 +105,6 @@ int Weapon::dmg_max()
 void Weapon::dmg_max(int d)
 {
   _dmg_max = d;
-  // return *this;
 }
 
 int Weapon::dmg_bonus()
@@ -113,6 +115,24 @@ int Weapon::dmg_bonus()
 void Weapon::dmg_bonus(int d)
 {
   _dmg_bonus = d;
-  // return *this;
 }
 
+int Weapon::light_radius()
+{
+  return _light_radius;
+}
+
+void Weapon::light_radius(int d)
+{
+  _light_radius = d;
+}
+
+int Weapon::destroy_after()
+{
+  return _destroy_after;
+}
+
+void Weapon::destroy_after(int d)
+{
+  _destroy_after = d;
+}

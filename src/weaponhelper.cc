@@ -41,6 +41,8 @@ Weapon* WeaponHelper::createFromLua(std::string array_name)
 		w->icon = (int)(lua.get_item_prop<double>("Weapons", array_name, "icon"));
 		w->weight((int)(lua.get_item_prop<double>("Weapons", array_name, "weight")));
 		w->gold((int)(lua.get_item_prop<double>("Weapons", array_name, "gold")));
+		w->light_radius((int)(lua.get_item_prop<double>("Weapons", array_name, "light_radius")));
+		w->destroy_after((int)(lua.get_item_prop<double>("Weapons", array_name, "destroy_after")));
 	} catch (...) {
 		throw;
 	}

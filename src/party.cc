@@ -26,20 +26,15 @@ std::pair<int, int> Party::get_coords()
 
 Party::Party()
 {
-  x = 0; y = 0;
-  _gold = 0;
-  _food = 0;
+	x = 0; y = 0;
+	_gold = 0;
+	_food = 0;
 }
 
 Party& Party::Instance()
 {
   static Party inst;
   return inst;
-}
-
-int Party::current_light_source_radius()
-{
-	return 0;
 }
 
 int Party::gold()
@@ -236,4 +231,20 @@ int Party::max_carrying_capacity()
 	}
 
 	return max_weight / 6.35;
+}
+
+int Party::light_radius()
+{
+	int radius = 0;
+
+	for (PlayerCharacter &player: _players) {
+		if (player.weapon() != NULL) {
+			if (player.weapon()->light_radius() > 0)
+				radius = max(radius, player.weapon()->light_radius());
+		}
+
+		// Check for glowing shields, spells, etc.
+	}
+
+	return radius;
 }

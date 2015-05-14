@@ -246,6 +246,25 @@ void GameControl::do_turn()
 			_clock.inc(30);
 	}
 
+	// Check if torches, etc. need to be destroyed
+	for (int i = 0; i < Party::Instance().party_size(); i++) {
+		PlayerCharacter* pl = Party::Instance().get_player(i);
+		if (pl->weapon() != NULL) {
+			if (pl->weapon()->destroy_after() == 1) {
+				printcon(pl->name() + " throws away the " + pl->weapon()->name() + " as it no longer fulfills its purpose.");
+
+				// TODO: Ask user to confirm by pressing SPACE bar.
+
+				// Now delete memory of item
+				Weapon* wep = pl->weapon();
+				pl->set_weapon(NULL);
+				delete wep;
+			}
+			else if (pl->weapon()->destroy_after() > 1)
+				pl->weapon()->destroy_after(pl->weapon()->destroy_after() - 1);
+		}
+	}
+
 	draw_status();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -633,9 +652,8 @@ std::string GameControl::ready_item(int selected_player)
 			std::string selected_item_name = party->inventory()->get_item(selection)->name();
 
 			if (WeaponHelper::exists(selected_item_name)) {
-				if (player->weapon() != NULL) {
+				if (player->weapon() != NULL)
 					party->inventory()->add(player->weapon());
-				}
 				// This first creates a new weapon by reserving memory for it
 				Weapon* weapon = WeaponHelper::createFromLua(selected_item_name);
 				player->set_weapon(weapon);
@@ -648,9 +666,8 @@ std::string GameControl::ready_item(int selected_player)
 				party->inventory()->remove(weapon->name());
 			}
 			else if (ShieldHelper::exists(selected_item_name)) {
-				if (player->shield() != NULL) {
+				if (player->shield() != NULL)
 					party->inventory()->add(player->shield());
-				}
 				Shield* shield = ShieldHelper::createFromLua(selected_item_name);
 				player->set_shield(shield);
 				party->inventory()->remove(shield->name());
@@ -1515,7 +1532,7 @@ std::pair<int, int> GameControl::get_viewport()
 	int x = 0; // Default: maximum viewport, bright as day!
 
 	if (arena->get_map()->is_dungeon) {
-		int rad = max(2, party->current_light_source_radius());
+		int rad = max(2, party->light_radius());
 		return std::make_pair(rad,rad);
 	}
 
@@ -1539,8 +1556,11 @@ std::pair<int, int> GameControl::get_viewport()
 		break;
 	}
 
-	// It's a square view!
+	// Reflect light sources indoors
+	if (!arena->get_map()->is_outdoors())
+		x = max(x, party->light_radius());
 
+	// It's a square view!
 	return std::make_pair(x,x);
 }
 

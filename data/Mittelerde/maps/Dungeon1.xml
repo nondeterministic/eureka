@@ -160,21 +160,21 @@
   <objects>
     <object x="10" y="44" ox="0" oy="0" icon_no="169" layer="0" id="south_door" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="24" y="13" ox="0" oy="0" icon_no="171" layer="0" id="door1" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="5" ox="0" oy="0" icon_no="147" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="21" y="19" ox="0" oy="0" icon_no="148" layer="0" id="torch" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="5" ox="0" oy="0" icon_no="147" layer="0" id="" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="19" ox="0" oy="0" icon_no="148" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="24" y="16" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="4" ox="0" oy="0" icon_no="223" layer="0" id="skeleton" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="4" y="30" ox="0" oy="0" icon_no="222" layer="0" id="web" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="5" y="2" ox="0" oy="0" icon_no="36" layer="0" id="ladder" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="27" y="19" ox="0" oy="0" icon_no="148" layer="0" id="torch" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="27" y="19" ox="0" oy="0" icon_no="148" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="38" ox="11" oy="38" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" personality="hostile" move_mode="static" type="monster" combat_script="bestiary/orc.lua"/>
-    <object x="4" y="20" ox="0" oy="0" icon_no="147" layer="0" id="torch2" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="4" y="20" ox="0" oy="0" icon_no="147" layer="0" id="torch2" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="40" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="7" y="37" ox="7" oy="37" icon_no="254" layer="0" id="orc" lua_name="" how_many="1" removable="no" personality="hostile" move_mode="static" type="monster" combat_script="bestiary/orc.lua"/>
     <object x="13" y="8" ox="13" oy="8" icon_no="254" layer="0" id="orc_room" lua_name="" how_many="1" removable="no" personality="hostile" move_mode="static" type="monster" combat_script="bestiary/orc.lua"/>
     <object x="24" y="9" ox="24" oy="9" icon_no="355" layer="0" id="skeleton_fighter" lua_name="" how_many="1" removable="no" personality="hostile" move_mode="static" type="monster" combat_script="bestiary/orc.lua"/>
-    <object x="4" y="11" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="4" y="11" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="5" y="2">

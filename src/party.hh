@@ -25,12 +25,14 @@ protected:
   Party();
 
 public:
-  // The absolute party coordinates on a map.  Use map->screen to get
-  // relative coords!
+  // The absolute party coordinates on a map.  Use map->screen to get relative coords!
   int x, y;
+
+  // >0 if, e.g., torch is carried and lit.
+  // int light_radius;
   
   static Party& Instance();
-  int current_light_source_radius();
+  int light_radius();
   void add_player(PlayerCharacter);
   PlayerCharacter* get_player(int);
   PlayerCharacter* get_player(std::string);

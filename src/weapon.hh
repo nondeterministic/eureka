@@ -31,6 +31,8 @@ protected:
   int _dmg_min;
   int _dmg_max;
   int _dmg_bonus;
+  int _light_radius;
+  int _destroy_after;
 
 public:
   Weapon();
@@ -46,6 +48,12 @@ public:
 
   int dmg_max();
   void dmg_max(int);
+
+  int light_radius();
+  void light_radius(int);
+
+  int destroy_after();
+  void destroy_after(int);
 
   int dmg_bonus();
   void dmg_bonus(int);

@@ -15,7 +15,9 @@ Weapons["sword"]  = {
    damage_bonus = 0,
    weight       = 1,
    icon         = 593,
-   gold         = 10
+   gold         = 10,
+   light_radius = 0,
+   destroy_after = 0 
 }
 
 -- simpl_pushweapon(Weapons.sword)

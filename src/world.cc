@@ -378,6 +378,39 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, int flags)
         icon_node->set_attribute("walk", "full");
 }
 
+/*
+ * Loads all the world elements which are defined in terms of Lua tables and therefore defs.lua files inside
+ * their corresponding subdirectories inside data/
+ */
+
+void World::load_world_elements(lua_State* L)
+{
+	int number_of_elems = 4;
+	std::string* elems = new string[number_of_elems] { "weapons", "shields", "bestiary", "edibles" };
+
+	for (int i = 0; i < number_of_elems; i++) {
+		if (luaL_dofile(L, ((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/" + elems[i] + "/defs.lua").c_str())) {
+			cerr << "Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
+			exit(1);
+		}
+
+		for (boost::filesystem::directory_iterator itr(((string)DATADIR + "/simplicissimus/data/" + (string) WORLD_NAME + "/" + elems[i]));
+				itr != boost::filesystem::directory_iterator();
+				++itr)
+		{
+			const string fname = itr->path().filename().string();
+
+			if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
+				if (luaL_dofile(L, ((string) DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/" + elems[i] + "/" + fname).c_str())) {
+					cerr << "Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << endl;
+					exit(1);
+				}
+			}
+		}
+	}
+}
+
+/*
 void World::load_world_elements(lua_State* L)
 {
 	// Weapons
@@ -439,4 +472,25 @@ void World::load_world_elements(lua_State* L)
 			}
 		}
 	}
+
+	// Edibles
+	if (luaL_dofile(L, ((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/edibles/defs.lua").c_str())) {
+		cerr << "Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
+		exit(1);
+	}
+
+	for (boost::filesystem::directory_iterator itr(((string)DATADIR + "/simplicissimus/data/" + (string) WORLD_NAME + "/edibles"));
+			itr != boost::filesystem::directory_iterator();
+			++itr)
+	{
+		const string fname = itr->path().filename().string();
+
+		if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
+			if (luaL_dofile(L, ((string) DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/edibles/" + fname).c_str())) {
+				cerr << "Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << endl;
+				exit(1);
+			}
+		}
+	}
 }
+*/

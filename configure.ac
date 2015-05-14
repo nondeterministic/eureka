@@ -78,6 +78,7 @@ AC_CONFIG_FILES([Makefile \
 		 data/Mittelerde/maps/Makefile
 		 data/Mittelerde/weapons/Makefile
 		 data/Mittelerde/shields/Makefile
+		 data/Mittelerde/edibles/Makefile
 		 data/Mittelerde/sound/Makefile
 		 data/Mittelerde/people/Makefile
 		 data/Mittelerde/bestiary/Makefile])
