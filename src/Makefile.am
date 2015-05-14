@@ -66,11 +66,13 @@ simplicissimus_SOURCES = \
 	playercharacter.hh playercharacter.cc \
 	item.hh item.cc \
 	gold.hh gold.cc \
+	edible.hh edible.cc \
 	shield.hh shield.cc \
 	weapon.hh weapon.cc \
 	itemfactory.hh itemfactory.cc \
 	weaponhelper.hh weaponhelper.cc \
 	shieldhelper.hh shieldhelper.cc \
+	edibleshelper.hh edibleshelper.cc \
 	attackers.hh attackers.cc \
 	conversation.hh conversation.cc \
 	pathfinding.hh pathfinding.cc \

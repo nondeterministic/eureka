@@ -7,6 +7,7 @@
 
 #include "itemfactory.hh"
 #include "item.hh"
+#include "edibleshelper.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "util.hh"
@@ -56,6 +57,8 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 		return WeaponHelper::createFromLua(item_name);
 	else if (ShieldHelper::exists(item_name))
 		return ShieldHelper::createFromLua(item_name);
+	else if (EdiblesHelper::exists(item_name))
+		return EdiblesHelper::createFromLua(item_name);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?

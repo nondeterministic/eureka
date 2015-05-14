@@ -48,6 +48,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/signals.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <libxml++/libxml++.h>
 #include <libxml++/parsers/textreader.h>

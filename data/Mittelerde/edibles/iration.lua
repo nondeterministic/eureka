@@ -6,16 +6,19 @@
 -- dofile(simpl_datapath() .. "weapons/defs.lua")
 
 Edibles["iron ration"]  = { 
-   name          = "iron ration", 
-   plural_name   = "iron rations", 
-   food_up       = 200,
-   hp_up         = 0,
-   heal_poison   = "false",
-   cause_poison  = "false",
-   magic_herb    = "false",
-   rounds_drunk  = 0,
-   gold          = 3,
-   weight        = 2
+   name                   = "iron ration", 
+   plural_name            = "iron rations", 
+
+   food_up                = 200,
+   healing_power          = "none",
+   poison_healing_power   = "none",
+   poisonous              = "none",
+   magic_herb             = "false",
+   intoxicating_effect    = "none",
+
+   gold                   = 3,
+   weight                 = 2,
+   icon                   = 5
 }
 
 -- simpl_pushweapon(Weapons.axe)

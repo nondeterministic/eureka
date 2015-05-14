@@ -11,6 +11,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
 
 enum Alignment
 {
@@ -21,8 +22,30 @@ enum Alignment
 
 typedef boost::tuple<std::string, Alignment> line_tuple;
 
-//extern boost::unordered_map< std::string, Weapon > weapons_map;
-//extern boost::unordered_map< std::string, Shield > shields_map;
+enum Emphasis
+{
+	NONE,
+	VERY_LITTLE,
+	SOME,
+	STRONG,
+	VERY_STRONG
+};
+
+const boost::unordered_map<Emphasis, std::string> emphasisToString =
+	boost::assign::map_list_of
+	(NONE, "NONE")
+	(VERY_LITTLE, "VERY_LITTLE")
+	(SOME, "SOME")
+	(STRONG, "STRONG")
+	(VERY_STRONG, "VERY_STRONG");
+
+const boost::unordered_map<std::string, Emphasis> stringToEmphasis =
+	boost::assign::map_list_of
+	("NONE", NONE)
+	("VERY_LITTLE", VERY_LITTLE)
+	("SOME", SOME)
+	("STRONG", STRONG)
+	("VERY_STRONG", VERY_STRONG);
 
 const boost::unordered_map<PROFESSION, std::string> professionToString =
 	boost::assign::map_list_of

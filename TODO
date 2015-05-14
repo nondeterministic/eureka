@@ -1,6 +1,8 @@
 TODO
 =====
 
+- Show party/monster icon indoors in red briefly, when hit in a battle 
+
 - Magic system
 
 - Level up
@@ -11,9 +13,7 @@ TODO
 
 - Locks
 
-- Consume (DONE)/buy (TODO) food
-
-- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
+- Consume (DONE)/buy (IN PROGRESS) food
 
 - Rest party
 
@@ -58,6 +58,8 @@ MISC
 
 DONE
 =====
+
+- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
 
 - DONE: Save/load game.  Store modified city maps?
   (Add additional items, TODO)
