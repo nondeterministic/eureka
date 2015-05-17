@@ -37,14 +37,14 @@ do
 	items = {}
 	items[0] = Edibles["iron ration"]
 	items[1] = Edibles["standard ration"]
-	items[2] = Edibles["magic mushrooms"]
+	items[2] = Edibles["magic mushroom"]
 
 	function description()
-		simpl_printcon("You see a blacksmith.")
+		simpl_printcon("You see a food merchant.")
 	end
 
 	function name()
-		simpl_printcon("I'm Lilia the food merchant in town I'm vergan, lesbian and gluten-intolerant.")
+		simpl_printcon("I'm Lilia the food merchant in town. I'm vegan, lesbian and gluten-intolerant.")
 	end
 	
 	function job()
@@ -108,7 +108,7 @@ do
 	end
 	
 	function otherwise(item)
-		if (item == "vegan") then
+		if (item == "vegan" or item == "food" or item == "buy") then
 			job()
 		else	
 			simpl_printcon(string.format("%s? I don't know about such things. I'm just a simple mind after all...", item))

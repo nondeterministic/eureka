@@ -16,12 +16,13 @@
 #include <string>
 #include <vector>
 
-ItemFactory::ItemFactory() {
+ItemFactory::ItemFactory()
+{
 	// TODO Auto-generated constructor stub
-
 }
 
-ItemFactory::~ItemFactory() {
+ItemFactory::~ItemFactory()
+{
 	// TODO Auto-generated destructor stub
 }
 
@@ -33,12 +34,12 @@ Item* ItemFactory::create(std::string lua_name)
 {
 	std::vector<std::string> lname_split = Util::splitString(lua_name, "::");
 
-	if (lname_split[0] == "weapons") {
+	if (lname_split[0] == "weapons")
 		return WeaponHelper::createFromLua(lname_split[1]);
-	}
-	else if (lname_split[0] == "shields") {
+	else if (lname_split[0] == "shields")
 		return ShieldHelper::createFromLua(lname_split[1]);
-	}
+	else if (lname_split[0] == "edibles")
+		return EdiblesHelper::createFromLua(lname_split[1]);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?

@@ -76,6 +76,8 @@ public:
   void action_on_enter(std::shared_ptr<ActionOnEnter>);
   bool leave_map();
   void talk();
+  void game_over();
+  void use();
   void make_guards(PERSONALITY);
   void attack();
   void get_attacked();

@@ -209,6 +209,10 @@ std::vector<int> Combat::attack_options()
 
   for (int i = 0; i < party->party_size(); i++) {
     PlayerCharacter* player = party->get_player(i);
+
+    if (player->condition() == DEAD)
+    	continue;
+
     ZtatsWin::Instance().highlight_lines(i * 2, i * 2 + 2);
 
     std::stringstream ss;
@@ -291,6 +295,9 @@ int Combat::party_fight(const std::vector<int> choices)
 	// The party's moves...
 	int i = 0;
 	for (auto player = party->party_begin(); player != party->party_end(); i++, player++) {
+		if (player->condition() == DEAD)
+			continue;
+
 		if (choices[i] > -1) {
 			// Choose weapon to attack with
 			Weapon* wep = player->weapon();
@@ -430,12 +437,17 @@ int Combat::foes_fight()
 				boost::algorithm::to_lower_copy(foe->name()) +
 				(std::string)".lua").c_str()))
 		{
-			cerr << "WARNING: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			cerr << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
 			cerr << "Assuming instead that we're fighting with someone from an indoors map...\n";
-			// exit(EXIT_FAILURE);
 
 			if (lua.call_fn<bool>("attack") && !fled)
 				lua.call_fn<double>("fight");
+
+			// All of the party died of the attack?
+			if (Party::Instance().party_alive() == 0) {
+				GameControl::Instance().game_over();
+				return 0;
+			}
 		}
 		// Fight against ordinary monster, defined in monster definition file
 		else {
@@ -473,10 +485,14 @@ int Combat::foes_fight()
 					moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
 				moved = advance_foes();                        // Attempt to move
 
-			if (moved.find(foe->name()) == moved.end() &&
-					lua.call_fn<bool>("attack") &&
-					!fled)
+			if (moved.find(foe->name()) == moved.end() && lua.call_fn<bool>("attack") && !fled)
 				lua.call_fn<double>("fight");
+
+			// All of the party died of the attack?
+			if (Party::Instance().party_alive() == 0) {
+				GameControl::Instance().game_over();
+				return 0;
+			}
 
 			if (fled)
 				i--;
@@ -773,17 +789,20 @@ bool Combat::create_random_monsters()
 
 std::string Combat::noticed_monsters()
 {
-  // Determine who sees the other first, try each player,
-  // individually. (TODO: Dogs are to be handled separately.)
-  std::string _name = "";
-  for (auto curr_player = party->party_begin(); curr_player != party->party_end(); curr_player++) {
-    if (GameRules::bonus(curr_player->luck()) + random(1, 12) >= 9) {
-      _name = curr_player->name();
-      break;
-    }
-  }
+	// Determine who sees the other first, try each player,
+	// individually. (TODO: Dogs are to be handled separately.)
+	std::string _name = "";
+	for (auto curr_player = party->party_begin(); curr_player != party->party_end(); curr_player++) {
+		if (curr_player->condition() == DEAD)
+			continue;
 
-  return _name;
+		if (GameRules::bonus(curr_player->luck()) + random(1, 12) >= 9) {
+			_name = curr_player->name();
+			break;
+		}
+	}
+
+	return _name;
 }
 
 int Combat::random(int min, int max)

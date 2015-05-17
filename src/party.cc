@@ -26,6 +26,7 @@ std::pair<int, int> Party::get_coords()
 
 Party::Party()
 {
+	rounds_intoxicated = 0;
 	x = 0; y = 0;
 	_gold = 0;
 	_food = 0;

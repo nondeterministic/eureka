@@ -27,6 +27,7 @@ protected:
 public:
   // The absolute party coordinates on a map.  Use map->screen to get relative coords!
   int x, y;
+  int rounds_intoxicated;
 
   // >0 if, e.g., torch is carried and lit.
   // int light_radius;

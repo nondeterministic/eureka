@@ -14,22 +14,22 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 				 int charr, int iq, int end, bool sex,
 				 RACE race, PROFESSION profession) : PlayerCharacter()
 {
-  _race = race;
-  _prof = profession;
-  _name = name;
-  _hp_max = hpm;
-  _hp = hpm;
-  _sp = spm;
-  _sp_max = spm;
-  _str = str;
-  _luck = luck;
-  _dxt = dxt;
-  _wis = wis;
-  _char = charr;
-  _iq = iq;
-  _end = end;  
-  _sex = sex;
-  _condition = GOOD;
+	_race = race;
+	_prof = profession;
+	_name = name;
+	_hp_max = hpm;
+	_hp = hpm;
+	_sp = spm;
+	_sp_max = spm;
+	_str = str;
+	_luck = luck;
+	_dxt = dxt;
+	_wis = wis;
+	_char = charr;
+	_iq = iq;
+	_end = end;
+	_sex = sex;
+	_condition = GOOD;
 }
 
 int PlayerCharacter::ep()

@@ -49,6 +49,8 @@ extern "C" {
 #include "combat.hh"
 #include "weapon.hh"
 #include "weaponhelper.hh"
+#include "edible.hh"
+#include "edibleshelper.hh"
 #include "shield.hh"
 #include "shieldhelper.hh"
 #include "creature.hh"
@@ -219,18 +221,50 @@ std::shared_ptr<Arena> GameControl::get_arena()
 
 void GameControl::do_turn()
 {
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
 	_turns++;
 	_turn_passed = 0;
 
 	// Consume food
-	if (is_arena_outdoors()) {
-		if (_turns%20 == 0)
-			Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size() * 2);
+	if (Party::Instance().food() == 0) {
+		if (is_arena_outdoors()) {
+			if (_turns%20 == 0) {
+				for (int i = 0; i < Party::Instance().party_size(); i++) {
+					PlayerCharacter* pl = Party::Instance().get_player(i);
+					pl->set_hp(max(0, pl->hp() - 1));
+				}
+				zwin.update_player_list();
+			}
+		}
+		else {
+			if (_turns%40 == 0) {
+				for (int i = 0; i < Party::Instance().party_size(); i++) {
+					PlayerCharacter* pl = Party::Instance().get_player(i);
+					pl->set_hp(max(0, pl->hp() - 2));
+				}
+				zwin.update_player_list();
+			}
+		}
 	}
 	else {
-		if (_turns%40 == 0)
-			Party::Instance().set_food(Party::Instance().food() - Party::Instance().party_size());
+		if (is_arena_outdoors()) {
+			if (_turns%20 == 0) {
+				Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size() * 2));
+				zwin.update_player_list();
+			}
+		}
+		else {
+			if (_turns%40 == 0) {
+				Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size()));
+				zwin.update_player_list();
+			}
+		}
 	}
+
+	// Is party starved to death?
+	if (Party::Instance().party_alive() == 0)
+		game_over();
 
 	// Check if random combat ensues and handle it in case
 	if (is_arena_outdoors()) {
@@ -264,6 +298,26 @@ void GameControl::do_turn()
 				pl->weapon()->destroy_after(pl->weapon()->destroy_after() - 1);
 		}
 	}
+
+	// Check intoxication
+	if (Party::Instance().rounds_intoxicated > 0)
+		Party::Instance().rounds_intoxicated--;
+
+	// Check poisoned status
+	for (int i = 0; i < Party::Instance().party_size(); i++) {
+		PlayerCharacter* pl = Party::Instance().get_player(i);
+
+		if (pl->condition() == POISONED) {
+			pl->set_hp(max(0, pl->hp() - 1));
+			if (pl->hp() == 0)
+				pl->set_condition(DEAD);
+			zwin.update_player_list();
+		}
+	}
+
+	// Has party been poisoned to death?
+	if (Party::Instance().party_alive() == 0)
+		game_over();
 
 	draw_status();
 
@@ -472,6 +526,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_t:
 					talk();
 					break;
+				case SDLK_u:
+					use();
+					break;
 				case SDLK_y: // yield / unready item
 					printcon("Yield (let go of) item - select player");
 					yield_item(zwin.select_player());
@@ -628,6 +685,183 @@ std::string GameControl::yield_item(int selected_player)
 
 	printcon("Never mind...");
 	return "";
+}
+
+void GameControl::use()
+{
+	MiniWin& mwin = MiniWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	mwin.save_surf();
+	mwin.clear();
+	mwin.println(0, "Use item", CENTERALIGN);
+	mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
+
+	std::map<std::string, int> tmp = party->inventory()->list_all();
+	std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
+	zwin.set_lines(tmp2);
+	zwin.clear();
+	int selection = zwin.select_item();
+
+	if (selection >= 0) {
+		std::string selected_item_name = party->inventory()->get_item(selection)->name();
+
+		if (WeaponHelper::exists(selected_item_name)) {
+			printcon("Try to (r)eady a weapon instead.");
+		}
+		else if (ShieldHelper::exists(selected_item_name)) {
+			printcon("Try to (r)eady a shield instead.");
+		}
+		else if (EdiblesHelper::exists(selected_item_name)) {
+			// Create a temporary item
+			Edible* item = (Edible*)ItemFactory::create_plain_name(selected_item_name);
+
+			// ----------------------------------------------------------------------------------
+			// Now eat it and compute effects of edible...
+
+			// Food up
+			if (item->food_up > 0) {
+				Party::Instance().set_food(Party::Instance().food() + item->food_up);
+				draw_status(); printcon("That was delicious. (PRESS SPACE BAR)"); em->get_key(" ");
+			}
+
+			// Intoxication
+			int intoxicating_rounds = 0;
+			switch (item->intoxicating) {
+			case VERY_LITTLE:
+				intoxicating_rounds = random(0, 10);
+				break;
+			case SOME:
+				intoxicating_rounds = random(10, 20);
+				break;
+			case STRONG:
+				intoxicating_rounds = random(20, 30);
+				break;
+			case VERY_STRONG:
+				intoxicating_rounds = random(30, 40);
+				break;
+			}
+			Party::Instance().rounds_intoxicated = Party::Instance().rounds_intoxicated + intoxicating_rounds;
+			if (intoxicating_rounds > 0) {
+				draw_status();
+				printcon("It seems that " + item->name() + " has an intoxicating effect... (PRESS SPACE BAR)");
+				em->get_key(" ");
+			}
+
+			// Getting poisoned
+			for (int i = 0; i < Party::Instance().party_size(); i++) {
+				PlayerCharacter* pl = Party::Instance().get_player(i);
+				bool poisoned = false;
+
+				if (pl->condition() != DEAD) {
+					switch (item->poisonous) {
+					case VERY_LITTLE:
+						poisoned = random(0, 10) >= 9;
+						break;
+					case SOME:
+						poisoned = random(0, 10) >= 7;
+						break;
+					case STRONG:
+						poisoned = random(0, 10) >= 5;
+						break;
+					case VERY_STRONG:
+						poisoned = random(0, 10) >= 3;
+						break;
+					}
+					if (poisoned) {
+						pl->set_condition(POISONED);
+						draw_status();
+						printcon(pl->name() + " is starting to feel quite sick... (PRESS SPACE BAR)");
+						em->get_key(" ");
+					}
+				}
+			}
+
+			// Poison healing
+			for (int i = 0; i < Party::Instance().party_size(); i++) {
+				PlayerCharacter* pl = Party::Instance().get_player(i);
+				bool phealed = false;
+
+				if (pl->condition() == POISONED) {
+					switch (item->poison_healing_power) {
+					case VERY_LITTLE:
+						phealed = random(0, 10) >= 9;
+						break;
+					case SOME:
+						phealed = random(0, 10) >= 7;
+						break;
+					case STRONG:
+						phealed = random(0, 10) >= 5;
+						break;
+					case VERY_STRONG:
+						phealed = random(0, 10) >= 3;
+						break;
+					}
+
+					if (phealed) {
+						pl->set_condition(GOOD);
+						draw_status();
+						printcon(pl->name() + " feels less sick suddenly... (PRESS SPACE BAR)");
+						em->get_key(" ");
+					}
+				}
+			}
+
+			{ // Normal healing
+				int healed = 0;
+
+				switch (item->healing_power) {
+				case VERY_LITTLE:
+					healed = random(1, 5);
+					break;
+				case SOME:
+					healed = random(4, 10);
+					break;
+				case STRONG:
+					healed = random(10, 20);
+					break;
+				case VERY_STRONG:
+					healed = random(20, 30);
+					break;
+				}
+
+				for (int i = 0; i < Party::Instance().party_size(); i++) {
+					PlayerCharacter* pl = Party::Instance().get_player(i);
+					if (healed) {
+						if (pl->hp() < pl->hpm()) {
+							pl->set_hp(min(pl->hpm(), pl->hp() + healed));
+
+							// TODO: Update party view to signal healed players
+							draw_status();
+							printcon(pl->name() + " feels reinvigorated... (PRESS SPACE BAR)");
+							em->get_key(" ");
+						}
+					}
+				}
+			}
+			// ----------------------------------------------------------------------------------
+
+			// Remove one such item from inventory
+			party->inventory()->remove(item->name());
+			delete item;
+		}
+		else
+			printcon("You cannot use that.");
+	}
+	else
+		printcon("Changed your mind, huh?");
+
+	draw_status();
+	mwin.display_last();
+}
+
+// TODO: Do something more useful here...
+
+void GameControl::game_over()
+{
+	printcon("GAME OVER. ALL ARE DEAD. PRESS SPACE TO EXIT.");
+	em->get_key(" ");
+	exit(0);
 }
 
 std::string GameControl::ready_item(int selected_player)
@@ -1297,6 +1531,17 @@ void GameControl::move_party(LDIR dir)
 	// Determine center of arena
 	int screen_center_x, screen_center_y;
 	arena->get_center_coords(screen_center_x, screen_center_y);
+
+	if (Party::Instance().rounds_intoxicated > 0) {
+		bool move_random = random(0,10) >= 7;
+
+		if (move_random) {
+			LDIR newDir = LDIR(rand() % 3);
+			if (newDir != dir)
+				printcon("Ooer...");
+			dir = newDir;
+		}
+	}
 
 	// Indoors
 	if (!is_arena_outdoors()) {

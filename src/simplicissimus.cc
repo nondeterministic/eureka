@@ -306,13 +306,16 @@ int main(int argc, char *argv[])
   // Start fresh game with some dummy values
   else {
 	  // TODO: For testing, add some party members.  All have an axe - how handy!
-	  PlayerCharacter p1("Bilbo Baggins", 20, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
+	  // PlayerCharacter p1("Bilbo Baggins", 20, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
+	  PlayerCharacter p1("Bilbo Baggins", 2, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
 	  party->add_player(p1);
 	  party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
-	  PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
+	  // PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
+	  PlayerCharacter p2("Gandalf", 1, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
 	  party->add_player(p2);
 	  party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
-	  PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
+	  PlayerCharacter p3("Aragorn", 2, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
+	  // PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
 	  party->add_player(p3);
 	  party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
 	  ZtatsWin::Instance().update_player_list();
@@ -325,7 +328,7 @@ int main(int argc, char *argv[])
 	  party->inventory()->add(WeaponHelper::createFromLua("axe"));
 	  party->inventory()->add(ShieldHelper::createFromLua("small shield"));
 
-	  party->set_food(200);
+	  party->set_food(2);
 	  party->set_gold(11);
   }
 
@@ -354,7 +357,7 @@ int main(int argc, char *argv[])
   Console::Instance().
     print(&normalFont,
 	  "This is pre-alpha software! Currently supported commands are:\n(a)ttack, (d)rop item, "
-	  "(e)nter, (i)nventory, (l)ook, (p)pull/push, (q)uit, (r)eady item, (t)alk, (y)ield item, (z)tats.\n",
+	  "(e)nter, (i)nventory, (l)ook, (p)pull/push, (q)uit, (r)eady item, (t)alk, (u)use item, (y)ield item, (z)tats.\n",
 	  false);
 
   // Activate event handling

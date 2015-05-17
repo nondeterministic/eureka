@@ -455,12 +455,20 @@ int l_get_player_ac(lua_State* L)
 
 int l_player_change_hp(lua_State* L)
 {
-  std::string player_name = (std::string)(lua_tostring(L, 1));
-  PlayerCharacter* player = Party::Instance().get_player(player_name);
-  int change = lua_tonumber(L, 2);
-  player->set_hp(player->hp() + change);
+	std::string player_name = (std::string)(lua_tostring(L, 1));
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+	int old_hp = player->hp();
+	int change = lua_tonumber(L, 2);
+	player->set_hp(max(0, player->hp() + change));
 
-  return 0;
+	if (player->hp() == 0) {
+		player->set_condition(DEAD);
+
+		if (old_hp != 0) // Player died NOW, not some time before...
+			GameControl::Instance().printcon(player->name() + " has died.");
+	}
+
+	return 0;
 }
 
 int l_notify_party_hit(lua_State* L)
@@ -474,8 +482,9 @@ int l_notify_party_hit(lua_State* L)
 }
 
 // Returns the names of at most n randomly chosen players from the
-// front row of the party.  If the party is smaller, it still returns
-// n strings, some of which are empty.
+// front row of the party (by putting them on the Lua stack).
+// If the party is smaller, it still returns n strings, some of which
+// are empty.
 
 int l_rand_player(lua_State* L)
 {
@@ -483,11 +492,11 @@ int l_rand_player(lua_State* L)
   int requested = (int)lua_tonumber(L, 1);
   int count = min(min(Party::Instance().party_size(), 3), requested);
 
-  // std::cout << "Simpl: requested: " << requested << ", count: " << count << std::endl;
-
   while ((int)players.size() < count) {
     int rnd = GameControl::Instance().random(0, min(Party::Instance().party_size() - 1, 2));
-    players.insert(Party::Instance().get_player(rnd));
+    PlayerCharacter* p = Party::Instance().get_player(rnd);
+    if (p->condition() != DEAD)
+    	players.insert(p);
   }
 
   // Prepare return values

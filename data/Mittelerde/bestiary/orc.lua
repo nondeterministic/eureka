@@ -137,7 +137,7 @@ do
 	 	return false
       end
 
-      player_name = simpl_rand_player(1) -- Get exactly 1 random player to attack
+      player_name = simpl_rand_player(1) -- Get exactly 1 random player to be attacked
 
       r = simpl_rand(1, 20) - simpl_bonus(get_luck()) - simpl_bonus(get_dxt())
       attack_successful = r < simpl_get_ac(player_name)
@@ -161,8 +161,8 @@ do
 
       damage = simpl_rand(wep.damage_min, wep.damage_max)
       simpl_printcon(string.format("An %s swings his %s and hits %s for %d points of damage.",
-      				   get_name(), wep.name, player_name, damage), true)
-
+    				                get_name(), wep.name, player_name, damage), true)
+    				                
       simpl_player_change_hp(player_name, -damage)
       simpl_notify_party_hit()
    end

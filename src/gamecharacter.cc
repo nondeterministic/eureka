@@ -106,7 +106,10 @@ int GameCharacter::gold()
 
 void GameCharacter::set_hp(int hp)
 {
-  _hp = hp;
+	_hp = hp;
+
+	if (hp == 0)
+		_condition = DEAD;
 }
 
 int GameCharacter::hp()

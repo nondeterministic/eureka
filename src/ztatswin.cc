@@ -528,8 +528,21 @@ void ZtatsWin::update_player_list()
 			player != Party::Instance().party_end();
 			player++, i++, i++)
 	{
+		std::string condition = "G";
+		switch (player->condition()) {
+		case GOOD:
+			condition = "G";
+			break;
+		case POISONED:
+			condition = "P";
+			break;
+		case DEAD:
+			condition = "D";
+			break;
+		}
+
 		ostringstream name, name_stats;
-		name << (i + 2)/2 << "-" << player->name();
+		name << (i + 2)/2 << "-" << player->name() << " (" << condition << ")";
 		println(i, name.str());
 
 		name_stats << "  AC: " << player->armour_class();
