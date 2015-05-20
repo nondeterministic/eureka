@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
 	  party->inventory()->add(WeaponHelper::createFromLua("axe"));
 	  party->inventory()->add(ShieldHelper::createFromLua("small shield"));
 
-	  party->set_food(2);
+	  party->set_food(200);
 	  party->set_gold(11);
   }
 

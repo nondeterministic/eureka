@@ -222,6 +222,9 @@ std::shared_ptr<Arena> GameControl::get_arena()
 void GameControl::do_turn()
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
+	static SoundSample sample;  // If this isn't static, then the var
+	                            // gets discarded before the sample has
+	                            // finished playing
 
 	_turns++;
 	_turn_passed = 0;
@@ -233,6 +236,7 @@ void GameControl::do_turn()
 				for (int i = 0; i < Party::Instance().party_size(); i++) {
 					PlayerCharacter* pl = Party::Instance().get_player(i);
 					pl->set_hp(max(0, pl->hp() - 1));
+					sample.play(HIT);
 				}
 				zwin.update_player_list();
 			}
@@ -242,6 +246,7 @@ void GameControl::do_turn()
 				for (int i = 0; i < Party::Instance().party_size(); i++) {
 					PlayerCharacter* pl = Party::Instance().get_player(i);
 					pl->set_hp(max(0, pl->hp() - 2));
+					sample.play(HIT);
 				}
 				zwin.update_player_list();
 			}
@@ -311,6 +316,7 @@ void GameControl::do_turn()
 			pl->set_hp(max(0, pl->hp() - 1));
 			if (pl->hp() == 0)
 				pl->set_condition(DEAD);
+			sample.play(HIT);
 			zwin.update_player_list();
 		}
 	}
@@ -912,6 +918,7 @@ std::string GameControl::ready_item(int selected_player)
 			// After readying an item, the AC may have changed, for example.
 			zwin.update_player_list();
 			printcon("Readying " + selected_item_name);
+			mwin.display_last();
 
 			return selected_item_name;
 		}

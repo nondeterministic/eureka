@@ -1,21 +1,17 @@
 TODO
 =====
 
-- Ready hands (i.e., unready weapon or torch)
-
-- Show party/monster icon indoors in red briefly, when hit in a battle 
+- Unready weapon or torch; SOLUTION: make (r)eady like picking up of multiple items, i.e., per selection and confirmation; look at get_item() code!
 
 - Magic system
 
 - Level up
 
-- Buy remedies for magic and healing
+- Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop)
 
 - NPCs
 
-- Locks
-
-- Consume (DONE)/buy (IN PROGRESS) food
+- Locks and lock shop
 
 - Rest party
 
@@ -27,6 +23,10 @@ KNOWN BUGS
 
 MISC
 =====
+
+- ROYALTY FREE MUSIC:
+
+  https://musopen.org/music/983/anton-bruckner/symphony-no-3-in-dm-wab-103/
 
 - Good battle music?
   http://www.youtube.com/watch?v=GGU1P6lBW6Q
@@ -60,6 +60,8 @@ MISC
 
 DONE
 =====
+
+- Consume (DONE)/buy (DONE) food
 
 - Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
 
