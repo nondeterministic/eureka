@@ -1,8 +1,6 @@
 TODO
 =====
 
-- Unready weapon or torch; SOLUTION: make (r)eady like picking up of multiple items, i.e., per selection and confirmation; look at get_item() code!
-
 - Magic system
 
 - Level up

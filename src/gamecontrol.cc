@@ -1493,10 +1493,13 @@ bool GameControl::walk_fullspeed(int x, int y)
 
 bool GameControl::walkable(int x, int y)
 {
-	if (x >= (int)(arena->get_map()->width()) || x < 0)
-		return false;
-	if (y >= (int)(arena->get_map()->height()) || y < 0)
-		return false;
+	// TODO: These bounds only work indoors, as outdoors we have a jump of 2 between hex.  Do we need to check the boundaries outdoors at all?
+	if (!is_arena_outdoors()) {
+		if (x >= (int)(arena->get_map()->width()) || x < 0)
+			return false;
+		if (y >= (int)(arena->get_map()->height()) || y < 0)
+			return false;
+	}
 
 	bool return_value = false;
 
@@ -1635,9 +1638,8 @@ void GameControl::move_party(LDIR dir)
 					}
 					y_diff = 0;
 				}
-				if (screen_pos_party.second < screen_center_y) {
+				if (screen_pos_party.second < screen_center_y)
 					arena->move(DIR_UP);
-				}
 			}
 			else {
 				printcon("Blocked");
