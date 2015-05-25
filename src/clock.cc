@@ -24,7 +24,7 @@
 Clock::Clock()
 {
   h = 6;
-  m = 55;
+  m = 0;
 }
 
 std::pair<int,int> Clock::time()

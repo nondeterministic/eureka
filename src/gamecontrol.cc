@@ -513,6 +513,10 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_g:
 					get_item();
 					break;
+				case SDLK_h:
+					// Rest party
+					hole_up();
+					break;
 				case SDLK_i:
 					inventory();
 					break;
@@ -691,6 +695,64 @@ std::string GameControl::yield_item(int selected_player)
 
 	printcon("Never mind...");
 	return "";
+}
+
+// Rest party
+
+void GameControl::hole_up()
+{
+	MiniWin& mwin = MiniWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	mwin.save_surf();
+	mwin.clear();
+
+	printcon("Hole up and camp. For how many hours? (0-9)");
+	char chours = em->get_key("0123456789");
+	int hours = atoi(&chours);
+	printcon(std::to_string(hours));
+
+	if (hours == 0) {
+		printcon("Changed your mind, huh?");
+		draw_status();
+		mwin.display_last();
+		return;
+	}
+
+	printcon("Do you want to set up a guard? (y/n)");
+	int selected_player = -1;
+
+	switch (em->get_key("yn")) {
+	case 'n':
+		printcon("n");
+		break;
+	case 'y':
+		printcon("y");
+		printcon("Select a guard");
+		selected_player = zwin.select_player();
+		break;
+	}
+
+	// If there is a guard set...
+	if (selected_player != -1) {
+
+	}
+
+	pair<int,int> old_time = _clock.time();
+
+	do {
+		// TODO: Alternative do_turn without food consumption and to reflect guarding to defend attacks?  Parameterized do_turn?
+		do_turn();
+
+		// TODO: Do the actual healing of the party...
+		// ..
+
+		draw_status();
+		Console::Instance().pause(50);
+	} while (_clock.time().first != (old_time.first + hours) % 24);
+
+	draw_status();
+	mwin.display_last();
 }
 
 void GameControl::use()

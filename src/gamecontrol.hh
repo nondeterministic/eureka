@@ -78,6 +78,7 @@ public:
   void talk();
   void game_over();
   void use();
+  void hole_up();
   void make_guards(PERSONALITY);
   void attack();
   void get_attacked();
