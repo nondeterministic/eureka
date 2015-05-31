@@ -30,6 +30,8 @@ Party::Party()
 	x = 0; y = 0;
 	_gold = 0;
 	_food = 0;
+	_guard = -1;
+	is_resting = false;
 }
 
 Party& Party::Instance()
@@ -107,6 +109,44 @@ PlayerCharacter* Party::get_player(int number)
     if (i == number)
       return &(*player);
   return NULL;
+}
+
+PlayerCharacter* Party::get_guard()
+{
+	if (_guard >= 0 && _guard < party_size() && get_player(_guard)->condition() != DEAD)
+		return get_player(_guard);
+	else {
+		std::cerr << "WARNING: Trying to get player " << _guard << " as guard, but is either dead or out of bounds.\n";
+		return NULL;
+	}
+}
+
+void Party::set_guard(int g)
+{
+	if (g >= 0 && g < party_size() && get_player(g)->condition() != DEAD)
+		_guard = g;
+	else {
+		std::cerr << "WARNING: Trying to set player " << g << " to be guard, but either dead or out of bounds.\n";
+		_guard = -1;
+	}
+}
+
+void Party::set_guard(PlayerCharacter* p)
+{
+	for (int i = 0; i < party_size(); i++) {
+		if (p->name() == get_player(i)->name()) {
+			set_guard(i);
+			return;
+		}
+	}
+
+	std::cerr << "WARNING: Trying to set player " << p->name() << " to be guard, but is probably dead.\n";
+	_guard = -1;
+}
+
+void Party::unset_guard()
+{
+	_guard = -1;
 }
 
 PlayerCharacter* Party::get_player(std::string name)

@@ -215,7 +215,7 @@ void SquareArena::map_to_screen(int mx, int my, int& sx, int& sy)
 
 bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 {
-  bool steep = abs(yi - yp) > abs(xi - xp);
+	bool steep = abs(yi - yp) > abs(xi - xp);
 
 #ifndef SWAP_INT
 #define SWAP_INT(local_x, local_y) {            \
@@ -225,78 +225,98 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
   }
 #endif
 
-  if (steep)
-    {
-      SWAP_INT(xp, yp);
-      SWAP_INT(xi, yi);
+	if (steep) {
+		SWAP_INT(xp, yp);
+		SWAP_INT(xi, yi);
     }
 
-  if (xp > xi)
-    {
-      SWAP_INT(xp, xi);
-      SWAP_INT(yp, yi);
+	if (xp > xi) {
+		SWAP_INT(xp, xi);
+		SWAP_INT(yp, yi);
     }
 
-  int deltax = xi - xp;
-  int deltay = abs(yi - yp);
-  int error = ((float) deltax) / 2.0;
-  int ystep = 0;
-  int y = yp;
-  if (yp < yi)
-    ystep = 1;
-  else
-    ystep = -1;
+	int deltax = xi - xp;
+	int deltay = abs(yi - yp);
+	int error = ((float) deltax) / 2.0;
+	int ystep = 0;
+	int y = yp;
+	if (yp < yi)
+		ystep = 1;
+	else
+		ystep = -1;
 
-  std::vector<int> row;
-  int icon_no = 0;
+	std::vector<int> row;
+	int icon_no = 0;
 
 #ifndef ADD_ICON
-#define ADD_ICON(local_x, local_y) {                    \
-    icon_no = get_map()->get_tile(local_x, local_y);    \
-    row.push_back(icon_no);                             \
+#define ADD_ICON(local_x, local_y) {                    			\
+	icon_no = get_map()->get_tile(local_x, local_y);    			\
+    row.push_back(icon_no);                             			\
   }
 #endif
 
-  // std::cout << "xp: " << xp << " xi: " << xi << "\n";
-  for (int x = xp; x <= xi; x++) {
-    if (steep) {
-      ADD_ICON(y, x);
-    }
-    else {
-      ADD_ICON(x, y);
-    }
+	for (int x = xp; x <= xi; x++) {
+		if (steep) {
+			// Objects
+			std::pair<int,int> coords = std::make_pair(y, x);
+			auto avail_objects = get_map()->objs()->equal_range(coords);
 
-    error -= deltay;
+			if (avail_objects.first != avail_objects.second) {
+				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+					MapObj& the_obj = curr_obj->second;
+					row.push_back(the_obj.get_icon());
+				}
+			}
 
-    if (error < 0) {
-      y += ystep;
-      error += deltax;
-    }
-  }
+			// Normal icons
+			ADD_ICON(y, x);
+		}
+		else {
+			// Objects
+			std::pair<int,int> coords = std::make_pair(x, y);
+			auto avail_objects = get_map()->objs()->equal_range(coords);
 
-  // Now do the actual check for transparency in the row,
-  // we just built.
-  int semitrans = 0;
-  for (unsigned i = 1; i < row.size() - 1; i++) {
-    IconProps* props = IndoorsIcons::Instance().get_props(row[i]);
+			if (avail_objects.first != avail_objects.second) {
+				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+					MapObj& the_obj = curr_obj->second;
+					row.push_back(the_obj.get_icon());
+				}
+			}
 
-    if (props && (props->flags() & NOT_TRANS)) {
-      row.clear();
-      return false;
-    }
-    else if (i > 0 && props && (props->flags() & SEMI_TRANS)) {
-      // Decrease viewing distance by 4 on semi transparent icons, but
-      // not when standing on one (i.e., i > 0), rather only when
-      // those icons block the view, i.e., are in front of the player.
-      if (row.size() - ++semitrans > 4) {
-        row.clear();
-        return false;
-      }
-    }
-  }
+			// Normal icons
+			ADD_ICON(x, y);
+		}
 
-  row.clear();
-  return true;
+		error -= deltay;
+
+		if (error < 0) {
+			y += ystep;
+			error += deltax;
+		}
+	}
+
+	// Now do the actual check for transparency in the row, we just built.
+	int semitrans = 0;
+	for (unsigned i = 1; i < row.size() - 1; i++) {
+		IconProps* props = IndoorsIcons::Instance().get_props(row[i]);
+
+		if (props && (props->flags() & NOT_TRANS)) {
+			row.clear();
+			return false;
+		}
+		else if (i > 0 && props && (props->flags() & SEMI_TRANS)) {
+			// Decrease viewing distance by 4 on semi transparent icons, but
+			// not when standing on one (i.e., i > 0), rather only when
+			// those icons block the view, i.e., are in front of the player.
+			if (row.size() - ++semitrans > 4) {
+				row.clear();
+				return false;
+			}
+		}
+	}
+
+	row.clear();
+	return true;
 }
 
 // Returns true if tile x,y is within the radius of a light source, false otherwise

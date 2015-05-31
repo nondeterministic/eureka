@@ -77,8 +77,8 @@
       <icon no="68" trans="full" walk="full">nothing special</icon>
       <icon no="69" trans="full" walk="full">nothing special</icon>
       <icon no="70" trans="full" walk="full">nothing special</icon>
-      <icon no="71" trans="full" walk="full">nothing special</icon>
-      <icon no="72" trans="full" walk="full">nothing special</icon>
+      <icon no="71" trans="full" walk="not">closed gate</icon>
+      <icon no="72" trans="full" walk="full">open gate</icon>
       <icon no="73" trans="full" walk="full">nothing special</icon>
       <icon no="74" trans="full" walk="full">nothing special</icon>
       <icon no="75" trans="full" walk="full">nothing special</icon>
@@ -131,8 +131,8 @@
       <icon no="122" trans="full" walk="full">nothing special</icon>
       <icon no="123" trans="full" walk="full">nothing special</icon>
       <icon no="124" trans="full" walk="full">nothing special</icon>
-      <icon no="125" trans="full" walk="full" next_anim="126">guard</icon>
-      <icon no="126" trans="full" walk="full" next_anim="125">guard</icon>
+      <icon no="125" trans="full" walk="not" next_anim="126">guard</icon>
+      <icon no="126" trans="full" walk="not" next_anim="125">guard</icon>
       <icon no="127" trans="full" walk="full">nothing special</icon>
       <icon no="128" trans="full" walk="full">nothing special</icon>
       <icon no="129" trans="full" walk="full">nothing special</icon>
@@ -173,11 +173,11 @@
       <icon no="164" trans="full" walk="full">nothing special</icon>
       <icon no="165" trans="full" walk="full">nothing special</icon>
       <icon no="166" trans="full" walk="full">nothing special</icon>
-      <icon no="167" trans="full" walk="full">nothing special</icon>
-      <icon no="168" trans="full" walk="full">nothing special</icon>
-      <icon no="169" trans="full" walk="full">nothing special</icon>
+      <icon no="167" trans="full" walk="full">walkway</icon>
+      <icon no="168" trans="full" walk="full">walkway</icon>
+      <icon no="169" trans="not" walk="not">closed door</icon>
       <icon no="170" trans="full" walk="full">nothing special</icon>
-      <icon no="171" trans="full" walk="full">nothing special</icon>
+      <icon no="171" trans="semi" walk="not">closed door</icon>
       <icon no="172" trans="full" walk="full">nothing special</icon>
       <icon no="173" trans="full" walk="full">nothing special</icon>
       <icon no="174" trans="full" walk="full">nothing special</icon>

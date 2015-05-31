@@ -21,6 +21,7 @@ protected:
   std::string prev_map_name, _map_name;
   Inventory _inv;
   int _gold, _food;
+  int _guard;
 
   Party();
 
@@ -28,6 +29,7 @@ public:
   // The absolute party coordinates on a map.  Use map->screen to get relative coords!
   int x, y;
   int rounds_intoxicated;
+  bool is_resting;
 
   // >0 if, e.g., torch is carried and lit.
   // int light_radius;
@@ -41,6 +43,10 @@ public:
   std::vector<PlayerCharacter>::iterator party_end();
   int party_size();
   unsigned party_alive();
+  void set_guard(int);
+  PlayerCharacter* get_guard();
+  void set_guard(PlayerCharacter*);
+  void unset_guard();
   void set_coords(int, int);
   void set_coords(std::pair<int, int>);
   std::pair<int, int> get_coords();

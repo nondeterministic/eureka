@@ -79,6 +79,7 @@ public:
   void game_over();
   void use();
   void hole_up();
+  void open_act();
   void make_guards(PERSONALITY);
   void attack();
   void get_attacked();
@@ -95,7 +96,7 @@ public:
   void set_map_name(const char*);
   void start_turns();
   void stop_turns();
-  void do_turn();
+  void do_turn(bool = false);
   int random(int, int);
   void printcon(const std::string, bool = false);
   bool walk_fullspeed(int, int);

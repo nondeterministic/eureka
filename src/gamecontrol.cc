@@ -219,7 +219,7 @@ std::shared_ptr<Arena> GameControl::get_arena()
 	return arena;
 }
 
-void GameControl::do_turn()
+void GameControl::do_turn(bool resting)
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	static SoundSample sample;  // If this isn't static, then the var
@@ -230,39 +230,41 @@ void GameControl::do_turn()
 	_turn_passed = 0;
 
 	// Consume food
-	if (Party::Instance().food() == 0) {
-		if (is_arena_outdoors()) {
-			if (_turns%20 == 0) {
-				for (int i = 0; i < Party::Instance().party_size(); i++) {
-					PlayerCharacter* pl = Party::Instance().get_player(i);
-					pl->set_hp(max(0, pl->hp() - 1));
-					sample.play(HIT);
+	if (!resting) { // We don't need to worry about food while resting
+		if (Party::Instance().food() == 0) {
+			if (is_arena_outdoors()) {
+				if (_turns%20 == 0) {
+					for (int i = 0; i < Party::Instance().party_size(); i++) {
+						PlayerCharacter* pl = Party::Instance().get_player(i);
+						pl->set_hp(max(0, pl->hp() - 1));
+						sample.play(HIT);
+					}
+					zwin.update_player_list();
 				}
-				zwin.update_player_list();
+			}
+			else {
+				if (_turns%40 == 0) {
+					for (int i = 0; i < Party::Instance().party_size(); i++) {
+						PlayerCharacter* pl = Party::Instance().get_player(i);
+						pl->set_hp(max(0, pl->hp() - 2));
+						sample.play(HIT);
+					}
+					zwin.update_player_list();
+				}
 			}
 		}
 		else {
-			if (_turns%40 == 0) {
-				for (int i = 0; i < Party::Instance().party_size(); i++) {
-					PlayerCharacter* pl = Party::Instance().get_player(i);
-					pl->set_hp(max(0, pl->hp() - 2));
-					sample.play(HIT);
+			if (is_arena_outdoors()) {
+				if (_turns%20 == 0) {
+					Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size() * 2));
+					zwin.update_player_list();
 				}
-				zwin.update_player_list();
 			}
-		}
-	}
-	else {
-		if (is_arena_outdoors()) {
-			if (_turns%20 == 0) {
-				Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size() * 2));
-				zwin.update_player_list();
-			}
-		}
-		else {
-			if (_turns%40 == 0) {
-				Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size()));
-				zwin.update_player_list();
+			else {
+				if (_turns%40 == 0) {
+					Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size()));
+					zwin.update_player_list();
+				}
 			}
 		}
 	}
@@ -523,6 +525,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_l:
 					look();
 					break;
+				case SDLK_o:
+					open_act();
+					break;
 				case SDLK_p:
 					pull_push();
 					break;
@@ -697,6 +702,13 @@ std::string GameControl::yield_item(int selected_player)
 	return "";
 }
 
+// TODO
+
+void GameControl::open_act()
+{
+
+}
+
 // Rest party
 
 void GameControl::hole_up()
@@ -733,23 +745,40 @@ void GameControl::hole_up()
 		break;
 	}
 
-	// If there is a guard set...
-	if (selected_player != -1) {
+	// If player was chosen, set guard
+	if (selected_player != -1)
+		Party::Instance().set_guard(selected_player);
 
-	}
+	Party::Instance().is_resting = true;
 
 	pair<int,int> old_time = _clock.time();
-
+	int rounds = 0;
 	do {
 		// TODO: Alternative do_turn without food consumption and to reflect guarding to defend attacks?  Parameterized do_turn?
-		do_turn();
+		// TODO: Update, if true, then we tell do_turn that we're resting
+		do_turn(true);
 
 		// TODO: Do the actual healing of the party...
-		// ..
+		for (int i = 0; i < Party::Instance().party_size(); i++) {
+			PlayerCharacter* pl = Party::Instance().get_player(i);
+
+			// Do actual party healing
+			if (pl->condition() != DEAD && pl->hp() < pl->hpm()) {
+				if (is_arena_outdoors() && rounds % 3 == 0)
+					pl->set_hp(pl->hp() + 1);
+				else if (is_arena_outdoors() && rounds % 10 == 0)
+					pl->set_hp(pl->hp() + 1);
+			}
+		}
 
 		draw_status();
 		Console::Instance().pause(50);
+		rounds++;
 	} while (_clock.time().first != (old_time.first + hours) % 24);
+
+	// Unset guard again
+	Party::Instance().unset_guard();
+	Party::Instance().is_resting = false;
 
 	draw_status();
 	mwin.display_last();
@@ -1576,6 +1605,10 @@ bool GameControl::walkable(int x, int y)
 			if (found_obj.first != found_obj.second) {
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
 					MapObj& map_obj = curr_obj->second;
+					IconProps* props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+
+					if (props->flags() & WALK_NOT)
+						return false;
 
 					if (map_obj.get_type() == MAPOBJ_MONSTER)
 						return false;

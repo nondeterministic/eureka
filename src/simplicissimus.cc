@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
   Console::Instance().
     print(&normalFont,
 	  "This is pre-alpha software! Currently supported commands are:\n(a)ttack, (d)rop item, "
-	  "(e)nter, (i)nventory, (l)ook, (p)pull/push, (q)uit, (r)eady item, (t)alk, (u)use item, (y)ield item, (z)tats.\n",
+	  "(e)nter, (i)nventory, (l)ook, (o)pen, (p)pull/push, (q)uit, (r)eady item, (t)alk, (u)use item, (y)ield item, (z)tats.\n",
 	  false);
 
   // Activate event handling
