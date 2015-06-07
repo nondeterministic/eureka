@@ -42,10 +42,12 @@
 #include "eventchangeicon.hh"
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
+#include "eventdeleteobj.hh"
 #include "action.hh"
 #include "actiontake.hh"
 #include "actiononenter.hh"
 #include "actionpullpush.hh"
+#include "actionopened.hh"
 
 Map::Map()
 {
@@ -302,6 +304,9 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 		if (nodeElement) {
 			const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
 
+			// Could be empty, if object doesn't have an actions tag
+			xmlpp::Node::NodeList actions_node = (*iter)->get_children("actions");
+
 			// Iterate through attributes of object node
 			for (auto iter = attributes.begin(); iter != attributes.end(); ++iter) {
 				const xmlpp::Attribute* attribute = *iter;
@@ -326,6 +331,16 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 					new_obj.id = attribute->get_value().c_str();
 				else if (a_name == "removable")
 					new_obj.removable = attribute->get_value().uppercase() == "YES";
+				else if (a_name == "locked") {
+					new_obj.openable = true;
+
+					if (attribute->get_value().uppercase() == "NORMAL")
+						new_obj.lock_type = NORMAL_LOCK;
+					else if (attribute->get_value().uppercase() == "MAGIC")
+						new_obj.lock_type = MAGIC_LOCK;
+					else // if (attribute->get_value().uppercase() == "UNLOCKED")
+						new_obj.lock_type = UNLOCKED;
+				}
 				else if (a_name == "personality") {
 					if (attribute->get_value().uppercase() == "HOSTILE")
 						new_obj.personality = HOSTILE;
@@ -355,8 +370,13 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 			}
 
 			// Parse actions, if there are any associated to the object
-			for (auto action: parse_actions_node(nodeElement))
-				new_obj.add_action(action);
+			if (actions_node.size() > 0) {
+				std::vector<std::shared_ptr<Action>> actions = parse_actions_node(actions_node.front());
+
+				for (auto action = actions.begin(); action != actions.end(); ++action) {
+					new_obj.add_action(*action);
+				}
+			}
 
 			new_obj.set_coords(x, y);
 
@@ -375,10 +395,14 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 {
 	std::vector<std::shared_ptr<Action>> parsed_actions;
 
+	cout << "PARSING ACTIONS...\n";
+
 	// Get all action nodes
 	xmlpp::Node::NodeList actions = node->get_children();
 	for (auto action = actions.begin(); action != actions.end(); ++action) {
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*action);
+
+		cout << "PARSING ACTION...\n";
 
 		if (nodeElement) {
 			std::string curr_act_name = nodeElement->get_attribute_value("type");  // Name of action
@@ -394,8 +418,12 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 							                            atoi(nodeElement->get_attribute_value("y").c_str()),
 														"ACT_ON_PULLPUSH");
 			}
-			else if (curr_act_name == "ACT_ON_TAKE")
+			else if (curr_act_name == "ACT_ON_OPENED") {
+				_act = std::make_shared<ActionOpened>("ACT_ON_OPENED");
+			}
+			else if (curr_act_name == "ACT_ON_TAKE") {
 				_act = std::make_shared<ActionOnTake>("ACT_ON_TAKE");
+			}
 			else
 				continue;
 
@@ -425,6 +453,10 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						}
 						else
 							std::cerr << "XML load error: EVENT_ENTER_MAP malformed?" << std::endl;
+					}
+					else if (event_type_s == "EVENT_DELETE_OBJECT") {
+						std::shared_ptr<EventDeleteObject> new_ev(new EventDeleteObject());
+						_act->add_event(new_ev);
 					}
 					else if (event_type_s == "EVENT_CHANGE_ICON") {
 						const xmlpp::Element* event_change_icon = (xmlpp::Element*)(*event)->get_children("change_icon").front();
@@ -581,6 +613,12 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		node->set_attribute("x", s_x.str());
 		node->set_attribute("y", s_y.str());
 	}
+	else if (dynamic_cast<ActionOpened*>(action)) {
+		node->set_attribute("type", "ACT_ON_OPENED");
+	}
+	else if (dynamic_cast<ActionOnTake*>(action)) {
+		node->set_attribute("type", "ACT_ON_TAKE");
+	}
 	else
 		node->set_attribute("type", "Check Map::write_action_node() for error!");
 
@@ -606,6 +644,9 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			change_icon_el->set_attribute("icon_now", std::to_string(event_change_icon->icon_now));
 			change_icon_el->set_attribute("icon_new", std::to_string(event_change_icon->icon_new));
 		}
+		else if (std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev)) {
+			ev_node->set_attribute("type", "EVENT_DELETE_OBJECT");
+		}
 		else if (std::dynamic_pointer_cast<EventPrintcon>(*curr_ev)) {
 			std::shared_ptr<EventPrintcon> event_printcon= std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PRINTCON");
@@ -615,6 +656,10 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_LUA_SCRIPT");
 			ev_node->set_child_text(event_lua_script->file_name);
+		}
+		else if (std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev)) {
+			std::shared_ptr<EventDeleteObject> event_printcon= std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_DELETE_OBJECT");
 		}
 	}
 }
@@ -669,6 +714,15 @@ bool Map::xml_write_map_data(std::string path)
 				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
 				object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
 
+				if (mapObj.openable) {
+					if (mapObj.lock_type == NORMAL_LOCK)
+						object_node->set_attribute("locked","normal");
+					else if (mapObj.lock_type == MAGIC_LOCK)
+						object_node->set_attribute("locked","magic");
+					else if (mapObj.lock_type == UNLOCKED)
+						object_node->set_attribute("locked","unlocked");
+				}
+
 				if (mapObj.personality == HOSTILE)
 					object_node->set_attribute("personality","hostile");
 				else if (mapObj.personality == RIGHTEOUS)
@@ -701,10 +755,20 @@ bool Map::xml_write_map_data(std::string path)
 					object_node->set_attribute("init_script", mapObj.get_init_script_path());
 				if (mapObj.get_combat_script_path().length() > 0)
 					object_node->set_attribute("combat_script", mapObj.get_combat_script_path());
+
+				// Write object actions, if there are any
+				if (mapObj.actions()->size() > 0) {
+					xmlpp::Element* actions_node = object_node->add_child("actions");
+
+					for (auto curr_act = mapObj.actions()->begin(); curr_act != mapObj.actions()->end(); curr_act++) {
+						xmlpp::Element* action_node = actions_node->add_child("action");
+						write_action_node(action_node, curr_act->get());
+					}
+				}
 			}
 		}
 
-		// Write actions (& events)
+		// Write global map actions (& events)
 		if (_actions.size() > 0) {
 			xmlpp::Element* actions_node = _main_map_xml_root->add_child("actions");
 

@@ -7,6 +7,7 @@
 #include "eventchangeicon.hh"
 #include "eventluascript.hh"
 #include "map.hh"
+#include "mapobj.hh"
 
 #include <memory>
 
@@ -14,11 +15,12 @@ class GameEventHandler
 {
 public:
   GameEventHandler();
-  bool handle(std::shared_ptr<GameEvent>, std::shared_ptr<Map>);
+  bool handle(std::shared_ptr<GameEvent>, std::shared_ptr<Map>, MapObj* = NULL);
   bool handle_event_enter_map(std::shared_ptr<EventEnterMap>, std::shared_ptr<Map>);
   bool handle_event_change_icon(std::shared_ptr<EventChangeIcon>, std::shared_ptr<Map>);
   bool handle_event_printcon(std::shared_ptr<EventPrintcon>, std::shared_ptr<Map>);
   bool handle_event_lua_script(std::shared_ptr<EventLuaScript>, std::shared_ptr<Map>);
+  bool handle_event_delete_object(std::shared_ptr<Map>, MapObj*);
 };
 
 #endif

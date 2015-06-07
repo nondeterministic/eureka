@@ -63,6 +63,7 @@ extern "C" {
 #include "console.hh"
 #include "eventmanager.hh"
 #include "actiononenter.hh"
+#include "actionopened.hh"
 #include "actiontake.hh"
 #include "actionpullpush.hh"
 #include "eventermap.hh"
@@ -702,13 +703,6 @@ std::string GameControl::yield_item(int selected_player)
 	return "";
 }
 
-// TODO
-
-void GameControl::open_act()
-{
-
-}
-
 // Rest party
 
 void GameControl::hole_up()
@@ -784,6 +778,100 @@ void GameControl::hole_up()
 	mwin.display_last();
 }
 
+void GameControl::open_act()
+{
+	printcon("Open - in which direction?");
+	std::pair<int,int> coords = select_coords();
+
+	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+
+	// TODO: If there are more than one openable item in one place, all are opened in succession.
+	// However, I can't think of a scenario, where this would occur/be a problem.
+
+	if (avail_objects.first != avail_objects.second) {
+		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+			MapObj& the_obj = curr_obj->second;
+			IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+
+			if (the_obj.openable) {
+				if (the_obj.lock_type == NORMAL_LOCK || the_obj.lock_type == MAGIC_LOCK) {
+					printcon("You try, but it seems locked.");
+					return;
+				}
+				else {
+					cout << "AO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+
+					for (auto act = the_obj.actions()->begin(); act != the_obj.actions()->end(); act++) {
+						std::shared_ptr<Action> tmp_act = (*act);
+						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
+
+						cout << "BO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+
+						if (action == NULL) {
+							printcon("Nothing to open here.");
+							return;
+						}
+
+						GameEventHandler gh;
+						for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+							gh.handle(*curr_ev, arena->get_map(), &the_obj);
+
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	printcon("Nothing to open here.");
+	return;
+}
+
+void GameControl::unlock_item()
+{
+	if (!party->indoors()) {
+		printcon("Unlock - nothing to unlock here.");
+		return;
+	}
+
+	ZtatsWin& zwin = ZtatsWin::Instance();
+	printcon("Unlock - in which direction?");
+	std::pair<int,int> coords = select_coords();
+
+	printcon("Choose a player to attempt the unlocking of item.");
+	int chosen_player = zwin.select_player();
+	if (chosen_player < 0) {
+		printcon("Changed your mind then?");
+		return;
+	}
+	PlayerCharacter* player = party->get_player(chosen_player);
+
+	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+	if (avail_objects.first != avail_objects.second) {
+		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+			MapObj& the_obj = curr_obj->second;
+			IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+
+			if (the_obj.openable) {
+				if (the_obj.lock_type == NORMAL_LOCK) {
+					printcon("Wow, you did it!");
+					party->rm_jimmylock();
+					the_obj.lock_type = UNLOCKED;
+					return;
+				}
+				else if (the_obj.lock_type == MAGIC_LOCK) {
+					printcon("It seems, this needs more than just a jimmy lock.");
+					return;
+				}
+				else {
+					printcon("Not locked. Don't waste a perfectly good jimmy lock on it.");
+					return;
+				}
+			}
+		}
+	}
+}
+
 void GameControl::use()
 {
 	MiniWin& mwin = MiniWin::Instance();
@@ -808,6 +896,9 @@ void GameControl::use()
 		}
 		else if (ShieldHelper::exists(selected_item_name)) {
 			printcon("Try to (r)eady a shield instead.");
+		}
+		else if (selected_item_name == "jimmy lock") {
+			unlock_item();
 		}
 		else if (EdiblesHelper::exists(selected_item_name)) {
 			// Create a temporary item

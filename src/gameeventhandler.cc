@@ -3,10 +3,12 @@
 #include "gameevent.hh"
 #include "gamestate.hh"
 #include "map.hh"
+#include "mapobj.hh"
 #include "indoorsmap.hh"
 #include "eventermap.hh"
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
+#include "eventdeleteobj.hh"
 #include "gamecontrol.hh"
 #include "miniwin.hh"
 #include "world.hh"
@@ -31,7 +33,7 @@ GameEventHandler::GameEventHandler()
 {
 }
 
-bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<Map> map)
+bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<Map> map, MapObj* obj)
 {
 	if (std::dynamic_pointer_cast<EventEnterMap>(event))
 		return handle_event_enter_map(std::dynamic_pointer_cast<EventEnterMap>(event), map);
@@ -41,10 +43,26 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 		return handle_event_lua_script(std::dynamic_pointer_cast<EventLuaScript>(event), map);
 	else if (std::dynamic_pointer_cast<EventChangeIcon>(event))
 		return handle_event_change_icon(std::dynamic_pointer_cast<EventChangeIcon>(event), map);
+	else if (std::dynamic_pointer_cast<EventDeleteObject>(event))
+		return handle_event_delete_object(map, obj);
 	else
 		std::cout << "Not handling UNKNOWN EVENT\n:";
 
 	return false;
+}
+
+// Deletes one (not all!) object from map; see pop_obj() for details.
+
+bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapObj* obj)
+{
+	if (obj == NULL) {
+		std::cerr << "ERROR: Trying to delete NULL-object.\n";
+		return false;
+	}
+
+	unsigned x, y;
+	obj->get_coords(x, y);
+	map->pop_obj((int)x, (int)y);
 }
 
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)

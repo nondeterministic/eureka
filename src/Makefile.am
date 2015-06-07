@@ -43,10 +43,12 @@ simplicissimus_SOURCES = \
 	actiontake.hh actiontake.cc \
 	actiononenter.hh actiononenter.cc \
 	actionpullpush.hh actionpullpush.cc \
+	actionopened.hh actionopened.cc \
 	playlist.hh playlist.cc \
 	soundsample.hh soundsample.cc \
 	eventmanager.hh eventmanager.cc \
 	gameevent.hh gameevent.cc \
+	eventdeleteobj.hh eventdeleteobj.cc \
 	eventermap.hh eventermap.cc \
 	eventchangeicon.hh eventchangeicon.cc \
 	eventprintcon.hh eventprintcon.cc \
@@ -65,6 +67,7 @@ simplicissimus_SOURCES = \
 	race.hh profession.hh \
 	playercharacter.hh playercharacter.cc \
 	item.hh item.cc \
+	jimmylock.hh jimmylock.cc \
 	gold.hh gold.cc \
 	edible.hh edible.cc \
 	shield.hh shield.cc \

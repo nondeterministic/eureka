@@ -66,7 +66,16 @@
     <object x="30" y="5" ox="0" oy="0" icon_no="642" layer="0" id="8" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="4" y="28" ox="0" oy="0" icon_no="87" layer="0" id="chest" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="5" ox="17" oy="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
-    <object x="22" y="3" ox="0" oy="0" icon_no="171" layer="0" id="prisondoor" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="22" y="3" ox="0" oy="0" icon_no="171" layer="0" id="prisondoor" locked="normal" lua_name="" how_many="1" removable="no" move_mode="static" type="item">
+    	<actions>
+	        <action type="ACT_ON_OPENED">
+		        <event type="EVENT_PRINTCON">
+					The door makes a creaky noise and opens...
+		        </event>
+				<event type="EVENT_DELETE_OBJECT"/>		  
+	    	</action>
+    	</actions>
+    </object>
     <object x="31" y="5" ox="0" oy="0" icon_no="646" layer="0" id="6" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="34" y="7" ox="0" oy="0" icon_no="647" layer="0" id="5" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>

@@ -22,6 +22,7 @@ protected:
   Inventory _inv;
   int _gold, _food;
   int _guard;
+  int _jlocks;
 
   Party();
 
@@ -63,6 +64,9 @@ public:
   void set_food(int);
   std::string to_xml();
   int max_carrying_capacity();
+  void rm_jimmylock();
+  void add_jimmylock();
+  int jimmylock_count();
 };
 
 #endif

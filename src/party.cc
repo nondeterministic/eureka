@@ -1,5 +1,6 @@
 #include "simplicissimus.hh"
 #include "party.hh"
+#include "jimmylock.hh"
 
 #include <utility>
 #include <iostream>
@@ -31,6 +32,7 @@ Party::Party()
 	_gold = 0;
 	_food = 0;
 	_guard = -1;
+	_jlocks = 0;
 	is_resting = false;
 }
 
@@ -38,6 +40,29 @@ Party& Party::Instance()
 {
   static Party inst;
   return inst;
+}
+
+int Party::jimmylock_count()
+{
+	return _jlocks;
+}
+
+void Party::add_jimmylock()
+{
+	inventory()->add(new JimmyLock());
+	_jlocks++;
+}
+
+void Party::rm_jimmylock()
+{
+	if (_jlocks <= 0) {
+		std::cerr << "ERROR: Tried to remove jimmy lock from inventory although there doesn't seem to be one.\n";
+		return;
+	}
+
+	JimmyLock l;
+	inventory()->remove(l.name());
+	_jlocks--;
 }
 
 int Party::gold()
@@ -186,6 +211,7 @@ std::string Party::to_xml()
 	partyNd->add_child("map")->add_child_text(map_name());
 	partyNd->add_child("indoors")->add_child_text(indoors()? "1":"0");
 	partyNd->add_child("gold")->add_child_text(std::to_string(gold()));
+	partyNd->add_child("jimmylocks")->add_child_text(std::to_string(jimmylock_count()));
 	partyNd->add_child("food")->add_child_text(std::to_string(food()));
 
 	// Add players
@@ -225,7 +251,13 @@ std::string Party::to_xml()
 	// Add inventory
 	xmlpp::Element* invEl = partyNd->add_child("inventory");
 	for (unsigned i = 0; i < Party::Instance().inventory()->size(); i++) {
-		Item* item = Party::Instance().inventory()->get_item(i);
+		Item* item = inventory()->get_item(i);
+
+		// Skip jimmy locks as these are written and read separately, not as part of the inventory
+		JimmyLock l;
+		if (item->name() == l.name())
+			continue;
+
 		xmlpp::Element* itemEl(invEl->add_child("item"));
 
 		itemEl->set_attribute("how_many", std::to_string(Party::Instance().inventory()->how_many_at(i)));

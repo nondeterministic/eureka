@@ -237,6 +237,11 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 
 	int deltax = xi - xp;
 	int deltay = abs(yi - yp);
+
+	// TODO: Ignores night or light; shows always icons right next to player, is that desired?
+	if (deltax <= 1 && deltay <= 1)
+		return true;
+
 	int error = ((float) deltax) / 2.0;
 	int ystep = 0;
 	int y = yp;
@@ -245,7 +250,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 	else
 		ystep = -1;
 
-	std::vector<int> row;
+	std::vector<int> row, row_objs;
 	int icon_no = 0;
 
 #ifndef ADD_ICON
@@ -264,7 +269,12 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 			if (avail_objects.first != avail_objects.second) {
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
-					row.push_back(the_obj.get_icon());
+					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+					if (!(props->flags() & FULLY_TRANS)) {
+						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
+						row_objs.push_back(the_obj.get_icon());
+						break;
+					}
 				}
 			}
 
@@ -279,7 +289,12 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 			if (avail_objects.first != avail_objects.second) {
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
-					row.push_back(the_obj.get_icon());
+					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+					if (!(props->flags() & FULLY_TRANS)) {
+						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
+						row_objs.push_back(the_obj.get_icon());
+						break;
+					}
 				}
 			}
 
@@ -295,27 +310,44 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		}
 	}
 
-	// Now do the actual check for transparency in the row, we just built.
+	// Now do the actual check for transparency in the row of icons, we just built.
 	int semitrans = 0;
 	for (unsigned i = 1; i < row.size() - 1; i++) {
 		IconProps* props = IndoorsIcons::Instance().get_props(row[i]);
 
-		if (props && (props->flags() & NOT_TRANS)) {
-			row.clear();
+		if (props && (props->flags() & NOT_TRANS))
 			return false;
-		}
 		else if (i > 0 && props && (props->flags() & SEMI_TRANS)) {
 			// Decrease viewing distance by 4 on semi transparent icons, but
 			// not when standing on one (i.e., i > 0), rather only when
 			// those icons block the view, i.e., are in front of the player.
-			if (row.size() - ++semitrans > 4) {
-				row.clear();
+			if (row.size() - ++semitrans > 4)
 				return false;
+		}
+	}
+
+	// And here is a row of objects, we filled.  Problem is, that the row of icons can be longer or shorter than the row of icons as there
+	// can be 0 to n objects per icon on the map.  So with this naiv scanning of objects, there sometimes could be odd effects in the
+	// view of the player.
+	if (row_objs.size() > 0) {
+		semitrans = 0;
+
+		for (unsigned i = 0; i < row_objs.size(); i++) {
+			IconProps* props = IndoorsIcons::Instance().get_props(row_objs[i]);
+
+			if (props && (props->flags() & NOT_TRANS))
+				return false;
+			else if (props && (props->flags() & SEMI_TRANS)) {
+				// Decrease viewing distance by 4 on semi transparent icons, but
+				// not when standing on one (i.e., i > 0), rather only when
+				// those icons block the view, i.e., are in front of the player.
+				// TODO: This is OK for icons as in the loop above, but won't work like this for objects.  Bad?
+				if (row_objs.size() - ++semitrans > 4)
+					return false;
 			}
 		}
 	}
 
-	row.clear();
 	return true;
 }
 

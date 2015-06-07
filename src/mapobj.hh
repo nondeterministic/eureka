@@ -30,6 +30,11 @@ enum PERSONALITY
 	HOSTILE, NEUTRAL, RIGHTEOUS
 };
 
+enum LOCK_TYPE
+{
+	NORMAL_LOCK, MAGIC_LOCK, UNLOCKED
+};
+
 class MapObj
 {
 public:
@@ -60,6 +65,8 @@ public:
 
 	MOVE_MODE move_mode;
 	PERSONALITY personality;
+	LOCK_TYPE lock_type;
+	bool openable;
 
 protected:
 	MAPOBJ_TYPES _type;

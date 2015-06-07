@@ -177,7 +177,7 @@
       <icon no="168" trans="full" walk="full">walkway</icon>
       <icon no="169" trans="not" walk="not">closed door</icon>
       <icon no="170" trans="full" walk="full">nothing special</icon>
-      <icon no="171" trans="semi" walk="not">closed door</icon>
+      <icon no="171" trans="semi" walk="not">closed door with iron bars</icon>
       <icon no="172" trans="full" walk="full">nothing special</icon>
       <icon no="173" trans="full" walk="full">nothing special</icon>
       <icon no="174" trans="full" walk="full">nothing special</icon>

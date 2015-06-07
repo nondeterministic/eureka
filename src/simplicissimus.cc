@@ -32,6 +32,7 @@
 #include "luaapi.hh"
 #include "weapon.hh"
 #include "shield.hh"
+#include "jimmylock.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "util.hh"
@@ -200,6 +201,11 @@ int main(int argc, char *argv[])
 				  gc->set_map_name(reader.read_string().c_str());
 			  else if (reader.get_name() == "indoors")
 				  gc->set_outdoors(reader.read_string() == "0"? true : false);
+			  else if (reader.get_name() == "jimmylocks") {
+				  int locks = std::stoi(reader.read_string().c_str());
+				  for (int l = 0; l < locks; l++)
+					  party->add_jimmylock();
+			  }
 			  else if (reader.get_name() == "gold")
 				  party->set_gold(std::stoi(reader.read_string().c_str()));
 			  else if (reader.get_name() == "food")
@@ -327,6 +333,9 @@ int main(int argc, char *argv[])
 	  party->inventory()->add(WeaponHelper::createFromLua("sword"));
 	  party->inventory()->add(WeaponHelper::createFromLua("axe"));
 	  party->inventory()->add(ShieldHelper::createFromLua("small shield"));
+	  party->add_jimmylock();
+	  party->add_jimmylock();
+	  party->add_jimmylock();
 
 	  party->set_food(200);
 	  party->set_gold(11);

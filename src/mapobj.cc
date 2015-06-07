@@ -24,6 +24,9 @@ MapObj::MapObj()
   how_many = 1;
   move_mode = STATIC;
   personality = NEUTRAL;
+
+  lock_type = UNLOCKED;
+  openable = false;
 }
 
 MapObj::~MapObj()

@@ -23,11 +23,13 @@ leibniz_SOURCES = leibniz.cc \
 		../actiontake.cc ../actiontake.hh \
 		../actiononenter.cc ../actiononenter.hh \
 		../actionpullpush.cc ../actionpullpush.hh \
+		../actionopened.cc ../actionopened.hh \
 		addactionwin.cc addactionwin.hh \
 		addobjectwin.cc addobjectwin.hh \
 		../mapobj.cc ../mapobj.hh \
 		../gameevent.cc ../gameevent.hh \
 		../eventermap.cc ../eventermap.hh \
+		../eventdeleteobj.cc ../eventdeleteobj.hh \
 		../eventprintcon.cc ../eventprintcon.hh \ 
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \

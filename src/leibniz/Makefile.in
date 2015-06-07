@@ -102,9 +102,10 @@ am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	../gamecharacter.$(OBJEXT) ../creature.$(OBJEXT) \
 	../map.$(OBJEXT) obj.$(OBJEXT) ../action.$(OBJEXT) \
 	../actiontake.$(OBJEXT) ../actiononenter.$(OBJEXT) \
-	../actionpullpush.$(OBJEXT) addactionwin.$(OBJEXT) \
-	addobjectwin.$(OBJEXT) ../mapobj.$(OBJEXT) \
-	../gameevent.$(OBJEXT) ../eventermap.$(OBJEXT) \
+	../actionpullpush.$(OBJEXT) ../actionopened.$(OBJEXT) \
+	addactionwin.$(OBJEXT) addobjectwin.$(OBJEXT) \
+	../mapobj.$(OBJEXT) ../gameevent.$(OBJEXT) \
+	../eventermap.$(OBJEXT) ../eventdeleteobj.$(OBJEXT) \
 	../eventprintcon.$(OBJEXT) ../eventchangeicon.$(OBJEXT) \
 	../eventluascript.$(OBJEXT) eventwin.$(OBJEXT) \
 	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
@@ -371,11 +372,13 @@ leibniz_SOURCES = leibniz.cc \
 		../actiontake.cc ../actiontake.hh \
 		../actiononenter.cc ../actiononenter.hh \
 		../actionpullpush.cc ../actionpullpush.hh \
+		../actionopened.cc ../actionopened.hh \
 		addactionwin.cc addactionwin.hh \
 		addobjectwin.cc addobjectwin.hh \
 		../mapobj.cc ../mapobj.hh \
 		../gameevent.cc ../gameevent.hh \
 		../eventermap.cc ../eventermap.hh \
+		../eventdeleteobj.cc ../eventdeleteobj.hh \
 		../eventprintcon.cc ../eventprintcon.hh \
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \
@@ -504,10 +507,14 @@ clean-binPROGRAMS:
 	../$(DEPDIR)/$(am__dirstamp)
 ../actionpullpush.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
+../actionopened.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../mapobj.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../gameevent.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventermap.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
+../eventdeleteobj.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventprintcon.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
@@ -543,10 +550,12 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiononenter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actionopened.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actionpullpush.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiontake.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/creature.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventchangeicon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventdeleteobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventermap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventluascript.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventprintcon.Po@am__quote@
