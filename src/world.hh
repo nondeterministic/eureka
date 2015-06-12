@@ -30,8 +30,10 @@
 #include <exception>
 #include <vector>
 #include <memory>
+
 #include "map.hh"
 #include "creature.hh"
+#include "spell.hh"
 
 extern "C" {
 #include <lua5.1/lua.h>
@@ -85,6 +87,7 @@ protected:
   std::vector<std::shared_ptr<Map>> _maps;
   std::vector<std::string> _map_names;
   std::vector<Creature> _creatures;
+  std::vector<Spell> _spells;
   std::string _name, _path;
   unsigned _indoors_tile_size, _outdoors_tile_size;
   xmlpp::Document* _main_world_xml_file;

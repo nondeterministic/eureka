@@ -110,21 +110,19 @@ int main(int argc, char *argv[])
     res_w = 800; res_h=577;
   }
 
-  // Load game data
-  if (! World::Instance().xml_load_world_data(((std::string)DATADIR + 
-					       "/simplicissimus/data/" + 
-					       (std::string)WORLD_NAME + ".xml").c_str()))
-    {
-      std::cerr << "Error loading game data. Did you run make install?" << std::endl;
-      return -1;
-    }
-
   // Initialise Lua engine
   _lua_state = luaL_newstate();
   luaL_openlibs(_lua_state); /* Load Lua libraries */
 
   // Make the simplicissimus API visible to Lua
   publicize_api(_lua_state);
+
+  // Load game data
+  if (! World::Instance().xml_load_world_data(((std::string)DATADIR + "/simplicissimus/data/" + (std::string)WORLD_NAME + ".xml").c_str()))
+  {
+      std::cerr << "ERROR: Error loading game data. Did you run make install?" << std::endl;
+      return -1;
+  }
 
   // Load Lua scripts, basically.
   World::Instance().load_world_elements(_lua_state);
@@ -365,7 +363,7 @@ int main(int argc, char *argv[])
 
   Console::Instance().
     print(&normalFont,
-	  "This is pre-alpha software! Currently supported commands are:\n(a)ttack, (d)rop item, "
+	  "This is alpha-status software! Currently supported commands are:\n(a)ttack, (d)rop item, "
 	  "(e)nter, (i)nventory, (l)ook, (o)pen, (p)pull/push, (q)uit, (r)eady item, (t)alk, (u)use item, (y)ield item, (z)tats.\n",
 	  false);
 

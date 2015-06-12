@@ -395,14 +395,10 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 {
 	std::vector<std::shared_ptr<Action>> parsed_actions;
 
-	cout << "PARSING ACTIONS...\n";
-
 	// Get all action nodes
 	xmlpp::Node::NodeList actions = node->get_children();
 	for (auto action = actions.begin(); action != actions.end(); ++action) {
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*action);
-
-		cout << "PARSING ACTION...\n";
 
 		if (nodeElement) {
 			std::string curr_act_name = nodeElement->get_attribute_value("type");  // Name of action

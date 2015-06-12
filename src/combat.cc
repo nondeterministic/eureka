@@ -441,6 +441,8 @@ void Combat::victory()
   // No need to clean bounty items as they are destroyed when combat is over!
 }
 
+// Foes fight now against the party...
+
 int Combat::foes_fight()
 {
 	LuaWrapper lua(_lua_state);
@@ -449,7 +451,9 @@ int Combat::foes_fight()
 	for (int i = 0; i < foes.size(); i++) {
 		Creature* foe = foes.get()->at(i).get();
 
-		// Load corresponding Lua monster definition
+		// Load corresponding Lua monster definition.
+		//
+		// Indoors map defined monster (e.g., town folk)
 		if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
 				(std::string)PACKAGE + "/data/" +
 				(std::string)WORLD_NAME + "/bestiary/" +
@@ -468,7 +472,7 @@ int Combat::foes_fight()
 				return 0;
 			}
 		}
-		// Fight against ordinary monster, defined in monster definition file
+		// Fight against ordinary monster, defined in monster definition file.
 		else {
 			// Convert the this-pointer to string and push it to Lua-Land
 			// along with i, such that Lua knows which monster is referred

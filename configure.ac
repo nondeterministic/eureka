@@ -73,7 +73,9 @@ AC_CONFIG_FILES([Makefile \
 		 m4/Makefile 
 		 data/Makefile
 		 data/leibniz/Makefile 
-		 data/Mittelerde/Makefile 
+		 data/Mittelerde/Makefile
+		 data/Mittelerde/spells/Makefile
+		 data/Mittelerde/spells/mage/Makefile
 		 data/Mittelerde/images/Makefile
 		 data/Mittelerde/maps/Makefile
 		 data/Mittelerde/weapons/Makefile
@@ -86,7 +88,8 @@ AC_OUTPUT
 
 echo "
   ($PACKAGE_NAME) version $PACKAGE_VERSION
-  Prefix.........: $prefix
+
+  Prefix.........:        $prefix
   C++ Compiler...:        $CXX $CXXFLAGS $CPPFLAGS 
       		     SDL: $SDL_CFLAGS
 		   Boost: $BOOST_CPPFLAGS

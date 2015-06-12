@@ -20,14 +20,18 @@
 // See http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
 #define BOOST_NO_SCOPED_ENUMS
 #define BOOST_NO_CXX11_SCOPED_ENUMS
-#include "boost/filesystem.hpp"
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <libxml++/libxml++.h>
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
+
 #include "world.hh"
 #include "config.h"
+#include "simplicissimus.hh"
 #include "map.hh"
 #include "indoorsmap.hh"
 #include "outdoorsmap.hh"
@@ -36,6 +40,9 @@
 #include "creature.hh"
 #include "luaapi.hh"
 #include "weapon.hh"
+#include "spell.hh"
+#include "luawrapper.hh"
+#include "luaapi.hh"
 
 extern "C"
 {
@@ -44,6 +51,8 @@ extern "C"
 #include <lualib.h>
 #include <lauxlib.h>
 }
+
+extern lua_State* _lua_state;
 
 World::World()
 {
@@ -378,13 +387,16 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, int flags)
         icon_node->set_attribute("walk", "full");
 }
 
-/*
- * Loads all the world elements which are defined in terms of Lua tables and therefore defs.lua files inside
- * their corresponding subdirectories inside data/
+/**
+ * Loads all the world elements.
  */
 
 void World::load_world_elements(lua_State* L)
 {
+	LuaWrapper lua(L);
+
+	// First load those which are defined in terms of Lua tables and therefore defs.lua files inside their corresponding subdirectories inside data/
+
 	int number_of_elems = 4;
 	std::string* elems = new string[number_of_elems] { "weapons", "shields", "bestiary", "edibles" };
 
@@ -407,5 +419,36 @@ void World::load_world_elements(lua_State* L)
 				}
 			}
 		}
+	}
+
+	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
+
+	boost::filesystem::path targetDir((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/spells/");
+	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+
+	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
+	    if (is_regular_file(i)) {
+	    	Spell spell;
+	    	std::vector<std::string> strs;
+	    	boost::split(strs, i.string(), boost::is_any_of("/\\"));
+
+	    	// Extract profession first, assuming the directory is .../.../mage/spell.lua; whereas i points to spell.lua
+	    	spell.profession     = stringToProfession.at(boost::to_upper_copy<std::string>(strs.at(strs.size() - 2)));
+	    	spell.full_file_path = i.string();
+
+	    	// Now execute spell to extract missing data that we want to store in spell object
+			if (luaL_dofile(L, i.string().c_str())) {
+				std::cout << "ERROR: COULDNT EXECUTE SPELL FILE " << i.string() << endl;
+				exit(1);
+			}
+
+			spell.name           = lua.call_fn<string>("get_name");
+			spell.sound_path     = lua.call_fn<string>("get_sound_path");
+			spell.sp             = lua.call_fn<double>("get_sp");
+			spell.level          = lua.call_fn<double>("get_level");
+
+	    	cout << "INFO: Loaded spell: " << i.string() << endl;
+	    	_spells.push_back(spell);
+	    }
 	}
 }

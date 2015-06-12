@@ -27,7 +27,9 @@ simplicissimus_SOURCES = \
 	sdlwindow.hh sdlwindow.cc \
 	inventory.hh inventory.cc \
 	party.hh party.cc \
-	map.hh map.cc world.hh world.cc \
+	map.hh map.cc \
+	spell.hh spell.cc \
+	world.hh world.cc \
 	type.hh type.cc \
 	sdltricks.hh sdltricks.cc \
 	sdlwindowregion.hh \

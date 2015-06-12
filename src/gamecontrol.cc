@@ -799,13 +799,9 @@ void GameControl::open_act()
 					return;
 				}
 				else {
-					cout << "AO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-
 					for (auto act = the_obj.actions()->begin(); act != the_obj.actions()->end(); act++) {
 						std::shared_ptr<Action> tmp_act = (*act);
 						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
-
-						cout << "BO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 
 						if (action == NULL) {
 							printcon("Nothing to open here.");

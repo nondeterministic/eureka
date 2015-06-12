@@ -108,9 +108,10 @@ am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	../eventermap.$(OBJEXT) ../eventdeleteobj.$(OBJEXT) \
 	../eventprintcon.$(OBJEXT) ../eventchangeicon.$(OBJEXT) \
 	../eventluascript.$(OBJEXT) eventwin.$(OBJEXT) \
-	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
-	../outdoorsicons.$(OBJEXT) ../iconprops.$(OBJEXT) \
-	../icons.$(OBJEXT) ../indoorsicons.$(OBJEXT) \
+	../luawrapper.$(OBJEXT) ../outdoorsmap.$(OBJEXT) \
+	../indoorsmap.$(OBJEXT) ../outdoorsicons.$(OBJEXT) \
+	../iconprops.$(OBJEXT) ../icons.$(OBJEXT) \
+	../indoorsicons.$(OBJEXT) ../spell.$(OBJEXT) \
 	../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
 	iconpropswin.$(OBJEXT) newworldwin.$(OBJEXT) \
 	startupwin.$(OBJEXT) newmapwin.$(OBJEXT) sdleditor.$(OBJEXT) \
@@ -383,12 +384,14 @@ leibniz_SOURCES = leibniz.cc \
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \
 		eventwin.cc eventwin.hh \
+		../luawrapper.hh ../luawrapper.cc \
 		../outdoorsmap.cc ../outdoorsmap.hh \
 		../indoorsmap.cc ../indoorsmap.hh \
 		../outdoorsicons.cc ../outdoorsicons.hh \
 		../iconprops.cc ../iconprops.hh \
 		../icons.cc ../icons.hh \
 		../indoorsicons.cc ../indoorsicons.hh \
+		../spell.hh ../spell.cc \
 		../world.cc ../world.hh \
 		../gamerules.cc ../gamerules.hh \
 		iconpropswin.cc iconpropswin.hh \
@@ -522,6 +525,8 @@ clean-binPROGRAMS:
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventluascript.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
+../luawrapper.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../outdoorsmap.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../indoorsmap.$(OBJEXT): ../$(am__dirstamp) \
@@ -533,6 +538,7 @@ clean-binPROGRAMS:
 ../icons.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../indoorsicons.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
+../spell.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../world.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../gamerules.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
@@ -567,11 +573,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/indoorsicons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/indoorsmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/item.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/luawrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/mapobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/outdoorsicons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/outdoorsmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/shield.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/spell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/weapon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/world.Po@am__quote@

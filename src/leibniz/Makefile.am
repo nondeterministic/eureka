@@ -34,12 +34,14 @@ leibniz_SOURCES = leibniz.cc \
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \
 		eventwin.cc eventwin.hh \
+		../luawrapper.hh ../luawrapper.cc \
 		../outdoorsmap.cc ../outdoorsmap.hh \
 		../indoorsmap.cc ../indoorsmap.hh \
 		../outdoorsicons.cc ../outdoorsicons.hh \
 		../iconprops.cc ../iconprops.hh \
 		../icons.cc ../icons.hh \
 		../indoorsicons.cc ../indoorsicons.hh \
+		../spell.hh ../spell.cc \
 		../world.cc ../world.hh \
 		../gamerules.cc ../gamerules.hh \
 		iconpropswin.cc iconpropswin.hh \
