@@ -81,6 +81,8 @@ extern "C" {
 #include "conversation.hh"
 #include "gamestate.hh"
 #include "gameeventhandler.hh"
+#include "spell.hh"
+#include "spellcasthelper.hh"
 #include "config.h"
 
 using namespace std;
@@ -517,7 +519,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 						if (cplayer >= 0) {
 							PlayerCharacter* player = party->get_player(cplayer);
 
-							if (player->condition() != DEAD) {
+							if (player->condition() == DEAD) {
 								printcon("Next time try picking an alive party member.");
 								break;
 							}
@@ -602,18 +604,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	return 0;
 }
 
-// Spell casting - outside battle, e.g., light, healing, etc.
-//
-// PRECONDITION: Assumes that player is alive!!
-
 void GameControl::cast_spell(int player_no, Spell spell)
 {
-	PlayerCharacter* player = party->get_player(player_no);
-
-	if (player->sp() < spell.sp) {
-		printcon(player->name() + " does not have enough spell points to cast " + spell.name + ".");
-		return;
-	}
+	SpellCastHelper::cast(player_no, spell, _lua_state);
 }
 
 // Returns the full file path of the chosen spell, otherwise "" if no spell was selected.

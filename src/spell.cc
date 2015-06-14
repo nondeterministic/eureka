@@ -15,6 +15,9 @@
 #include "spell.hh"
 #include "luawrapper.hh"
 #include "simplicissimus.hh"
+#include "party.hh"
+#include "playercharacter.hh"
+#include "gamecontrol.hh"
 
 extern "C"
 {
@@ -24,7 +27,7 @@ extern "C"
 #include <lauxlib.h>
 }
 
-// Nice little helper that returns a Spell object for a given filepath to a Lua
+// Nice little static helper that returns a Spell object for a given filepath to a Lua
 // spell definition file.  Needs a Lua state to evaluate the contents of the spell
 // definition file.
 
@@ -53,8 +56,3 @@ Spell Spell::spell_from_file_path(std::string fp, lua_State* L)
 
 	return spell;
 }
-
-//Spell Spell::spell_from_spell_name(std::string fp, lua_State* L)
-//{
-//
-//}

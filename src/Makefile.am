@@ -29,6 +29,7 @@ simplicissimus_SOURCES = \
 	party.hh party.cc \
 	map.hh map.cc \
 	spell.hh spell.cc \
+	spellcasthelper.hh spellcasthelper.cc \
 	world.hh world.cc \
 	type.hh type.cc \
 	sdltricks.hh sdltricks.cc \

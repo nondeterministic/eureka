@@ -183,6 +183,18 @@ int l_ztatswin_restore(lua_State* L)
 	return 0;
 }
 
+// Returns number of selected player in party
+
+int l_choose_player(lua_State* L)
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	int player = zwin.select_player();
+	lua_pushnumber(L, player);
+
+	return 1;
+}
+
 /**
  * When called, on the Lua stack has to be a table of weapons.
  * This table will then be inserted into the ztats window display,
@@ -714,6 +726,20 @@ int l_remove_from_current_map(lua_State* L)
 	return 0;
 }
 
+// Gets two arguments on Lua stack:
+// 1. number of party member, 2. a number that is to be added to member's hp
+// (if that number is negative, subtraction actually occurs, naturally).
+
+int l_add_hp(lua_State* L)
+{
+	int player = lua_tonumber(L, 1);
+	int value  = lua_tonumber(L, 2);
+
+	std::cout << "ARGUMENTS: player: " << " value: " << value << std::endl;
+
+	return 0;
+}
+
 void publicize_api(lua_State* L)
 {
   // Lua 5.1
@@ -797,6 +823,12 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_join);
   lua_setglobal(L, "simpl_join");
+
+  lua_pushcfunction(L, l_choose_player);
+  lua_setglobal(L, "simpl_choose_player");
+
+  lua_pushcfunction(L, l_add_hp);
+  lua_setglobal(L, "simpl_add_hp");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {
