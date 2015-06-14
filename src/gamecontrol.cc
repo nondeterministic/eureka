@@ -510,6 +510,34 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_a:
 					attack();
 					break;
+				case SDLK_c: {
+						printcon("Cast spell - select player");
+						int cplayer = zwin.select_player();
+
+						if (cplayer >= 0) {
+							PlayerCharacter* player = party->get_player(cplayer);
+
+							if (player->condition() != DEAD) {
+								printcon("Next time try picking an alive party member.");
+								break;
+							}
+
+							if (!player->is_spell_caster()) {
+								printcon(player->name() + " does not have magic abilities.");
+								break;
+							}
+
+							std::string spell_file_path = select_spell(cplayer);
+
+							if (spell_file_path.length() > 0)
+								cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
+							else
+								printcon("Never mind.");
+						}
+						else
+							printcon("Never mind.");
+					}
+					break;
 				case SDLK_d:
 					drop_items();
 					break;
@@ -572,6 +600,66 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 		}
 	}
 	return 0;
+}
+
+// Spell casting - outside battle, e.g., light, healing, etc.
+//
+// PRECONDITION: Assumes that player is alive!!
+
+void GameControl::cast_spell(int player_no, Spell spell)
+{
+	PlayerCharacter* player = party->get_player(player_no);
+
+	if (player->sp() < spell.sp) {
+		printcon(player->name() + " does not have enough spell points to cast " + spell.name + ".");
+		return;
+	}
+}
+
+// Returns the full file path of the chosen spell, otherwise "" if no spell was selected.
+//
+// PRECONDITION: Assumes that player_no refers to a magic user!  Otherwise the list will be empty!
+//               So check the magic use before calling this!
+
+std::string GameControl::select_spell(int player_no)
+{
+	MiniWin& mwin = MiniWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
+	PlayerCharacter* player = Party::Instance().get_player(player_no);
+
+	std::map<std::string, int> spell_list;
+	std::vector<std::string> spell_file_paths;
+
+	for (auto spell : *(World::Instance().get_spells())) {
+		if (player->profession() == spell.profession && player->level() <= spell.level) {
+			spell_list.insert(std::make_pair(spell.name, 1));
+			spell_file_paths.push_back(spell.full_file_path);
+		}
+	}
+
+	// This should never happen!  See precondition comment on top of function!
+	// (But just in case... The program won't crash at least.)
+	if (spell_list.size() == 0)
+		return "";
+
+	printcon("Cast - select a spell");
+
+	mwin.save_surf();
+	mwin.clear();
+	mwin.println(0, "Cast spell", CENTERALIGN);
+	mwin.println(1, "(Press space to cast selected spell, q to exit)");
+
+	std::map<std::string, int> items = spell_list;
+	std::vector<line_tuple>  items_l = Util::to_line_tuples(items);
+	zwin.set_lines(items_l);
+	zwin.clear();
+	int selection = zwin.select_item();
+
+	if (selection >= 0)
+		return spell_file_paths.at(selection);
+
+	// No spell was chosen...
+	return "";
 }
 
 void GameControl::quit()

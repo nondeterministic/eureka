@@ -32,6 +32,11 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 	_condition = GOOD;
 }
 
+bool PlayerCharacter::is_spell_caster()
+{
+	return _prof == MAGE || _prof == CLERIC || _prof == DRUID || _prof == NECROMANCER || _prof == ARCHMAGE || _prof == GEOMANCER;
+}
+
 int PlayerCharacter::ep()
 {
   return _ep;

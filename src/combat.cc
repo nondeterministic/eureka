@@ -218,75 +218,83 @@ bool Combat::initiate()
 
 std::vector<int> Combat::attack_options()
 {
-  // Stores the choices of the party members.  The individual values
-  // of choices are as follows: if the player defends, -1 is stored at
-  // the respective position in array, otherwise the number of the
-  // monster that is to be attacked.
-  std::vector<int> choices;
-  choices.reserve(party->party_size());
-  choices.resize(party->party_size());
+	// Stores the choices of the party members.  The individual values
+	// of choices are as follows: if the player defends, -1 is stored at
+	// the respective position in array, otherwise the number of the
+	// monster that is to be attacked.
+	std::vector<int> choices;
+	choices.reserve(party->party_size());
+	choices.resize(party->party_size());
 
-  for (int i = 0; i < party->party_size(); i++) {
-    PlayerCharacter* player = party->get_player(i);
+	for (int i = 0; i < party->party_size(); i++) {
+		PlayerCharacter* player = party->get_player(i);
+		std::string key_inputs = "adr";
 
-    if (player->condition() == DEAD)
-    	continue;
+		if (player->condition() == DEAD)
+			continue;
 
-    ZtatsWin::Instance().highlight_lines(i * 2, i * 2 + 2);
+		ZtatsWin::Instance().highlight_lines(i * 2, i * 2 + 2);
 
-    std::stringstream ss;
-    ss << player->name() << " has these options this battle round:\n";
-    ss << "(A)ttack foes with ";
-    if (player->weapon() != NULL) {
-      ss << (Util::vowel(player->weapon()->name()[0])? "an " : "a ") << player->weapon()->name();
-      ss << ".\n(D)efend.\n(R)eady item.";
-    }
-    else
-      ss << "bare hands.\n(D)efend.\n(R)eady item.";
-    printcon(ss.str());
-    ss.str("");
+		std::stringstream ss;
+		ss << player->name() << " has these options this battle round:\n";
+		ss << "(A)ttack foes with ";
+		if (player->weapon() != NULL)
+			ss << (Util::vowel(player->weapon()->name()[0])? "an " : "a ") << player->weapon()->name() << "\n";
+		else
+			ss << "bare hands.\n";
+		if (player->is_spell_caster()) {
+			ss << "(C)ast a spell.\n";
+			key_inputs += 'c';
+		}
+		ss << "(D)efend.\n(R)eady item.";
+		printcon(ss.str());
+		ss.str("");
 
-    char input = em->get_key("adr");
-    if (input == 'a') {
-      if (foes.count()->size() == 1)
-        choices[i] = 1;
-      else {
-        int attacked = select_enemy(i);
-	
-        string attacked_name;
-        int j = 1;
-        for (auto foe : *(foes.count())) {
-          if (attacked == j)
-            attacked_name = foe.first;
-          j++;
-        }
-        printcon(player->name() + " will attack " +
-                 (Util::vowel(attacked_name[0]) ? "an " : "a ") +
-                 attacked_name + " in the next round.");
-        choices[i] = attacked;
-      }
-    }
-    else if (input == 'd') {
-      printcon(player->name() + " will defend in the next round.");
-      choices[i] = -1;
-    }
-    else { // (R)eady item
-      std::string new_weapon = GameControl::Instance().ready_item(i);
+		char input = em->get_key(key_inputs.c_str());
+		if (input == 'a') {
+			if (foes.count()->size() == 1)
+				choices[i] = 1;
+			else {
+				int attacked = select_enemy(i);
 
-      if (new_weapon != "") {
-	ss << player->name() + " will ready a" << 
-	  (Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
-	printcon(ss.str());
-      }
-      else
-	printcon(player->name() + " will defend in the next round.");
+				string attacked_name;
+				int j = 1;
+				for (auto foe : *(foes.count())) {
+					if (attacked == j)
+						attacked_name = foe.first;
+					j++;
+				}
+				printcon(player->name() + " will attack " +
+						(Util::vowel(attacked_name[0]) ? "an " : "a ") +
+						attacked_name + " in the next round.");
+				choices[i] = attacked;
+			}
+		}
+		else if (input == 'c') {
+			printcon(player->name() + " will cast a spell in the next round.");
+			choices[i] = -1;
+		}
+		else if (input == 'd') {
+			printcon(player->name() + " will defend in the next round.");
+			choices[i] = -1;
+		}
+		else { // (R)eady item
+			std::string new_weapon = GameControl::Instance().ready_item(i);
 
-      choices[i] = -1;
-    }
-    ZtatsWin::Instance().unhighlight_lines(i * 2, i * 2 + 2);
-  }
+			if (new_weapon != "") {
+				ss << player->name() + " will ready a" <<
+						(Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
+				printcon(ss.str());
+			}
+			else
+				printcon(player->name() + " will defend in the next round.");
 
-  return choices;
+			choices[i] = -1;
+		}
+		ZtatsWin::Instance().unhighlight_lines(i * 2, i * 2 + 2);
+	}
+
+	return choices;
 }
 
 int Combat::fight(const std::vector<int> choices)

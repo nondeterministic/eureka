@@ -56,6 +56,7 @@ public:
   int level();
   void set_level(int);
   int potential_level();
+  bool is_spell_caster();
 };
 
 #endif

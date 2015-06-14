@@ -76,6 +76,7 @@ public:
   void load_world_elements(lua_State* L);
   void xml_write_world_data(std::string = "");
   std::vector<Creature>* get_creatures();
+  std::vector<Spell>* get_spells();
 
 protected:
   World();

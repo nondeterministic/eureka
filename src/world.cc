@@ -42,7 +42,6 @@
 #include "weapon.hh"
 #include "spell.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"
 
 extern "C"
 {
@@ -52,7 +51,7 @@ extern "C"
 #include <lauxlib.h>
 }
 
-extern lua_State* _lua_state;
+// extern lua_State* _lua_state;
 
 World::World()
 {
@@ -428,27 +427,13 @@ void World::load_world_elements(lua_State* L)
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
 	    if (is_regular_file(i)) {
-	    	Spell spell;
-	    	std::vector<std::string> strs;
-	    	boost::split(strs, i.string(), boost::is_any_of("/\\"));
-
-	    	// Extract profession first, assuming the directory is .../.../mage/spell.lua; whereas i points to spell.lua
-	    	spell.profession     = stringToProfession.at(boost::to_upper_copy<std::string>(strs.at(strs.size() - 2)));
-	    	spell.full_file_path = i.string();
-
-	    	// Now execute spell to extract missing data that we want to store in spell object
-			if (luaL_dofile(L, i.string().c_str())) {
-				std::cout << "ERROR: COULDNT EXECUTE SPELL FILE " << i.string() << endl;
-				exit(1);
-			}
-
-			spell.name           = lua.call_fn<string>("get_name");
-			spell.sound_path     = lua.call_fn<string>("get_sound_path");
-			spell.sp             = lua.call_fn<double>("get_sp");
-			spell.level          = lua.call_fn<double>("get_level");
-
-	    	cout << "INFO: Loaded spell: " << i.string() << endl;
+	    	Spell spell = Spell::spell_from_file_path(i.string(), L);
 	    	_spells.push_back(spell);
 	    }
 	}
+}
+
+std::vector<Spell>* World::get_spells()
+{
+	return &_spells;
 }
