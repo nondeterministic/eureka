@@ -30,6 +30,8 @@ extern "C"
 
 void SpellCastHelper::cast(int player_no, Spell spell, lua_State* L)
 {
+	std::cout << "CASTING " << spell.name << std::endl;
+
 	LuaWrapper lua(L);
 
 	PlayerCharacter* player = Party::Instance().get_player(player_no);

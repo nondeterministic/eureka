@@ -732,11 +732,42 @@ int l_remove_from_current_map(lua_State* L)
 
 int l_add_hp(lua_State* L)
 {
-	int player = lua_tonumber(L, 1);
-	int value  = lua_tonumber(L, 2);
+	int player_no = lua_tonumber(L, 1);
+	int value     = lua_tonumber(L, 2);
 
-	std::cout << "ARGUMENTS: player: " << " value: " << value << std::endl;
+	PlayerCharacter* player = Party::Instance().get_player(player_no);
 
+	// We cannot up the HP of a dead player
+	if (player->condition() == DEAD) {
+	    GameControl::Instance().printcon("But " + player->name() + " is dead.");
+		return 0;
+	}
+
+	if (value >= 0)
+		player->set_hp(max(player->hpm(), player->hp() + value));
+	else
+		player->set_hp(max(0, player->hp() + value));
+
+	return 0;
+}
+
+// Returns true if player referred to by number on Lua stack is dead.
+// (Will crash, if that number is out of range for some reason.)
+
+int l_is_dead(lua_State* L)
+{
+	int player_no = lua_tonumber(L, 1);
+	lua_pushboolean(L, Party::Instance().get_player(player_no)->condition() == DEAD);
+	return 1;
+}
+
+int l_play_sound(lua_State* L)
+{
+	std::string file_name = lua_tostring(L, 1);
+	std::cout << "PLAYING " << file_name << std::endl;
+
+	static SoundSample sample;
+	sample.play(file_name);
 	return 0;
 }
 
@@ -829,6 +860,12 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_add_hp);
   lua_setglobal(L, "simpl_add_hp");
+
+  lua_pushcfunction(L, l_is_dead);
+  lua_setglobal(L, "simpl_is_dead");
+
+  lua_pushcfunction(L, l_play_sound);
+  lua_setglobal(L, "simpl_play_sound");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

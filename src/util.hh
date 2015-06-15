@@ -11,9 +11,9 @@ namespace Util
   bool vowel(const char);
   std::vector<std::string> splitString(std::string, std::string);
   std::vector<line_tuple> to_line_tuples(std::map<std::string, int>&);
+  std::string extract_name_from_ztats_list(std::string);
 
-  namespace Private
-  {
+  namespace Private {
   	  std::vector<std::string>& splitString2(std::string, std::string, std::vector<std::string>&);
   }
 }

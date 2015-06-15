@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cstddef>        // std::size_t
 
 #include "util.hh"
 #include "simplicissimus.hh"
@@ -58,4 +59,23 @@ std::vector<line_tuple> Util::to_line_tuples(std::map<std::string, int>& selecti
   }
 
   return result;
+}
+
+// In the stats list, one sees entries like "12) arrow (200)" meaning that selection 12 refers to 200 arrows.
+// When one is interested only in the displayed name, arrow, then call this function here.  It will return arrow in this case.
+// (Note: The input string can also be "1) arrow", i.e., without quantity!  So we differenatiate that case below.)
+
+std::string Util::extract_name_from_ztats_list(std::string s)
+{
+	std::size_t f1 = s.find_first_of(')');
+	std::size_t f2 = s.find_first_of('(');
+
+	if (f1 != std::string::npos) {
+		if (f2 != std::string::npos)
+			return s.substr(f1 + 2, s.length() - f1 - 2);
+		else
+			return s.substr(f1 + 2);
+	}
+
+	return "";
 }

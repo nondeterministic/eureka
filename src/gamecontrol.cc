@@ -379,7 +379,7 @@ void GameControl::move_objects()
 			std::pair<unsigned,unsigned> new_coords = pf.follow_party(obj_x, obj_y, party->x, party->y);
 
 			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&             // If coordinates changed...
-					(new_coords.first != party->x || new_coords.second != party->y))     // If new coordinates aren't those of the party...
+					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 			{
 				map_obj->set_coords(new_coords.first, new_coords.second);
 				moved_objects.push_back(*map_obj);
@@ -400,8 +400,8 @@ void GameControl::move_objects()
 			int best_x = 0, best_y = 0;
 			for (int x = -1; x < 2; x++) {
 				for (int y = -1; y < 2; y++) {
-					if ((int)obj_x + x > 0 && (int)obj_x + x < arena->get_map()->width() - 3 &&
-							(int)obj_y + y > 0 && (int)obj_y + y < arena->get_map()->height() - 3 &&
+					if ((int)obj_x + x > 0 && (int)obj_x + x < (int)arena->get_map()->width() - 3 &&
+							(int)obj_y + y > 0 && (int)obj_y + y < (int)arena->get_map()->height() - 3 &&
 								walkable((int)obj_x + x, (int)obj_y + y))
 					{
 						int new_dist = abs(party->x - (int)obj_x - x) + abs(party->y - (int)obj_y - y);
@@ -621,17 +621,18 @@ std::string GameControl::select_spell(int player_no)
 	PlayerCharacter* player = Party::Instance().get_player(player_no);
 
 	std::map<std::string, int> spell_list;
-	std::vector<std::string> spell_file_paths;
+	std::map<std::string, std::string> spell_file_paths;
 
 	for (auto spell : *(World::Instance().get_spells())) {
 		if (player->profession() == spell.profession && player->level() <= spell.level) {
 			spell_list.insert(std::make_pair(spell.name, 1));
-			spell_file_paths.push_back(spell.full_file_path);
+			spell_file_paths.insert(std::make_pair(spell.name, spell.full_file_path));
 		}
 	}
 
 	// This should never happen!  See precondition comment on top of function!
-	// (But just in case... The program won't crash at least.)
+	// (But just in case... The program won't crash at least.  It will just think
+	// that the player cancelled the spell selection - which is odd behaviour.)
 	if (spell_list.size() == 0)
 		return "";
 
@@ -648,8 +649,14 @@ std::string GameControl::select_spell(int player_no)
 	zwin.clear();
 	int selection = zwin.select_item();
 
-	if (selection >= 0)
-		return spell_file_paths.at(selection);
+	if (selection >= 0) {
+		for (int i = 0; i < items_l.size(); i++) {
+			if (selection == i) {
+				std::string clean_spell_name = Util::extract_name_from_ztats_list(items_l[i].get_head());
+				return spell_file_paths.at(clean_spell_name);
+			}
+		}
+	}
 
 	// No spell was chosen...
 	return "";
@@ -872,7 +879,7 @@ void GameControl::open_act()
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
-			IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+			// IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
 
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK || the_obj.lock_type == MAGIC_LOCK) {
@@ -921,13 +928,13 @@ void GameControl::unlock_item()
 		printcon("Changed your mind then?");
 		return;
 	}
-	PlayerCharacter* player = party->get_player(chosen_player);
+	// PlayerCharacter* player = party->get_player(chosen_player);
 
 	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
-			IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
+			// IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
 
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK) {
@@ -1005,6 +1012,8 @@ void GameControl::use()
 			case VERY_STRONG:
 				intoxicating_rounds = random(30, 40);
 				break;
+			default:
+				break;
 			}
 			Party::Instance().rounds_intoxicated = Party::Instance().rounds_intoxicated + intoxicating_rounds;
 			if (intoxicating_rounds > 0) {
@@ -1031,6 +1040,8 @@ void GameControl::use()
 						break;
 					case VERY_STRONG:
 						poisoned = random(0, 10) >= 3;
+						break;
+					default:
 						break;
 					}
 					if (poisoned) {
@@ -1061,6 +1072,8 @@ void GameControl::use()
 					case VERY_STRONG:
 						phealed = random(0, 10) >= 3;
 						break;
+					default:
+						break;
 					}
 
 					if (phealed) {
@@ -1087,6 +1100,8 @@ void GameControl::use()
 					break;
 				case VERY_STRONG:
 					healed = random(20, 30);
+					break;
+				default:
 					break;
 				}
 
