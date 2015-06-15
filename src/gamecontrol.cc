@@ -606,7 +606,13 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 
 void GameControl::cast_spell(int player_no, Spell spell)
 {
-	SpellCastHelper::cast(player_no, spell, _lua_state);
+	PlayerCharacter* player = party->get_player(player_no);
+
+	if (player->sp() < spell.sp)
+		printcon(player->name() + " does not have enough spell points.");
+	else {
+		SpellCastHelper::cast(player_no, spell, _lua_state);
+	}
 }
 
 // Returns the full file path of the chosen spell, otherwise "" if no spell was selected.

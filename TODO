@@ -1,6 +1,8 @@
 TODO
 =====
 
+- Spell points recover from walking + resting (prio: med, skill low)
+
 - Level up (prio high, skill med)
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)

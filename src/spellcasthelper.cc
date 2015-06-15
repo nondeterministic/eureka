@@ -19,6 +19,7 @@
 #include "party.hh"
 #include "playercharacter.hh"
 #include "gamecontrol.hh"
+#include "ztatswin.hh"
 
 extern "C"
 {
@@ -30,14 +31,17 @@ extern "C"
 
 void SpellCastHelper::cast(int player_no, Spell spell, lua_State* L)
 {
-	std::cout << "CASTING " << spell.name << std::endl;
-
 	LuaWrapper lua(L);
 
 	PlayerCharacter* player = Party::Instance().get_player(player_no);
 
 	if (!player->is_spell_caster()) {
 		GameControl::Instance().printcon(player->name() + " is not a magic user.");
+		return;
+	}
+
+	if (player->sp() < spell.sp) {
+		GameControl::Instance().printcon(player->name() + " does not have enough spell points.");
 		return;
 	}
 
@@ -51,5 +55,8 @@ void SpellCastHelper::cast(int player_no, Spell spell, lua_State* L)
 		exit(1);
 	}
 
+	player->set_sp(player->sp() - spell.sp);
+
 	lua.call_void_fn("cast");
+	ZtatsWin::Instance().update_player_list();
 }
