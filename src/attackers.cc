@@ -28,6 +28,14 @@
 
 using namespace std;
 
+// Gets n-th enemy in the vector.
+// You will not like calling this, when n > _enemies.size().
+
+Creature* Attackers::get(int n)
+{
+	return _enemies[n].get();
+}
+
 // Returns pointer to creature at distance, distance, or NULL if no
 // creature is at distance, distance.
 

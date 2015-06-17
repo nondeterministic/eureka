@@ -21,12 +21,15 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+
 #include <memory>
 #include <boost/unordered_set.hpp>
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
+
 #include <SDL.h>
 #include <SDL_keysym.h>
+
 #include "simplicissimus.hh"
 #include "soundsample.hh"
 #include "console.hh"
@@ -45,6 +48,7 @@
 #include "util.hh"
 #include "gold.hh"
 #include "gamerules.hh"
+#include "spellcasthelper.hh"
 #include "config.h"
 
 extern "C"
@@ -63,13 +67,15 @@ using namespace std;
 
 Combat::Combat()
 {
-  party = &Party::Instance();
-  em = &EventManager::Instance();
-  fled = false;
+	party = &Party::Instance();
+	em = &EventManager::Instance();
+	fled = false;
+	party->is_in_combat = true;
 }
 
 Combat::~Combat()
 {
+	party->is_in_combat = false;
 }
 
 // Returns true on victory, false otherwise.
@@ -93,7 +99,6 @@ bool Combat::initiate()
 				advance_party();
 				foes_fight();
 				return initiate();
-				// return false; // TODO is this return necessary?
 			}
 			break;
 		case 'f':
@@ -216,15 +221,11 @@ bool Combat::initiate()
 	return false;
 }
 
-std::vector<int> Combat::attack_options()
+std::vector<AttackOption> Combat::attack_options()
 {
-	// Stores the choices of the party members.  The individual values
-	// of choices are as follows: if the player defends, -1 is stored at
-	// the respective position in array, otherwise the number of the
-	// monster that is to be attacked.
-	std::vector<int> choices;
-	choices.reserve(party->party_size());
-	choices.resize(party->party_size());
+	std::vector<AttackOption> options;
+	options.reserve(party->party_size());
+	options.resize(party->party_size());
 
 	for (int i = 0; i < party->party_size(); i++) {
 		PlayerCharacter* player = party->get_player(i);
@@ -253,7 +254,7 @@ std::vector<int> Combat::attack_options()
 		char input = em->get_key(key_inputs.c_str());
 		if (input == 'a') {
 			if (foes.count()->size() == 1)
-				choices[i] = 1;
+				options[i].attack(1);
 			else {
 				int attacked = select_enemy(i);
 
@@ -264,42 +265,47 @@ std::vector<int> Combat::attack_options()
 						attacked_name = foe.first;
 					j++;
 				}
-				printcon(player->name() + " will attack " +
-						(Util::vowel(attacked_name[0]) ? "an " : "a ") +
-						attacked_name + " in the next round.");
-				choices[i] = attacked;
+				printcon(player->name() + " will attack " + (Util::vowel(attacked_name[0]) ? "an " : "a ") + attacked_name + " in the next round.");
+				options[i].attack(attacked);
 			}
 		}
 		else if (input == 'c') {
-			printcon(player->name() + " will cast a spell in the next round.");
-			choices[i] = -1;
+			std::string spell_file_path = GameControl::Instance().select_spell(i);
+
+			if (spell_file_path == "") {
+				printcon("Changed our minds in the last minute, didn't we?");
+				options[i].defend();
+			}
+			else {
+				printcon(player->name() + " will cast a spell in the next round.");
+				options[i].cast_spell(spell_file_path);
+			}
 		}
 		else if (input == 'd') {
 			printcon(player->name() + " will defend in the next round.");
-			choices[i] = -1;
+			options[i].defend();
 		}
 		else { // (R)eady item
 			std::string new_weapon = GameControl::Instance().ready_item(i);
 
 			if (new_weapon != "") {
-				ss << player->name() + " will ready a" <<
-						(Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
+				ss << player->name() + " will ready a" << (Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
 				printcon(ss.str());
 			}
 			else
 				printcon(player->name() + " will defend in the next round.");
 
-			choices[i] = -1;
+			options[i].defend();
 		}
 		ZtatsWin::Instance().unhighlight_lines(i * 2, i * 2 + 2);
 	}
 
-	return choices;
+	return options;
 }
 
-int Combat::fight(const std::vector<int> choices)
+int Combat::fight(std::vector<AttackOption> a_options)
 {
-  party_fight(choices);
+  party_fight(a_options);
   foes_fight();
   return 0;
 }
@@ -307,16 +313,13 @@ int Combat::fight(const std::vector<int> choices)
 // Returns number of monsters left after a round of melee has taken
 // place, also handles the actual melee itself after the characters
 // have chosen their respective actions for this round.
-//
-// choices contains the choices the attacking party made, see
-// attack_options() for details.
 
-int Combat::party_fight(const std::vector<int> choices)
+int Combat::party_fight(std::vector<AttackOption> a_options)
 {
 	LuaWrapper lua(_lua_state);
 	static SoundSample sample;
 
-	if ((int)choices.size() < party->party_size())
+	if ((int)a_options.size() < party->party_size())
 		std::cerr << "Warning: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
@@ -325,7 +328,12 @@ int Combat::party_fight(const std::vector<int> choices)
 		if (player->condition() == DEAD)
 			continue;
 
-		if (choices[i] > -1) {
+		if (a_options[i].is_cast_spell()) {
+			Spell spell = Spell::spell_from_file_path(a_options[i].get_spell_path(), _lua_state);
+			SpellCastHelper sch(spell, _lua_state);
+			sch.cast(i);
+		}
+		else if (a_options[i].is_attack()) {
 			// Choose weapon to attack with
 			Weapon* wep = player->weapon();
 
@@ -335,7 +343,9 @@ int Combat::party_fight(const std::vector<int> choices)
 
 			int j = 1;
 			for (auto foe : *(foes.count())) {
-				if (j == choices[i]) {
+
+				// TODO: use attacking_who() as well. not just attacking_nr()!!!!!!!!!!!!!!!!!!!!
+				if (j == a_options[i].attacking_nr()) {
 					int k = 0;
 					for (auto _foe = foes.begin(); _foe != foes.end(); _foe++, k++) {
 						if (foe.first == (*_foe)->name()) {

@@ -34,6 +34,7 @@ Party::Party()
 	_guard = -1;
 	_jlocks = 0;
 	is_resting = false;
+	is_in_combat = false;
 }
 
 Party& Party::Instance()

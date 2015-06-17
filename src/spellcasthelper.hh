@@ -21,8 +21,14 @@ extern "C"
 
 class SpellCastHelper
 {
+private:
+	lua_State* L;
+	Spell spell;
+
 public:
-	static void cast(int, Spell, lua_State*);
+	SpellCastHelper(Spell, lua_State*);
+	void cast(int);
+	int choose(int);
 };
 
 #endif

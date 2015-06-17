@@ -21,13 +21,17 @@
 #define __GCCOMBAT_HH
 
 #include <SDL.h>
+
+#include "attackoption.hh"
 #include "gamecontrol.hh"
 #include "attackers.hh"
 #include "eventmanager.hh"
 #include "playercharacter.hh"
 #include "item.hh"
 #include "inventory.hh"
+
 #include <boost/unordered_set.hpp>
+
 #include <string>
 #include <vector>
 
@@ -46,11 +50,11 @@ public:
   ~Combat();
   bool initiate();
   int select_enemy(int);
-  int fight(const std::vector<int>);
-  int party_fight(const std::vector<int>);
+  int fight(std::vector<AttackOption>);
+  int party_fight(std::vector<AttackOption>);
   void victory();
   int foes_fight();
-  std::vector<int> attack_options();
+  std::vector<AttackOption> attack_options();
   void advance_party();
   std::string noticed_monsters();
   bool create_random_monsters();

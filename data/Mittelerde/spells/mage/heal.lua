@@ -17,8 +17,8 @@ do
    local level       = 1
    local sp          = 5
    local caster      = ""
-   local targets     = 0                     -- see comments inside spell.hh
-   
+   local targets     = -1                     -- see comments inside spell.hh
+
    -- ---------------------------------------------------------------------------------
    -- Standard functions
 
@@ -49,13 +49,25 @@ do
    -- ---------------------------------------------------------------------------------
    -- Cast spell
 
+   -- Does the actual casting of spell, after choose() was called
+   
    function cast()
+	  if (targets >= 0) then
+     	simpl_play_sound(get_sound_path())
+     	simpl_add_hp(targets, simpl_rand(1, 5))
+      else
+        simpl_printcon("Something went wrong, casting the spell. It is a program error")
+      end
+   end
+
+   -- Choose target for attack or party member, e.g., for healing. Is empty for, say, a light spell.
+
+   function choose()
       chosen_player = simpl_choose_player()
        
       if (chosen_player >= 0) then
          if (not(simpl_is_dead(chosen_player))) then
-         	simpl_play_sound(get_sound_path())
-	     	simpl_add_hp(chosen_player, simpl_rand(1, 5))
+		    targets = chosen_player
 	     else
 	     	simpl_printcon("That would require more than healing of light wounds...")
 	     end

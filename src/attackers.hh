@@ -39,6 +39,7 @@ private:
 public:
   void remove(int);
   const std::vector<std::shared_ptr<Creature>>* get();
+  Creature* get(int number);
   void add(std::shared_ptr<Creature>);
   std::vector<std::shared_ptr<Creature>>::iterator begin();
   std::vector<std::shared_ptr<Creature>>::iterator end();

@@ -195,6 +195,18 @@ int l_choose_player(lua_State* L)
 	return 1;
 }
 
+// Returns number of a group of monsters or -1 if user cancelled.
+
+int l_choose_monster(lua_State* L)
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	int player = zwin.select_player();
+	lua_pushnumber(L, player);
+
+	return 1;
+}
+
 /**
  * When called, on the Lua stack has to be a table of weapons.
  * This table will then be inserted into the ztats window display,
@@ -764,11 +776,29 @@ int l_is_dead(lua_State* L)
 int l_play_sound(lua_State* L)
 {
 	std::string file_name = lua_tostring(L, 1);
-	std::cout << "PLAYING " << file_name << std::endl;
-
 	static SoundSample sample;
 	sample.play(file_name);
 	return 0;
+}
+
+int l_is_in_battle(lua_State* L)
+{
+	lua_pushboolean(L, Party::Instance().is_in_combat);
+	return 1;
+}
+
+// Get hp from n-th monster that attacks, where n is an integer on the Lua stack.
+// Note it is not the n-th group of monsters, but really the n-th monster of Combat::foes array!
+//
+// NOTE: Make sure to set combat pointer properly from the Lua script, prior to calling this
+// or the program will crash!!  (See above function to achieve this from Lua land.)
+
+int simpl_get_hp(lua_State* L)
+{
+	int foe_nr = lua_tonumber(L, 1);
+	Creature* c = combat->get_foes().get(foe_nr);
+	lua_pushnumber(L, c->hp());
+	return 1;
 }
 
 void publicize_api(lua_State* L)
@@ -858,6 +888,9 @@ void publicize_api(lua_State* L)
   lua_pushcfunction(L, l_choose_player);
   lua_setglobal(L, "simpl_choose_player");
 
+  lua_pushcfunction(L, l_choose_monster);
+  lua_setglobal(L, "simpl_choose_monster");
+
   lua_pushcfunction(L, l_add_hp);
   lua_setglobal(L, "simpl_add_hp");
 
@@ -866,6 +899,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_play_sound);
   lua_setglobal(L, "simpl_play_sound");
+
+  lua_pushcfunction(L, l_is_in_battle);
+  lua_setglobal(L, "simpl_party_in_combat");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

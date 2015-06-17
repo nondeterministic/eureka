@@ -20,6 +20,8 @@ TODO
 BUGS
 =====
 
+- Do not let players ready an item like a jimmy lock! [MED]
+
 - When first 3 in a party of 4 die during battle, program seems to crash during battle [SEVERE]
   SOLUTION? When member dies put immediately in the back of party, so that alive members move forward.
 
