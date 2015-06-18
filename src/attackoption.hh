@@ -10,35 +10,43 @@
 
 #include <string>
 
+#include "playercharacter.hh"
 #include "spell.hh"
-#include "creature.hh"
+#include "combat.hh"
+
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
+class Combat;
 
 class AttackOption
 {
+protected:
+	PlayerCharacter* player;
+	lua_State* L;
+	int target;
+
+	int random(int,int);
+	void printcon(std::string, bool);
+
 public:
-	AttackOption();
-
-	bool is_cast_spell();
-	bool is_attack();
-	bool is_defend();
-
-	void defend(bool = true);
-
-	void attack(int);                        // Attack n-th opponent
-	void attack(Creature*);				     // Attack this specific enemy
-	int attacking_nr();
-	Creature* attacking_who();
-
-	void cast_spell(std::string);            // Cast spell with file path...
-	void cast_spell(Spell);                  // Cast spell
-	std::string get_spell_path();
-
-private:
-	std::string spell_fp;
-	Spell spell;
-	Creature* enemy;
-	int enemy_nr;
-	bool defending;
+	AttackOption(int, lua_State*);
+	virtual ~AttackOption();
+	virtual void execute(Combat* = NULL);
+	void set_target(int);
 };
 
-#endif /* SRC_ATTACKOPTIONS_HH_ */
+class DefendOption : public AttackOption
+{
+public:
+	DefendOption(); // int, lua_State*);
+	~DefendOption();
+	void execute(Combat* = NULL);
+};
+
+#endif

@@ -39,6 +39,10 @@ do
       return level
    end
 
+   function is_attack_spell()
+     return true
+   end
+
    function get_targets()
       return targets
    end
@@ -62,6 +66,8 @@ do
    -- ---------------------------------------------------------------------------------
    -- Cast spell
 
+   -- Does the actual casting of spell, after choose() was called
+
    function cast()
       if (simpl_party_in_combat()) then
          attack_monsters()
@@ -71,6 +77,24 @@ do
    	  end
    end
 
+   -- Choose target for attack or party member, e.g., for healing. Is empty for, say, a light spell.
+
+   function choose()
+      chosen_player = simpl_choose_player()
+       
+      if (chosen_player >= 0) then
+         if (not(simpl_is_dead(chosen_player))) then
+		    targets = chosen_player
+	     else
+	     	simpl_printcon("That would require more than healing of light wounds...")
+	     end
+	  else
+	     simpl_printcon("Changed your mind then?")
+	  end
+   end
+
+   -- Helper function, do not call from C directly!  Only used within the script.
+   
    function attack_monsters()
    	  monster_group = simpl_choose_monster()
    	  

@@ -756,7 +756,7 @@ int l_add_hp(lua_State* L)
 	}
 
 	if (value >= 0)
-		player->set_hp(max(player->hpm(), player->hp() + value));
+		player->set_hp(min(player->hpm(), player->hp() + value));
 	else
 		player->set_hp(max(0, player->hp() + value));
 

@@ -8,6 +8,8 @@
 #define SRC_SPELLCASTHELPER_HH_
 
 #include "spell.hh"
+#include "attackoption.hh"
+#include "combat.hh"
 
 #include <string>
 
@@ -19,16 +21,21 @@ extern "C"
 #include <lauxlib.h>
 }
 
-class SpellCastHelper
+class Combat;
+
+class SpellCastHelper : public AttackOption
 {
 private:
-	lua_State* L;
 	Spell spell;
 
+	bool enabled(); // True if the player is a magic user, prints on console an error otherwise.  INTERNAL USE ONLY!
+
 public:
-	SpellCastHelper(Spell, lua_State*);
-	void cast(int);
-	int choose(int);
+	SpellCastHelper(int, lua_State*);
+	~SpellCastHelper();
+	void set_spell_path(std::string);
+	void execute(Combat* = NULL);
+	int choose();
 };
 
 #endif

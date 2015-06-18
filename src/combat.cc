@@ -221,9 +221,9 @@ bool Combat::initiate()
 	return false;
 }
 
-std::vector<AttackOption> Combat::attack_options()
+std::vector<AttackOption*> Combat::attack_options()
 {
-	std::vector<AttackOption> options;
+	std::vector<AttackOption*> options;
 	options.reserve(party->party_size());
 	options.resize(party->party_size());
 
@@ -252,9 +252,13 @@ std::vector<AttackOption> Combat::attack_options()
 		ss.str("");
 
 		char input = em->get_key(key_inputs.c_str());
+
 		if (input == 'a') {
-			if (foes.count()->size() == 1)
-				options[i].attack(1);
+			options[i] = new AttackOption(i, _lua_state);
+
+			if (foes.count()->size() == 1) {
+				options[i]->set_target(1);
+			}
 			else {
 				int attacked = select_enemy(i);
 
@@ -266,24 +270,34 @@ std::vector<AttackOption> Combat::attack_options()
 					j++;
 				}
 				printcon(player->name() + " will attack " + (Util::vowel(attacked_name[0]) ? "an " : "a ") + attacked_name + " in the next round.");
-				options[i].attack(attacked);
+				options[i]->set_target(attacked);
 			}
 		}
 		else if (input == 'c') {
 			std::string spell_file_path = GameControl::Instance().select_spell(i);
 
 			if (spell_file_path == "") {
-				printcon("Changed our minds in the last minute, didn't we?");
-				options[i].defend();
+				printcon("Changed our mind in the last minute, didn't we?");
+				options[i] = new DefendOption();
 			}
 			else {
-				printcon(player->name() + " will cast a spell in the next round.");
-				options[i].cast_spell(spell_file_path);
+				SpellCastHelper* sch = new SpellCastHelper(i, _lua_state);
+				sch->set_spell_path(spell_file_path);
+
+				if (sch->choose() >= 0) {
+					printcon(player->name() + " will cast a spell in the next round.");
+					options[i] = sch;
+				}
+				else {
+					printcon("Changed our mind in the last minute, didn't we?");
+					options[i] = new DefendOption();
+					delete sch;
+				}
 			}
 		}
 		else if (input == 'd') {
 			printcon(player->name() + " will defend in the next round.");
-			options[i].defend();
+			options[i] = new DefendOption();
 		}
 		else { // (R)eady item
 			std::string new_weapon = GameControl::Instance().ready_item(i);
@@ -295,7 +309,7 @@ std::vector<AttackOption> Combat::attack_options()
 			else
 				printcon(player->name() + " will defend in the next round.");
 
-			options[i].defend();
+			options[i] = new DefendOption();
 		}
 		ZtatsWin::Instance().unhighlight_lines(i * 2, i * 2 + 2);
 	}
@@ -303,23 +317,31 @@ std::vector<AttackOption> Combat::attack_options()
 	return options;
 }
 
-int Combat::fight(std::vector<AttackOption> a_options)
+int Combat::fight(std::vector<AttackOption*> attack_commands)
 {
-  party_fight(a_options);
+  party_fight(attack_commands);
   foes_fight();
+
+  for (auto ac: attack_commands) {
+	  std::cout << "Info: combat:cc: Deleting party attack command.\n";
+	  delete ac;
+  }
+
   return 0;
+}
+
+void Combat::add_to_bounty(Item* i)
+{
+	_bounty_items.add(i);
 }
 
 // Returns number of monsters left after a round of melee has taken
 // place, also handles the actual melee itself after the characters
 // have chosen their respective actions for this round.
 
-int Combat::party_fight(std::vector<AttackOption> a_options)
+int Combat::party_fight(std::vector<AttackOption*> attacks)
 {
-	LuaWrapper lua(_lua_state);
-	static SoundSample sample;
-
-	if ((int)a_options.size() < party->party_size())
+	if ((int)attacks.size() < party->party_size())
 		std::cerr << "Warning: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
@@ -327,97 +349,113 @@ int Combat::party_fight(std::vector<AttackOption> a_options)
 	for (auto player = party->party_begin(); player != party->party_end(); i++, player++) {
 		if (player->condition() == DEAD)
 			continue;
-
-		if (a_options[i].is_cast_spell()) {
-			Spell spell = Spell::spell_from_file_path(a_options[i].get_spell_path(), _lua_state);
-			SpellCastHelper sch(spell, _lua_state);
-			sch.cast(i);
-		}
-		else if (a_options[i].is_attack()) {
-			// Choose weapon to attack with
-			Weapon* wep = player->weapon();
-
-			// Get the monster that is to be attacked this round
-			Creature* opponent = NULL;
-			int opponent_offset = 0;
-
-			int j = 1;
-			for (auto foe : *(foes.count())) {
-
-				// TODO: use attacking_who() as well. not just attacking_nr()!!!!!!!!!!!!!!!!!!!!
-				if (j == a_options[i].attacking_nr()) {
-					int k = 0;
-					for (auto _foe = foes.begin(); _foe != foes.end(); _foe++, k++) {
-						if (foe.first == (*_foe)->name()) {
-							opponent = _foe->get(); // Opponent now points to the monster to be attacked
-							opponent_offset = k;
-							break;
-						}
-					}
-				}
-				j++;
-			}
-
-			if (opponent == NULL) {
-				std::cerr << "Warning: uicombat:: opponent == null (No monster to attack.)\n";
-				break;
-			}
-
-			if (wep != NULL && opponent->distance() <= wep->range()) {
-				stringstream ss;
-				ss << player->name() + " swings the " + wep->name() + " at " << opponent->name();
-
-				int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
-
-				if (random(1, 20) > temp_AC) {
-					int damage = random(wep->dmg_min(), wep->dmg_max());
-					ss << " and hits for " << damage << " points of damage.";
-					if (opponent->hp() - damage > 0) {
-						opponent->set_hp(opponent->hp() - damage);
-						lua.push_fn_arg((double)(opponent->hp() - damage));
-						lua.call_void_fn("set_hp");
-					}
-					else {
-						ss << " killing the " << opponent->name() << ".";
-						foes.remove(opponent_offset);
-
-						// Add experience points to player's balance
-						player->inc_ep(lua.call_fn<double>("get_ep"));
-
-						// Now add monster's items to bounty items to be collected
-						// by party in case of battle victory.
-						_bounty_items.add(opponent->weapon());
-
-						// Add monster's gold
-						int gold_coins = lua.call_fn<double>("get_gold");
-						for (int ii = 0; ii < gold_coins; ii++)
-							_bounty_items.add(new Gold());
-					}
-					printcon(ss.str(), true);
-					MiniWin::Instance().alarm();
-					sample.play(FOE_HIT);
-				}
-				else {
-					ss << " and misses.";
-					printcon(ss.str(), true);
-				}
-			}
-			else if (wep != NULL) {
-				stringstream ss;
-				ss << player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
-				printcon(ss.str(), true);
-			}
-			// Attack with bare hands...
-			else {
-				stringstream ss;
-				ss << player->name() << " attempts a futile karate punch at " << opponent->name() << " but fails.";
-				printcon(ss.str(), true);
-			}
-		}
+		attacks[i]->execute(this);
 	}
 
 	return 0;
 }
+
+//int Combat::party_fight(std::vector<AttackOption> a_options)
+//{
+//	LuaWrapper lua(_lua_state);
+//	static SoundSample sample;
+//
+//	if ((int)a_options.size() < party->party_size())
+//		std::cerr << "Warning: Attack choices < party size. This is serious.\n";
+//
+//	// The party's moves...
+//	int i = 0;
+//	for (auto player = party->party_begin(); player != party->party_end(); i++, player++) {
+//		if (player->condition() == DEAD)
+//			continue;
+//
+//		if (a_options[i].is_cast_spell()) {
+//			a_options[i].get_spellcasthelper()->cast();
+//		}
+//		else if (a_options[i].is_attack()) {
+//			// Choose weapon to attack with
+//			Weapon* wep = player->weapon();
+//
+//			// Get the monster that is to be attacked this round
+//			Creature* opponent = NULL;
+//			int opponent_offset = 0;
+//
+//			int j = 1;
+//			for (auto foe : *(foes.count())) {
+//
+//				if (j == a_options[i].attacking()) {
+//					int k = 0;
+//					for (auto _foe = foes.begin(); _foe != foes.end(); _foe++, k++) {
+//						if (foe.first == (*_foe)->name()) {
+//							opponent = _foe->get(); // Opponent now points to the monster to be attacked
+//							opponent_offset = k;
+//							break;
+//						}
+//					}
+//				}
+//				j++;
+//			}
+//
+//			if (opponent == NULL) {
+//				std::cerr << "Warning: uicombat:: opponent == null (No monster to attack.)\n";
+//				break;
+//			}
+//
+//			if (wep != NULL && opponent->distance() <= wep->range()) {
+//				stringstream ss;
+//				ss << player->name() + " swings the " + wep->name() + " at " << opponent->name();
+//
+//				int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
+//
+//				if (random(1, 20) > temp_AC) {
+//					int damage = random(wep->dmg_min(), wep->dmg_max());
+//					ss << " and hits for " << damage << " points of damage.";
+//					if (opponent->hp() - damage > 0) {
+//						opponent->set_hp(opponent->hp() - damage);
+//						lua.push_fn_arg((double)(opponent->hp() - damage));
+//						lua.call_void_fn("set_hp");
+//					}
+//					else {
+//						ss << " killing the " << opponent->name() << ".";
+//						foes.remove(opponent_offset);
+//
+//						// Add experience points to player's balance
+//						player->inc_ep(lua.call_fn<double>("get_ep"));
+//
+//						// Now add monster's items to bounty items to be collected
+//						// by party in case of battle victory.
+//						_bounty_items.add(opponent->weapon());
+//
+//						// Add monster's gold
+//						int gold_coins = lua.call_fn<double>("get_gold");
+//						for (int ii = 0; ii < gold_coins; ii++)
+//							_bounty_items.add(new Gold());
+//					}
+//					printcon(ss.str(), true);
+//					MiniWin::Instance().alarm();
+//					sample.play(FOE_HIT);
+//				}
+//				else {
+//					ss << " and misses.";
+//					printcon(ss.str(), true);
+//				}
+//			}
+//			else if (wep != NULL) {
+//				stringstream ss;
+//				ss << player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
+//				printcon(ss.str(), true);
+//			}
+//			// Attack with bare hands...
+//			else {
+//				stringstream ss;
+//				ss << player->name() << " attempts a futile karate punch at " << opponent->name() << " but fails.";
+//				printcon(ss.str(), true);
+//			}
+//		}
+//	}
+//
+//	return 0;
+//}
 
 void Combat::victory()
 {
@@ -600,7 +638,7 @@ void Combat::advance_party()
   printcon("Your party advances.", true);
 }
 
-Attackers Combat::get_foes()
+Attackers& Combat::get_foes()
 {
 	return foes;
 }

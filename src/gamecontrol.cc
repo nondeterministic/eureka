@@ -611,9 +611,10 @@ void GameControl::cast_spell(int player_no, Spell spell)
 	if (player->sp() < spell.sp)
 		printcon(player->name() + " does not have enough spell points.");
 	else {
-		SpellCastHelper sch(spell, _lua_state);
-		sch.choose(player_no);
-		sch.cast(player_no);
+		SpellCastHelper sch(player_no, _lua_state);
+		sch.set_spell_path(spell.full_file_path);
+		sch.choose();
+		sch.execute();
 	}
 }
 

@@ -29,44 +29,53 @@ extern "C"
 #include <lauxlib.h>
 }
 
-SpellCastHelper::SpellCastHelper(Spell s, lua_State* ls)
+SpellCastHelper::SpellCastHelper(int p, lua_State* ls) : AttackOption(p, ls)
 {
-	L = ls;
-	spell = s;
+}
 
-	if (luaL_dofile(L, spell.full_file_path.c_str())) {
+SpellCastHelper::~SpellCastHelper()
+{
+
+}
+
+void SpellCastHelper::set_spell_path(std::string sp)
+{
+	spell = Spell::spell_from_file_path(sp, L);
+
+	if (luaL_dofile(L, sp.c_str())) {
 		std::cerr << "ERROR: spellcasthelper.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
 		exit(1);
 	}
 }
 
-// Execute choose function in Lua spell file
-
-int SpellCastHelper::choose(int player_no)
+bool SpellCastHelper::enabled()
 {
-	LuaWrapper lua(L);
-
-	PlayerCharacter* player = Party::Instance().get_player(player_no);
-
 	if (!player->is_spell_caster()) {
 		GameControl::Instance().printcon(player->name() + " is not a magic user.");
-		return -1;
+		return false;
 	}
 
 	if (player->sp() < spell.sp) {
 		GameControl::Instance().printcon(player->name() + " does not have enough spell points.");
-		return -1;
+		return false;
 	}
 
 	if (!player->condition() == DEAD) {
 		GameControl::Instance().printcon("Try that with an alive party member next time.");
-		return -1;
+		return false;
 	}
 
-//	if (luaL_dofile(L, spell.full_file_path.c_str())) {
-//		std::cerr << "ERROR: spellcasthelper.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
-//		exit(1);
-//	}
+	return true;
+}
+
+// Execute choose function in Lua spell file
+
+int SpellCastHelper::choose()
+{
+	LuaWrapper lua(L);
+
+	if (!enabled())
+		return -1;
 
 	lua.call_void_fn("choose");
 	int targets = lua.call_fn<double>("get_targets");
@@ -76,31 +85,14 @@ int SpellCastHelper::choose(int player_no)
 
 // Execute cast function in Lua spell file
 
-void SpellCastHelper::cast(int player_no)
+void SpellCastHelper::execute(Combat* combat)
 {
+	std::cout << "Executing spell!\n";
+
 	LuaWrapper lua(L);
 
-	PlayerCharacter* player = Party::Instance().get_player(player_no);
-
-	if (!player->is_spell_caster()) {
-		GameControl::Instance().printcon(player->name() + " is not a magic user.");
+	if (!enabled())
 		return;
-	}
-
-	if (player->sp() < spell.sp) {
-		GameControl::Instance().printcon(player->name() + " does not have enough spell points.");
-		return;
-	}
-
-	if (!player->condition() == DEAD) {
-		GameControl::Instance().printcon("Try that with an alive party member next time.");
-		return;
-	}
-
-//	if (luaL_dofile(L, spell.full_file_path.c_str())) {
-//		std::cerr << "ERROR: spellcasthelper.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
-//		exit(1);
-//	}
 
 	lua.push_fn_arg(player->name());
 	lua.call_void_fn("set_caster");

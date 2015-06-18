@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+class AttackOption;
+
 class Combat
 {
 protected:
@@ -50,11 +52,12 @@ public:
   ~Combat();
   bool initiate();
   int select_enemy(int);
-  int fight(std::vector<AttackOption>);
-  int party_fight(std::vector<AttackOption>);
+  int fight(std::vector<AttackOption*>);
+  int party_fight(std::vector<AttackOption*>);
   void victory();
+  void add_to_bounty(Item*);
   int foes_fight();
-  std::vector<AttackOption> attack_options();
+  std::vector<AttackOption*> attack_options();
   void advance_party();
   std::string noticed_monsters();
   bool create_random_monsters();
@@ -64,7 +67,7 @@ public:
   bool vowel(const char);
   boost::unordered_set<std::string> advance_foes();
   void flee_foe(int);
-  Attackers get_foes();
+  Attackers& get_foes();
   void set_foes(Attackers);
 };
 

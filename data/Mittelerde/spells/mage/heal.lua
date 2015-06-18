@@ -38,6 +38,10 @@ do
       return level
    end
 
+   function is_attack_spell()
+     return false
+   end
+
    function get_targets()
       return targets
    end
