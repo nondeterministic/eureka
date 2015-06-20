@@ -57,10 +57,15 @@ do
    
    function cast()
 	  if (targets >= 0) then
+	    player_name = simpl_get_player_name(targets)
+     	
      	simpl_play_sound(get_sound_path())
      	simpl_add_hp(targets, simpl_rand(1, 5))
+     	
+     	-- If in combat, then the printcon is showing letter by letter, otherwise all at once.
+     	simpl_printcon(caster .. " casts a spell, and " .. player_name .. " feels much better.", simpl_party_in_combat())
       else
-        simpl_printcon("Something went wrong, casting the spell. It is a program error")
+        simpl_printcon("Something went wrong, casting the spell. It is a program error.")
       end
    end
 

@@ -118,7 +118,7 @@ void AttackOption::execute(Combat* combat)
 	// Attack with bare hands...
 	else {
 		stringstream ss;
-		ss << player->name() << " attempts a futile karate punch at " << opponent->name() << " but fails.";
+		ss << player->name() << " lands a futile punch at " << opponent->name() << " without any noticable effect.";
 		printcon(ss.str(), true);
 	}
 }

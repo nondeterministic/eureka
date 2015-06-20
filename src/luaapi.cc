@@ -46,6 +46,8 @@
 #include "shieldhelper.hh"
 #include "race.hh"
 #include "luawrapper.hh"
+#include "gold.hh"
+#include "miniwin.hh"
 
 extern "C" {
 #include <lua.h>
@@ -199,11 +201,7 @@ int l_choose_player(lua_State* L)
 
 int l_choose_monster(lua_State* L)
 {
-	ZtatsWin& zwin = ZtatsWin::Instance();
-
-	int player = zwin.select_player();
-	lua_pushnumber(L, player);
-
+	lua_pushnumber(L, combat->select_enemy());
 	return 1;
 }
 
@@ -781,10 +779,120 @@ int l_play_sound(lua_State* L)
 	return 0;
 }
 
+// True, if party is currently in battle
+
 int l_is_in_battle(lua_State* L)
 {
 	lua_pushboolean(L, Party::Instance().is_in_combat);
 	return 1;
+}
+
+// On the stack is the number of the party member
+
+int l_get_player_name(lua_State* L)
+{
+	int player_no = lua_tonumber(L, 1);
+	lua_pushstring(L, Party::Instance().get_player(player_no)->name().c_str());
+	return 1;
+}
+
+// On the stack is the number of the monster to be attacked.
+// Returns the single name of the monster.
+// PRECONDITION: ASSUMES THAT COMBAT PTR IS SET!!!
+
+int l_get_single_monster_name(lua_State* L)
+{
+	int group = lua_tonumber(L, 1);
+	std::string attacked_single_name = "";
+
+	int j = 1;
+	for (auto foe : *(combat->get_foes().count())) {
+		if (group == j)
+			attacked_single_name = foe.first;
+		j++;
+	}
+
+	lua_pushstring(L, attacked_single_name.c_str());
+	return 1;
+}
+
+int l_magic_attack(lua_State* L)
+{
+	// Get Lua parameters; see attack spell script.
+	int  targets             = lua_tonumber(L, 1);
+	bool attack_whole_group  = lua_tonumber(L, 2) == 1? true : false;
+	int  resistance          = lua_tonumber(L, 3);
+	int  range               = lua_tonumber(L, 4);
+	int  damage              = lua_tonumber(L, 5);
+	int  spell_lasts         = lua_tonumber(L, 6);
+    std::string caster       = lua_tostring(L, 7);
+
+    PlayerCharacter* player = Party::Instance().get_player(caster);
+
+	// Get the monster that is to be attacked this round
+	Creature* opponent = NULL;
+	int opponent_offset = 0;
+
+	int j = 1;
+	for (auto foe : *(combat->get_foes().count())) {
+		if (j == targets) {
+			int k = 0;
+			for (auto _foe = combat->get_foes().begin(); _foe != combat->get_foes().end(); _foe++, k++) {
+				if (foe.first == (*_foe)->name()) {
+					opponent = _foe->get(); // Opponent now points to the monster to be attacked
+					opponent_offset = k;
+					break;
+				}
+			}
+		}
+		j++;
+	}
+
+	if (opponent == NULL) {
+		std::cerr << "ERROR: luaapi.cc: opponent == null (No monster to attack.)\n";
+		return 0;
+	}
+
+	if (opponent->distance() <= range) {
+		stringstream ss;
+
+		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
+
+		if (GameControl::Instance().random(1, 20) > temp_AC) {
+			LuaWrapper lua(L);
+
+			if (opponent->hp() - damage > 0) {
+				ss << player->name() << " casts a spell, causing the " << opponent->name() << " " << damage << " points of damage.";
+				opponent->set_hp(opponent->hp() - damage);
+				lua.push_fn_arg((double)(opponent->hp() - damage));
+				lua.call_void_fn("set_hp");
+			}
+			else {
+				ss << player->name() << " casts a spell, killing the " << opponent->name() << ".";
+			    combat->get_foes().remove(opponent_offset);
+
+				// Add experience points to player's balance
+				player->inc_ep(lua.call_fn<double>("get_ep"));
+
+				// Now add monster's items to bounty items to be collected
+				// by party in case of battle victory.
+				combat->add_to_bounty(opponent->weapon());
+
+				// Add monster's gold
+				int gold_coins = lua.call_fn<double>("get_gold");
+				for (int ii = 0; ii < gold_coins; ii++)
+					combat->add_to_bounty(new Gold());
+			}
+		    GameControl::Instance().printcon(ss.str(), true);
+			MiniWin::Instance().alarm();
+		}
+		else {
+			ss << player->name() << " casts a spell, but misses.";
+			GameControl::Instance().printcon(ss.str(), true);
+		}
+	}
+
+	return 0;
 }
 
 // Get hp from n-th monster that attacks, where n is an integer on the Lua stack.
@@ -902,6 +1010,15 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_is_in_battle);
   lua_setglobal(L, "simpl_party_in_combat");
+
+  lua_pushcfunction(L, l_get_player_name);
+  lua_setglobal(L, "simpl_get_player_name");
+
+  lua_pushcfunction(L, l_get_single_monster_name);
+  lua_setglobal(L, "simpl_get_single_monster_name");
+
+  lua_pushcfunction(L, l_magic_attack);
+  lua_setglobal(L, "simpl_magic_attack");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

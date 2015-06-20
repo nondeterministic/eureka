@@ -35,7 +35,7 @@ SpellCastHelper::SpellCastHelper(int p, lua_State* ls) : AttackOption(p, ls)
 
 SpellCastHelper::~SpellCastHelper()
 {
-
+	std::cout << "~SpellCastHelper.\n";
 }
 
 void SpellCastHelper::set_spell_path(std::string sp)

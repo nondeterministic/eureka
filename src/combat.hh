@@ -51,7 +51,7 @@ public:
   Combat();
   ~Combat();
   bool initiate();
-  int select_enemy(int);
+  int select_enemy();
   int fight(std::vector<AttackOption*>);
   int party_fight(std::vector<AttackOption*>);
   void victory();

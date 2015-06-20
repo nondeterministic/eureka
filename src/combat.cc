@@ -221,6 +221,25 @@ bool Combat::initiate()
 	return false;
 }
 
+// group refers to the n-th group of attackers.  There are always >= 1 groups.
+// Returns a random first foe of the n-th group - this is always the default to be hit during an attack.
+
+//int get_attacked_monster_from_group(int group)
+//{
+//	if (group == 1)
+//		return 1;
+//
+//	std::string attacked_single_name = ""; // Store it just for fun, is not needed!  Maybe later?!
+//	int j = 1;
+//	for (auto foe : *(foes.count())) {
+//		if (group == j)
+//			attacked_single_name = foe.first;
+//		j++;
+//	}
+//	printcon(player->name() + " will attack " + (Util::vowel(attacked_name[0]) ? "an " : "a ") + attacked_name + " in the next round.");
+//	options[i]->set_target(attacked);
+//}
+
 std::vector<AttackOption*> Combat::attack_options()
 {
 	std::vector<AttackOption*> options;
@@ -260,7 +279,8 @@ std::vector<AttackOption*> Combat::attack_options()
 				options[i]->set_target(1);
 			}
 			else {
-				int attacked = select_enemy(i);
+				// int attacked = select_enemy(i);
+				int attacked = select_enemy();
 
 				string attacked_name;
 				int j = 1;
@@ -281,11 +301,28 @@ std::vector<AttackOption*> Combat::attack_options()
 				options[i] = new DefendOption();
 			}
 			else {
+				LuaWrapper lua(_lua_state);
+				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, _lua_state);
 				SpellCastHelper* sch = new SpellCastHelper(i, _lua_state);
 				sch->set_spell_path(spell_file_path);
 
+				// Convert the this-pointer to string and push it to Lua-land
+				// along with i, such that Lua knows which monster is referred
+				// to.  (I know, this is very crazy code, but life is crazy.)
+				// Then, the Lua spell code can refer to foes in the combat object,
+				// for example.
+				//
+				// The workflow is as follows: first, we send the pointer as string to Lua,
+				// then Lua sends it back to luaapi.cc, so that within luaapi.cc the according
+				// combat actions can be triggered.
+
+				std::ostringstream thiss;
+				thiss << (void const *)this;
+				lua.push_fn_arg((std::string)thiss.str());
+				lua.call_void_fn("set_combat_ptr");
+
 				if (sch->choose() >= 0) {
-					printcon(player->name() + " will cast a spell in the next round.");
+					printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
 					options[i] = sch;
 				}
 				else {
@@ -355,146 +392,52 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 	return 0;
 }
 
-//int Combat::party_fight(std::vector<AttackOption> a_options)
-//{
-//	LuaWrapper lua(_lua_state);
-//	static SoundSample sample;
-//
-//	if ((int)a_options.size() < party->party_size())
-//		std::cerr << "Warning: Attack choices < party size. This is serious.\n";
-//
-//	// The party's moves...
-//	int i = 0;
-//	for (auto player = party->party_begin(); player != party->party_end(); i++, player++) {
-//		if (player->condition() == DEAD)
-//			continue;
-//
-//		if (a_options[i].is_cast_spell()) {
-//			a_options[i].get_spellcasthelper()->cast();
-//		}
-//		else if (a_options[i].is_attack()) {
-//			// Choose weapon to attack with
-//			Weapon* wep = player->weapon();
-//
-//			// Get the monster that is to be attacked this round
-//			Creature* opponent = NULL;
-//			int opponent_offset = 0;
-//
-//			int j = 1;
-//			for (auto foe : *(foes.count())) {
-//
-//				if (j == a_options[i].attacking()) {
-//					int k = 0;
-//					for (auto _foe = foes.begin(); _foe != foes.end(); _foe++, k++) {
-//						if (foe.first == (*_foe)->name()) {
-//							opponent = _foe->get(); // Opponent now points to the monster to be attacked
-//							opponent_offset = k;
-//							break;
-//						}
-//					}
-//				}
-//				j++;
-//			}
-//
-//			if (opponent == NULL) {
-//				std::cerr << "Warning: uicombat:: opponent == null (No monster to attack.)\n";
-//				break;
-//			}
-//
-//			if (wep != NULL && opponent->distance() <= wep->range()) {
-//				stringstream ss;
-//				ss << player->name() + " swings the " + wep->name() + " at " << opponent->name();
-//
-//				int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
-//
-//				if (random(1, 20) > temp_AC) {
-//					int damage = random(wep->dmg_min(), wep->dmg_max());
-//					ss << " and hits for " << damage << " points of damage.";
-//					if (opponent->hp() - damage > 0) {
-//						opponent->set_hp(opponent->hp() - damage);
-//						lua.push_fn_arg((double)(opponent->hp() - damage));
-//						lua.call_void_fn("set_hp");
-//					}
-//					else {
-//						ss << " killing the " << opponent->name() << ".";
-//						foes.remove(opponent_offset);
-//
-//						// Add experience points to player's balance
-//						player->inc_ep(lua.call_fn<double>("get_ep"));
-//
-//						// Now add monster's items to bounty items to be collected
-//						// by party in case of battle victory.
-//						_bounty_items.add(opponent->weapon());
-//
-//						// Add monster's gold
-//						int gold_coins = lua.call_fn<double>("get_gold");
-//						for (int ii = 0; ii < gold_coins; ii++)
-//							_bounty_items.add(new Gold());
-//					}
-//					printcon(ss.str(), true);
-//					MiniWin::Instance().alarm();
-//					sample.play(FOE_HIT);
-//				}
-//				else {
-//					ss << " and misses.";
-//					printcon(ss.str(), true);
-//				}
-//			}
-//			else if (wep != NULL) {
-//				stringstream ss;
-//				ss << player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
-//				printcon(ss.str(), true);
-//			}
-//			// Attack with bare hands...
-//			else {
-//				stringstream ss;
-//				ss << player->name() << " attempts a futile karate punch at " << opponent->name() << " but fails.";
-//				printcon(ss.str(), true);
-//			}
-//		}
-//	}
-//
-//	return 0;
-//}
-
 void Combat::victory()
 {
-  printcon("Your party emerged victorious!", true);
-  MiniWin::Instance().display_last();
+	printcon("Your party emerged victorious!", true);
+	MiniWin::Instance().display_last();
 
-  if (_bounty_items.size() > 0) {
-    ZtatsWin& zwin = ZtatsWin::Instance();
-    printcon("As the dust of battle lifts, some items are left over. Dost thou wish to pick them up? (y/n)", true);
+	if (_bounty_items.size() > 0) {
+		ZtatsWin& zwin = ZtatsWin::Instance();
+		printcon("As the dust of battle lifts, some items are left over. Dost thou wish to pick them up? (y/n)", true);
 
-    switch (em->get_key("yn")) {
-    case 'y': {
-      MiniWin&  mwin = MiniWin::Instance();
-      mwin.save_surf();
-      mwin.clear();
-      mwin.println(0, "Pick up items", CENTERALIGN);
-      mwin.println(1, "(Press space to select an item, q when done)", CENTERALIGN);
-          
-      std::map<std::string, int> tmp = _bounty_items.list_all();
-      std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
-      zwin.set_lines(tmp2);
-      zwin.clear();
-      zwin.select_items();
+		switch (em->get_key("yn")) {
+		case 'y': {
+			MiniWin&  mwin = MiniWin::Instance();
+			mwin.save_surf();
+			mwin.clear();
+			mwin.println(0, "Pick up items", CENTERALIGN);
+			mwin.println(1, "(Press space to select an item, q when done)", CENTERALIGN);
 
-      // Remove gold, if any, from bounty and add it to party's gold account instead
-      Gold tmp_gold;
-      int new_gold = _bounty_items.remove_all(tmp_gold.name());
-      party->set_gold(party->gold() + new_gold);
-      GameControl::Instance().draw_status();
+			std::map<std::string, int> tmp = _bounty_items.list_all();
+			std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
+			zwin.set_lines(tmp2);
+			zwin.clear();
+			// TODO: It seems, we are ignoring the selection and simply add ALL of the bounty to the inventory. CHECK!
+			zwin.select_items();
 
-      party->inventory()->add_all(_bounty_items);
-      mwin.display_last();
-      break;
-    }
-    case 'n':
-      return;
-    }
-  }
-  // No need to clean bounty items as they are destroyed when combat is over!
+			// Remove gold, if any, from bounty and add it to party's gold account instead
+			Gold tmp_gold;
+			int new_gold = _bounty_items.remove_all(tmp_gold.name());
+			party->set_gold(party->gold() + new_gold);
+			GameControl::Instance().draw_status();
+
+			party->inventory()->add_all(_bounty_items);
+			mwin.display_last();
+			break;
+		}
+		case 'n':
+			// Delete memory for items from bounty
+			for (int i = 0; i <_bounty_items.size(); i++)
+				delete _bounty_items.get_item(i);
+
+			return;
+		}
+	}
+	// No need to clean bounty items as they are destroyed when combat is over!
+	// TODO: Really?  I can't see the code anymore, where this happens...  BUG?!
+	// It seems that in the 'y' case above, the items are added to inventory, so mustn't be deleted.
+	// In the 'n' case, however, we must free the memory and then, indeed, the deletion of the combat object, will delete the then empty inventory object.
 }
 
 // Foes fight now against the party...
@@ -586,8 +529,10 @@ int Combat::foes_fight()
 
 // Returns which monster is going to be attacked in the next round by
 // player player_no.
+//
+// TODO: Make this as nice as select_player in ztats window!
 
-int Combat::select_enemy(int player_no)
+int Combat::select_enemy()
 {
   std::stringstream options;
   int i = 0;
