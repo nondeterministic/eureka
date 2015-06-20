@@ -1,4 +1,4 @@
-EXTRA_DIST = charset.png frame.png Mittelerde.xml
+EXTRA_DIST = intro.png charset.png frame.png Mittelerde.xml
 
 SUBDIRS = Mittelerde leibniz
 
