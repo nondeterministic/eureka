@@ -54,16 +54,12 @@ EditorWin::EditorWin(bool new_world)
   _sdleditor = NULL;
 
   // Not sure, if this is the right place or thing to do.  Check!
-  nb_main.signal_switch_page().
-    connect(sigc::mem_fun(*this, &EditorWin::on_my_switch_page));
+  nb_main.signal_switch_page().connect(sigc::mem_fun(*this, &EditorWin::on_my_switch_page));
 
-  signal_configure_event().
-    connect(sigc::mem_fun(*this, &EditorWin::on_my_configure_event), false);
+  signal_configure_event().connect(sigc::mem_fun(*this, &EditorWin::on_my_configure_event), false);
 
-  add_events(Gdk::KEY_PRESS_MASK
-             | Gdk::KEY_RELEASE_MASK);
-  signal_key_press_event().
-    connect(sigc::mem_fun(*this, &EditorWin::on_my_key_press_event), false);
+  add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK);
+  signal_key_press_event().connect(sigc::mem_fun(*this, &EditorWin::on_my_key_press_event), false);
 
   //#ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
   signal_draw().connect(sigc::mem_fun(*this, &EditorWin::on_my_sig_expose));
@@ -472,35 +468,57 @@ void EditorWin::determine_map_offsets(void)
   context()->set_yoffset(new_offsets.top/ts);
 }
 
+bool EditorWin::on_scheissi(GdkEventMotion* event)
+{
+	place_icon_on_map((int)event->x, (int)event->y);
+
+	return true; // Not done.  Event will be further handled by GTKMM etc.
+}
+
+void EditorWin::place_icon_on_map(int x, int y)
+{
+	if (rb_draw_map.get_active())
+		put_curr_tile_on_map(x, y);
+	else if (rb_draw_obj.get_active())
+		add_object(x, y);
+	else if (rb_del_obj.get_active())
+		rm_obj(x, y);
+	else if (rb_add_action.get_active())
+		add_action(x, y);
+	else if (rb_del_action.get_active())
+		del_action(x, y);
+}
+
 // User clicked in editor window
 
 bool EditorWin::on_tab_button_press_event(GdkEventButton* event)
 {
-  if (rb_draw_map.get_active())
-    put_curr_tile_on_map((int)event->x, (int)event->y);
-  else if (rb_draw_obj.get_active()) {
-    add_object((int)event->x, (int)event->y);
-    // put_curr_tile_in_obj_register((int)event->x, (int)event->y);
-  }
-  else if (rb_del_obj.get_active())
-    rm_obj((int)event->x, (int)event->y);
-  else if (rb_add_action.get_active())
-    add_action((int)event->x, (int)event->y);
-  else if (rb_del_action.get_active())
-    del_action((int)event->x, (int)event->y);
+	_drag = true;
 
-  // Set drag handle!
-  _drag = true;
+	place_icon_on_map((int)event->x, (int)event->y);
 
-  return true;
+//	if (rb_draw_map.get_active())
+//		put_curr_tile_on_map((int)event->x, (int)event->y);
+//	else if (rb_draw_obj.get_active()) {
+//		add_object((int)event->x, (int)event->y);
+//		// put_curr_tile_in_obj_register((int)event->x, (int)event->y);
+//	}
+//	else if (rb_del_obj.get_active())
+//		rm_obj((int)event->x, (int)event->y);
+//	else if (rb_add_action.get_active())
+//		add_action((int)event->x, (int)event->y);
+//	else if (rb_del_action.get_active())
+//		del_action((int)event->x, (int)event->y);
+
+	return true;
 }
 
 bool EditorWin::on_tab_button_release_event(GdkEventButton* event)
 {
-  // Unset drag handle!
-  _drag = false;
+	// Unset drag handle!
+	_drag = false;
 
-  return false;
+	return false;
 }
 
 /*
@@ -882,14 +900,10 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
                          | Gdk::BUTTON_RELEASE_MASK
                          | Gdk::BUTTON1_MOTION_MASK
                          | Gdk::BUTTON2_MOTION_MASK);
-    _tab_ebox.
-      signal_button_press_event().
-      connect(sigc::mem_fun(*this,
-                            &EditorWin::on_tab_button_press_event));
-    _tab_ebox.
-      signal_button_release_event().
-      connect(sigc::mem_fun(*this,
-                            &EditorWin::on_tab_button_release_event));
+						 // | Gdk::POINTER_MOTION_MASK);
+    _tab_ebox.signal_button_press_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_press_event));
+    _tab_ebox.signal_button_release_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_release_event));
+    _tab_ebox.signal_motion_notify_event().connect(sigc::mem_fun(*this, &EditorWin::on_scheissi));
   }
   // If it did have a parent, just reparent to the new tab.
   else {

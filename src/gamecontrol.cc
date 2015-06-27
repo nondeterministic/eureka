@@ -613,6 +613,12 @@ void GameControl::cast_spell(int player_no, Spell spell)
 	else {
 		SpellCastHelper sch(player_no, _lua_state);
 		sch.set_spell_path(spell.full_file_path);
+
+		if (sch.is_attack_spell_only()) {
+			printcon("Your party is not engaged in battle.");
+			return;
+		}
+
 		sch.choose();
 		sch.execute();
 	}

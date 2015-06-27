@@ -39,6 +39,11 @@ public:
   bool on_tab_button_release_event(GdkEventButton*);
   // bool on_motion_notify_event(GdkEventMotion* event);
   bool on_swindow_button_press_event(GdkEventButton*);
+
+  bool on_scheissi(GdkEventMotion*);
+  void place_icon_on_map(int x, int y);
+
+
   bool on_my_key_press_event(GdkEventKey*);
   bool on_my_sig_expose(const Cairo::RefPtr<Cairo::Context>&);
   void on_my_switch_page(Gtk::Widget*, guint);

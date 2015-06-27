@@ -8,6 +8,8 @@
 #include <SDL_mixer.h>
 #include <string>
 #include <iostream>
+#include <algorithm>
+
 #include "soundsample.hh"
 #include "config.h"
 
@@ -25,9 +27,10 @@ SoundSample::SoundSample(std::string filename)
 
 void SoundSample::init()
 {
-  _chan = -1;  // TODO: is this a good init value? -1 is an error in
-	       // Mix_PlayChannel, so it should be, i.e., any other
-	       // value will be the actual channel.
+  // _chan = -1 ; // TODO: is this a good init value? -1 is an error in
+  _chan = 1 ; // TODO: is this a good init value? -1 is an error in
+	           // Mix_PlayChannel, so it should be, i.e., any other
+	           // value will be the actual channel.
   std::string file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "walk.wav";
   walk_wav = Mix_LoadWAV(file.c_str());
   file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "hit.wav";
@@ -35,6 +38,7 @@ void SoundSample::init()
   file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "foe_hit.wav";
   foe_hit_wav = Mix_LoadWAV(file.c_str());
   other_wav = NULL;
+  _vol = 24;
 }
 
 SoundSample::~SoundSample()
@@ -82,11 +86,22 @@ void SoundSample::play(SampleType t, int loop)
   }
 }
 
+// 0 (min) - 128 (max)
+void SoundSample::set_volume(int v)
+{
+	_vol = std::max(0, std::min(128, v));
+}
+
+void SoundSample::set_channel(int c)
+{
+	_chan = c;
+}
+
 void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 {
 	if (wav != NULL) {
 		// Max volume is 128, we want half the volume for samples!
-		Mix_Volume(_chan, 24);
+		Mix_Volume(_chan, _vol);
 		_chan = Mix_PlayChannel(-1, wav, loop);
 	}
 	else

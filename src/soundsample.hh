@@ -24,6 +24,8 @@ public:
 
   void play(int = 0);
   void stop();
+  void set_volume(int);
+  void set_channel(int);
   void play(SampleType t, int = 0);
   void play(std::string, int = 0);
   std::string filename();
@@ -39,6 +41,7 @@ private:
   void play_chunk(Mix_Chunk*, int = 0);
   void init();
   int _chan;
+  int _vol;
 };
 
 #endif	/* SOUNDSAMPLE_HH */

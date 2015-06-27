@@ -142,6 +142,8 @@ int intro(int res_w, int res_h)
 		std::cerr << "Error: Could not initialize audio.\n";
 
 	SoundSample sample;
+	sample.set_channel(4711);
+	sample.set_volume(128);
 	sample.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/LocusIste.ogg", 1);
 
     // Set the video mode
@@ -224,6 +226,8 @@ int start_game(int res_w, int res_h)
 
 	// TODO
 	SoundSample sample;
+	sample.set_channel(4711);
+	sample.set_volume(128);
 	sample.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/travel.ogg", 1);
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the

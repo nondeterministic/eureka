@@ -36,6 +36,7 @@ public:
 	void set_spell_path(std::string);
 	void execute(Combat* = NULL);
 	int choose();
+	bool is_attack_spell_only();
 };
 
 #endif

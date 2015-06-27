@@ -68,6 +68,13 @@ bool SpellCastHelper::enabled()
 	return true;
 }
 
+bool SpellCastHelper::is_attack_spell_only()
+{
+	LuaWrapper lua(L);
+
+	return lua.call_fn<bool>("is_attack_spell");
+}
+
 // Execute choose function in Lua spell file
 
 int SpellCastHelper::choose()
