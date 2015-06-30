@@ -44,8 +44,10 @@ AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no)
   hbox.pack_start(objects_combo, Gtk::PACK_SHRINK);
   vbox.add(hbox);
 
-  objects_combo.append("Monster");
   objects_combo.append("Item");
+  objects_combo.append("Person");
+  objects_combo.append("Monster");
+  objects_combo.append("Animal");
 
   vbox.add(cb_removable);
 
@@ -87,11 +89,15 @@ void AddObjectWin::on_button_ok(void)
 
 MAPOBJ_TYPES AddObjectWin::get_object_type(void)
 {
-  switch (_object_no) {
-  case 0:
-    return MAPOBJ_MONSTER;
-  default:
-    return MAPOBJ_ITEM;
+	switch (_object_no) {
+	case 0:
+		return MAPOBJ_ITEM;
+	case 1:
+		return MAPOBJ_PERSON;
+	case 2:
+		return MAPOBJ_MONSTER;
+	default:
+		return MAPOBJ_ANIMAL;
   }
 }
 

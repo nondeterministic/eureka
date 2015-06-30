@@ -37,13 +37,8 @@ public:
   void on_menu_map_expand();
   bool on_tab_button_press_event(GdkEventButton*);
   bool on_tab_button_release_event(GdkEventButton*);
-  // bool on_motion_notify_event(GdkEventMotion* event);
+  bool on_tab_button_motion_pressed(GdkEventMotion*);
   bool on_swindow_button_press_event(GdkEventButton*);
-
-  bool on_scheissi(GdkEventMotion*);
-  void place_icon_on_map(int x, int y);
-
-
   bool on_my_key_press_event(GdkEventKey*);
   bool on_my_sig_expose(const Cairo::RefPtr<Cairo::Context>&);
   void on_my_switch_page(Gtk::Widget*, guint);
@@ -86,6 +81,8 @@ protected:
   Gtk::ToggleButton tb_show_map, tb_show_obj, tb_show_act;
 
   std::vector<TabContext> _tab_contexts;
+
+  void place_icon_on_map(int x, int y);
 
   bool _show_grid;
   bool _drag;

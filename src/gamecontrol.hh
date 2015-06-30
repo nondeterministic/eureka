@@ -63,6 +63,7 @@ protected:
 public:
 	static GameControl& Instance();
 	bool is_arena_outdoors();
+	bool move_party_quietly(LDIR, bool = false);
 	void move_party(LDIR);
 	void move_objects();
 	void draw_status(bool = true);

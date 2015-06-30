@@ -172,9 +172,20 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	gc->get_arena()->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 	gc->get_arena()->determine_offsets();
-	gc->set_party(event->get_x(), event->get_y());
+
+	// The following is somewhat yucky code around the fact that you cannot place the party
+	// just inside an arbitrary location in the map. So I put it on (1,1) and then use move
+	// commands in quick succession to the actual location the party should be in.
 
 	party->set_indoors(true);
+	gc->get_arena()->show_map();
+	gc->set_party(event->get_x(), event->get_y());
+	gc->set_party(1, 1);
+
+	for (unsigned x = 1; x < event->get_x(); x++)
+		gc->move_party_quietly(DIR_RIGHT, true);
+	for (unsigned y = 1; y < event->get_y(); y++)
+		gc->move_party_quietly(DIR_DOWN, true);
 
 	return true;
 }

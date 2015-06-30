@@ -125,45 +125,48 @@ Offsets SquareArena::move(int dir)
   return offsets();
 }
 
+// Determine map offsets in terms of pixels - not tiles!
+
 Offsets SquareArena::determine_offsets()
 {
-  std::cerr << "Offsets:\n";
-  unsigned screen_width = _sdl_surf->w;
-  std::cerr << "sdl_surf->w" << screen_width << "\n";
-  unsigned screen_height = _sdl_surf->h;
-  std::cerr << "sdl_surf->h" << screen_height << "\n";
+	std::cerr << "Offsets:\n";
+	unsigned screen_width = _sdl_surf->w;
+	std::cerr << "sdl_surf->w" << screen_width << "\n";
+	unsigned screen_height = _sdl_surf->h;
+	std::cerr << "sdl_surf->h" << screen_height << "\n";
 
-  unsigned map_width = get_map()->width() * tile_size();
-  unsigned map_height = get_map()->height() * tile_size();
+	unsigned map_width  = get_map()->width()  * tile_size();
+	unsigned map_height = get_map()->height() * tile_size();
 
-  // Does the map height fit into the window height?
-  if (map_height <= screen_height)
-    {
-      _bot_hidden = 0;
-      _top_hidden = 0;
-    }
-  else
-    {
-      if (screen_height + _top_hidden < map_height)
-        _bot_hidden = map_height - _top_hidden - screen_height;
-      else
-        _bot_hidden = 0;
-    }
+	// Does the map height fit into the window height?
+	if (map_height <= screen_height) {
+		_bot_hidden = 0;
+		_top_hidden = 0;
+	}
+	else {
+		if (screen_height + _top_hidden < map_height)
+			_bot_hidden = map_height - _top_hidden - screen_height;
+		else
+			_bot_hidden = 0;
+	}
 
-  if (map_width <= screen_width)
-    {
-      _left_hidden = 0;
-      _right_hidden = 0;
-    }
-  else
-    {
-      if (screen_width + _left_hidden < map_width)
-        _right_hidden = map_width - _left_hidden - screen_width;
-      else
-        _right_hidden = 0;
-    }
+	if (map_width <= screen_width) {
+		_left_hidden = 0;
+		_right_hidden = 0;
+	}
+	else {
+		if (screen_width + _left_hidden < map_width)
+			_right_hidden = map_width - _left_hidden - screen_width;
+		else
+			_right_hidden = 0;
+	}
 
-  return offsets();
+	std::cout << "top_hidden: " << _top_hidden << ", "
+			  << "bot_hidden: " << _bot_hidden << ", "
+	          << "left_hidden: " << _left_hidden << ", "
+	          << "right_hidden: " << _right_hidden << "\n";
+
+	return offsets();
 }
 
 // Returns 0 when tile hex-x-coordinate in the upper left corner is

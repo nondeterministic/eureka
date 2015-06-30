@@ -468,11 +468,13 @@ void EditorWin::determine_map_offsets(void)
   context()->set_yoffset(new_offsets.top/ts);
 }
 
-bool EditorWin::on_scheissi(GdkEventMotion* event)
+// User has button pressed AND moves the mouse in editor window
+
+bool EditorWin::on_tab_button_motion_pressed(GdkEventMotion* event)
 {
 	place_icon_on_map((int)event->x, (int)event->y);
 
-	return true; // Not done.  Event will be further handled by GTKMM etc.
+	return false; // Not done.  Event will be further handled by GTKMM etc.
 }
 
 void EditorWin::place_icon_on_map(int x, int y)
@@ -900,10 +902,9 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
                          | Gdk::BUTTON_RELEASE_MASK
                          | Gdk::BUTTON1_MOTION_MASK
                          | Gdk::BUTTON2_MOTION_MASK);
-						 // | Gdk::POINTER_MOTION_MASK);
     _tab_ebox.signal_button_press_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_press_event));
     _tab_ebox.signal_button_release_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_release_event));
-    _tab_ebox.signal_motion_notify_event().connect(sigc::mem_fun(*this, &EditorWin::on_scheissi));
+    _tab_ebox.signal_motion_notify_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_motion_pressed));
   }
   // If it did have a parent, just reparent to the new tab.
   else {

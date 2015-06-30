@@ -286,7 +286,7 @@ void GameControl::do_turn(bool resting)
 		combat.initiate();
 	}
 	else {
-		if (_turns%20 == 0)
+		if (_turns%60 == 0)
 			_clock.inc(30);
 	}
 
@@ -1822,82 +1822,61 @@ bool GameControl::walkable(int x, int y)
 	return !return_value;
 }
 
-void GameControl::move_party(LDIR dir)
-{
-	MiniWin& mwin = MiniWin::Instance();
+// Just moves party, doesn't do turn or play sounds.  Use move_party() for that as a wrapper around
+// this function.  If ignore_walkable is set, then the party is moved, even through unpassable terrain.
 
+bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
+{
+	bool moved = false;
+	MiniWin& mwin = MiniWin::Instance();
 	int x_diff = 0, y_diff = 0;
-	static SoundSample sample;  // If this isn't static, then the var
-	                            // gets discarded before the sample has
-	                            // finished playing
 
 	// Determine center of arena
 	int screen_center_x, screen_center_y;
 	arena->get_center_coords(screen_center_x, screen_center_y);
 
-	if (Party::Instance().rounds_intoxicated > 0) {
-		bool move_random = random(0,10) >= 7;
-
-		if (move_random) {
-			LDIR newDir = LDIR(rand() % 3);
-			if (newDir != dir)
-				printcon("Ooer...");
-			dir = newDir;
-		}
-	}
-
 	// Indoors
 	if (!is_arena_outdoors()) {
 		switch (dir) {
 		case DIR_LEFT:
-			if (walkable(party->x - 1, party->y)) {
+			if (walkable(party->x - 1, party->y) || ignore_walkable) {
 				arena->moving(true);
-				printcon("West");
-				sample.play(WALK);
+				moved = true;
 				x_diff = -1;
 				if (party->x <= 1) {
 					if (leave_map()) {
 						mwin.display_last();
-						return;
+						return true;
 					}
 					x_diff = 0;
 				}
 				if (screen_pos_party.first < screen_center_x)
 					arena->move(DIR_LEFT);
 			}
-			else {
-				printcon("Blocked");
-				sample.play(HIT);
-			}
 			break;
 		case DIR_RIGHT:
-			if (walkable(party->x + 1, party->y)) {
+			if (walkable(party->x + 1, party->y) || ignore_walkable) {
 				arena->moving(true);
-				printcon("East");
-				sample.play(WALK);
+				// printcon("East");
+				// sample.play(WALK);
+				moved = true;
 				x_diff = 1;
 				// See comment below!
 				if ((unsigned)party->x >= arena->get_map()->width() - 4) {
 					if (leave_map()) {
 						mwin.display_last();
-						return;
+						return true;
 					}
 					x_diff = 0;
 				}
-				if (screen_pos_party.first > screen_center_x) {
+				if (screen_pos_party.first > screen_center_x)
 					arena->move(DIR_RIGHT);
-				}
-			}
-			else {
-				printcon("Blocked");
-				sample.play(HIT);
 			}
 			break;
 		case DIR_DOWN:
-			if (walkable(party->x, party->y + 1)) {
+			if (walkable(party->x, party->y + 1) || ignore_walkable) {
 				arena->moving(true);
-				printcon("South");
-				sample.play(WALK);
+				moved = true;
 				y_diff = 1;
 				// TODO: The -4 is necessary as show_map() creates some kind of
 				// border around the map to be displayed.  Might be able to
@@ -1905,38 +1884,30 @@ void GameControl::move_party(LDIR dir)
 				if ((unsigned)party->y >= arena->get_map()->height() - 4) {
 					if (leave_map()) {
 						mwin.display_last();
-						return;
+						return true;
 					}
 					y_diff = 0;
 				}
-				if (screen_pos_party.second > screen_center_y) {
+				if (screen_pos_party.second > screen_center_y)
 					arena->move(DIR_DOWN);
-				}
-			}
-			else {
-				printcon("Blocked");
-				sample.play(HIT);
 			}
 			break;
 		case DIR_UP:
-			if (walkable(party->x, party->y - 1)) {
+			if (walkable(party->x, party->y - 1) || ignore_walkable) {
 				arena->moving(true);
-				printcon("North");
-				sample.play(WALK);
+				// printcon("North");
+				// sample.play(WALK);
+				moved = true;
 				y_diff = -1;
 				if (party->y <= 1) {
 					if (leave_map()) {
 						mwin.display_last();
-						return;
+						return true;
 					}
 					y_diff = 0;
 				}
 				if (screen_pos_party.second < screen_center_y)
 					arena->move(DIR_UP);
-			}
-			else {
-				printcon("Blocked");
-				sample.play(HIT);
 			}
 			break;
 		default:
@@ -1948,12 +1919,13 @@ void GameControl::move_party(LDIR dir)
 	else {
 		switch (dir) {
 		case DIR_LEFT:
-			if (walkable(party->x - 1, party->y)) {
-				if (party->x % 2 == 0)
-					printcon("South-West");
-				else
-					printcon("North-West");
-				sample.play(WALK);
+			if (walkable(party->x - 1, party->y) || ignore_walkable) {
+//				if (party->x % 2 == 0)
+//					printcon("South-West");
+//				else
+//					printcon("North-West");
+//				sample.play(WALK);
+				moved = true;
 
 				x_diff = -1;
 				if (screen_pos_party.first < screen_center_x) {
@@ -1962,12 +1934,13 @@ void GameControl::move_party(LDIR dir)
 				}
 				break;
 		case DIR_RIGHT:
-			if (walkable(party->x + 1, party->y)) {
-				if (party->x % 2 == 0)
-					printcon("South-East");
-				else
-					printcon("North-East");
-				sample.play(WALK);
+			if (walkable(party->x + 1, party->y) || ignore_walkable) {
+//				if (party->x % 2 == 0)
+//					printcon("South-East");
+//				else
+//					printcon("North-East");
+//				sample.play(WALK);
+				moved = true;
 
 				x_diff = 1;
 				if (screen_pos_party.first > screen_center_x) {
@@ -1977,81 +1950,71 @@ void GameControl::move_party(LDIR dir)
 			}
 			break;
 		case DIR_DOWN:
-			if (walkable(party->x, party->y + 2)) {
-				printcon("South");
-				sample.play(WALK);
+			if (walkable(party->x, party->y + 2) || ignore_walkable) {
+				moved = true;
 				y_diff = 2;
 				if (screen_pos_party.second > screen_center_y)
 					arena->move(DIR_DOWN);
 			}
 			break;
 		case DIR_UP:
-			if (walkable(party->x, party->y -2)) {
-				printcon("North");
-				sample.play(WALK);
+			if (walkable(party->x, party->y -2) || ignore_walkable) {
+				moved = true;
 				y_diff = -2;
 				if (screen_pos_party.second < screen_center_y)
 					arena->move(DIR_UP);
 			}
 			break;
 		case DIR_RDOWN:
-			if (walkable(party->x + 1, party->y + (party->x % 2 == 0? 0 : 2))) {
-				printcon("South-East");
-				sample.play(WALK);
+			if (walkable(party->x + 1, party->y + (party->x % 2 == 0? 0 : 2))  || ignore_walkable) {
+				moved = true;
 				y_diff = party->x % 2 == 0? 0 : 2;
 				x_diff = 1;
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
 					arena->move(DIR_RIGHT);
 				}
-				if (screen_pos_party.second > screen_center_y) {
+				if (screen_pos_party.second > screen_center_y)
 					arena->move(DIR_DOWN);
-				}
 			}
 			break;
 		case DIR_RUP:
-			if (walkable(party->x + 1, party->y - (party->x % 2 == 0? 2 : 0))) {
-				printcon("North-East");
-				sample.play(WALK);
+			if (walkable(party->x + 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
+				moved = true;
 				y_diff = -(party->x % 2 == 0? 2 : 0);
 				x_diff = 1;
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
 					arena->move(DIR_RIGHT);
 				}
-				if (screen_pos_party.second < screen_center_y) {
+				if (screen_pos_party.second < screen_center_y)
 					arena->move(DIR_UP);
-				}
 			}
 			break;
 		case DIR_LUP:
-			if (walkable(party->x - 1, party->y - (party->x % 2 == 0? 2 : 0))) {
-				printcon("North-West");
-				sample.play(WALK);
+			if (walkable(party->x - 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
+				moved = true;
 				y_diff = -(party->x % 2 == 0? 2 : 0);
 				x_diff = -1;
 				if (screen_pos_party.first < screen_center_x) {
 					arena->move(DIR_LEFT);
 					arena->move(DIR_LEFT);
 				}
-				if (screen_pos_party.second < screen_center_y) {
+				if (screen_pos_party.second < screen_center_y)
 					arena->move(DIR_UP);
-				}
 			}
 			break;
 		case DIR_LDOWN:
-			if (walkable(party->x - 1, party->y + (party->x % 2 == 0? 0 : 2))) {
-				printcon("South-West");
-				sample.play(WALK);
+			if (walkable(party->x - 1, party->y + (party->x % 2 == 0? 0 : 2)) || ignore_walkable) {
+				moved = true;
 				y_diff = party->x % 2 == 0? 0 : 2;
 				x_diff = -1;
 				if (screen_pos_party.first < screen_center_x) {
 					arena->move(DIR_LEFT);
 					arena->move(DIR_LEFT);
 				}
-				if (screen_pos_party.second > screen_center_y) {
+				if (screen_pos_party.second > screen_center_y)
 					arena->move(DIR_DOWN);
-				}
 			}
 			break;
 			}
@@ -2066,6 +2029,35 @@ void GameControl::move_party(LDIR dir)
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
 	std::cout << "Info: Party: " << party->x << ", " << party->y << "\n";
+
+	return moved;
+}
+
+void GameControl::move_party(LDIR dir)
+{
+	static SoundSample sample;  // If this isn't static, then the var
+	                            // gets discarded before the sample has
+	                            // finished playing
+
+	if (Party::Instance().rounds_intoxicated > 0) {
+		bool move_random = random(0,10) >= 7;
+
+		if (move_random) {
+			LDIR newDir = LDIR(rand() % 3);
+			if (newDir != dir)
+				printcon("Ooer...");
+			dir = newDir;
+		}
+	}
+
+	if (move_party_quietly(dir)) {
+		sample.play(WALK);
+		printcon(ldirToString.at(dir) + ".");
+	}
+	else {
+		sample.play(HIT);
+		printcon("Blocked.");
+	}
 
 	do_turn();
 }

@@ -2,9 +2,14 @@
 #define ARENA_HH
 
 #include <SDL.h>
+
 #include <vector>
 #include <memory>
 #include <utility>
+
+#include <boost/assign/list_of.hpp>
+#include <boost/unordered_map.hpp>
+
 #include "map.hh"
 
 enum LDIR {
@@ -18,6 +23,18 @@ enum LDIR {
   DIR_RDOWN,
   DIR_NONE
 };
+
+const boost::unordered_map<LDIR, std::string> ldirToString =
+	boost::assign::map_list_of
+	(DIR_UP, "North")
+	(DIR_DOWN, "South")
+	(DIR_RIGHT, "East")
+	(DIR_LEFT, "West")
+	(DIR_LUP, "West")
+	(DIR_LDOWN, "West")
+	(DIR_RUP, "East")
+	(DIR_RDOWN, "East")
+	(DIR_NONE, "Nowhere");
 
 class Offsets
 {
