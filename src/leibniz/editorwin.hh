@@ -37,6 +37,7 @@ public:
   void on_menu_map_expand();
   bool on_tab_button_press_event(GdkEventButton*);
   bool on_tab_button_release_event(GdkEventButton*);
+  // bool on_tab_motion(GdkEventMotion*);
   bool on_tab_button_motion_pressed(GdkEventMotion*);
   bool on_swindow_button_press_event(GdkEventButton*);
   bool on_my_key_press_event(GdkEventKey*);
@@ -79,6 +80,8 @@ protected:
   Gtk::RadioButton rb_draw_map, rb_draw_obj, rb_del_obj, rb_add_action, rb_del_action;
   Gtk::RadioButton::Group toolbox_gr;
   Gtk::ToggleButton tb_show_map, tb_show_obj, tb_show_act;
+
+  Gtk::Label coords_lbl;
 
   std::vector<TabContext> _tab_contexts;
 

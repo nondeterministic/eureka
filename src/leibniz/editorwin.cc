@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <cmath>
-#include <sstream>
+#include <strstream>
 #include <gtkmm/stock.h>
 #include <gdk/gdkx.h>
 #include <gdkmm/pixbuf.h>
@@ -42,10 +42,15 @@ EditorWin::EditorWin(bool new_world)
   _outdoors_icon_pic(World::Instance().get_path() + "/" +
                      World::Instance().get_name() + "/images/" +
                      "icons_outdoors.png"),
-  rb_draw_map("Draw map"), rb_draw_obj("Draw object"),
-  rb_del_obj("Delete object"), rb_add_action("Add action/event..."),
-  rb_del_action("Delete action"), tb_show_map("Show map"),
-  tb_show_obj("Show objects"), tb_show_act("Show actions")
+  rb_draw_map("Draw map"),
+  rb_draw_obj("Draw object"),
+  rb_del_obj("Delete object"),
+  rb_add_action("Add action/event..."),
+  rb_del_action("Delete action"),
+  tb_show_map("Show map"),
+  tb_show_obj("Show objects"),
+  tb_show_act("Show actions"),
+  coords_lbl("Dumm")
 {
   _show_grid = true;
   _drag = false;
@@ -190,12 +195,9 @@ EditorWin::EditorWin(bool new_world)
   togglehbox.pack_start(tb_show_map, Gtk::PACK_SHRINK);
   togglehbox.pack_start(tb_show_obj, Gtk::PACK_SHRINK);
   togglehbox.pack_start(tb_show_act, Gtk::PACK_SHRINK);
-  tb_show_map.signal_toggled().
-    connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_map_toggled));
-  tb_show_obj.signal_toggled().
-    connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_obj_toggled));
-  tb_show_act.signal_toggled().
-    connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_act_toggled));
+  tb_show_map.signal_toggled().connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_map_toggled));
+  tb_show_obj.signal_toggled().connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_obj_toggled));
+  tb_show_act.signal_toggled().connect(sigc::mem_fun(*this, &EditorWin::on_tb_show_act_toggled));
 
   show_all_children();
 }
@@ -472,7 +474,17 @@ void EditorWin::determine_map_offsets(void)
 
 bool EditorWin::on_tab_button_motion_pressed(GdkEventMotion* event)
 {
-	place_icon_on_map((int)event->x, (int)event->y);
+    int map_x = 0;
+    int map_y = 0;
+    _sdleditor->pixel_to_map(event->x, event->y, map_x, map_y);
+
+	strstream ss;
+	ss << "x: " << map_x << " y: " << map_y << "\0";
+
+	coords_lbl.set_text(ss.str());
+
+    if (event->state & Gdk::BUTTON1_MASK)
+    	place_icon_on_map((int)event->x, (int)event->y);
 
 	return false; // Not done.  Event will be further handled by GTKMM etc.
 }
@@ -909,9 +921,11 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
                          | Gdk::BUTTON_RELEASE_MASK
                          | Gdk::BUTTON1_MOTION_MASK
                          | Gdk::BUTTON2_MOTION_MASK);
+    _tab_ebox.add_events(Gdk::POINTER_MOTION_MASK);
     _tab_ebox.signal_button_press_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_press_event));
     _tab_ebox.signal_button_release_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_release_event));
     _tab_ebox.signal_motion_notify_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_button_motion_pressed));
+    //    _tab_ebox.signal_motion_notify_event().connect(sigc::mem_fun(*this, &EditorWin::on_tab_motion));
   }
   // If it did have a parent, just reparent to the new tab.
   else {
@@ -1020,6 +1034,7 @@ bool EditorWin::add_sdleditor_tab(const char* tab_name)
     vtoolbox.pack_start(rb_del_obj, Gtk::PACK_SHRINK);
     vtoolbox.pack_start(rb_add_action, Gtk::PACK_SHRINK);
     vtoolbox.pack_start(rb_del_action, Gtk::PACK_SHRINK);
+    vtoolbox.pack_start(coords_lbl, Gtk::PACK_SHRINK);
     vbox.pack_start(togglehbox, Gtk::PACK_SHRINK);
     vbox.pack_start(_swin_icons, Gtk::PACK_SHRINK);
     _swin_icons.add(_swin_icons_hbox);
