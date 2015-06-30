@@ -684,6 +684,13 @@ void EditorWin::add_object(int x, int y)
     newObj.set_icon(obj_win.get_icon_no());
     newObj.removable = obj_win.removable;
     newObj.id = obj_win.id;
+
+    // TODO: Just some dummy action added to object, so user can later type in the real one(s)
+    if (obj_win.has_action()) {
+    	std::shared_ptr<Action> ptr(new ActionPullPush(map_x, map_y, "ACT_ON_PULL_PUSH"));
+    	newObj.add_action(ptr);
+    }
+
     get_curr_map()->push_obj(newObj);
 
     ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
