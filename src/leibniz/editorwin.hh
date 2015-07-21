@@ -50,6 +50,7 @@ public:
   bool grid_on() const;
   void set_grid(bool = true);
   void determine_map_offsets();
+  void fill_with_curr_tile(int, int);
   void put_curr_tile_on_map(int, int);
   // void put_curr_tile_in_obj_register(int, int);
   void rm_obj(int, int);
@@ -77,7 +78,7 @@ protected:
   Gtk::HBox _swin_icons_hbox, hbox, togglehbox;
   Gtk::ScrolledWindow _swin_icons;
   Gtk::Notebook nb_main;
-  Gtk::RadioButton rb_draw_map, rb_draw_obj, rb_del_obj, rb_add_action, rb_del_action;
+  Gtk::RadioButton rb_draw_map, rb_fill_map, rb_draw_obj, rb_del_obj, rb_add_action, rb_del_action;
   Gtk::RadioButton::Group toolbox_gr;
   Gtk::ToggleButton tb_show_map, tb_show_obj, tb_show_act;
 
@@ -86,6 +87,7 @@ protected:
   std::vector<TabContext> _tab_contexts;
 
   void place_icon_on_map(int x, int y);
+  void fill(Map*, unsigned, unsigned, unsigned, unsigned);
 
   bool _show_grid;
   bool _drag;

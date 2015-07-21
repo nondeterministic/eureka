@@ -43,6 +43,7 @@ EditorWin::EditorWin(bool new_world)
                      World::Instance().get_name() + "/images/" +
                      "icons_outdoors.png"),
   rb_draw_map("Draw map"),
+  rb_fill_map("Fill map"),
   rb_draw_obj("Draw object"),
   rb_del_obj("Delete object"),
   rb_add_action("Add action/event..."),
@@ -179,11 +180,14 @@ EditorWin::EditorWin(bool new_world)
   hbox.pack_start(vtoolbox, Gtk::PACK_SHRINK);
   rb_draw_map.set_active();
   rb_draw_map.set_mode(false);
+  rb_fill_map.set_active();
+  rb_fill_map.set_mode(false);
   rb_draw_obj.set_mode(false);
   rb_del_obj.set_mode(false);
   rb_add_action.set_mode(false);
   rb_del_action.set_mode(false);
   toolbox_gr = rb_draw_map.get_group();
+  rb_fill_map.set_group(toolbox_gr);
   rb_draw_obj.set_group(toolbox_gr);
   rb_del_obj.set_group(toolbox_gr);
   rb_add_action.set_group(toolbox_gr);
@@ -493,6 +497,8 @@ void EditorWin::place_icon_on_map(int x, int y)
 {
 	if (rb_draw_map.get_active())
 		put_curr_tile_on_map(x, y);
+	else if (rb_fill_map.get_active())
+		fill_with_curr_tile(x, y);
 	else if (rb_draw_obj.get_active())
 		add_object(x, y);
 	else if (rb_del_obj.get_active())
@@ -551,6 +557,43 @@ bool EditorWin::on_tab_button_release_event(GdkEventButton* event)
   }
 */
 
+void EditorWin::fill_with_curr_tile(int x, int y)
+{
+	int map_x = 0;
+	int map_y = 0;
+	_sdleditor->pixel_to_map(x, y, map_x, map_y);
+	unsigned curr_brush = context()->get_icon_brush_no();
+	Map* map = get_curr_map().get();
+
+	fill(map, curr_brush, map->get_tile(map_x, map_y), (unsigned)map_x, (unsigned)map_y);
+    ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
+}
+
+// Fills position map_x, map_y on the map, which currently has tile old_brush on it, with new_brush.
+
+void EditorWin::fill(Map* map, unsigned new_brush, unsigned old_brush, unsigned map_x, unsigned map_y)
+{
+	map->set_tile(map_x, map_y, new_brush);
+
+	for (int xoff = -1; xoff < 2; xoff++)
+	{
+		for (int yoff = -1; yoff < 2; yoff++)
+		{
+			if (xoff == 0 && yoff == 0)
+				continue;
+
+			if ((int)map_x + xoff < 0 || (int)map_y + yoff < 0)
+				return;
+
+			if ((int)map_x + xoff > (int)(map->height()) || (int)map_y + yoff > (int)(map->width()))
+				return;
+
+			if (map->get_tile((unsigned)(map_x + xoff), (unsigned)(map_y + yoff)) == (int)(old_brush))
+				fill(map, new_brush, old_brush, map_x + xoff, map_y + yoff);
+		}
+	}
+}
+
 // x and y are the current screen coordinates where the user clicked
 
 void EditorWin::put_curr_tile_on_map(int x, int y)
@@ -566,6 +609,7 @@ void EditorWin::put_curr_tile_on_map(int x, int y)
       int icon_size = 0;
       if (get_curr_map()->is_outdoors())
         icon_size = World::Instance().get_indoors_tile_size();
+
       else
         icon_size = World::Instance().get_outdoors_tile_size();
       this->queue_draw_area(map_x, map_y, icon_size, icon_size);
@@ -961,6 +1005,7 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
       _swin_icons_hbox.pack_start(_outdoors_icon_pic, Gtk::PACK_SHRINK);
     }
     tb_show_obj.set_sensitive(false);
+    rb_fill_map.set_sensitive(false);
     rb_draw_obj.set_sensitive(false);
     rb_del_obj.set_sensitive(false);
     rb_draw_map.set_active(true);
@@ -973,6 +1018,7 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
     }
     tb_show_obj.set_sensitive(true);
     rb_draw_obj.set_sensitive(true);
+    rb_fill_map.set_sensitive(true);
     rb_del_obj.set_sensitive(true);
     rb_add_action.set_sensitive(true);
   }
@@ -1030,6 +1076,7 @@ bool EditorWin::add_sdleditor_tab(const char* tab_name)
     _swin_icons.set_size_request(-1, 200);
     // hbox.add(vtoolbox);  Seems this is already done above!
     vtoolbox.pack_start(rb_draw_map, Gtk::PACK_SHRINK);
+    vtoolbox.pack_start(rb_fill_map, Gtk::PACK_SHRINK);
     vtoolbox.pack_start(rb_draw_obj, Gtk::PACK_SHRINK);
     vtoolbox.pack_start(rb_del_obj, Gtk::PACK_SHRINK);
     vtoolbox.pack_start(rb_add_action, Gtk::PACK_SHRINK);
