@@ -15,7 +15,6 @@
 IconPropsWin::IconPropsWin(Glib::RefPtr<Gdk::Pixbuf>& icon) : name_lbl("Name:"), icon_lbl("undef icon no.")
 {
   _name = "undef";
-  _transparency = 0;
   _icon_no = 0;
 
   set_title("Edit icon properties");
@@ -34,10 +33,15 @@ IconPropsWin::IconPropsWin(Glib::RefPtr<Gdk::Pixbuf>& icon) : name_lbl("Name:"),
   hbox_name.pack_start(name_entry, Gtk::PACK_SHRINK);
   vbox.add(hbox_name);
 
+  walk_combo.append("full speed");
+  walk_combo.append("slow");
+  walk_combo.append("unpassable");
+
   trans_combo.append("fully transparent");
   trans_combo.append("semi-transparent");
   trans_combo.append("not transparent");
 
+  vbox.add(walk_combo);
   vbox.add(trans_combo);
 
   align.add(vbox);
@@ -72,19 +76,57 @@ void IconPropsWin::on_button_ok(void)
 
   switch (trans_combo.get_active_row_number()) {
   case 0:
-    _transparency = FULLY_TRANS;
-    break;
+	  _iconProps._trans = IT_FULLY;
+	  break;
   case 1:
-    _transparency = SEMI_TRANS;
-    break;
+	  _iconProps._trans = IT_SEMI;
+	  break;
   case 2:
-    _transparency = NOT_TRANS;
-    break;
-  default:
-    _transparency = FULLY_TRANS;
+	  _iconProps._trans = IT_NOT;
+	  break;
   }
-  
+
+  switch (walk_combo.get_active_row_number()) {
+  case 0:
+	  _iconProps._walk = IW_FULL;
+	  break;
+  case 1:
+	  _iconProps._walk = IW_SLOW;
+	  break;
+  case 2:
+	  _iconProps._walk = IW_NOT;
+	  break;
+  }
+
   hide();
+}
+
+void IconPropsWin::set_trans(ICON_TRANS it)
+{
+	std::cout << "Setting trans to: " << it << "\n";
+
+	_iconProps._trans = it;
+	trans_combo.set_active(it);
+	queue_draw();
+}
+
+ICON_TRANS IconPropsWin::get_trans()
+{
+	return _iconProps._trans;
+}
+
+void IconPropsWin::set_walkable(ICON_WALK iw)
+{
+	std::cout << "Setting walkable to: " << iw << "\n";
+
+	_iconProps._walk = iw;
+	walk_combo.set_active(iw);
+	queue_draw();
+}
+
+ICON_WALK IconPropsWin::get_walkable()
+{
+	return _iconProps._walk;
 }
 
 std::string IconPropsWin::get_name(void)
@@ -94,32 +136,10 @@ std::string IconPropsWin::get_name(void)
 
 void IconPropsWin::set_name(const char* n)
 {
-  name_entry.set_text(n);
-  _name = n;
-}
+	name_entry.set_text(n);
+	_name = n;
 
-void IconPropsWin::set_transparency(int t)
-{
-  _transparency = t;
-
-  if (t & SEMI_TRANS)
-    trans_combo.set_active(1);
-  else if (t & NOT_TRANS)
-    trans_combo.set_active(2);
-  else {
-    trans_combo.set_active(0);
-    _transparency = FULLY_TRANS;
-  }
-}
-
-int IconPropsWin::get_transparency(void)
-{
-  if (_transparency & SEMI_TRANS)
-    return SEMI_TRANS;
-  else if (_transparency & NOT_TRANS)
-    return NOT_TRANS;
-  else
-    return FULLY_TRANS;
+	queue_draw();
 }
 
 void IconPropsWin::set_icon_no(unsigned t)
@@ -128,6 +148,8 @@ void IconPropsWin::set_icon_no(unsigned t)
   tmp << t;
   icon_lbl.set_text(tmp.str());
   _icon_no = t;
+
+  queue_draw();
 }
 
 unsigned IconPropsWin::get_icon_no(void)

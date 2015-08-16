@@ -563,7 +563,7 @@ void EditorWin::fill_with_curr_tile(int x, int y)
 	int map_y = 0;
 	_sdleditor->pixel_to_map(x, y, map_x, map_y);
 	unsigned curr_brush = context()->get_icon_brush_no();
-	Map* map = get_curr_map().get();
+	std::shared_ptr<Map> map = get_curr_map();
 
 	fill(map, curr_brush, map->get_tile(map_x, map_y), (unsigned)map_x, (unsigned)map_y);
     ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
@@ -571,7 +571,7 @@ void EditorWin::fill_with_curr_tile(int x, int y)
 
 // Fills position map_x, map_y on the map, which currently has tile old_brush on it, with new_brush.
 
-void EditorWin::fill(Map* map, unsigned new_brush, unsigned old_brush, unsigned map_x, unsigned map_y)
+void EditorWin::fill(std::shared_ptr<Map> map, unsigned new_brush, unsigned old_brush, unsigned map_x, unsigned map_y)
 {
 	map->set_tile(map_x, map_y, new_brush);
 
@@ -758,94 +758,94 @@ void EditorWin::add_object(int x, int y)
 
 bool EditorWin::on_swindow_button_press_event(GdkEventButton* event)
 {
-  Glib::RefPtr<Gtk::Adjustment> h_adj = _swin_icons.get_hadjustment();
-  Glib::RefPtr<Gtk::Adjustment> v_adj = _swin_icons.get_vadjustment();
-  int vadj = v_adj->get_value();
-  int hadj = h_adj->get_value();
-  int icon_size = 0;
-  int icons_per_row = 0;
-  int icon_no_pressed = 0;
+	Glib::RefPtr<Gtk::Adjustment> h_adj = _swin_icons.get_hadjustment();
+	Glib::RefPtr<Gtk::Adjustment> v_adj = _swin_icons.get_vadjustment();
+	int vadj = v_adj->get_value();
+	int hadj = h_adj->get_value();
+	int icon_size = 0;
+	int icons_per_row = 0;
+	int icon_no_pressed = 0;
 
-  if (get_curr_map()->is_outdoors()) {
-    if (event->x > _outdoors_icon_pic.get_width() || event->y > _outdoors_icon_pic.get_height())
-      return true;
+	if (get_curr_map()->is_outdoors()) {
+		if (event->x > _outdoors_icon_pic.get_width() || event->y > _outdoors_icon_pic.get_height())
+			return true;
 
-    icon_size = World::Instance().get_outdoors_tile_size() - 1;
-    // The icon map is 661 pixels wide to not cut off abruptly, but
-    // now we have to remove the -1 again in the icons_per_row
-    // calculation.  So it's 660/33 = 20 icons per row.
-    icons_per_row = (_outdoors_icon_pic.get_width() - 1)/icon_size;
-    // TODO: Is the below OK now?
-    // This 2 (resp 3) offsets are odd: it seems I need that because
-    // the swindow has a tiny weeny frame around it and the event->x
-    // coordinates are not relative wrt. the frame but relative to
-    // the outside window!
-    int x_coord = (int)event->x - _swin_icons_hbox.get_border_width() + hadj;
-    int y_coord = (int)event->y - (_swin_icons_hbox.get_border_width() + 2) + vadj;
+		icon_size = World::Instance().get_outdoors_tile_size() - 1;
+		// The icon map is 661 pixels wide to not cut off abruptly, but
+		// now we have to remove the -1 again in the icons_per_row
+		// calculation.  So it's 660/33 = 20 icons per row.
+		icons_per_row = (_outdoors_icon_pic.get_width() - 1)/icon_size;
+		// TODO: Is the below OK now?
+		// This 2 (resp 3) offsets are odd: it seems I need that because
+		// the swindow has a tiny weeny frame around it and the event->x
+		// coordinates are not relative wrt. the frame but relative to
+		// the outside window!
+		int x_coord = (int)event->x - _swin_icons_hbox.get_border_width() + hadj;
+		int y_coord = (int)event->y - (_swin_icons_hbox.get_border_width() + 2) + vadj;
 
-    icon_no_pressed = x_coord/icon_size + y_coord/icon_size*icons_per_row;
-  }
-  else {
-    if (event->x > _indoors_icon_pic.get_width() || event->y > _indoors_icon_pic.get_height())
-      return true;
+		icon_no_pressed = x_coord/icon_size + y_coord/icon_size*icons_per_row;
+	}
+	else {
+		if (event->x > _indoors_icon_pic.get_width() || event->y > _indoors_icon_pic.get_height())
+			return true;
 
-    icon_size = World::Instance().get_indoors_tile_size();
-    icons_per_row = _indoors_icon_pic.get_width()/icon_size;
+		icon_size = World::Instance().get_indoors_tile_size();
+		icons_per_row = _indoors_icon_pic.get_width()/icon_size;
 
-    icon_no_pressed = ((int)event->x+hadj)/icon_size + (((int)event->y+vadj)/icon_size*icons_per_row);
-  }
+		icon_no_pressed = ((int)event->x+hadj)/icon_size + (((int)event->y+vadj)/icon_size*icons_per_row);
+	}
 
-  // Determine icon rectangle
-  int icon_x = (icon_no_pressed%icons_per_row) * icon_size;
-  int icon_y = (int)(icon_no_pressed/icons_per_row) * icon_size;
-  std::cout << "Icon: " << icon_x << ", " << icon_y << std::endl;
+	// Determine icon rectangle
+	int icon_x = (icon_no_pressed%icons_per_row) * icon_size;
+	int icon_y = (int)(icon_no_pressed/icons_per_row) * icon_size;
+	std::cout << "Icon: " << icon_x << ", " << icon_y << std::endl;
 
-  // Set selected icon for dialog to display
-  Glib::RefPtr<Gdk::Pixbuf> icon_pixbuf = (get_curr_map()->is_outdoors()?
-                                           _outdoors_icon_pic.get_pixbuf() :
-                                           _indoors_icon_pic.get_pixbuf());
-  // Glib::RefPtr<Gdk::Pixbuf> chosen_icon_pb =
-  _selected_icon_pb = Gdk::Pixbuf::create_subpixbuf(icon_pixbuf,
-                                                    icon_x,
-                                                    icon_y,
-                                                    icon_size,
-                                                    icon_size);
+	// Set selected icon for dialog to display
+	Glib::RefPtr<Gdk::Pixbuf> icon_pixbuf = (get_curr_map()->is_outdoors()?
+			_outdoors_icon_pic.get_pixbuf() :
+			_indoors_icon_pic.get_pixbuf());
+	// Glib::RefPtr<Gdk::Pixbuf> chosen_icon_pb =
+	_selected_icon_pb = Gdk::Pixbuf::create_subpixbuf(icon_pixbuf,
+			icon_x,
+			icon_y,
+			icon_size,
+			icon_size);
 
-  // Select current icon brush
-  if (event->button == 1)
-    context()->set_icon_brush_no(icon_no_pressed);
-  // Edit icon properties
-  else if (event->button == 3) {
-    IconPropsWin icon_props_win(_selected_icon_pb);
-    IconProps* curr_icon_props;
+	// Select current icon brush
+	if (event->button == 1)
+		context()->set_icon_brush_no(icon_no_pressed);
+	// Edit icon properties
+	else if (event->button == 3) {
+		IconPropsWin icon_props_win(_selected_icon_pb);
+		IconProps* curr_icon_props;
 
-    if (get_curr_map()->is_outdoors())
-      curr_icon_props = OutdoorsIcons::Instance().get_props(icon_no_pressed);
-    else
-      curr_icon_props = IndoorsIcons::Instance().get_props(icon_no_pressed);
+		if (get_curr_map()->is_outdoors())
+			curr_icon_props = OutdoorsIcons::Instance().get_props(icon_no_pressed);
+		else
+			curr_icon_props = IndoorsIcons::Instance().get_props(icon_no_pressed);
 
-    std::cout << "Icon props: " << curr_icon_props->flags() << "\n";
+		icon_props_win.set_icon_no(icon_no_pressed);
+		icon_props_win.set_name(curr_icon_props->get_name().c_str());
+		icon_props_win.set_walkable(curr_icon_props->_walk);
+		icon_props_win.set_trans(curr_icon_props->_trans);
 
-    icon_props_win.set_icon_no(icon_no_pressed);
-    icon_props_win.set_name(curr_icon_props->get_name().c_str());
-    icon_props_win.set_transparency(curr_icon_props->flags());
+		if (icon_props_win.run()) {
+			IconProps new_icon_props;
+			new_icon_props.set_icon(icon_props_win.get_icon_no());
+			new_icon_props.set_name(icon_props_win.get_name().c_str());
+			new_icon_props._walk  = icon_props_win.get_walkable();
+			new_icon_props._trans = icon_props_win.get_trans();
 
-    if (icon_props_win.run()) {
-      IconProps new_icon_props;
-      new_icon_props.set_icon(icon_props_win.get_icon_no());
-      new_icon_props.set_name(icon_props_win.get_name().c_str());
-      new_icon_props.add_flags(icon_props_win.get_transparency());
+			if (get_curr_map()->is_outdoors())
+				OutdoorsIcons::Instance().add_props(new_icon_props);
+			else
+				IndoorsIcons::Instance().add_props(new_icon_props);
 
-      if (get_curr_map()->is_outdoors())
-        OutdoorsIcons::Instance().add_props(new_icon_props);
-      else
-        IndoorsIcons::Instance().add_props(new_icon_props);
+			ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
+		}
+	}
 
-      ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
-    }
-  }
-
-  return true;
+	return true;
 }
 
 bool EditorWin::on_my_key_press_event(GdkEventKey* event)

@@ -273,7 +273,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
-					if (!(props->flags() & FULLY_TRANS)) {
+					if (!(props->_trans == IT_FULLY)) {
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
 						break;
@@ -293,7 +293,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
-					if (!(props->flags() & FULLY_TRANS)) {
+					if (!(props->_trans == IT_FULLY)) {
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
 						break;
@@ -318,9 +318,9 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 	for (unsigned i = 1; i < row.size() - 1; i++) {
 		IconProps* props = IndoorsIcons::Instance().get_props(row[i]);
 
-		if (props && (props->flags() & NOT_TRANS))
+		if (props && (props->_trans == IT_NOT))
 			return false;
-		else if (i > 0 && props && (props->flags() & SEMI_TRANS)) {
+		else if (i > 0 && props && (props->_trans == IT_SEMI)) {
 			// Decrease viewing distance by 4 on semi transparent icons, but
 			// not when standing on one (i.e., i > 0), rather only when
 			// those icons block the view, i.e., are in front of the player.
@@ -338,9 +338,9 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		for (unsigned i = 0; i < row_objs.size(); i++) {
 			IconProps* props = IndoorsIcons::Instance().get_props(row_objs[i]);
 
-			if (props && (props->flags() & NOT_TRANS))
+			if (props && (props->_trans == IT_NOT))
 				return false;
-			else if (props && (props->flags() & SEMI_TRANS)) {
+			else if (props && (props->_trans == IT_SEMI)) {
 				// Decrease viewing distance by 4 on semi transparent icons, but
 				// not when standing on one (i.e., i > 0), rather only when
 				// those icons block the view, i.e., are in front of the player.

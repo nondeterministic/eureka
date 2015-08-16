@@ -7,16 +7,16 @@
   <map href="./Mittelerde/maps/Mitwok.xml" type="indoors">Mitwok</map>
   <iconprops>
     <indoors>
-      <icon no="0" trans="full" walk="full">nothing special</icon>
-      <icon no="1" trans="full" walk="full">nothing special</icon>
-      <icon no="2" trans="full" walk="not" next_anim="587" sound_effect="shallow_water.wav">water</icon>
+      <icon no="0" trans="full" walk="not">deep water</icon>
+      <icon no="1" trans="full" walk="not">water</icon>
+      <icon no="2" trans="full" walk="not">shallow water</icon>
       <icon no="3" trans="full" walk="full">nothing special</icon>
       <icon no="4" trans="full" walk="full">nothing special</icon>
-      <icon no="5" trans="full" walk="full">nothing special</icon>
-      <icon no="6" trans="full" walk="full">nothing special</icon>
-      <icon no="7" trans="full" walk="full">nothing special</icon>
-      <icon no="8" trans="full" walk="full">nothing special</icon>
-      <icon no="9" trans="full" walk="full">castle</icon>
+      <icon no="5" trans="semi" walk="slow">forest</icon>
+      <icon no="6" trans="semi" walk="slow">deep forest</icon>
+      <icon no="7" trans="full" walk="slow">hills</icon>
+      <icon no="8" trans="not" walk="not">mountain</icon>
+      <icon no="9" trans="not" walk="slow">dungeon</icon>
       <icon no="10" trans="full" walk="full">nothing special</icon>
       <icon no="11" trans="full" walk="full">nothing special</icon>
       <icon no="12" trans="full" walk="full">nothing special</icon>
@@ -89,7 +89,7 @@
       <icon no="79" trans="full" walk="full">nothing special</icon>
       <icon no="80" trans="full" walk="full">nothing special</icon>
       <icon no="81" trans="full" walk="full">nothing special</icon>
-      <icon no="82" trans="full" walk="full">nothing special</icon>
+      <icon no="82" trans="full" walk="slow">rock</icon>
       <icon no="83" trans="full" walk="full">nothing special</icon>
       <icon no="84" trans="not" walk="not">stone wall</icon>
       <icon no="85" trans="full" walk="full">nothing special</icon>
@@ -116,7 +116,7 @@
       <icon no="106" trans="full" walk="full">nothing special</icon>
       <icon no="107" trans="full" walk="full">nothing special</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>
-      <icon no="109" trans="not" walk="not">wall</icon>
+      <icon no="109" trans="not" walk="not">wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
       <icon no="111" trans="full" walk="full">nothing special</icon>
       <icon no="112" trans="full" walk="full">fire</icon>
@@ -197,7 +197,7 @@
       <icon no="187" trans="full" walk="full">nothing special</icon>
       <icon no="188" trans="full" walk="full">nothing special</icon>
       <icon no="189" trans="full" walk="full">nothing special</icon>
-      <icon no="190" trans="full" walk="full">nothing special</icon>
+      <icon no="190" trans="not" walk="not">wall</icon>
       <icon no="191" trans="full" walk="full">nothing special</icon>
       <icon no="192" trans="full" walk="full">nothing special</icon>
       <icon no="193" trans="full" walk="full">nothing special</icon>

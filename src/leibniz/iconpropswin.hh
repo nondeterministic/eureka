@@ -20,8 +20,13 @@ public:
   virtual ~IconPropsWin();
   std::string get_name();
   void set_name(const char*);
-  void set_transparency(int);
-  int get_transparency();
+
+  void set_walkable(ICON_WALK);
+  ICON_WALK get_walkable();
+
+  void set_trans(ICON_TRANS);
+  ICON_TRANS get_trans();
+
   void set_icon_no(unsigned);
   unsigned get_icon_no();
 
@@ -34,13 +39,13 @@ protected:
   Gtk::HBox hbox_name;
   Gtk::Label name_lbl, icon_lbl;
   Gtk::Entry name_entry;
-  Gtk::ComboBoxText trans_combo;
+  Gtk::ComboBoxText trans_combo, walk_combo;
 
   void on_button_cancel(void);
   void on_button_ok(void);
 
   std::string _name;
-  int _transparency;
+  IconProps _iconProps;
   unsigned _icon_no;
 };
 

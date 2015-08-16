@@ -87,7 +87,7 @@ protected:
   std::vector<TabContext> _tab_contexts;
 
   void place_icon_on_map(int x, int y);
-  void fill(Map*, unsigned, unsigned, unsigned, unsigned);
+  void fill(std::shared_ptr<Map>, unsigned, unsigned, unsigned, unsigned);
 
   bool _show_grid;
   bool _drag;

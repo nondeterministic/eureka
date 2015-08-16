@@ -14,7 +14,8 @@ IconProps::IconProps()
 	_radius = 0;
 	_icon = 0;
 	_next_anim = -1;
-	_flags = FULLY_TRANS + WALK_FULLSPEED;
+	_trans = IT_FULLY;
+	_walk = IW_FULL;
 	_name = "nothing special";
 	_seffect = "";
 }
@@ -25,32 +26,12 @@ IconProps::~IconProps()
 
 void IconProps::set_icon(unsigned no)
 {
-  _icon = no;
+	_icon = no;
 }
 
 unsigned IconProps::get_icon(void)
 {
-  return _icon;
-}
-
-int IconProps::flags(void) const
-{
-  return _flags;
-}
-
-void IconProps::set_flags(int flags)
-{
-  _flags = flags;
-}
-
-void IconProps::add_flags(int flags)
-{
-  _flags += flags;
-}
-
-void IconProps::rm_flags(int flags)
-{
-  _flags -= flags;
+	return _icon;
 }
 
 int IconProps::light_radius()
@@ -65,7 +46,7 @@ void IconProps::set_light_radius(int r)
 
 std::string IconProps::get_name(void)
 {
-  return _name;
+	return _name;
 }
 
 void IconProps::set_name(const char* newname)

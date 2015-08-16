@@ -1770,14 +1770,10 @@ bool GameControl::is_arena_outdoors()
 
 bool GameControl::walk_fullspeed(int x, int y)
 {
-  bool return_value = false;
-
   if (is_arena_outdoors())
-    return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_FULLSPEED;
+	  return OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_FULL;
   else
-    return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_FULLSPEED;
-
-  return return_value;
+	  return IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_FULL;
 }
 
 bool GameControl::walkable(int x, int y)
@@ -1793,9 +1789,9 @@ bool GameControl::walkable(int x, int y)
 	bool return_value = false;
 
 	if (is_arena_outdoors())
-		return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
+		return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_NOT;
 	else {
-		return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->flags() & WALK_NOT;
+		return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_NOT;
 
 		// Don't walk over monsters...
 		if (!return_value) {
@@ -1805,7 +1801,7 @@ bool GameControl::walkable(int x, int y)
 					MapObj& map_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
 
-					if (props->flags() & WALK_NOT)
+					if (props->_walk == IW_NOT)
 						return false;
 
 					if (map_obj.get_type() == MAPOBJ_MONSTER)
