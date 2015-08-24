@@ -375,7 +375,6 @@ bool SquareArena::is_illuminated(int x, int y)
 			obj.get_coords(objx, objy);
 
 			if (abs((int)objx - x) <= radius && abs((int)objy - y) <= radius) {
-				std::cout << "ILLUMINATED BY OBJ!\n";
 				return true;
 			}
 		}
@@ -394,7 +393,6 @@ bool SquareArena::is_illuminated(int x, int y)
 
 				if (radius > 0) {
 					if (abs(check_x) - x <= radius && abs(check_y) - y <= radius) {
-						std::cout << "ILLUMINATED BY ICON!\n";
 						return true;
 					}
 				}
@@ -469,9 +467,6 @@ void SquareArena::show_map(int x_width, int y_width)
 				// std::cout << "Adding to playlist: " << sample_path << "\n";
 			}
 
-			// Check for sound effects to be played for particular object??
-			// TODO
-
 			int party_x, party_y;
 			map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
 			screen_to_map(party_x, party_y, party_x, party_y);
@@ -497,13 +492,20 @@ void SquareArena::show_map(int x_width, int y_width)
 
 				// Now draw the objects
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+					int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
+
 					if (in_los(x, y, party_x, party_y)) {
 						if ((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) || is_illuminated((int)x, (int)y)) {
-							int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
-
 							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
 								std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
 						}
+					}
+
+					// Check for sound effects to be played for particular object??
+					if (IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect().size() > 0) {
+						std::string sample_path = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect();
+						playlist.add_wav(sample_path);
+						sound_effects_added.push_back(sample_path);
 					}
 				}
 			}
