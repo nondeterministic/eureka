@@ -132,8 +132,7 @@ int intro(int res_w, int res_h)
 	}
 
     // Initialize the SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
     	cerr << "SDL_Init() Failed: " << SDL_GetError() << endl;
     	exit(1);
     }
@@ -141,22 +140,20 @@ int intro(int res_w, int res_h)
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
 		std::cerr << "Error: Could not initialize audio.\n";
 
-	SoundSample sample;
-	sample.set_channel(4711);
-	sample.set_volume(128);
-	sample.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/LocusIste.ogg", 1);
+	SoundSample sample_intro;
+	sample_intro.set_channel(4711);
+	sample_intro.set_volume(128);
+	sample_intro.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/LocusIste.ogg", 1);
 
     // Set the video mode
     SDL_Surface* display;
     display = SDL_SetVideoMode(res_w, res_h, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    if (display == NULL)
-    {
+    if (display == NULL) {
     	cerr << "SDL_SetVideoMode() Failed: " << SDL_GetError() << endl;
     	exit(1);
     }
 
-    if (SDL_BlitSurface(img, NULL, display, NULL) != 0)
-    {
+    if (SDL_BlitSurface(img, NULL, display, NULL) != 0) {
     	cerr << "SDL_BlitSurface() Failed: " << SDL_GetError() << endl;
     	exit(1);
     }
@@ -198,8 +195,7 @@ int start_game(int res_w, int res_h)
 	int x = 13, y = 21; // Some default values for starting position in wilderness
 
 	// Load game data
-	if (! World::Instance().xml_load_world_data(((std::string)DATADIR + "/simplicissimus/data/" + (std::string)WORLD_NAME + ".xml").c_str()))
-	{
+	if (! World::Instance().xml_load_world_data(((std::string)DATADIR + "/simplicissimus/data/" + (std::string)WORLD_NAME + ".xml").c_str())) {
 		std::cerr << "ERROR: Error loading game data. Did you run make install?" << std::endl;
 		return -1;
 	}
@@ -225,10 +221,10 @@ int start_game(int res_w, int res_h)
 	win->init(res_w, res_h); // , 32, SDL_HWPALETTE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 	// TODO
-	SoundSample sample;
-	sample.set_channel(4711);
-	sample.set_volume(128);
-	sample.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/travel.ogg", 1);
+	SoundSample game_music;
+	game_music.set_channel(4711);
+	game_music.set_volume(128);
+	game_music.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/travel.ogg", 1);
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
@@ -439,6 +435,7 @@ int start_game(int res_w, int res_h)
 	gc->set_map_name("Landschaft");
 	gc->show_win();
 	gc->draw_status();
+	gc->set_game_music(&game_music);
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 

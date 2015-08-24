@@ -374,8 +374,31 @@ bool SquareArena::is_illuminated(int x, int y)
 			unsigned objx, objy;
 			obj.get_coords(objx, objy);
 
-			if (abs((int)objx - radius) <= 4 && abs((int)objy - y) <= radius)
+			if (abs((int)objx - x) <= radius && abs((int)objy - y) <= radius) {
+				std::cout << "ILLUMINATED BY OBJ!\n";
 				return true;
+			}
+		}
+	}
+
+	// Check if some ordinary icons that are not objects illuminate the location in question
+	int max_radius = 6; // TODO: This is a hack, it means that a light source can at most illuminate stuff 6 icons around it.
+				        // For the game that should be sufficient, but it's not very realistic.
+	for (int xoff = -max_radius; xoff < max_radius; xoff++) {
+		for (int yoff = -max_radius; yoff < max_radius; yoff++) {
+			int check_x = x + xoff;
+			int check_y = y + yoff;
+
+			if (check_x >= 0 && check_y >= 0 && check_x < _map->width() && check_y < _map->height()) {
+				int radius = IndoorsIcons::Instance().get_props(_map->get_tile((unsigned)check_x, (unsigned)check_y))->light_radius();
+
+				if (radius > 0) {
+					if (abs(check_x) - x <= radius && abs(check_y) - y <= radius) {
+						std::cout << "ILLUMINATED BY ICON!\n";
+						return true;
+					}
+				}
+			}
 		}
 	}
 
@@ -446,6 +469,9 @@ void SquareArena::show_map(int x_width, int y_width)
 				// std::cout << "Adding to playlist: " << sample_path << "\n";
 			}
 
+			// Check for sound effects to be played for particular object??
+			// TODO
+
 			int party_x, party_y;
 			map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
 			screen_to_map(party_x, party_y, party_x, party_y);
@@ -457,7 +483,7 @@ void SquareArena::show_map(int x_width, int y_width)
 							is_illuminated((int)x, (int)y)))
 				{
 					if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
-						std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+						std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
 
 				}
 			}
@@ -476,7 +502,7 @@ void SquareArena::show_map(int x_width, int y_width)
 							int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
 							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
-								std::cerr << "put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+								std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
 						}
 					}
 				}

@@ -40,6 +40,7 @@
 #include "pathfinding.hh"
 #include "mapobj.hh"
 #include "spell.hh"
+#include "soundsample.hh"
 
 typedef boost::uniform_int<> NumberDistribution; 
 typedef boost::mt19937       RandomNumberGenerator; 
@@ -58,6 +59,7 @@ protected:
 	std::string input;
 	unsigned _turns;
 	Clock _clock;
+	SoundSample* _game_music;
 	GameControl();
 
 public:
@@ -92,6 +94,7 @@ public:
 	void drop_items();
 	void inventory();
 	void pull_push();
+	void set_game_music(SoundSample*);
 	std::string ready_item(int);
 	std::string yield_item(int);
 	void look();

@@ -51,39 +51,51 @@ SoundSample::~SoundSample()
   std::cout << "~SoundSample: " << _filename << "\n";   
 }
 
-// void SoundSample::set_filename(std::string filename)
-// {
-//   _filename = filename;
-// }
+// Toggle all audio
+
+void SoundSample::toggle()
+{
+	if (_audio_on) {
+		Mix_Pause(_chan);
+		Mix_PauseMusic();
+		_audio_on = false;
+	}
+	else {
+		Mix_Resume(_chan);
+		Mix_ResumeMusic();
+		_audio_on = true;
+	}
+}
 
 void SoundSample::play(int loop)
 {
-  play(_filename, loop);
+	play(_filename, loop);
 }
 
 void SoundSample::play(std::string filename, int loop)
 {
-  _filename = filename;
-  std::cout << "PLAYING " << _filename << std::endl;
-  other_wav = Mix_LoadWAV(_filename.c_str());
-  play_chunk(other_wav, loop);
+	_filename = filename;
+	std::cout << "PLAYING " << _filename << std::endl;
+	other_wav = Mix_LoadWAV(_filename.c_str());
+	play_chunk(other_wav, loop);
+	_audio_on = true;
 }
 
 // Play some standard, predefined samples (see enum above)
 
 void SoundSample::play(SampleType t, int loop)
 {
-  switch (t) {
-  case WALK:
-    play_chunk(walk_wav, loop);
-    break;
-  case HIT:
-    play_chunk(hit_wav, loop);
-    break;
-  case FOE_HIT:
-    play_chunk(foe_hit_wav, loop);
-    break;
-  }
+	  switch (t) {
+	  case WALK:
+		play_chunk(walk_wav, loop);
+		break;
+	  case HIT:
+		play_chunk(hit_wav, loop);
+		break;
+	  case FOE_HIT:
+		play_chunk(foe_hit_wav, loop);
+		break;
+	  }
 }
 
 // 0 (min) - 128 (max)
@@ -103,6 +115,7 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 		// Max volume is 128, we want half the volume for samples!
 		Mix_Volume(_chan, _vol);
 		_chan = Mix_PlayChannel(-1, wav, loop);
+		_audio_on = true;
 	}
 	else
 		std::cerr << "WARNING: Cannot play sample. Check soundsample.cc.\n";
@@ -115,6 +128,7 @@ void SoundSample::stop()
   if (_chan != -1) {
     Mix_ExpireChannel(_chan, 200);
     _chan = -1;
+	_audio_on = false;
   }
 }
 

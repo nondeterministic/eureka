@@ -103,6 +103,11 @@ GameControl& GameControl::Instance()
   return _inst;
 }
 
+void GameControl::set_game_music(SoundSample* gm)
+{
+	_game_music = gm;
+}
+
 int GameControl::set_party(int x, int y)
 {
   party->set_coords(x, y);
@@ -572,6 +577,10 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_t:
 					talk();
 					break;
+				case SDLK_EQUALS:
+					printcon("Toggling sound");
+					_game_music->toggle();
+					break;
 				case SDLK_u:
 					use();
 					break;
@@ -966,6 +975,10 @@ void GameControl::unlock_item()
 					printcon("Not locked. Don't waste a perfectly good jimmy lock on it.");
 					return;
 				}
+			}
+			else {
+				printcon("Nothing to open here.");
+				return;
 			}
 		}
 	}

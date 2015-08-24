@@ -58,9 +58,9 @@
     <action type="ACT_ON_ENTER" x="8" y="27">
       <event type="EVENT_PRINTCON">You feel glorious...</event>
       <event type="EVENT_ENTER_MAP">
-        <x>20</x>
-        <y>10</y>
-        <target_map>Mitwok</target_map>
+        <x>23</x>
+        <y>50</y>
+        <target_map>Rothenburg</target_map>
       </event>
     </action>
   </actions>

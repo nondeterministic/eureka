@@ -4,6 +4,7 @@
 #include "weapon.hh"
 #include "shield.hh"
 #include "profession.hh"
+#include "soundsample.hh"
 
 #include <string>
 #include <memory>

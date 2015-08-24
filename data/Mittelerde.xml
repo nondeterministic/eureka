@@ -5,11 +5,15 @@
   <map href="./Mittelerde/maps/Stadtkarte1.xml" type="indoors">Stadtkarte1</map>
   <map href="./Mittelerde/maps/Dungeon1.xml" type="indoors">Dungeon1</map>
   <map href="./Mittelerde/maps/Mitwok.xml" type="indoors">Mitwok</map>
+  <map href="./Mittelerde/maps/Rothenburg.xml" type="indoors">Rothenburg</map>
+  <map href="./Mittelerde/maps/Rothenburg_upstairs.xml" type="indoors">Rothenburg_upstairs</map>
+  <map href="./Mittelerde/maps/Rothenburg_roof.xml" type="indoors">Rothenburg_roof</map>
+  <map href="./Mittelerde/maps/Rothenburg_downstairs.xml" type="indoors">Rothenburg_downstairs</map>
   <iconprops>
     <indoors>
       <icon no="0" trans="full" walk="not">deep water</icon>
       <icon no="1" trans="full" walk="not">water</icon>
-      <icon no="2" trans="full" walk="not">shallow water</icon>
+      <icon no="2" trans="full" walk="not" next_anim="587" sound_effect="shallow_water.wav">shallow water</icon>
       <icon no="3" trans="full" walk="full">nothing special</icon>
       <icon no="4" trans="full" walk="full">nothing special</icon>
       <icon no="5" trans="semi" walk="slow">forest</icon>
@@ -130,7 +134,7 @@
       <icon no="120" trans="full" walk="full">nothing special</icon>
       <icon no="121" trans="full" walk="full">nothing special</icon>
       <icon no="122" trans="full" walk="full">nothing special</icon>
-      <icon no="123" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.wav">torch</icon>
       <icon no="124" trans="full" walk="full">nothing special</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">guard</icon>
       <icon no="126" trans="full" walk="not" next_anim="125">guard</icon>
@@ -154,11 +158,11 @@
       <icon no="144" trans="full" walk="full">nothing special</icon>
       <icon no="145" trans="full" walk="full">nothing special</icon>
       <icon no="146" trans="full" walk="full">nothing special</icon>
-      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav">torch</icon>
-      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav">torch</icon>
+      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav">wall-mounted torch</icon>
+      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav">wall-mounted torch</icon>
       <icon no="149" trans="full" walk="full">nothing special</icon>
-      <icon no="150" trans="full" walk="full">nothing special</icon>
-      <icon no="151" trans="full" walk="full">nothing special</icon>
+      <icon no="150" trans="full" walk="not">nothing special</icon>
+      <icon no="151" trans="full" walk="not">nothing special</icon>
       <icon no="152" trans="full" walk="full">nothing special</icon>
       <icon no="153" trans="full" walk="full">nothing special</icon>
       <icon no="154" trans="full" walk="full">nothing special</icon>
@@ -179,7 +183,7 @@
       <icon no="169" trans="not" walk="not">closed door</icon>
       <icon no="170" trans="full" walk="full">nothing special</icon>
       <icon no="171" trans="semi" walk="not">closed door with iron bars</icon>
-      <icon no="172" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="4" no="172" trans="full" walk="full" sound_effect="torch.wav">torch</icon>
       <icon no="173" trans="full" walk="full">nothing special</icon>
       <icon no="174" trans="full" walk="full">nothing special</icon>
       <icon no="175" trans="full" walk="full">nothing special</icon>
@@ -229,7 +233,7 @@
       <icon no="219" trans="full" walk="full">nothing special</icon>
       <icon no="220" trans="full" walk="full">nothing special</icon>
       <icon no="221" trans="full" walk="full">nothing special</icon>
-      <icon no="222" trans="full" walk="full">nothing special</icon>
+      <icon no="222" trans="full" walk="slow">cobweb</icon>
       <icon no="223" trans="full" walk="full">nothing special</icon>
       <icon no="224" trans="full" walk="full">nothing special</icon>
       <icon no="225" trans="full" walk="full">nothing special</icon>
@@ -824,14 +828,14 @@
       <icon no="814" trans="full" walk="full">nothing special</icon>
       <icon no="815" trans="full" walk="full">nothing special</icon>
       <icon no="816" trans="full" walk="full">nothing special</icon>
-      <icon no="817" trans="full" walk="full">nothing special</icon>
-      <icon no="818" trans="full" walk="full">nothing special</icon>
-      <icon no="819" trans="full" walk="full">nothing special</icon>
-      <icon no="820" trans="full" walk="full">nothing special</icon>
-      <icon no="821" trans="full" walk="full">nothing special</icon>
-      <icon no="822" trans="full" walk="full">nothing special</icon>
-      <icon no="823" trans="full" walk="full">nothing special</icon>
-      <icon no="824" trans="full" walk="full">nothing special</icon>
+      <icon no="817" trans="not" walk="not">nothing special</icon>
+      <icon no="818" trans="not" walk="not">nothing special</icon>
+      <icon no="819" trans="not" walk="not">nothing special</icon>
+      <icon no="820" trans="not" walk="not">nothing special</icon>
+      <icon no="821" trans="not" walk="not">nothing special</icon>
+      <icon no="822" trans="not" walk="not">nothing special</icon>
+      <icon no="823" trans="full" walk="not">nothing special</icon>
+      <icon no="824" trans="full" walk="not">nothing special</icon>
       <icon no="825" trans="full" walk="full">nothing special</icon>
       <icon no="826" trans="full" walk="full">nothing special</icon>
       <icon no="827" trans="full" walk="full">nothing special</icon>

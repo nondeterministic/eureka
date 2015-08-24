@@ -20,9 +20,10 @@ class SoundSample {
 public:
   SoundSample();
   SoundSample(std::string);
-  virtual ~SoundSample();
+  ~SoundSample();
 
   void play(int = 0);
+  void toggle();
   void stop();
   void set_volume(int);
   void set_channel(int);
@@ -42,6 +43,7 @@ private:
   void init();
   int _chan;
   int _vol;
+  bool _audio_on;
 };
 
 #endif	/* SOUNDSAMPLE_HH */
