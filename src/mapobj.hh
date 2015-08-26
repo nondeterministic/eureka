@@ -22,7 +22,7 @@ enum MAPOBJ_TYPES
 
 enum MOVE_MODE
 {
-	STATIC, FLEE, FOLLOWING
+	STATIC, FLEE, FOLLOWING, ROAM
 };
 
 enum PERSONALITY
@@ -62,6 +62,7 @@ public:
 	std::vector<std::shared_ptr<Action>>* actions();
 	void set_foes(Attackers);
 	Attackers get_foes();
+	MapObj copy();
 
 	MOVE_MODE move_mode;
 	PERSONALITY personality;

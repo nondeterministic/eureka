@@ -142,8 +142,8 @@
       <icon no="128" trans="full" walk="full">nothing special</icon>
       <icon no="129" trans="full" walk="full">nothing special</icon>
       <icon no="130" trans="full" walk="full">nothing special</icon>
-      <icon no="131" trans="full" walk="full">nothing special</icon>
-      <icon no="132" trans="full" walk="full">nothing special</icon>
+      <icon no="131" trans="full" walk="full" next_anim="132">chester</icon>
+      <icon no="132" trans="full" walk="full" next_anim="131">chester</icon>
       <icon no="133" trans="full" walk="full">nothing special</icon>
       <icon no="134" trans="full" walk="full">nothing special</icon>
       <icon no="135" trans="full" walk="full" next_anim="136">child</icon>
@@ -281,8 +281,8 @@
       <icon no="267" trans="full" walk="full">nothing special</icon>
       <icon no="268" trans="full" walk="full">nothing special</icon>
       <icon no="269" trans="full" walk="full">nothing special</icon>
-      <icon no="270" trans="full" walk="full">nothing special</icon>
-      <icon no="271" trans="full" walk="full">nothing special</icon>
+      <icon no="270" trans="full" walk="full" next_anim="271">chester</icon>
+      <icon no="271" trans="full" walk="full" next_anim="270">chester</icon>
       <icon no="272" trans="full" walk="full">nothing special</icon>
       <icon no="273" trans="full" walk="full">nothing special</icon>
       <icon no="274" trans="full" walk="full">nothing special</icon>

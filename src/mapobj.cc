@@ -25,14 +25,56 @@ MapObj::MapObj()
   move_mode = STATIC;
   personality = NEUTRAL;
 
+  _type = MAPOBJ_ITEM;
+
   lock_type = UNLOCKED;
   openable = false;
+}
+
+// TODO: Am not using copy constructor as it somehow breaks the game elsewhere.
+// (To see why, add a std::cout in this method somewhere when used as copy constructor.)
+//
+// Deep-copy of MapObj
+
+MapObj MapObj::copy()
+{
+	MapObj tmp;
+
+	tmp._layer = _layer;
+	tmp._x = _x;
+	tmp._y = _y;
+	tmp._ox = _ox;
+	tmp._oy = _oy;
+	tmp._icon = _icon;
+	tmp.removable = removable;
+	tmp.lua_name = lua_name;
+	tmp.how_many = how_many;
+	tmp.move_mode = move_mode;
+	tmp.personality = personality;
+	tmp._type = _type;
+	tmp.lock_type = lock_type;
+	tmp.openable = openable;
+
+	for (std::shared_ptr<Action> act: _actions)
+		tmp._actions.push_back(act);
+
+	tmp._init_script = _init_script;
+	tmp._combat_script = _combat_script;
+
+	// TODO: This is a bit useless, I think, as Attackers itself has no deep-copy
+	// (but there are other places, where I also pass Attackers on the stack, and it seems to work)
+	// Not sure, if this will be a problem later...
+	tmp._foes = _foes;
+
+	return tmp;
 }
 
 MapObj::~MapObj()
 {
 	_actions.clear();
 }
+
+// TODO: This seems buggy, as there is no Attackers deep-copy. (Why doesn't this cause trouble?!)
 
 void MapObj::set_foes(Attackers attackers)
 {

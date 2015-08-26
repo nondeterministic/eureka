@@ -355,7 +355,7 @@ void GameControl::move_objects()
 	if (is_arena_outdoors())
 		return;
 
-	std::vector<MapObj> moved_objects;
+	std::vector<std::pair<int,int>> moved_objects_coords;
 
 	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
@@ -363,9 +363,49 @@ void GameControl::move_objects()
 
 		map_obj->get_coords(obj_x, obj_y);
 
-		// STATIC
-		if (map_obj->move_mode == STATIC) {
-			// TODO: Maybe do some hovering around?
+		// ROAM around
+		if (map_obj->move_mode == ROAM) {
+			int move = random(0,16);  // That is, a 50% chance of keeping the same position
+
+			unsigned ox, oy;
+			map_obj->get_origin(ox, oy);
+
+			if (move <= 2) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+						abs(obj_x - ox) <= 2 && abs(obj_y - oy - 1) <= 2 &&
+							walkable(obj_x, obj_y - 1) &&
+								(obj_x != party->x || obj_y - 1 != party->y)) {
+					map_obj->set_coords(obj_x, obj_y - 1);
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 4) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox) <= 2 && abs(obj_y - oy + 1) <= 2 &&
+						walkable(obj_x, obj_y + 1) &&
+								(obj_x != party->x || obj_y + 1 != party->y)) {
+					map_obj->set_coords(obj_x, obj_y + 1);
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 6) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox - 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						walkable(obj_x - 1, obj_y) &&
+							(obj_x - 1 != party->x || obj_y != party->y)) {
+					map_obj->set_coords(obj_x - 1, obj_y);
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 8) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox + 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						walkable(obj_x + 1, obj_y) &&
+							(obj_x + 1 != party->x || obj_y != party->y)) {
+					map_obj->set_coords(obj_x + 1, obj_y);
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
 		}
 
 		// FOLLOW
@@ -386,8 +426,8 @@ void GameControl::move_objects()
 			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&             // If coordinates changed...
 					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 			{
+				moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				map_obj->set_coords(new_coords.first, new_coords.second);
-				moved_objects.push_back(*map_obj);
 			}
 		}
 
@@ -418,15 +458,20 @@ void GameControl::move_objects()
 				}
 			}
 
+			moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 			map_obj->set_coords((int)obj_x + best_x, (int)obj_y + best_y);
-			moved_objects.push_back(*map_obj);
 		}
 	}
 
-	// Now do the actual moving of objects on the map, i.e., remove them and reinsert them
-	for (MapObj mo: moved_objects) {
-		arena->get_map()->pop_obj(mo.id);
-		arena->get_map()->push_obj(mo);
+	for (std::pair<int,int> coords: moved_objects_coords) {
+		for (MapObj* obj: arena->get_map()->get_objs(coords.first, coords.second)) {
+			if (obj->get_type() != MAPOBJ_ITEM) {
+				MapObj tmpObj = obj->copy();  // Make a deep copy of the object that is about to be kicked off the map
+				arena->get_map()->pop_obj(coords.first, coords.second);
+				arena->get_map()->push_obj(tmpObj);
+				break; // Assume there is at most one animate object per coordinate; so ignore other objects here
+			}
+		}
 	}
 }
 
@@ -903,7 +948,6 @@ void GameControl::open_act()
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
-			// IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
 
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK || the_obj.lock_type == MAGIC_LOCK) {
@@ -916,7 +960,7 @@ void GameControl::open_act()
 						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
 
 						if (action == NULL) {
-							printcon("Nothing to open here.");
+							printcon("Nothing to open here. 1");
 							return;
 						}
 
@@ -931,7 +975,7 @@ void GameControl::open_act()
 		}
 	}
 
-	printcon("Nothing to open here.");
+	printcon("Nothing to open here. 2");
 	return;
 }
 
@@ -1399,8 +1443,8 @@ void GameControl::make_guards(PERSONALITY pers)
 	}
 }
 
-// The "opposite" of attack(), so to speak.
-// Lets those hostile objects attack the party if next to it.
+// The "opposite" of attack(), so to speak:
+// lets those hostile objects attack the party if next to it.
 
 void GameControl::get_attacked()
 {
@@ -1488,7 +1532,7 @@ void GameControl::attack()
 					return;
 				}
 				else {
-					printcon("You use your charms, but there is no response");
+					printcon("You attack, but there is no response. Are you sure, you want to do this? 1");
 					return;
 				}
 			}
@@ -1516,7 +1560,7 @@ void GameControl::attack()
 					return;
 				}
 				else {
-					printcon("You use your charms, but there is no response");
+					printcon("You attack, but there is no response. Are you sure, you want to do this? 2");
 					return;
 				}
 			}

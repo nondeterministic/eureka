@@ -67,7 +67,7 @@ Map::Map(const Map& p)
 	_data = p._data;
 	_map_objects = p._map_objects;
 	_actions = p._actions;
-	std::cout << "DEEP COPY MOTHERFUCKER\n";
+	std::cout << "DEEP MAP COPY MOTHERFUCKER\n";
 }
 
 Map::~Map()
@@ -352,6 +352,8 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 						new_obj.move_mode = FLEE;
 					else if (attribute->get_value().uppercase() == "FOLLOWING")
 						new_obj.move_mode = FOLLOWING;
+					else if (attribute->get_value().uppercase() == "ROAM")
+						new_obj.move_mode = ROAM;
 				}
 				else if (a_name == "type") {
 					if (attribute->get_value().uppercase() == "ITEM")
@@ -730,6 +732,8 @@ bool Map::xml_write_map_data(std::string path)
 					object_node->set_attribute("move_mode","flee");
 				else if (mapObj.move_mode == FOLLOWING)
 					object_node->set_attribute("move_mode","following");
+				else if (mapObj.move_mode == ROAM)
+					object_node->set_attribute("move_mode","roam");
 				else
 					object_node->set_attribute("move_mode","static");
 
