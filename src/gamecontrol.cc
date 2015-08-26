@@ -960,7 +960,7 @@ void GameControl::open_act()
 						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
 
 						if (action == NULL) {
-							printcon("Nothing to open here. 1");
+							printcon("Nothing to open here.");
 							return;
 						}
 
@@ -975,7 +975,7 @@ void GameControl::open_act()
 		}
 	}
 
-	printcon("Nothing to open here. 2");
+	printcon("Nothing to open here.");
 	return;
 }
 
@@ -1532,7 +1532,7 @@ void GameControl::attack()
 					return;
 				}
 				else {
-					printcon("You attack, but there is no response. Are you sure, you want to do this? 1");
+					printcon("You attack, but there is no response. Are you sure, you want to do this?");
 					return;
 				}
 			}
@@ -1560,7 +1560,7 @@ void GameControl::attack()
 					return;
 				}
 				else {
-					printcon("You attack, but there is no response. Are you sure, you want to do this? 2");
+					printcon("You attack, but there is no response. Are you sure, you want to do this?");
 					return;
 				}
 			}

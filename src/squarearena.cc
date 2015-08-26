@@ -477,9 +477,24 @@ void SquareArena::show_map(int x_width, int y_width)
 						((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) ||
 							is_illuminated((int)x, (int)y)))
 				{
+					// Mirrors reflect, if an animate object is in front of it...
+					if (IndoorsIcons::Instance().get_props(tileno)->get_name().find("mirror") != std::string::npos) {
+						for (int offset = -1; offset <= 1; offset += 2) {
+							auto found_obj = _map->objs()->equal_range(std::make_pair(x, y + offset));
+							for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+								if (((MapObj)curr_obj->second).get_type() != MAPOBJ_ITEM) {
+									tileno += 1; // Reflection icon is mirror icon + 1
+									break;
+								}
+							}
+						}
+
+						if (Party::Instance().x == x && abs((int)(Party::Instance().y) - (int)y) == 1)
+							tileno += 1;
+					}
+
 					if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
 						std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
-
 				}
 			}
 
