@@ -38,7 +38,8 @@ void SoundSample::init()
   file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "foe_hit.wav";
   foe_hit_wav = Mix_LoadWAV(file.c_str());
   other_wav = NULL;
-  _vol = 24;
+  // _vol = 24;
+  _vol = 128; // TODO: I used to think it a good idea to make background noises more quiet (ie vol = 24) Not so sure anymore...
 }
 
 SoundSample::~SoundSample()
@@ -75,7 +76,7 @@ void SoundSample::play(int loop)
 void SoundSample::play(std::string filename, int loop)
 {
 	_filename = filename;
-	std::cout << "PLAYING " << _filename << std::endl;
+	std::cout << "Info: Wanting to play file " << _filename << "." << std::endl;
 	other_wav = Mix_LoadWAV(_filename.c_str());
 	play_chunk(other_wav, loop);
 	_audio_on = true;
@@ -118,7 +119,7 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 		_audio_on = true;
 	}
 	else
-		std::cerr << "WARNING: Cannot play sample. Check soundsample.cc.\n";
+		std::cerr << "Warning: Cannot play file. Check soundsample.cc.\n";
 
 	// std::cout << "Channel: " << _chan << "\n";
 }

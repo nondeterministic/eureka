@@ -61,22 +61,22 @@
       <icon no="47" trans="full" walk="full">nothing special</icon>
       <icon no="48" trans="full" walk="not">spider</icon>
       <icon no="49" trans="full" walk="full">nothing special</icon>
-      <icon no="50" trans="full" walk="not">magic user</icon>
-      <icon no="51" trans="full" walk="not">magic user</icon>
-      <icon no="52" trans="full" walk="not">ranger</icon>
-      <icon no="53" trans="full" walk="not">ranger</icon>
-      <icon no="54" trans="full" walk="not">knight</icon>
-      <icon no="55" trans="full" walk="not">knight</icon>
-      <icon no="56" trans="full" walk="not">druid</icon>
-      <icon no="57" trans="full" walk="not">druid</icon>
-      <icon no="58" trans="full" walk="not">blacksmith</icon>
-      <icon no="59" trans="full" walk="not">blacksmith</icon>
+      <icon no="50" trans="full" walk="not" next_anim="51">magic user</icon>
+      <icon no="51" trans="full" walk="not" next_anim="50">magic user</icon>
+      <icon no="52" trans="full" walk="not" next_anim="53">ranger</icon>
+      <icon no="53" trans="full" walk="not" next_anim="52">ranger</icon>
+      <icon no="54" trans="full" walk="not" next_anim="55">knight</icon>
+      <icon no="55" trans="full" walk="not" next_anim="54">knight</icon>
+      <icon no="56" trans="full" walk="not" next_anim="57">druid</icon>
+      <icon no="57" trans="full" walk="not" next_anim="56">druid</icon>
+      <icon no="58" trans="full" walk="not" next_anim="59">blacksmith</icon>
+      <icon no="59" trans="full" walk="not" next_anim="58">blacksmith</icon>
       <icon no="60" trans="full" walk="full">nothing special</icon>
       <icon no="61" trans="full" walk="full">nothing special</icon>
-      <icon no="62" trans="full" walk="not">ranger</icon>
-      <icon no="63" trans="full" walk="not">ranger</icon>
-      <icon no="64" trans="full" walk="not">monk</icon>
-      <icon no="65" trans="full" walk="not">monk</icon>
+      <icon no="62" trans="full" walk="not" next_anim="63">ranger</icon>
+      <icon no="63" trans="full" walk="not" next_anim="62">ranger</icon>
+      <icon no="64" trans="full" walk="not" next_anim="65">monk</icon>
+      <icon no="65" trans="full" walk="not" next_anim="64">monk</icon>
       <icon no="66" trans="full" walk="full">nothing special</icon>
       <icon no="67" trans="full" walk="full">nothing special</icon>
       <icon no="68" trans="full" walk="full">nothing special</icon>
@@ -122,7 +122,7 @@
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="not">wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
-      <icon no="111" trans="full" walk="slow">fireplace</icon>
+      <icon no="111" trans="full" walk="slow" next_anim="121">fireplace</icon>
       <icon no="112" trans="full" walk="slow">fire</icon>
       <icon no="113" trans="full" walk="full">nothing special</icon>
       <icon no="114" trans="full" walk="full">nothing special</icon>
@@ -132,28 +132,28 @@
       <icon no="118" trans="full" walk="full">nothing special</icon>
       <icon no="119" trans="full" walk="full">nothing special</icon>
       <icon no="120" trans="full" walk="slow">bed</icon>
-      <icon no="121" trans="full" walk="slow">fireplace</icon>
-      <icon no="122" trans="full" walk="slow">fireplace</icon>
+      <icon no="121" trans="full" walk="slow" next_anim="122">fireplace</icon>
+      <icon no="122" trans="full" walk="slow" next_anim="111">fireplace</icon>
       <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.wav">torch</icon>
       <icon no="124" trans="full" walk="full">nothing special</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">guard</icon>
       <icon no="126" trans="full" walk="not" next_anim="125">guard</icon>
-      <icon no="127" trans="full" walk="not">person</icon>
-      <icon no="128" trans="full" walk="not">person</icon>
-      <icon no="129" trans="full" walk="not">bard</icon>
-      <icon no="130" trans="full" walk="not">bard</icon>
-      <icon no="131" trans="full" walk="not">chester</icon>
-      <icon no="132" trans="full" walk="not">chester</icon>
-      <icon no="133" trans="full" walk="not">praying person</icon>
-      <icon no="134" trans="full" walk="not">praying person</icon>
-      <icon no="135" trans="full" walk="not">child</icon>
-      <icon no="136" trans="full" walk="not">child</icon>
-      <icon no="137" trans="full" walk="not">bull</icon>
-      <icon no="138" trans="full" walk="not">bull</icon>
-      <icon no="139" trans="full" walk="not">magic user</icon>
-      <icon no="140" trans="full" walk="not">magic user</icon>
-      <icon no="141" trans="full" walk="not">shepherd</icon>
-      <icon no="142" trans="full" walk="not">shepherd</icon>
+      <icon no="127" trans="full" walk="not" next_anim="128">person</icon>
+      <icon no="128" trans="full" walk="not" next_anim="127">person</icon>
+      <icon no="129" trans="full" walk="not" next_anim="130">bard</icon>
+      <icon no="130" trans="full" walk="not" next_anim="129">bard</icon>
+      <icon no="131" trans="full" walk="not" next_anim="132">chester</icon>
+      <icon no="132" trans="full" walk="not" next_anim="131">chester</icon>
+      <icon no="133" trans="full" walk="not" next_anim="134">praying person</icon>
+      <icon no="134" trans="full" walk="not" next_anim="133">praying person</icon>
+      <icon no="135" trans="full" walk="not" next_anim="136">child</icon>
+      <icon no="136" trans="full" walk="not" next_anim="135">child</icon>
+      <icon no="137" trans="full" walk="not" next_anim="138">bull</icon>
+      <icon no="138" trans="full" walk="not" next_anim="137">bull</icon>
+      <icon no="139" trans="full" walk="not" next_anim="140">magic user</icon>
+      <icon no="140" trans="full" walk="not" next_anim="139">magic user</icon>
+      <icon no="141" trans="full" walk="not" next_anim="142">shepherd</icon>
+      <icon no="142" trans="full" walk="not" next_anim="141">shepherd</icon>
       <icon no="143" trans="full" walk="full">nothing special</icon>
       <icon no="144" trans="full" walk="full">nothing special</icon>
       <icon no="145" trans="full" walk="full">nothing special</icon>
@@ -281,8 +281,8 @@
       <icon no="267" trans="full" walk="full">nothing special</icon>
       <icon no="268" trans="full" walk="full">nothing special</icon>
       <icon no="269" trans="full" walk="full">nothing special</icon>
-      <icon no="270" trans="full" walk="not">chester</icon>
-      <icon no="271" trans="full" walk="not">chester</icon>
+      <icon no="270" trans="full" walk="not" next_anim="271">chester</icon>
+      <icon no="271" trans="full" walk="not" next_anim="270">chester</icon>
       <icon no="272" trans="full" walk="full">nothing special</icon>
       <icon no="273" trans="full" walk="full">nothing special</icon>
       <icon no="274" trans="full" walk="full">nothing special</icon>
@@ -306,10 +306,10 @@
       <icon no="292" trans="full" walk="full">nothing special</icon>
       <icon no="293" trans="full" walk="full">nothing special</icon>
       <icon no="294" trans="full" walk="full">nothing special</icon>
-      <icon no="295" trans="full" walk="not">woman</icon>
-      <icon no="296" trans="full" walk="not">woman</icon>
-      <icon no="297" trans="full" walk="not">fighter</icon>
-      <icon no="298" trans="full" walk="not">fighter</icon>
+      <icon no="295" trans="full" walk="not" next_anim="296">woman</icon>
+      <icon no="296" trans="full" walk="not" next_anim="295">woman</icon>
+      <icon no="297" trans="full" walk="not" next_anim="298">fighter</icon>
+      <icon no="298" trans="full" walk="not" next_anim="297">fighter</icon>
       <icon no="299" trans="full" walk="full">nothing special</icon>
       <icon no="300" trans="full" walk="full">nothing special</icon>
       <icon no="301" trans="full" walk="full">nothing special</icon>
@@ -444,8 +444,8 @@
       <icon no="430" trans="full" walk="full">nothing special</icon>
       <icon no="431" trans="full" walk="full">nothing special</icon>
       <icon no="432" trans="full" walk="full">nothing special</icon>
-      <icon no="433" trans="full" walk="not">clock</icon>
-      <icon no="434" trans="full" walk="not">clock</icon>
+      <icon no="433" trans="full" walk="not" next_anim="434">clock</icon>
+      <icon no="434" trans="full" walk="not" next_anim="433">clock</icon>
       <icon no="435" trans="full" walk="full">nothing special</icon>
       <icon no="436" trans="full" walk="full">nothing special</icon>
       <icon no="437" trans="full" walk="full">nothing special</icon>
@@ -521,12 +521,12 @@
       <icon no="507" trans="full" walk="full">nothing special</icon>
       <icon no="508" trans="full" walk="not">chest</icon>
       <icon no="509" trans="full" walk="not">locked chest</icon>
-      <icon no="510" trans="full" walk="not">magic chest</icon>
-      <icon no="511" trans="full" walk="not">magic chest</icon>
-      <icon no="512" trans="full" walk="not">magic chest</icon>
-      <icon no="513" trans="full" walk="not">magic chest</icon>
-      <icon no="514" trans="full" walk="not">magically locked chest</icon>
-      <icon no="515" trans="full" walk="full">nothing special</icon>
+      <icon no="510" trans="full" walk="not" next_anim="511">magic chest</icon>
+      <icon no="511" trans="full" walk="not" next_anim="512">magic chest</icon>
+      <icon no="512" trans="full" walk="not" next_anim="513">magic chest</icon>
+      <icon no="513" trans="full" walk="not" next_anim="510">magic chest</icon>
+      <icon no="514" trans="full" walk="not" next_anim="515">magically locked chest</icon>
+      <icon no="515" trans="full" walk="not" next_anim="533">magically locked chest</icon>
       <icon no="516" trans="full" walk="full">arrow</icon>
       <icon no="517" trans="full" walk="full">arrow</icon>
       <icon no="518" trans="full" walk="full">arrow</icon>
@@ -544,11 +544,11 @@
       <icon no="530" trans="full" walk="full">nothing special</icon>
       <icon no="531" trans="full" walk="full">nothing special</icon>
       <icon no="532" trans="full" walk="full">nothing special</icon>
-      <icon no="533" trans="full" walk="not">magically locked chest</icon>
-      <icon no="534" trans="full" walk="not">magically locked chest</icon>
+      <icon no="533" trans="full" walk="not" next_anim="534">magically locked chest</icon>
+      <icon no="534" trans="full" walk="not" next_anim="514">magically locked chest</icon>
       <icon no="535" trans="full" walk="full">gold coins</icon>
       <icon no="536" trans="full" walk="full">door sign</icon>
-      <icon no="537" trans="full" walk="full">door sign</icon>
+      <icon no="537" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">door sign</icon>
       <icon no="538" trans="full" walk="full">door sign</icon>
       <icon no="539" trans="full" walk="full">nothing special</icon>
       <icon no="540" trans="full" walk="full">nothing special</icon>
@@ -621,12 +621,12 @@
       <icon no="607" trans="full" walk="full">nothing special</icon>
       <icon no="608" trans="full" walk="full">nothing special</icon>
       <icon no="609" trans="full" walk="full">nothing special</icon>
-      <icon no="610" trans="full" walk="full">door sign</icon>
-      <icon no="611" trans="full" walk="full">door sign</icon>
-      <icon no="612" trans="full" walk="full">door sign</icon>
+      <icon no="610" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">door sign</icon>
+      <icon no="611" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">door sign</icon>
+      <icon no="612" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">door sign</icon>
       <icon no="613" trans="full" walk="full">door sign</icon>
       <icon no="614" trans="full" walk="full">door sign</icon>
-      <icon no="615" trans="full" walk="full">door sign</icon>
+      <icon no="615" trans="full" walk="full" sound_effect="crowd-talking-2.wav">door sign</icon>
       <icon no="616" trans="full" walk="full">magic sword</icon>
       <icon no="617" trans="full" walk="full">magic sword</icon>
       <icon no="618" trans="full" walk="full">magic sword</icon>
@@ -646,7 +646,7 @@
       <icon no="632" trans="full" walk="full">nothing special</icon>
       <icon no="633" trans="full" walk="full">nothing special</icon>
       <icon no="634" trans="full" walk="full">nothing special</icon>
-      <icon no="635" trans="full" walk="full">door sign</icon>
+      <icon no="635" trans="full" walk="full" sound_effect="crowd-talking-2.wav">door sign</icon>
       <icon no="636" trans="full" walk="full">door sign</icon>
       <icon no="637" trans="full" walk="full">door sign</icon>
       <icon no="638" trans="full" walk="full">door sign</icon>
