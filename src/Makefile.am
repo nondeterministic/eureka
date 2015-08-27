@@ -53,6 +53,7 @@ simplicissimus_SOURCES = \
 	gameevent.hh gameevent.cc \
 	eventdeleteobj.hh eventdeleteobj.cc \
 	eventermap.hh eventermap.cc \
+	eventplaysound.hh eventplaysound.cc \
 	eventchangeicon.hh eventchangeicon.cc \
 	eventprintcon.hh eventprintcon.cc \
 	eventluascript.hh eventluascript.cc \

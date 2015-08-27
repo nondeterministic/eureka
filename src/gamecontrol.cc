@@ -1778,7 +1778,17 @@ void GameControl::look()
 
 	// Check out of map bounds
 	if (icon_no >= 0) {
-		printcon("You see " + IndoorsIcons::Instance().get_props(icon_no)->get_name());
+		std::stringstream lookstr;
+		lookstr << "You see ";
+
+		if (arena->get_map()->is_outdoors()) {
+			lookstr << OutdoorsIcons::Instance().get_props(icon_no)->get_name();
+			printcon(lookstr.str());
+			return;
+		}
+
+		lookstr << IndoorsIcons::Instance().get_props(icon_no)->get_name();
+		printcon(lookstr.str());
 
 		// Return range of found objects at given location
 		auto found_obj = arena->get_map()->objs()->equal_range(coords);
@@ -2104,10 +2114,12 @@ void GameControl::move_party(LDIR dir)
 	}
 
 	if (move_party_quietly(dir)) {
+		sample.set_volume(50);
 		sample.play(WALK);
 		printcon(ldirToString.at(dir) + ".");
 	}
 	else {
+		sample.set_volume(24);
 		sample.play(HIT);
 		printcon("Blocked.");
 	}

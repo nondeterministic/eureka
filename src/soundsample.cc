@@ -28,7 +28,7 @@ SoundSample::SoundSample(std::string filename)
 void SoundSample::init()
 {
   // _chan = -1 ; // TODO: is this a good init value? -1 is an error in
-  _chan = 1 ; // TODO: is this a good init value? -1 is an error in
+  _chan = 1 ;  // TODO: is this a good init value? -1 is an error in
 	           // Mix_PlayChannel, so it should be, i.e., any other
 	           // value will be the actual channel.
   std::string file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "walk.wav";

@@ -148,8 +148,8 @@
       <icon no="134" trans="full" walk="not" next_anim="133">praying person</icon>
       <icon no="135" trans="full" walk="not" next_anim="136">child</icon>
       <icon no="136" trans="full" walk="not" next_anim="135">child</icon>
-      <icon no="137" trans="full" walk="not" next_anim="138">bull</icon>
-      <icon no="138" trans="full" walk="not" next_anim="137">bull</icon>
+      <icon no="137" trans="full" walk="not" next_anim="138" sound_effect="57790__reinsamba__1191-two-cows.wav">bull</icon>
+      <icon no="138" trans="full" walk="not" next_anim="137" sound_effect="57790__reinsamba__1191-two-cows.wav">bull</icon>
       <icon no="139" trans="full" walk="not" next_anim="140">magic user</icon>
       <icon no="140" trans="full" walk="not" next_anim="139">magic user</icon>
       <icon no="141" trans="full" walk="not" next_anim="142">shepherd</icon>
@@ -1008,9 +1008,9 @@
       <icon no="994" trans="full" walk="full">nothing special</icon>
       <icon no="995" trans="full" walk="full">nothing special</icon>
       <icon no="996" trans="full" walk="full">nothing special</icon>
-      <icon no="997" trans="full" walk="not">small dog</icon>
-      <icon no="998" trans="full" walk="not">medium sized dog</icon>
-      <icon no="999" trans="full" walk="not">large dog</icon>
+      <icon no="997" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">small dog</icon>
+      <icon no="998" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">medium sized dog</icon>
+      <icon no="999" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">large dog</icon>
       <icon no="1000" trans="full" walk="full">nothing special</icon>
       <icon no="1001" trans="full" walk="full">nothing special</icon>
       <icon no="1002" trans="full" walk="full">nothing special</icon>

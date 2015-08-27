@@ -41,6 +41,7 @@
 #include "eventermap.hh"
 #include "eventchangeicon.hh"
 #include "eventprintcon.hh"
+#include "eventplaysound.hh"
 #include "eventluascript.hh"
 #include "eventdeleteobj.hh"
 #include "action.hh"
@@ -456,6 +457,12 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						std::shared_ptr<EventDeleteObject> new_ev(new EventDeleteObject());
 						_act->add_event(new_ev);
 					}
+					else if (event_type_s == "EVENT_PLAY_SOUND") {
+						std::string filename = eventElement->get_child_text()->get_content().c_str();
+						boost::algorithm::trim(filename);
+						std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename));
+						_act->add_event(new_ev);
+					}
 					else if (event_type_s == "EVENT_CHANGE_ICON") {
 						const xmlpp::Element* event_change_icon = (xmlpp::Element*)(*event)->get_children("change_icon").front();
 
@@ -646,9 +653,14 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			ev_node->set_attribute("type", "EVENT_DELETE_OBJECT");
 		}
 		else if (std::dynamic_pointer_cast<EventPrintcon>(*curr_ev)) {
-			std::shared_ptr<EventPrintcon> event_printcon= std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
+			std::shared_ptr<EventPrintcon> event_printcon = std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PRINTCON");
 			ev_node->set_child_text(event_printcon->text);
+		}
+		else if (std::dynamic_pointer_cast<EventPlaySound>(*curr_ev)) {
+			std::shared_ptr<EventPlaySound> event_playsound = std::dynamic_pointer_cast<EventPlaySound>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_PLAY_SOUND");
+			ev_node->set_child_text(event_playsound->filename);
 		}
 		else if (std::dynamic_pointer_cast<EventLuaScript>(*curr_ev)) {
 			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);

@@ -106,13 +106,13 @@ am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	addactionwin.$(OBJEXT) addobjectwin.$(OBJEXT) \
 	../mapobj.$(OBJEXT) ../gameevent.$(OBJEXT) \
 	../eventermap.$(OBJEXT) ../eventdeleteobj.$(OBJEXT) \
-	../eventprintcon.$(OBJEXT) ../eventchangeicon.$(OBJEXT) \
-	../eventluascript.$(OBJEXT) eventwin.$(OBJEXT) \
-	../luawrapper.$(OBJEXT) ../outdoorsmap.$(OBJEXT) \
-	../indoorsmap.$(OBJEXT) ../outdoorsicons.$(OBJEXT) \
-	../iconprops.$(OBJEXT) ../icons.$(OBJEXT) \
-	../indoorsicons.$(OBJEXT) ../spell.$(OBJEXT) \
-	../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
+	../eventplaysound.$(OBJEXT) ../eventprintcon.$(OBJEXT) \
+	../eventchangeicon.$(OBJEXT) ../eventluascript.$(OBJEXT) \
+	eventwin.$(OBJEXT) ../luawrapper.$(OBJEXT) \
+	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
+	../outdoorsicons.$(OBJEXT) ../iconprops.$(OBJEXT) \
+	../icons.$(OBJEXT) ../indoorsicons.$(OBJEXT) \
+	../spell.$(OBJEXT) ../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
 	iconpropswin.$(OBJEXT) newworldwin.$(OBJEXT) \
 	startupwin.$(OBJEXT) newmapwin.$(OBJEXT) sdleditor.$(OBJEXT) \
 	indoorssdleditor.$(OBJEXT) outdoorssdleditor.$(OBJEXT) \
@@ -380,6 +380,7 @@ leibniz_SOURCES = leibniz.cc \
 		../gameevent.cc ../gameevent.hh \
 		../eventermap.cc ../eventermap.hh \
 		../eventdeleteobj.cc ../eventdeleteobj.hh \
+		../eventplaysound.cc ../eventplaysound.hh \
 		../eventprintcon.cc ../eventprintcon.hh \
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \
@@ -519,6 +520,8 @@ clean-binPROGRAMS:
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventdeleteobj.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
+../eventplaysound.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../eventprintcon.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../eventchangeicon.$(OBJEXT): ../$(am__dirstamp) \
@@ -564,6 +567,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventdeleteobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventermap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventluascript.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventplaysound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventprintcon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gamecharacter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gameevent.Po@am__quote@

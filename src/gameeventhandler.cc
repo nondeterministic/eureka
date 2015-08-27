@@ -12,6 +12,7 @@
 #include "gamecontrol.hh"
 #include "miniwin.hh"
 #include "world.hh"
+#include "soundsample.hh"
 #include "simplicissimus.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
@@ -39,6 +40,8 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 		return handle_event_enter_map(std::dynamic_pointer_cast<EventEnterMap>(event), map);
 	else if (std::dynamic_pointer_cast<EventPrintcon>(event))
 		return handle_event_printcon(std::dynamic_pointer_cast<EventPrintcon>(event), map);
+	else if (std::dynamic_pointer_cast<EventPlaySound>(event))
+		return handle_event_playsound(std::dynamic_pointer_cast<EventPlaySound>(event), map);
 	else if (std::dynamic_pointer_cast<EventLuaScript>(event))
 		return handle_event_lua_script(std::dynamic_pointer_cast<EventLuaScript>(event), map);
 	else if (std::dynamic_pointer_cast<EventChangeIcon>(event))
@@ -46,7 +49,7 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 	else if (std::dynamic_pointer_cast<EventDeleteObject>(event))
 		return handle_event_delete_object(map, obj);
 	else
-		std::cout << "Not handling UNKNOWN EVENT\n:";
+		std::cerr << "Error: Not handling UNKNOWN EVENT\n";
 
 	return false;
 }
@@ -63,6 +66,8 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 	unsigned x, y;
 	obj->get_coords(x, y);
 	map->pop_obj((int)x, (int)y);
+
+	return true;
 }
 
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)
@@ -94,6 +99,15 @@ bool GameEventHandler::handle_event_change_icon(std::shared_ptr<EventChangeIcon>
 bool GameEventHandler::handle_event_printcon(std::shared_ptr<EventPrintcon> event, std::shared_ptr<Map> map)
 {
 	GameControl::Instance().printcon(event->text);
+	return true;
+}
+
+bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> event, std::shared_ptr<Map> map)
+{
+	static SoundSample sample;  // If this isn't static, then the var
+	                            // gets discarded before the sample has
+                                // finished playing
+	sample.play((std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + event->filename);
 	return true;
 }
 

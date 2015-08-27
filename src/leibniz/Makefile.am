@@ -30,6 +30,7 @@ leibniz_SOURCES = leibniz.cc \
 		../gameevent.cc ../gameevent.hh \
 		../eventermap.cc ../eventermap.hh \
 		../eventdeleteobj.cc ../eventdeleteobj.hh \
+		../eventplaysound.cc ../eventplaysound.hh \
 		../eventprintcon.cc ../eventprintcon.hh \ 
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \

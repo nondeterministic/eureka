@@ -91,6 +91,7 @@
     </action>
     <action type="ACT_ON_ENTER" x="9" y="13">
       <event type="EVENT_PRINTCON">Down in the deep dark dungeon...</event>
+      <event type="EVENT_PLAY_SOUND">LocusIste.ogg</event>
       <event type="EVENT_ENTER_MAP">
         <x>5</x>
         <y>2</y>
@@ -99,6 +100,7 @@
     </action>
     <action type="ACT_ON_PULLPUSH" x="11" y="4">
       <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
+      <event type="EVENT_PLAY_SOUND">hit.wav</event>
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="11" y="5" icon_now="72" icon_new="71"/>
       </event>
