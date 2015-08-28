@@ -94,7 +94,7 @@
       <icon no="80" trans="full" walk="full">nothing special</icon>
       <icon no="81" trans="full" walk="full">nothing special</icon>
       <icon no="82" trans="full" walk="slow">rock</icon>
-      <icon no="83" trans="full" walk="not">corpse</icon>
+      <icon no="83" trans="full" walk="not">sleeping person</icon>
       <icon no="84" trans="not" walk="not">stone wall</icon>
       <icon no="85" trans="not" walk="not">door</icon>
       <icon no="86" trans="not" walk="not">door</icon>
@@ -234,7 +234,7 @@
       <icon no="220" trans="full" walk="full">nothing special</icon>
       <icon no="221" trans="full" walk="full">nothing special</icon>
       <icon no="222" trans="full" walk="slow">cobweb</icon>
-      <icon no="223" trans="full" walk="full">nothing special</icon>
+      <icon no="223" trans="full" walk="not">corpse</icon>
       <icon no="224" trans="full" walk="full">nothing special</icon>
       <icon no="225" trans="full" walk="full">nothing special</icon>
       <icon no="226" trans="full" walk="full">nothing special</icon>
