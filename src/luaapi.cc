@@ -409,6 +409,7 @@ int l_additemtoinv(lua_State* L)
  *
  * If a) fails, -1 is returned. If b) fails, -2 is returned.
  * If another error occurs, -3 is returned.
+ *
  * On success 0 is returned.
  */
 

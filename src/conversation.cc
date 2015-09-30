@@ -70,6 +70,10 @@ void Conversation::initiate()
 			lua.push_fn_arg(reply);
 			lua.call_void_fn("otherwise");
 		}
+
+		if (lua.call_fn<bool>("conversation_over"))
+			return;
+
 	} while (!(reply == "bye" || reply.length() == 0));
 
 	printcon("bye ");

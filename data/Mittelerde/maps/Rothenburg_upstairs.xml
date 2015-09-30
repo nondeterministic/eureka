@@ -9,22 +9,22 @@
     <row>6 6 5 5 6 6 6 5 6 5 4 82 82 5 5 5 4 6 6 4 5 5 5 4 5 5 5 4 4 5 4 5 5 4 82 82 6 6 6 5 5 6 5 6 82 5 5 5 82 4</row>
     <row>6 6 6 6 4 6 4 4 6 4 4 4 4 4 4 4 111 5 6 5 6 5 5 6 4 4 5 4 5 5 5 6 82 5 6 5 4 5 5 5 5 5 4 4 4 6 6 6 5 4</row>
     <row>4 5 5 6 190 190 197 190 197 190 197 190 190 4 4 4 4 5 4 6 82 6 6 5 6 6 6 6 6 6 6 1010 4 4 4 4 190 190 197 190 197 190 197 190 190 4 5 6 82 5</row>
-    <row>6 5 5 4 190 89 89 89 89 89 89 89 190 4 5 82 5 4 1010 5 6 4 5 5 6 5 6 6 82 5 5 4 5 4 4 4 190 89 89 89 89 89 89 89 190 4 5 6 4 4</row>
+    <row>6 5 5 4 190 509 509 509 509 509 509 509 190 4 5 82 5 4 1010 5 6 4 5 5 6 5 6 6 82 5 5 4 5 4 4 4 190 89 89 89 89 89 89 89 190 4 5 6 4 4</row>
     <row>4 82 5 4 190 89 89 89 89 89 89 89 190 4 4 4 4 5 5 4 5 4 6 5 6 6 6 4 5 5 5 5 5 4 4 4 190 89 89 89 89 89 89 89 197 4 4 5 4 4</row>
-    <row>4 6 5 4 197 89 89 89 89 89 89 89 190 4 4 4 82 4 4 4 4 4 4 4 4 82 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 190 4 5 6 4 5</row>
-    <row>5 6 6 4 190 89 89 89 36 89 89 89 190 190 190 190 190 190 190 190 197 190 190 190 197 190 190 190 190 197 190 190 190 190 190 190 190 89 89 89 37 89 89 89 190 4 5 5 5 4</row>
-    <row>5 5 5 4 190 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 197 4 4 5 4 5</row>
-    <row>5 4 5 4 197 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 190 4 5 6 4 4</row>
-    <row>4 82 6 4 190 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 190 4 4 5 4 5</row>
-    <row>6 5 4 4 190 190 190 190 89 89 89 89 190 190 190 190 190 190 190 190 190 190 190 190 198 190 190 190 190 198 190 190 190 198 190 190 190 190 190 168 190 190 190 190 190 1010 4 5 4 4</row>
-    <row>6 5 4 4 4 4 4 190 89 89 89 89 190 1141 1141 1141 1141 1141 1141 190 1034 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 197 4 4 4 4 4 6 82 4</row>
-    <row>4 6 4 4 4 4 4 190 89 89 89 89 190 1166 1141 1166 1166 1141 1141 198 1034 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 4 82 6 5 4</row>
-    <row>4 5 4 5 4 4 4 190 89 89 89 89 1141 1141 1141 1141 1141 1141 1141 190 1060 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 5 4 5 4 5 4</row>
-    <row>5 5 4 6 5 4 4 197 89 89 89 89 1141 1166 1141 1141 1166 1141 1166 190 292 218 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 5 4 4 5 4</row>
-    <row>5 5 6 82 6 4 4 190 89 89 89 89 190 1141 1141 1141 1141 1141 1141 190 1034 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 4 5 4 5 4 4</row>
-    <row>4 6 6 4 5 4 4 190 89 89 89 89 190 1166 1141 1141 1166 1141 1166 198 1034 241 292 292 292 292 292 292 292 4 937 4 4 4 4 4 190 89 89 89 89 190 4 4 5 6 6 5 82 4</row>
-    <row>4 4 6 4 4 5 4 197 89 89 89 89 190 120 1141 1141 1141 1141 1141 190 1060 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 82 5 6 5 5 4</row>
-    <row>4 1010 5 6 6 5 4 190 89 89 89 89 190 190 198 190 190 198 190 190 4 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 6 6 4 5 4</row>
+    <row>4 6 5 4 197 187 151 150 163 160 186 89 190 4 4 4 82 4 4 4 4 4 4 4 4 82 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 190 4 5 6 4 5</row>
+    <row>5 6 6 4 190 89 89 89 89 89 89 89 190 190 190 190 190 190 190 190 197 190 190 190 197 190 190 190 190 197 190 190 190 190 190 190 190 89 89 89 37 89 89 89 190 4 5 5 5 4</row>
+    <row>5 5 5 4 190 89 89 89 89 89 89 89 465 465 465 433 465 465 465 190 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 197 4 4 5 4 5</row>
+    <row>5 4 5 4 197 89 89 89 89 89 89 89 89 89 89 89 89 89 89 168 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 190 4 5 6 4 4</row>
+    <row>4 82 6 4 190 465 465 465 465 89 89 89 89 89 89 89 89 89 89 190 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 89 190 4 4 5 4 5</row>
+    <row>6 5 4 4 190 190 190 190 465 89 89 75 89 89 89 89 75 89 89 190 190 190 190 190 198 190 190 190 190 198 190 190 190 198 190 190 190 190 190 168 190 190 190 190 190 1010 4 5 4 4</row>
+    <row>6 5 4 4 4 4 4 190 465 89 89 89 89 1292 1293 89 89 89 89 190 1034 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 197 4 4 4 4 4 6 82 4</row>
+    <row>4 6 4 4 4 4 4 190 465 89 89 89 89 1317 1318 89 89 89 89 198 1034 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 4 82 6 5 4</row>
+    <row>4 5 4 5 4 4 4 190 465 89 89 89 89 89 89 89 89 89 89 190 1060 1060 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 5 4 5 4 5 4</row>
+    <row>5 5 4 6 5 4 4 197 89 89 89 75 89 89 89 89 75 89 89 190 292 218 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 5 4 4 5 4</row>
+    <row>5 5 6 82 6 4 4 190 465 89 89 89 89 89 89 89 89 89 89 190 1034 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 4 5 4 5 4 4</row>
+    <row>4 6 6 4 5 4 4 190 465 89 89 89 89 89 89 89 89 89 89 198 1034 241 292 292 292 292 292 292 292 4 937 4 4 4 4 4 190 89 89 89 89 190 4 4 5 6 6 5 82 4</row>
+    <row>4 4 6 4 4 5 4 197 89 89 89 89 89 89 89 89 89 89 89 190 1060 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 82 5 6 5 5 4</row>
+    <row>4 1010 5 6 6 5 4 190 190 168 190 190 190 190 198 190 190 198 190 190 4 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 4 5 6 6 4 5 4</row>
     <row>4 4 6 6 4 4 4 190 89 89 89 89 190 4 4 4 4 4 4 4 4 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 6 5 5 5 4 4</row>
     <row>5 4 5 6 82 5 4 197 89 89 89 89 190 4 4 4 4 4 4 4 4 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 89 89 190 4 5 4 4 6 4 5 4</row>
     <row>4 4 6 6 4 4 4 190 89 89 89 89 197 4 4 4 4 4 4 4 4 244 4 4 4 4 4 4 4 4 4 4 4 4 4 4 197 89 89 89 89 197 4 4 4 6 6 5 5 4</row>
@@ -62,44 +62,42 @@
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
   </data>
   <objects>
-    <object x="18" y="12" ox="0" oy="0" icon_no="753" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="17" y="12" ox="0" oy="0" icon_no="572" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="18" ox="0" oy="0" icon_no="559" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="12" ox="0" oy="0" icon_no="583" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="14" ox="0" oy="0" icon_no="1140" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="5" ox="0" oy="0" icon_no="128" layer="0" id="bankster" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="13" y="9" ox="0" oy="0" icon_no="141" layer="0" id="bookkeeper" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="9" y="19" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="48" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="40" y="33" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="15" ox="0" oy="0" icon_no="1165" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="16" y="12" ox="0" oy="0" icon_no="583" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="37" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="36" y="25" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="18" y="18" ox="0" oy="0" icon_no="534" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="36" y="35" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="27" y="47" ox="0" oy="0" icon_no="126" layer="0" id="guard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="14" y="13" ox="0" oy="0" icon_no="140" layer="0" id="healer" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="36" y="35" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="37" y="40" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="40" y="10" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="40" y="43" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="38" y="43" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="16" y="18" ox="0" oy="0" icon_no="558" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="40" y="27" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="25" y="29" ox="0" oy="0" icon_no="1100" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="44" ox="0" oy="0" icon_no="320" layer="0" id="advisor" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="38" y="43" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="15" y="2" ox="0" oy="0" icon_no="141" layer="0" id="druid" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="10" y="20" ox="0" oy="0" icon_no="126" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="33" y="33" ox="0" oy="0" icon_no="132" layer="0" id="chester" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="30" y="27" ox="0" oy="0" icon_no="394" layer="0" id="advisor" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="28" y="30" ox="0" oy="0" icon_no="350" layer="0" id="leader" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="20" y="47" ox="0" oy="0" icon_no="126" layer="0" id="guard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="20" y="8" ox="0" oy="0" icon_no="126" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="19" y="28" ox="0" oy="0" icon_no="811" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="21" y="40" ox="0" oy="0" icon_no="270" layer="0" id="chester" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="37" y="48" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="40" ox="0" oy="0" icon_no="270" layer="0" id="chester" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="16" y="45" ox="0" oy="0" icon_no="347" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="38" y="10" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="8" y="7" ox="0" oy="0" icon_no="136" layer="0" id="bankcustomer" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="19" y="29" ox="0" oy="0" icon_no="836" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="25" y="31" ox="0" oy="0" icon_no="1100" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="30" y="18" ox="0" oy="0" icon_no="1108" layer="0" id="bucket" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="19" y="9" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="40" y="33" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="25" y="31" ox="0" oy="0" icon_no="1100" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="31" y="18" ox="0" oy="0" icon_no="1107" layer="0" id="emptybucket" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="31" y="25" ox="0" oy="0" icon_no="433" layer="0" id="clock" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="20" y="10" ox="0" oy="0" icon_no="126" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="18" y="3" ox="0" oy="0" icon_no="998" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
+    <object x="31" y="25" ox="0" oy="0" icon_no="433" layer="0" id="clock" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="40" y="7">
@@ -120,13 +118,6 @@
       <event type="EVENT_ENTER_MAP">
         <x>8</x>
         <y>46</y>
-        <target_map>Rothenburg_roof</target_map>
-      </event>
-    </action>
-    <action type="ACT_ON_ENTER" x="8" y="7">
-      <event type="EVENT_ENTER_MAP">
-        <x>8</x>
-        <y>7</y>
         <target_map>Rothenburg_roof</target_map>
       </event>
     </action>
