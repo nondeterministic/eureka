@@ -206,7 +206,7 @@ int l_choose_monster(lua_State* L)
 }
 
 /**
- * When called, on the Lua stack has to be a table of weapons.
+ * When called, on the Lua stack has to be a table of either weapons or edibles, etc.
  * This table will then be inserted into the ztats window display,
  * and the user can select an item for purchase.
  *
@@ -224,21 +224,24 @@ int l_ztatswin_shopinteraction(lua_State* L)
 	lua_pushnil(L);
 
 	while (lua_next(L, -2) != 0) {
-		lua_pushnil(L);
-
     	std::string name;
     	std::string gold;
 
+    	lua_pushnil(L);
+
 		while (lua_next(L, -2) != 0) {
-            std::string val = lua_tostring(L, -1);
-            std::string key = lua_tostring(L, -2);
+			// Skip boolean table entries as we only want to extract name and gold anyway...
+			if (lua_type(L, -1) != LUA_TBOOLEAN) {             // Boolean, unlike an integer, cannot be implicitly converted to a string it seems, and a crash is the consequence
+				std::string val = lua_tostring(L, -1);
+				std::string key = lua_tostring(L, -2);         // Key is always a string
 
-        	if (key == "name")
-        		name = val;
-        	else if (key == "gold")
-        		gold = val;
+				if (key == "name")
+					name = val;
+				else if (key == "gold")
+					gold = val;
+			}
 
-        	lua_pop(L, 1);
+			lua_pop(L, 1);
     	}
 
     	std::stringstream ss;
@@ -439,6 +442,60 @@ int l_buyitem(lua_State* L)
 	}
 	else
     	lua_pushnumber(L, -3); // Other error occurred
+
+	return 1;
+}
+
+/**
+  * On the Lua stack is a Lua-table-element of type "Service", when this
+  * function is called. If this isn't the case, bad things will happen...
+  *
+  * On success, 0 is returned.
+  * -1 is returned if the party doesn't have enough money to afford the service.
+  */
+
+int l_buyservice(lua_State* L)
+{
+    int heal                = 0;
+    bool heal_poison        = 0;
+    bool resurrect          = false;
+    std::string print_after = "";
+    int gold                = 0;
+
+    std::cout << "BUYSERVICE CALLED WITH " << lua_gettop(L) << " ARGUMENTS\n";
+
+	lua_pushnil(L);    // First argument is the Lua table
+
+    while (lua_next(L, -2) != 0) {
+    	std::string key = lua_tostring(L, -2);
+
+    	if (key == "heal")
+    		heal = lua_tonumber(L, -1);
+    	else if (key == "heal_poison")
+    		heal_poison = lua_toboolean(L, -1);
+    	else if (key == "resurrect")
+    		resurrect = lua_toboolean(L, -1);
+    	else if (key == "print_after")
+    		print_after = lua_tostring(L, -1);
+    	else if (key == "gold")
+    		gold = lua_tonumber(L, -1);
+    	else
+    		std::cerr << "luaapi.cc: ERROR: unknown service: " << key << "\n";
+
+    	lua_pop(L, 1);
+    }
+
+    int selected_player = lua_tonumber(L, 2); // Second argument is player number
+
+    std::cout << "Selected PLAYER " << selected_player << "\n";
+
+    // Now change party stats according to the values
+    // TODO
+
+	// Now print successful response of purchased service
+	GameControl::Instance().printcon(print_after);
+
+	lua_pushnumber(L, 0);
 
 	return 1;
 }

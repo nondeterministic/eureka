@@ -1,4 +1,4 @@
-SUBDIRS = images maps weapons shields edibles spells bestiary sound people
+SUBDIRS = images maps weapons shields edibles spells bestiary sound people services
 
 EXTRA_DIST = elements.xml
 

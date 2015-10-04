@@ -390,8 +390,8 @@ void World::load_world_elements(lua_State* L)
 
 	// First load those which are defined in terms of Lua tables and therefore defs.lua files inside their corresponding subdirectories inside data/
 
-	int number_of_elems = 4;
-	std::string* elems = new string[number_of_elems] { "weapons", "shields", "bestiary", "edibles" };
+	std::string elems[] = { "weapons", "shields", "bestiary", "edibles", "services" };
+	int number_of_elems = sizeof(elems) / sizeof(std::string);
 
 	for (int i = 0; i < number_of_elems; i++) {
 		if (luaL_dofile(L, ((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/" + elems[i] + "/defs.lua").c_str())) {

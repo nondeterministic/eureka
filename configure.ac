@@ -83,6 +83,7 @@ AC_CONFIG_FILES([Makefile \
 		 data/Mittelerde/edibles/Makefile
 		 data/Mittelerde/sound/Makefile
 		 data/Mittelerde/people/Makefile
+		 data/Mittelerde/services/Makefile
 		 data/Mittelerde/bestiary/Makefile])
 AC_OUTPUT
 
