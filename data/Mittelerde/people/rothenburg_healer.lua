@@ -80,6 +80,8 @@ do
 	 simpl_printcon("Which party member is in need of healing?")
 	 selected_player = simpl_choose_player()
 
+	 simpl_printcon(simpl_get_player_name(selected_player))
+
 	 buyResult = simpl_buyservice(selected_player, selected_item)
 	 if (buyResult == -1) then
 	    simpl_printcon("You don't have enough gold.")

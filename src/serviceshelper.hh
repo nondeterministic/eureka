@@ -18,6 +18,7 @@ public:
   virtual ~ServicesHelper();
   static Service* createFromLua(std::string);
   static bool exists(std::string);
+  static void apply(Service*, int);
 };
 
 #endif

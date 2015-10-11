@@ -448,24 +448,36 @@ int l_buyitem(lua_State* L)
 	return 1;
 }
 
+/**
+ * On success, 0 is returned.
+ * -1 is returned if the party doesn't have enough money to afford the service.
+ */
+
 int l_buyservice(lua_State* L)
 {
     std::string selected_service = lua_tostring(L, 2);
-    std::cout << "Selected SERVICE " << selected_service << "\n";
+    int selected_player          = lua_tonumber(L, 1);
 
-    int selected_player = lua_tonumber(L, 1);
-    std::cout << "Selected PLAYER " << selected_player << "\n";
+    Service* service = (Service*)(ItemFactory::create_plain_name(selected_service));
 
-    // Now change party stats according to the values
-	Item* item = ItemFactory::create_plain_name(selected_service);
+    if (service != NULL) {
+		if (service->gold() > Party::Instance().gold()) {
+			GameControl::Instance().printcon("Sorry, it seems you cannot afford this.");
+			lua_pushnumber(L, -1);
+		}
+		else {
+			ServicesHelper::apply(service, selected_player);
+			lua_pushnumber(L, 0);
+		}
 
-    std::cout << "Created SERVICE " << item->name() << "\n";
+		ZtatsWin::Instance().update_player_list();
 
-	// Now print successful response of purchased service
-    // GameControl::Instance().printcon(print_after);
+		delete service;
+		return 1;
+    }
 
+    std::cerr << "ERROR: luaapi.cc: l_buyservice could not create service " << selected_service << "\n";
 	lua_pushnumber(L, 0);
-
 	return 1;
 }
 
