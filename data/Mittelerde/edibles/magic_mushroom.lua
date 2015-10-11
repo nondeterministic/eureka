@@ -11,7 +11,7 @@ Edibles["magic mushroom"]  = {
    healing_power          = "none",
    poison_healing_power   = "none",
    poisonous              = "none",
-   magic_herb             = "false",
+   magic_herb             = false,
    intoxicating_effect    = "very_strong",
 
    gold          = 1,

@@ -3,8 +3,8 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Services["heal_light"]  = { 
-   name                   = "Heal light wounds", 
+Services["heal light wounds"]  = { 
+   name                   = "heal light wounds", 
    
    heal                   = math.random(5,15),
    heal_poison            = true,

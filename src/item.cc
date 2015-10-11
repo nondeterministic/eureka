@@ -26,6 +26,9 @@ using namespace std;
 Item::Item()
 {
 	std::cout << "Item()" << std::endl;
+	_name = "";
+	_plural_name = "";
+	_gold = 0;
 	icon = 0;
 	_weight = 0;
 }

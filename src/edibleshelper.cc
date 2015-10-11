@@ -39,7 +39,7 @@ Edible* EdiblesHelper::createFromLua(std::string array_name)
 	w->healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "healing_power")));
 	w->poison_healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poison_healing_power")));
 	w->poisonous = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poisonous")));
-	w->is_magic_herb = boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "magic_herb")) == "TRUE" ? true : false;
+	w->is_magic_herb = lua.get_item_prop<bool>(globArrayName, array_name, "magic_herb");
 	w->intoxicating = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "intoxicating_effect")));
 
 	w->weight((int)(lua.get_item_prop<double>(globArrayName, array_name, "weight")));

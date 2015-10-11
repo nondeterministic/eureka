@@ -6,7 +6,7 @@
  */
 
 #ifndef EDIBLESHELPER_HH_
-#define EDIBLESELPER_HH_
+#define EDIBLESHELPER_HH_
 
 #include <string>
 #include "edible.hh"

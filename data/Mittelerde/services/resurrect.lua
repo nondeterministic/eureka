@@ -3,8 +3,8 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Services["resurrect"]  = { 
-   name                   = "Resurrect", 
+Services["resurrection"]  = { 
+   name                   = "resurrection", 
 
    heal                   = 50000,   -- Also, heal completely! No one has more than 50.000 HP!
    heal_poison            = true,

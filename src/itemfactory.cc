@@ -10,6 +10,7 @@
 #include "edibleshelper.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "serviceshelper.hh"
 #include "util.hh"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -40,6 +41,8 @@ Item* ItemFactory::create(std::string lua_name)
 		return ShieldHelper::createFromLua(lname_split[1]);
 	else if (lname_split[0] == "edibles")
 		return EdiblesHelper::createFromLua(lname_split[1]);
+	else if (lname_split[0] == "services")
+		return ServicesHelper::createFromLua(lname_split[1]);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?
@@ -60,6 +63,8 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 		return ShieldHelper::createFromLua(item_name);
 	else if (EdiblesHelper::exists(item_name))
 		return EdiblesHelper::createFromLua(item_name);
+	else if (ServicesHelper::exists(item_name))
+		return ServicesHelper::createFromLua(item_name);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?

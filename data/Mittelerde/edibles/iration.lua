@@ -13,7 +13,7 @@ Edibles["iron ration"]  = {
    healing_power          = "none",
    poison_healing_power   = "none",
    poisonous              = "none",
-   magic_herb             = "false",
+   magic_herb             = false,
    intoxicating_effect    = "none",
 
    gold                   = 3,

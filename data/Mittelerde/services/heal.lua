@@ -4,7 +4,7 @@
 -- -----------------------------------------------
 
 Services["heal"]  = { 
-   name                   = "Heal", 
+   name                   = "heal", 
 
    heal                   = 50000,   -- Heal completely! No one has more than 50.000 HP!
    heal_poison            = true,

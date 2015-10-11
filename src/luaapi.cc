@@ -44,6 +44,7 @@
 #include "itemfactory.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "serviceshelper.hh"
 #include "race.hh"
 #include "luawrapper.hh"
 #include "gold.hh"
@@ -230,8 +231,9 @@ int l_ztatswin_shopinteraction(lua_State* L)
     	lua_pushnil(L);
 
 		while (lua_next(L, -2) != 0) {
-			// Skip boolean table entries as we only want to extract name and gold anyway...
-			if (lua_type(L, -1) != LUA_TBOOLEAN) {             // Boolean, unlike an integer, cannot be implicitly converted to a string it seems, and a crash is the consequence
+			// Skip boolean table entries as we only want to extract name and gold anyway to display in the ztats window when shopping...
+			// (Boolean, unlike an integer, cannot be implicitly converted to a string it seems, and a crash is the consequence if we try.  So let's not.)
+			if (lua_type(L, -1) != LUA_TBOOLEAN) {
 				std::string val = lua_tostring(L, -1);
 				std::string key = lua_tostring(L, -2);         // Key is always a string
 
@@ -446,15 +448,38 @@ int l_buyitem(lua_State* L)
 	return 1;
 }
 
+int l_buyservice(lua_State* L)
+{
+    std::string selected_service = lua_tostring(L, 2);
+    std::cout << "Selected SERVICE " << selected_service << "\n";
+
+    int selected_player = lua_tonumber(L, 1);
+    std::cout << "Selected PLAYER " << selected_player << "\n";
+
+    // Now change party stats according to the values
+	Item* item = ItemFactory::create_plain_name(selected_service);
+
+    std::cout << "Created SERVICE " << item->name() << "\n";
+
+	// Now print successful response of purchased service
+    // GameControl::Instance().printcon(print_after);
+
+	lua_pushnumber(L, 0);
+
+	return 1;
+}
+
 /**
-  * On the Lua stack is a Lua-table-element of type "Service", when this
-  * function is called. If this isn't the case, bad things will happen...
+  * Topmost on the Lua stack is a Lua-table-element of type "Service", when this
+  * function is called, and below that a player number to perform this service to.
+  * (I.e., it was called like this simpl_buyservice(player, item).)
+  * If this isn't the case, bad things will happen...
   *
   * On success, 0 is returned.
   * -1 is returned if the party doesn't have enough money to afford the service.
   */
 
-int l_buyservice(lua_State* L)
+int l_buyservice_old(lua_State* L)
 {
     int heal                = 0;
     bool heal_poison        = 0;
@@ -462,12 +487,23 @@ int l_buyservice(lua_State* L)
     std::string print_after = "";
     int gold                = 0;
 
+    // //////////////////////////////////////////////////////////////////////////////////////
+    // INFO:
+    // In Lua we count down from the current stack pointer and up from the bottom.
+    // I.e., -1 refers to one below the SP (= topmost element), and 1 refers to the oldest
+    // element on the stack.
+    // //////////////////////////////////////////////////////////////////////////////////////
+
     std::cout << "BUYSERVICE CALLED WITH " << lua_gettop(L) << " ARGUMENTS\n";
 
-	lua_pushnil(L);    // First argument is the Lua table
+    // Push nil on top of stack and set Lua stack pointer to top.
+    lua_pushnil(L);
 
+	// The table begins two below the stack pointer...
     while (lua_next(L, -2) != 0) {
     	std::string key = lua_tostring(L, -2);
+
+        std::cout << "LOOP...\n";
 
     	if (key == "heal")
     		heal = lua_tonumber(L, -1);
@@ -480,13 +516,13 @@ int l_buyservice(lua_State* L)
     	else if (key == "gold")
     		gold = lua_tonumber(L, -1);
     	else
-    		std::cerr << "luaapi.cc: ERROR: unknown service: " << key << "\n";
+    		std::cerr << "luaapi.cc: ERROR: unknown service bought: " << key << "\n";
 
     	lua_pop(L, 1);
     }
 
-    int selected_player = lua_tonumber(L, 2); // Second argument is player number
-
+    // The bottom-most (i.e., oldest) argument is the player number.
+    int selected_player = lua_tonumber(L, 1);
     std::cout << "Selected PLAYER " << selected_player << "\n";
 
     // Now change party stats according to the values
@@ -1077,6 +1113,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_magic_attack);
   lua_setglobal(L, "simpl_magic_attack");
+
+  lua_pushcfunction(L, l_buyservice);
+  lua_setglobal(L, "simpl_buyservice");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {
