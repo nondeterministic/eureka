@@ -129,16 +129,28 @@ int l_pushshield(lua_State* L)
 
 int l_printcon(lua_State* L)
 {
-  if (lua_gettop(L) == 1)
-    GameControl::Instance().printcon(lua_tostring(L, 1));
-  else if (lua_gettop(L) == 2)
-    GameControl::Instance().printcon(lua_tostring(L, 1), lua_toboolean(L, 2));
-  else {
-    std::cerr << "Error: Lua: wrong number of arguments to l_printcon.\n";
-    exit(EXIT_FAILURE);
-  }
+	// First argument MUST be a string, so check it
+	if (!lua_isstring(L, 1)) {
+		std::cerr << "Error: Lua: l_printcon needs to be called with a string argument.\n";
+		exit(EXIT_FAILURE);
+	}
 
-  return 0;
+	// Second argument is optional, but must be bool
+	if (lua_gettop(L) == 2 && !lua_isboolean(L, 2)) {
+		std::cerr << "Error: Lua: l_printcon can optionally take as second argument a bool, but only a bool.\n";
+		exit(EXIT_FAILURE);
+	}
+
+	if (lua_gettop(L) == 1)
+		GameControl::Instance().printcon(lua_tostring(L, 1));
+	else if (lua_gettop(L) == 2)
+		GameControl::Instance().printcon(lua_tostring(L, 1), lua_toboolean(L, 2));
+	else {
+		std::cerr << "Error: Lua: wrong number of arguments to l_printcon.\n";
+		exit(EXIT_FAILURE);
+	}
+
+	return 0;
 }
 
 /**

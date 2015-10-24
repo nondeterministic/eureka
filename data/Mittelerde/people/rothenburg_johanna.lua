@@ -9,7 +9,7 @@ do
    -- --------------------------------------------------------
 
    c_values = { 
-      name = "Woman", race = "HUMAN", ep = 0, hp = 20, hpm = 20, sp = 0, spm = 0, 
+      name = "Johanna", race = "HUMAN", ep = 0, hp = 20, hpm = 20, sp = 0, spm = 0, 
       str = 16, luck = 15, dxt = 12, wis = 4, charr = 10, 
       iq = 10, endd = 14, sex = "FEMALE", profession = "SHEPHERD", weapon = Weapons["axe"], 
       shield = Shields["small shield"] 

@@ -172,13 +172,13 @@
     <object x="8" y="41" ox="0" oy="0" icon_no="138" layer="0" id="bull3" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="18" y="42" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="12" ox="0" oy="0" icon_no="1135" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="16" ox="11" oy="16" icon_no="59" layer="0" id="tinker" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="11" y="16" ox="11" oy="16" icon_no="59" layer="0" id="tinker" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_blacksmith.lua"/>
     <object x="8" y="35" ox="0" oy="0" icon_no="138" layer="0" id="bull4" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="20" y="47" ox="20" oy="47" icon_no="126" layer="0" id="entryguard1" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="25" y="31" ox="0" oy="0" icon_no="1100" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="35" y="29" ox="35" oy="29" icon_no="128" layer="0" id="bartender" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_bartender.lua"/>
     <object x="11" y="45" ox="11" oy="45" icon_no="125" layer="0" id="taxguard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="16" y="13" ox="16" oy="13" icon_no="135" layer="0" id="tinkerson" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="16" y="13" ox="16" oy="13" icon_no="135" layer="0" id="tinkerson" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_frederik.lua"/>
   </objects>
   <actions>
     <action type="ACT_ON_OPENED">

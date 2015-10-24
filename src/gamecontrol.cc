@@ -794,6 +794,8 @@ void GameControl::inventory()
   mwin.display_last();
 }
 
+// Let go of item and put it back to inventory.
+
 std::string GameControl::yield_item(int selected_player)
 {
 	MiniWin& mwin = MiniWin::Instance();
@@ -853,6 +855,7 @@ std::string GameControl::yield_item(int selected_player)
 			// After yielding an item, the AC may have changed, for example.
 			zwin.update_player_list();
 			printcon("Yielded " + selected_item_name);
+			return "";
 		}
 	}
 

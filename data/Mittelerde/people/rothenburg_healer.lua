@@ -67,7 +67,7 @@ do
 	 buy()
 	 simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. Feel free to look around and have a friendly chat with folks around here. And if you get hungry or thirsty, let me know.")
+	 simpl_printcon("But if you are in need of healing again, feel free to seek me out again...")
       end
    end
    
@@ -91,15 +91,15 @@ do
 	    simpl_printcon("Hmmm... This transaction failed. buyResult = " .. buyResult)
 	 end
       else
-	 simpl_printcon("Perhaps another time...")
+	 simpl_printcon("Some other time perhaps...")
       end
       
-      simpl_printcon("Can I be of assistance with anything else? (y/n)")
+      simpl_printcon("Can I assist you in any other way? (y/n)")
       job2()
    end
    
    function join()
-      simpl_printcon("My place is here to heal people...")
+      simpl_printcon("My place is here to heal people.")
       return false
    end
    
@@ -108,7 +108,7 @@ do
    end
    
    function otherwise(item)
-      if (item == "heal" or item == "healing" or item == "health" or item == "help" or item == "buy") then
+      if (item == "heal" or item == "healing" or item == "health" or item == "help" or item == "buy" or item == "shop" item == "sell") then
 	 job()
       else	
 	 simpl_printcon("I cannot help you with that.")

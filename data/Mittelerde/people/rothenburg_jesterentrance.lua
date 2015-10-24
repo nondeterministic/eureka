@@ -50,7 +50,7 @@ do
    end
    
    function job()
-      simpl_printcon("I used to be a Jester, but since the king in his endless wisdom has has decided to reinvest the citizen's money into the citizens themselves, I am now a public servant who is here to entertain you and everyone else, and not just the royals anymore. He ho ha ha...")
+      simpl_printcon("I used to be a Jester, but since the king in his endless wisdom has decided to reinvest the citizen's money into the citizens themselves, I am now a public servant who is here to entertain you and everyone else, and not just the royals anymore. He ho ha ha...")
    end
 
    function join()
