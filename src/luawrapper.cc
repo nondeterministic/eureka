@@ -224,6 +224,7 @@ void LuaWrapper::make_fn_call(int arguments, int return_values, int error)
 
 void LuaWrapper::handle_error()
 {
-	std::cerr << "Lua error: '" << lua_tostring(l, -1) << "'. Perhaps a function was called that is not defined in the script?!" << std::endl;
+	std::cerr << "ERROR: luawrapper.cc: Lua: '" << lua_tostring(l, -1) << "'. Perhaps a function was called that is not defined in the script?!" << std::endl;
+	std::cerr << "ERROR: luawrapper.cc: Quitting program now as a consequence.\n";
 	exit(0);
 }

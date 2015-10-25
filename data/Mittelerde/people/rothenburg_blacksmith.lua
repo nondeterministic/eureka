@@ -13,6 +13,8 @@ do
       iq = 15, endd = 7, sex = "MALE", profession = "TINKER", weapon = Weapons["axe"], shield = Shields["small shield"] 
    } 
 
+   conv_over = false
+
    -- -----------------------------------------------
    -- Standard functions
    -- -----------------------------------------------
