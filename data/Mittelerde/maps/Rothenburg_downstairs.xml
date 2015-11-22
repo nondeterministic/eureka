@@ -112,6 +112,12 @@
       </event>
     </action>
     <action type="ACT_ON_PULLPUSH" x="22" y="47"/>
-    <action type="ACT_ON_ENTER" x="40" y="45"/>
+    <action type="ACT_ON_ENTER" x="40" y="45">
+      <event type="EVENT_ENTER_MAP">
+        <x>40</x>
+        <y>46</y>
+        <target_map>Rothenburg</target_map>
+      </event>
+    </action>
   </actions>
 </map>

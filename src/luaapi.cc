@@ -49,6 +49,8 @@
 #include "luawrapper.hh"
 #include "gold.hh"
 #include "miniwin.hh"
+#include "gameeventhandler.hh"
+#include "eventchangeicon.hh"
 
 extern "C" {
 #include <lua.h>
@@ -179,6 +181,47 @@ int l_getkey(lua_State* L)
 	std::string allowed_keys = (std::string)(lua_tostring(L, 1));
 	ss << EventManager::Instance().get_key(allowed_keys.c_str());
 	lua_pushstring(L, ss.str().c_str());
+	return 1;
+}
+
+// On the Lua stack, at time of calling, are the 4 arguments for EventChangeIcon.
+// Returns to Lua -1 on error, 1 in case of success.
+
+int l_change_icon(lua_State* L)
+{
+	GameEventHandler gh;
+	std::shared_ptr<Map> the_map(GameControl::Instance().get_map());
+	std::shared_ptr<EventChangeIcon> new_ev(new EventChangeIcon());
+
+	if (!lua_isnumber(L, 1)) {
+		std::cerr << "Error: Lua: l_change_icon() wrong argument 1.\n";
+		exit(EXIT_FAILURE);
+	}
+	new_ev->x = lua_tonumber(L, 1);
+
+	if (!lua_isnumber(L, 2)) {
+		std::cerr << "Error: Lua: l_change_icon() wrong argument 2.\n";
+		exit(EXIT_FAILURE);
+	}
+	new_ev->y = lua_tonumber(L, 2);
+
+	if (!lua_isnumber(L, 3)) {
+		std::cerr << "Error: Lua: l_change_icon() wrong argument 3.\n";
+		exit(EXIT_FAILURE);
+	}
+	new_ev->icon_now = lua_tonumber(L, 3);
+
+	if (!lua_isnumber(L, 4)) {
+		std::cerr << "Error: Lua: l_change_icon() wrong argument 4.\n";
+		exit(EXIT_FAILURE);
+	}
+	new_ev->icon_new = lua_tonumber(L, 4);
+
+	if (gh.handle_event_change_icon(new_ev, the_map))
+		lua_pushnumber(L, 1);  // All OK
+	else
+		lua_pushnumber(L, -1); // Error happened
+
 	return 1;
 }
 
@@ -1140,6 +1183,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_buyservice);
   lua_setglobal(L, "simpl_buyservice");
+
+  lua_pushcfunction(L, l_change_icon);
+  lua_setglobal(L, "simpl_change_icon");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

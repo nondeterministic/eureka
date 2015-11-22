@@ -64,26 +64,24 @@ do
    
    function otherwise(item)
       if (item == "new" or item == "librarian" or item == "library") then
-	 simpl_printcon("Unfortunately, the previous librarian needed replacing since he would try to hide books from their removal by the king's servants.")
-      elseif (item == "removal" or item == "book removal" or string.find(item, "servant") or string.find(item, "king")) then
+	 simpl_printcon("Unfortunately, the previous librarian needed replacing since he would try to hide books from their removal by the governour's servants.")
+      elseif (item == "removal" or item == "book removal" or string.find(item, "servant") or string.find(item, "governo")) then
 	 msg = "There are books in existence whose content is detrimental to a peaceful coexistence within society. "
-	 .. "Clearly, it was a wise decision of the king to protect the public from such content, dost thou not agree? (y/n)"
+	 .. "Clearly, it was a wise decision of the governour to protect the public from such content, dost thou not agree? (y/n)"
 	 simpl_printcon(msg)
 	 books_answer = simpl_getkey("yn")
 	 simpl_printcon(string.format("%s ", books_answer))
 	 if (books_answer == "y") then
-	    simpl_printcon("Indeed, I have always made sure that my boy, Frederic, grows up learning about the right set of human values.")
+	    simpl_printcon("Indeed, I have always made sure that my boy, John, grows up learning about the right set of human values.")
 	 else
 	    simpl_printcon("Oh, so I take it, you have not become a public servant then yourself. (Smiles ironically.)")
 	 end
       elseif (string.find(item, "servant") or string.find(item, "public")) then
 	 msg = "Many people have closed their businesses in order to become public servants. "
-	    .. "Apparently they are necessary to organise a kingdom the size of our king's..."
+	    .. "Apparently they are necessary to organise a kingdom the size of ours..."
 	 simpl_printcon(msg)
-      elseif (item == "lies") then
-	 msg = "Shhhh, not so loud, stranger! You must not publicly question the public opinion without risking your freedom or your safety."
-	 simpl_printcon(msg)
-	 -- TODO: Expand story here
+      elseif (item == "boy" or item == "John") then
+	 simpl_printcon("I am his mother, but I do believe that he is a very intelligent little boy. He comes with me to the library a lot, because he likes to read books that even I find difficult to read. But I let him. It may do him good.")
       else	
 	 simpl_printcon("I cannot help you with that.")
       end

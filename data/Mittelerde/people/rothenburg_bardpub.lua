@@ -68,13 +68,13 @@ do
    function bye()
       if (pc_party) then
 	 if (string.len(name_answer) > 0) then
-	    simpl_printcon("Farewell " .. ", it was a pleasure meeting you.")
+	    simpl_printcon("Farewell " .. name_answer .. ", it was a pleasure meeting you.")
 	 else
 	    simpl_printcon("Farewell stranger, it was a pleasure meeting you.")
 	 end
       else
 	 msg = "Farewell, it was interesting talking to you, though I wish you'd think your antisocial positions over. "
-	 .. "We are a community that only works, if we obey to certain rules."
+	 .. "We are a community that only works, if we obey to certain rules, these are compassion and humility."
 	 simpl_printcon(msg)
       end
    end
@@ -110,9 +110,6 @@ do
 	 else
 	    simpl_printcon("Not in the mood then, I take it...")
 	 end
-      elseif (string.find(item, "ideal") or string.find(item, "social") or string.find(item, "justice")) then
-	 msg = ""
-	 simpl_printcon(msg)
       else
 	 simpl_printcon(string.format("I cannot help you with %s.", item))
       end

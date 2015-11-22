@@ -136,7 +136,7 @@ do
 	 .. "Worse yet, it seems that no one is doing anything about it, so they keep on killing people who enter the forests after dark or loose their way..."
 	 simpl_printcon(msg)
       elseif (string.find(item, "disappear") or string.find(item, "fury") or string.find(item, "return")) then
-	 msg = "In old times, men would ride out and keep these lands safe. They did this upon their own free will. But these days, everyone expects the king to do this "
+	 msg = "In old times, men would ride out and keep these lands safe. They did this upon their own free will. But these days, everyone expects our rulers to do this "
 	 .. "whereas he says the orcs have gotten too many. So we all stay within the city, do our work, pay our taxes and try to lead an as normal life as possible. "
 	 .. "I just hope my boy will someday be able to live a life that we used to have..."
 	 simpl_printcon(msg)

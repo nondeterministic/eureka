@@ -69,15 +69,15 @@ do
 	 simpl_printcon("Her death seems so far away, I can barely remember her. But father told me that we was ambushed and killed in the forest, collecting brushwood. The orcs who are responsible were never found or, worse, even looked for.")
       elseif (string.find(item, "orc")) then
 	 msg = "I have never seen one myself, but everyone knows they are lurking outside these city walls, in the lands of this kingdom, in the forests, waiting for "
-	 .. "passers by... Sorry, it is difficult for me to speak about this. I just wish someone would help us. We're only safe in the city, where the king protects us, but "
+	 .. "passers by... Sorry, it is difficult for me to speak about this. I just wish someone would help us. We're only safe in the city, where our rulers protect us, but "
 	 .. "it really feels like being a prisoner."
 	 simpl_printcon(msg)
       elseif (string.find(item, "prison") or item == "city" or item == "safe") then
 	 msg = "It seems everyone is finding it normal that one cannot go outside the city anymore, but I remember that mother and I went playing in the forests, at the rivers, in the fields. "
 	    .. "These are wonderful memories. But somehow noone else seems to want to go outside anymore. People say they are happy. I cannot believe that. How foolish is that?"
 	 simpl_printcon(msg)
-      elseif (item == "king") then
-	 msg = "I don't know much about him. People love our king. Father never talks about him though..."
+      elseif (string.find(item, "ruler")) then
+	 msg = "I don't know much about the rulers. People love our elected rulers. Father never talks about this much though..."
 	 simpl_printcon(msg)
       else	
 	 simpl_printcon("I cannot help you with that.")

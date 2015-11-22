@@ -127,9 +127,9 @@
     </object>
     <object x="27" y="47" ox="27" oy="47" icon_no="126" layer="0" id="entryguard2" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
     <object x="19" y="16" ox="0" oy="0" icon_no="537" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="31" y="26" ox="31" oy="26" icon_no="62" layer="0" id="ranger" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="31" y="26" ox="31" oy="26" icon_no="62" layer="0" id="ranger" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_rangerpub.lua"/>
     <object x="36" y="9" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="37" y="16" ox="37" oy="16" icon_no="296" layer="0" id="librarian" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="37" y="16" ox="37" oy="16" icon_no="296" layer="0" id="librarian" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_librarian.lua"/>
     <object x="8" y="10" ox="0" oy="0" icon_no="141" layer="0" id="healer" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/rothenburg_healer.lua"/>
     <object x="18" y="3" ox="0" oy="0" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="32" y="34" ox="32" oy="34" icon_no="126" layer="0" id="offdutyguard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/rothenburg_offdutyguard.lua"/>
@@ -145,7 +145,7 @@
     <object x="20" y="43" ox="0" oy="0" icon_no="93" layer="0" id="switch" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="15" y="2" ox="15" oy="2" icon_no="141" layer="0" id="johanna" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_johanna.lua"/>
     <object x="37" y="28" ox="0" oy="0" icon_no="1129" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="38" y="22" ox="38" oy="22" icon_no="136" layer="0" id="littleboy" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="38" y="22" ox="38" oy="22" icon_no="136" layer="0" id="littleboy" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_john.lua"/>
     <object x="11" y="12" ox="0" oy="0" icon_no="1163" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="12" y="44" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" removable="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
       <actions>
@@ -154,7 +154,7 @@
         </action>
       </actions>
     </object>
-    <object x="36" y="27" ox="36" oy="27" icon_no="64" layer="0" id="monk" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="36" y="27" ox="36" oy="27" icon_no="64" layer="0" id="monk" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/rothenburg_monk.lua"/>
     <object x="40" y="16" ox="0" oy="0" icon_no="559" layer="0" id="librarybook" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="31" y="27" ox="0" oy="0" icon_no="1103" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="33" ox="0" oy="0" icon_no="1108" layer="0" id="waterbucket" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
@@ -194,8 +194,8 @@
     <action type="ACT_ON_ENTER" x="40" y="46">
       <event type="EVENT_ENTER_MAP">
         <x>40</x>
-        <y>46</y>
-        <target_map>Rothenburg_upstairs</target_map>
+        <y>45</y>
+        <target_map>Rothenburg_downstairs</target_map>
       </event>
     </action>
     <action type="ACT_ON_ENTER" x="8" y="46">

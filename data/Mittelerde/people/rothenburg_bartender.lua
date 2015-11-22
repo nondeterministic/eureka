@@ -90,7 +90,7 @@ do
 	       if (look_answer == "y") then
 		  simpl_printcon("Alright then, I shall open the gate for you. Feel free to take a look downstairs...")
 		  conv_over = true
-		  -- TODO: Open the gate!
+		  simpl_change_icon(39, 36, 71, 72) -- Open the gate!
 	       else
 	       end
 	    end
