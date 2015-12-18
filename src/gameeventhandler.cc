@@ -59,7 +59,7 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapObj* obj)
 {
 	if (obj == NULL) {
-		std::cerr << "ERROR: Trying to delete NULL-object.\n";
+		std::cerr << "ERROR: gameeventhandler.cc: Trying to delete NULL-object.\n";
 		return false;
 	}
 
@@ -78,7 +78,7 @@ bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> e
 							event->file_name;
 
 	if (luaL_dofile(_lua_state, file_name.c_str())) {
-		std::cerr << "gameeventhandler.cc: Couldn't execute lua file: " << file_name << "\n";
+		std::cerr << "ERROR: gameeventhandler.cc: Couldn't execute lua file: " << file_name << "\n";
 		return false;
 	}
 
@@ -101,6 +101,8 @@ bool GameEventHandler::handle_event_printcon(std::shared_ptr<EventPrintcon> even
 	GameControl::Instance().printcon(event->text);
 	return true;
 }
+
+// TODO: Variable map currently not used. Can be null.
 
 bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> event, std::shared_ptr<Map> map)
 {
@@ -139,7 +141,6 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 		}
 	}
 
-	std::cout << "Entering " << event->get_map_name() << ".\n";
 	gc->printcon("Entering " + event->get_map_name());
 
 	mw->save_surf();
@@ -158,12 +159,12 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	gc->set_arena(Arena::create("indoors", event->get_map_name()));
 
 	if (gc->get_arena() == NULL) {
-		std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): Arena NULL.\n";
-		std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): Map name: " << event->get_map_name() << ".\n";
+		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): Arena NULL.\n";
+		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): Map name: " << event->get_map_name() << ".\n";
 		exit(-1);
 	}
 	if (gc->get_arena()->get_map() == NULL)
-		std::cerr << "ERROR: gamecontrol.cc::action_on_enter(): arena->get_map NULL.\n";
+		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): arena->get_map NULL.\n";
 
 	// If a map is stored inside the current game status, it means the player modified it in the past,
 	// and we should load it instead of loading it from the original game files.

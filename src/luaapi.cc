@@ -51,6 +51,7 @@
 #include "miniwin.hh"
 #include "gameeventhandler.hh"
 #include "eventchangeicon.hh"
+#include "eventplaysound.hh"
 
 extern "C" {
 #include <lua.h>
@@ -656,12 +657,12 @@ int l_player_change_hp(lua_State* L)
 
 int l_notify_party_hit(lua_State* L)
 {
-  static SoundSample sample;
+	static SoundSample sample;
 
-  Console::Instance().alarm();
-  sample.play(HIT);
+	Console::Instance().alarm();
+	sample.play(HIT);
 
-  return 0;
+	return 0;
 }
 
 // Returns the names of at most n randomly chosen players from the
@@ -932,12 +933,46 @@ int l_is_dead(lua_State* L)
 	return 1;
 }
 
+int l_make_guards(lua_State* L)
+{
+	if (!lua_isstring(L, 1)) {
+		std::cerr << "Error: Lua: l_make_guards() wrong argument.\n";
+		exit(EXIT_FAILURE);
+	}
+
+	string guard_mode = lua_tostring(L, 1);
+
+	if (boost::to_upper_copy(guard_mode) == "HOSTILE")
+	    GameControl::Instance().make_guards(HOSTILE);
+	else if (boost::to_upper_copy(guard_mode) == "RIGHTEOUS")
+	    GameControl::Instance().make_guards(RIGHTEOUS);
+	else
+	    GameControl::Instance().make_guards(NEUTRAL);
+
+	return 0;
+}
+
+// Pass name of file on the stack without
+
 int l_play_sound(lua_State* L)
 {
-	std::string file_name = lua_tostring(L, 1);
-	static SoundSample sample;
-	sample.play(file_name);
-	return 0;
+	GameEventHandler gh;
+	std::string filename = "";
+
+	if (!lua_isstring(L, 1)) {
+		std::cerr << "Error: Lua: l_play_sound() wrong argument.\n";
+		exit(EXIT_FAILURE);
+	}
+	filename = lua_tostring(L, 1);
+	boost::algorithm::trim(filename);
+	std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename));
+
+	if (gh.handle_event_playsound(new_ev, NULL))
+		lua_pushnumber(L, 1);  // All OK
+	else
+		lua_pushnumber(L, -1); // Error happened
+
+	return 1;
 }
 
 // True, if party is currently in battle
@@ -1186,6 +1221,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_change_icon);
   lua_setglobal(L, "simpl_change_icon");
+
+  lua_pushcfunction(L, l_make_guards);
+  lua_setglobal(L, "simpl_make_guards");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

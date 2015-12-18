@@ -413,8 +413,8 @@ void GameControl::move_objects()
 					map_obj->move_mode == FOLLOWING)
 		{
 			// Only follow each round with 70% probability or the following leaves the player no space to breathe
-			if (random(0,100) < 40)
-				break;
+//			if (random(0,100) < 40)
+//				break;
 
 			PathFinding pf(arena->get_map().get());
 
@@ -423,11 +423,14 @@ void GameControl::move_objects()
 
 			std::pair<unsigned,unsigned> new_coords = pf.follow_party(obj_x, obj_y, party->x, party->y);
 
-			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&             // If coordinates changed...
+			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&                       // If coordinates changed...
 					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 			{
-				moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
-				map_obj->set_coords(new_coords.first, new_coords.second);
+				// We need to check again for walkability, as other objects may have moved to this position in the same round...
+				if (walkable(new_coords.first, new_coords.second)) {
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+					map_obj->set_coords(new_coords.first, new_coords.second);
+				}
 			}
 		}
 
@@ -1466,6 +1469,8 @@ void GameControl::get_attacked()
 							get_map()->pop_obj(map_obj->id);
 						return;
 					}
+					else
+						std::cerr << "WARNING: gamecontrol.cc: I would attack, had I got an init script defined in the Lua script: " << map_obj->id << "\n";
 				}
 				else if (map_obj->get_type() == MAPOBJ_MONSTER) {
 					// We have foes from previous attack left, so do not initiate fresh combat
@@ -1490,6 +1495,8 @@ void GameControl::get_attacked()
 						return;
 					}
 				}
+				else
+					std::cerr << "WARNING: gamecontrol.cc: Unexpected case in get_attacked(): " << map_obj->id << "\n";
 			}
 		}
 	}
@@ -1856,15 +1863,15 @@ bool GameControl::walkable(int x, int y)
 			return false;
 	}
 
-	bool return_value = false;
+	bool is_walkable = false;
 
 	if (is_arena_outdoors())
-		return_value = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_NOT;
+		is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk != IW_NOT;
 	else {
-		return_value = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_NOT;
+		is_walkable = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk != IW_NOT;
 
-		// Don't walk over monsters...
-		if (!return_value) {
+		// But don't walk over monsters...
+		if (is_walkable) {
 			auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 			if (found_obj.first != found_obj.second) {
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
@@ -1885,7 +1892,7 @@ bool GameControl::walkable(int x, int y)
 		}
 	}
 
-	return !return_value;
+	return is_walkable;
 }
 
 // Just moves party, doesn't do turn or play sounds.  Use move_party() for that as a wrapper around

@@ -13,8 +13,6 @@ TODO
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
 
-- Magic system (prio high, skill high)
-
 - NPCs (prio med, skill high)
 
 - In game music (prio low, skill low)
@@ -22,6 +20,45 @@ TODO
 - Appearance of random monsters in dungeon (prio low, skill med)
 
 - Create different foes inside combat.cc rather than just one type (prio low, skill med)
+
+IN PROGRESS
+============
+
+- Magic system (prio high, skill high)
+
+DONE
+=====
+
+- AFTER TAXING TO TAXER AND PISSING HIM OFF, THE GUARD FOLLOW MECHANISM LEADS TO STACK OVERFLOW [SEVERE]
+
+- Locks and lock shop (prio high, skill med)
+
+- Rest party
+
+- Consume (DONE)/buy (DONE) food
+
+- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
+
+- DONE: Save/load game.  Store modified city maps?
+  (Add additional items, TODO)
+
+- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
+ 
+- Add weapons, arms, etc. from elements.xml.old to main elements.xml
+  and extend world.cc to read and use these properties.  [DONE]
+
+- Add icon property which is a number in the sequence of animations,
+  so that icons animate automatically.  Store the animation sequences
+  in hash table.  [DONE]
+
+- Leibniz does not yet save monster data and similar game data,
+  so far only reading of data is possible via world.cc. 
+
+  Put such files in separate XML file which is NOT read by editor
+  but only by game.  So nothing gets overwritten inside the world
+  file. [DONE - elements.xml]
+
+- Inventory weight, etc. (DONE)
 
 BUGS
 =====
@@ -99,35 +136,3 @@ NAMES
 - USE! Names from Materia Medica
 - USE! Names from Sherlock Holmes, Moriarty, etc.
 
-
-DONE
-=====
-
-- Locks and lock shop (prio high, skill med)
-
-- Rest party
-
-- Consume (DONE)/buy (DONE) food
-
-- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
-
-- DONE: Save/load game.  Store modified city maps?
-  (Add additional items, TODO)
-
-- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
- 
-- Add weapons, arms, etc. from elements.xml.old to main elements.xml
-  and extend world.cc to read and use these properties.  [DONE]
-
-- Add icon property which is a number in the sequence of animations,
-  so that icons animate automatically.  Store the animation sequences
-  in hash table.  [DONE]
-
-- Leibniz does not yet save monster data and similar game data,
-  so far only reading of data is possible via world.cc. 
-
-  Put such files in separate XML file which is NOT read by editor
-  but only by game.  So nothing gets overwritten inside the world
-  file. [DONE - elements.xml]
-
-- Inventory weight, etc. (DONE)

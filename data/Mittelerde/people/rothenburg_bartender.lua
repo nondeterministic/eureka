@@ -90,7 +90,9 @@ do
 	       if (look_answer == "y") then
 		  simpl_printcon("Alright then, I shall open the gate for you. Feel free to take a look downstairs...")
 		  conv_over = true
-		  simpl_change_icon(39, 36, 71, 72) -- Open the gate!
+		  -- Open the gate and play a creeky sound!
+		  simpl_play_sound("55820__sergenious__bridge.wav")
+		  simpl_change_icon(39, 36, 71, 72)
 	       else
 	       end
 	    end

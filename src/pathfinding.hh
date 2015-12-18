@@ -22,6 +22,8 @@ private:
 	int**  _all_paths;
 	bool** _visited;
 
+	int all_paths(int, int);
+
 public:
 	PathFinding(Map*);
 	~PathFinding();

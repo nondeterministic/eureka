@@ -83,13 +83,13 @@ do
 		  simpl_printcon("Thank you, your gold will help everyone in the kingdom.")
 	       else
 		  simpl_printcon("You should not try and fool the king into believing you are poor. GUARDS!! GUARDS!!")
+		  simpl_make_guards("HOSTILE")
 		  conv_over = true
-		  -- TODO: End conversation, make guards hostile
 	       end
 	    else
 	       simpl_printcon("Your continued antisocial behaviour leaves me no choice but to call for the guards. GUARDS!!")
+	       simpl_make_guards("HOSTILE")
 	       conv_over = true
-	       -- TODO: End conversation, make guards hostile
 	    end
 	 end
       elseif (item == "servant" or item == "public" or item == "public servant" or item == "skills") then
