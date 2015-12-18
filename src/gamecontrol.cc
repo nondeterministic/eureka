@@ -413,8 +413,8 @@ void GameControl::move_objects()
 					map_obj->move_mode == FOLLOWING)
 		{
 			// Only follow each round with 70% probability or the following leaves the player no space to breathe
-//			if (random(0,100) < 40)
-//				break;
+			if (random(0,100) < 40)
+				break;
 
 			PathFinding pf(arena->get_map().get());
 
@@ -427,7 +427,11 @@ void GameControl::move_objects()
 					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 			{
 				// We need to check again for walkability, as other objects may have moved to this position in the same round...
-				if (walkable(new_coords.first, new_coords.second)) {
+				if (walkable(new_coords.first, new_coords.second) &&
+					std::find(moved_objects_coords.begin(),
+							  moved_objects_coords.end(),
+							  std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
+				{
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 					map_obj->set_coords(new_coords.first, new_coords.second);
 				}
