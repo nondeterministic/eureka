@@ -32,9 +32,10 @@ public:
   Service(const Service&);
   std::string luaName();
 
-  int heal;
+  int  heal;
   bool heal_poison;
   bool resurrect;
+  bool level_up;
   std::string print_after;
 };
 

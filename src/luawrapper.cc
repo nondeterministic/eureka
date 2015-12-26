@@ -2,6 +2,8 @@
 #include <string>
 #include <list>
 #include <algorithm>
+#include <iostream>
+
 extern "C"
 {
 #include <lua.h>

@@ -15,6 +15,7 @@ extern "C"
 }
 #include <boost/algorithm/string.hpp>
 #include <string>
+#include <iostream>
 
 #include "luawrapper.hh"
 #include "luaapi.hh"

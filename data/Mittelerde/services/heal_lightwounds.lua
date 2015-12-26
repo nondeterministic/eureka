@@ -9,6 +9,7 @@ Services["heal light wounds"]  = {
    heal                   = math.random(5,15),
    heal_poison            = true,
    resurrect              = false,
+   level_up               = false,
 
    print_after            = "Healing of light wounds was successful!",
 

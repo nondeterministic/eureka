@@ -4,7 +4,7 @@ SUBDIRS = leibniz
 
 # -std=c++0x
 
-AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 \
+AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 -Wdeprecated-declarations \
 	$(LIBXMLPP_CFLAGS) \
 	$(SDL_CFLAGS) \
 	$(BOOST_CPPFLAGS) \

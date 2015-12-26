@@ -16,6 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <string>
 #include <vector>
+#include <iostream>
 
 ItemFactory::ItemFactory()
 {

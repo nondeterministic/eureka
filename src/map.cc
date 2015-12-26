@@ -896,7 +896,7 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 		row.clear();
 	}
 	catch (...) {
-		std::cerr << "BOOOOMMM!!! You better manually rescue your map data now." << std::cerr;
+		std::cerr << "BOOOOMMM!!! You better manually rescue your map data now." << std::endl;
 	}
 
 	// Now check/adjust objects...

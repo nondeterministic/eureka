@@ -995,7 +995,7 @@ void EditorWin::on_my_switch_page(Gtk::Widget* page, guint page_num)
     curr_map = World::Instance().get_map(new_curr_map_name.c_str());
   }
   catch (const MapNotFound& e) {
-    std::cerr << e.print() << std::cerr;
+    std::cerr << e.print() << std::endl;
     return;
   }
   if (curr_map->is_outdoors()) {
@@ -1093,7 +1093,7 @@ bool EditorWin::add_sdleditor_tab(const char* tab_name)
         _swin_icons_hbox.pack_start(_outdoors_icon_pic, Gtk::PACK_SHRINK);
     }
     catch (const MapNotFound& e) {
-      std::cerr << e.print() << std::cerr;
+      std::cerr << e.print() << std::endl;
       return false;
     }
 
@@ -1121,7 +1121,7 @@ bool EditorWin::add_sdleditor_tab(const char* tab_name)
       }
     }
     catch (const MapNotFound& e) {
-      std::cerr << e.print() << std::cerr;
+      std::cerr << e.print() << std::endl;
       return false;
     }
   }

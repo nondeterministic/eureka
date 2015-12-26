@@ -108,10 +108,10 @@ do
    end
    
    function otherwise(item)
-      if (item == "heal" or item == "healing" or item == "health" or item == "help" or item == "buy" or item == "shop" item == "sell") then
-	 job()
-      else	
-	 simpl_printcon("I cannot help you with that.")
-      end
-   end
+   		if (item == "heal" or item == "healing" or item == "health" or item == "help" or item == "buy" or item == "shop" or item == "sell") then
+			job()
+    	else	
+			simpl_printcon("I cannot help you with that.")
+    	end
+    end
 end

@@ -409,7 +409,7 @@ void GameControl::move_objects()
 		}
 
 		// FOLLOW
-		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 6 && abs((int)obj_y - party->y) < 6 ||
+		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 8 && abs((int)obj_y - party->y) < 8 ||
 					map_obj->move_mode == FOLLOWING)
 		{
 			// Only follow each round with 70% probability or the following leaves the player no space to breathe
@@ -427,7 +427,7 @@ void GameControl::move_objects()
 					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 			{
 				// We need to check again for walkability, as other objects may have moved to this position in the same round...
-				if (walkable(new_coords.first, new_coords.second) &&
+				if (// walkable(new_coords.first, new_coords.second) &&
 					std::find(moved_objects_coords.begin(),
 							  moved_objects_coords.end(),
 							  std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
@@ -439,6 +439,7 @@ void GameControl::move_objects()
 		}
 
 		// FLEE
+		// TODO: Also, like in the FOLLOW-case, add condition to only flee n fields max. distance? Otherwise they all flee to the edge of town...
 		if (map_obj->move_mode == FLEE) {
 			// Only flee each round with 70% probability or the fleeing leaves the player no chance to ever catch up
 			if (random(0,100) < 40)

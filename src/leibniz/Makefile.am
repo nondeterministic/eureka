@@ -1,6 +1,6 @@
 bin_PROGRAMS = leibniz
 
-AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
+AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 -Wdeprecated-declarations \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \
@@ -31,7 +31,7 @@ leibniz_SOURCES = leibniz.cc \
 		../eventermap.cc ../eventermap.hh \
 		../eventdeleteobj.cc ../eventdeleteobj.hh \
 		../eventplaysound.cc ../eventplaysound.hh \
-		../eventprintcon.cc ../eventprintcon.hh \ 
+		../eventprintcon.cc ../eventprintcon.hh \
 		../eventchangeicon.cc ../eventchangeicon.hh \
 		../eventluascript.cc ../eventluascript.hh \
 		eventwin.cc eventwin.hh \

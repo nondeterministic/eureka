@@ -3,13 +3,15 @@
 TODO
 =====
 
+- Potions [prio med, skill med]
+
+- Magic system (prio high, skill high) [IS THIS DONE? I THINK SO.]
+
 - Add shepherd that joins party, called EMMA (prio: med, skill low)
 
 - Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
 
 - Spell points recover from walking + resting (prio: med, skill low)
-
-- Level up (prio high, skill med)
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
 
@@ -24,7 +26,7 @@ TODO
 IN PROGRESS
 ============
 
-- Magic system (prio high, skill high)
+- Level up (prio high, skill med)
 
 DONE
 =====

@@ -27,7 +27,7 @@ PathFinding::PathFinding(Map* map)
 		_all_paths[i] = new int[_width];
 
 		for (int j = 0; j < _width; j++)
-			_all_paths[i][j] = 30000000;
+			_all_paths[i][j] = 300000000;
 	}
 
 	_visited= new bool*[_height];
@@ -68,8 +68,6 @@ PathFinding::~PathFinding()
 
 std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy, unsigned px, unsigned py)
 {
-	std::cout << "Follow: " << ox << ", " << oy << "\n";
-
 	GameControl& gc = GameControl::Instance();
 
 	int curr_sp = 0;
@@ -80,7 +78,6 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 	for (int xoff = -1; xoff < 2; xoff++) {
 		for (int yoff = -1; yoff < 2; yoff++) {
 			if (gc.walkable(ox + xoff, oy + yoff)) {
-				std::cout << "  Walkable: " << ox + xoff << ", " << oy + yoff << "\n";
 				curr_sp = shortest_path(ox + xoff, oy + yoff, px, py);
 				if (prev_sp == -2) // If it's the initial path, initialise prev_sp
 					prev_sp = curr_sp + 1;
@@ -142,41 +139,3 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 
 	return all_paths(ox,oy);
 }
-
-//int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
-//{
-//	if (abs(ox - (int)px) == 1 && abs(oy - (int)py) == 1)
-//		return 1;
-//
-//	if (ox == (int)px && oy == (int)py)
-//		return 0;
-//
-//	if (ox >= _width - 1 || oy >= _height - 1 || ox <= 0 || oy <= 0)
-//		return -1;
-//
-//	GameControl& gc = GameControl::Instance();
-//	std::vector<int> paths;
-//
-//	_visited[ox][oy] = true;
-//
-//	for (int xoff = -1; xoff < 2; xoff++) {
-//		for (int yoff = -1; yoff < 2; yoff++) {
-//			if (gc.walkable(ox + xoff, oy + yoff)) {
-//				if (_visited[ox + xoff][oy + yoff] && all_paths(ox + xoff,oy + yoff) > -1)
-//					paths.push_back(1 + all_paths(ox + xoff,oy + yoff));
-//				else if (!_visited[ox + xoff][oy + yoff]) {
-//					int sp = shortest_path(ox + xoff, oy + yoff, px, py);
-//					if (sp > -1)
-//						paths.push_back(1 + sp);
-//				}
-//			}
-//		}
-//	}
-//
-//	if (paths.size() > 0)
-//		_all_paths[ox][oy] = max(-1, *std::min_element(paths.begin(), paths.end()));
-//	else
-//		_all_paths[ox][oy] = -1;
-//
-//	return all_paths(ox,oy);
-//}

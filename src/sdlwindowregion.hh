@@ -20,6 +20,7 @@
 #ifndef __SDLWINDOWREGION_HH
 #define __SDLWINDOWREGION_HH
 
+#include <iostream>
 #include <SDL.h>
 
 #include <string>
