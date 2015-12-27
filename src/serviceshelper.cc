@@ -13,6 +13,7 @@
 #include "gamecontrol.hh"
 
 #include <string>
+#include <iostream>
 
 #include <boost/algorithm/string.hpp>
 
@@ -39,7 +40,7 @@ Service* ServicesHelper::createFromLua(std::string array_name)
 	w->heal_poison = lua.get_item_prop<bool>(globArrayName, array_name, "heal_poison");
 	w->resurrect = lua.get_item_prop<bool>(globArrayName, array_name, "resurrect");
 	w->print_after = lua.get_item_prop<std::string>(globArrayName, array_name, "print_after");
-	w->level_up = lua.get_item_prop<bool>(globArrayName, array_name, "level_up");
+
 	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
 
 	return w;

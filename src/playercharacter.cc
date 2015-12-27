@@ -1,4 +1,7 @@
 #include <string>
+#include <iostream>
+
+#include "gamecontrol.hh"  // TODO: This could be removed, only use it for random number generator.
 #include "playercharacter.hh"
 #include "profession.hh"
 #include "race.hh"
@@ -11,7 +14,7 @@ PlayerCharacter::PlayerCharacter()
 
 PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm, 
 				 int str, int luck, int dxt, int wis, 
-				 int charr, int iq, int end, bool sex,
+				 int charr, int iq, int end, bool sex, int level,
 				 RACE race, PROFESSION profession) : PlayerCharacter()
 {
 	_race = race;
@@ -30,6 +33,7 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 	_end = end;
 	_sex = sex;
 	_condition = GOOD;
+	_level = level;
 }
 
 bool PlayerCharacter::is_spell_caster()
@@ -57,14 +61,40 @@ void PlayerCharacter::set_profession(PROFESSION np)
   _prof = np;
 }
 
-void PlayerCharacter::set_level(int l)
+// This not simply sets the level, but, if l greater than the current level, increases the player characteristics.
+
+void PlayerCharacter::set_level(const int l)
 {
+	if (l <= _level) {
+		std::cerr << "WARNING: playercharacter.cc: Tried to set a lower (or the same) experience level for " << name() << " than he/she currently has. Level NOT set!\n";
+		return;
+	}
+
+	GameControl& gc = GameControl::Instance();
+
+	// Now update the character properties, once for each level raised.
+	int levels = potential_level() - level();
+	for (int i = 0; i < levels; i++) {
+		_hp_max = _hp_max + gc.random(3,6);
+
+		if (is_spell_caster()) {
+			_sp_max = _sp_max + gc.random(3,6);
+			_sp = _sp_max;
+		}
+
+		_str  = min(18, _str + gc.random(0,1));
+		_dxt  = min(18, _dxt + gc.random(0,1));
+		_end  = min(18, _end + gc.random(0,1));
+		_wis  = min(18, _wis + gc.random(0,1));
+		_iq   = min(18, _iq + gc.random(0,1));
+		_luck = min(18, _luck + gc.random(0,1));
+	}
+
 	_level = l;
 }
 
 int PlayerCharacter::level()
 {
-	_level = potential_level(); // TODO!!!
 	return _level;
 }
 

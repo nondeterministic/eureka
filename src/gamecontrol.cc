@@ -277,6 +277,30 @@ void GameControl::do_turn(bool resting)
 		}
 	}
 
+	// Restore spell points
+	if (is_arena_outdoors()) {
+		if (_turns%20 == 0) {
+			for (int i = 0; i < Party::Instance().party_size(); i++) {
+				PlayerCharacter* pl = Party::Instance().get_player(i);
+				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
+					pl->set_sp(pl->sp() + 1);
+					zwin.update_player_list();
+				}
+			}
+		}
+	}
+	else {
+		if (_turns%40 == 0) {
+			for (int i = 0; i < Party::Instance().party_size(); i++) {
+				PlayerCharacter* pl = Party::Instance().get_player(i);
+				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
+					pl->set_sp(pl->sp() + 1);
+					zwin.update_player_list();
+				}
+			}
+		}
+	}
+
 	// Is party starved to death?
 	if (Party::Instance().party_alive() == 0)
 		game_over();
@@ -924,12 +948,20 @@ void GameControl::hole_up()
 		for (int i = 0; i < Party::Instance().party_size(); i++) {
 			PlayerCharacter* pl = Party::Instance().get_player(i);
 
-			// Do actual party healing
-			if (pl->condition() != DEAD && pl->hp() < pl->hpm()) {
-				if (is_arena_outdoors() && rounds % 3 == 0)
-					pl->set_hp(pl->hp() + 1);
-				else if (is_arena_outdoors() && rounds % 10 == 0)
-					pl->set_hp(pl->hp() + 1);
+			// Do actual party healing and spell point recharging
+			if (pl->condition() != DEAD) {
+				if (pl->hp() < pl->hpm()) {
+					if (is_arena_outdoors() && rounds % 3 == 0)
+						pl->set_hp(pl->hp() + 1);
+					else if (is_arena_outdoors() && rounds % 10 == 0)
+						pl->set_hp(pl->hp() + 1);
+				}
+				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
+					if (is_arena_outdoors() && rounds % 3 == 0)
+						pl->set_sp(pl->sp() + 1);
+					else if (is_arena_outdoors() && rounds % 10 == 0)
+						pl->set_sp(pl->sp() + 1);
+				}
 			}
 		}
 

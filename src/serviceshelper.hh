@@ -9,6 +9,8 @@
 #define SERVICESHELPER_HH_
 
 #include <string>
+
+#include "playercharacter.hh"
 #include "service.hh"
 
 class ServicesHelper

@@ -1,5 +1,3 @@
-
-
 TODO
 =====
 
@@ -10,8 +8,6 @@ TODO
 - Add shepherd that joins party, called EMMA (prio: med, skill low)
 
 - Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
-
-- Spell points recover from walking + resting (prio: med, skill low)
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
 
@@ -26,10 +22,12 @@ TODO
 IN PROGRESS
 ============
 
-- Level up (prio high, skill med)
-
 DONE
 =====
+
+- Spell points recover from walking + resting (prio: med, skill low)
+
+- Level up (prio high, skill med) (DONE: Monk in Stadtkarte is an example)
 
 - AFTER TAXING TO TAXER AND PISSING HIM OFF, THE GUARD FOLLOW MECHANISM LEADS TO STACK OVERFLOW [SEVERE]
 

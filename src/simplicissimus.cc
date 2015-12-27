@@ -392,16 +392,16 @@ int start_game(int res_w, int res_h)
 	// Start fresh game with some dummy values
 	else {
 		// TODO: For testing, add some party members.  All have an axe - how handy!
-		PlayerCharacter p1("Bilbo Baggins", 20, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
-		// PlayerCharacter p1("Bilbo Baggins", 2, 11, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
+		PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
+		// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
 		party->add_player(p1);
 		party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
-		PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
+		PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, 1, HUMAN, MAGE);
 		// PlayerCharacter p2("Gandalf", 1, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
 		party->add_player(p2);
 		party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
 		// PlayerCharacter p3("Aragorn", 2, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
-		PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
+		PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, 1, HUMAN, FIGHTER);
 		party->add_player(p3);
 		party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
 		ZtatsWin::Instance().update_player_list();

@@ -20,7 +20,6 @@
 // See http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
 #define BOOST_NO_SCOPED_ENUMS
 #define BOOST_NO_CXX11_SCOPED_ENUMS
-// #define BOOST_FILESYSTEM_VERSION 3
 
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>

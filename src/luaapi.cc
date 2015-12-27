@@ -504,6 +504,32 @@ int l_buyitem(lua_State* L)
 	return 1;
 }
 
+// Level up all players that can be leveled up according to their respective EPs.
+// Return the number of players leveled-up, 0 if none was leveled up, a positive integer otherwise.
+
+int l_level_up(lua_State* L)
+{
+	int leveled_up = 0;
+
+	for (int i = 0; i < Party::Instance().party_size(); i++) {
+		PlayerCharacter* pl = Party::Instance().get_player(i);
+
+		if (pl->condition() != DEAD && pl->hp() > 0 &&  // Cannot level up dead players
+				pl->level() < pl->potential_level())
+		{
+			std::cout << "INFO: luaapi.cc: Leveled up player " << pl->name()  << " from " << pl->level() << " to " << pl->potential_level() << std::endl;
+			pl->set_level(pl->potential_level());
+			GameControl::Instance().printcon(pl->name() + " now has experience level " + std::to_string(pl->level()) + ".");
+			leveled_up++;
+		}
+	}
+
+    ZtatsWin::Instance().update_player_list();
+
+	lua_pushnumber(L, leveled_up);
+	return 1;
+}
+
 /**
  * On success, 0 is returned.
  * -1 is returned if the party doesn't have enough money to afford the service.
@@ -1224,6 +1250,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_make_guards);
   lua_setglobal(L, "simpl_make_guards");
+
+  lua_pushcfunction(L, l_level_up);
+  lua_setglobal(L, "simpl_level_up");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {
