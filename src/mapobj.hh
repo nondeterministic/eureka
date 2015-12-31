@@ -68,6 +68,7 @@ public:
 	PERSONALITY personality;
 	LOCK_TYPE lock_type;
 	bool openable;
+	bool is_random_monster;
 
 protected:
 	MAPOBJ_TYPES _type;

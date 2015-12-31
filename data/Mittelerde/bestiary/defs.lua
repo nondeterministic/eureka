@@ -21,6 +21,8 @@ end
 -- Random monsters table
 -- ---------------------
 
+-- TODO: Put the information below in a separate table, and then randomly return an entry from the table instead
+
 function rand_encounter(terrain)
    random = simpl_rand(1, 100)
 
@@ -29,13 +31,13 @@ function rand_encounter(terrain)
 	 return { 
 	    { __name = "Orc", 
 	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 5) }
+	      __number = simpl_rand(1, 5) },
 	 --    { __name = "Orc", 
 	 --      __distance = math.random(1, 4) * 10, 
 	 --      __number = math.random(1, 5) },
-	 --    { __name = "Troll", 
-	 --      __distance = -1, 
-	 --      __number = math.random(0, 2) } 
+	    { __name = "Troll", 
+	      __distance = -1, 
+	      __number = math.random(0, 2) }
 	 }
       end
    else

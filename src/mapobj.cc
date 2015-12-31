@@ -13,22 +13,23 @@
 
 MapObj::MapObj()
 {
-  _layer = 0;
-  _x = 0; 
-  _y = 0;
-  _ox = 0;
-  _oy = 0;
-  _icon = 0;
-  removable = false;
-  lua_name = "";
-  how_many = 1;
-  move_mode = STATIC;
-  personality = NEUTRAL;
+	is_random_monster = false;
+	_layer = 0;
+	_x = 0;
+	_y = 0;
+	_ox = 0;
+	_oy = 0;
+	_icon = 0;
+	removable = false;
+	lua_name = "";
+	how_many = 1;
+	move_mode = STATIC;
+	personality = NEUTRAL;
 
-  _type = MAPOBJ_ITEM;
+	_type = MAPOBJ_ITEM;
 
-  lock_type = UNLOCKED;
-  openable = false;
+	lock_type = UNLOCKED;
+	openable = false;
 }
 
 // TODO: Am not using copy constructor as it somehow breaks the game elsewhere.
@@ -40,6 +41,7 @@ MapObj MapObj::copy()
 {
 	MapObj tmp;
 
+	tmp.is_random_monster = is_random_monster;
 	tmp._layer = _layer;
 	tmp._x = _x;
 	tmp._y = _y;

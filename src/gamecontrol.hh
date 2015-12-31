@@ -113,6 +113,7 @@ public:
 	std::pair<int,int> get_viewport();
 	std::string select_spell(int);
 	void cast_spell(int, Spell);
+	void create_random_monsters_in_dungeon();
 };
 
 #endif

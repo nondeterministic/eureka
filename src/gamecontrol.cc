@@ -686,6 +686,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				// If there are hostile monsters next to the party, they may want to attack now...
 				get_attacked();
 
+				// Create random monsters in dungeons
+				create_random_monsters_in_dungeon();
+
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);
 				arena->show_party(screen_pos_party.first, screen_pos_party.second);
@@ -1493,6 +1496,55 @@ void GameControl::make_guards(PERSONALITY pers)
 			map_obj->personality = pers;
 	}
 }
+
+// Random monsters in dungeons work differently to outdoors: they don't simply appear, but are placed as objects
+// randomly near the party on the map and stay there, are saved as objects, etc.
+//
+// (I could have added this to indoorsmap.cc but then leibniz has yet another few nasty dependencies and I would
+//  have to do a few type casts here that wouldn't be so nice. So we simply create the monsters directly here.)
+
+void GameControl::create_random_monsters_in_dungeon()
+{
+	if (!arena->get_map()->is_dungeon)
+		return;
+
+	int rand_monster_count = 0;
+
+	// If there are already too many random monsters, don't generate more!
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj* map_obj = &(map_obj_pair->second);
+		if (map_obj->is_random_monster)
+			rand_monster_count++;
+	}
+	if (rand_monster_count > 15)
+		return;
+
+	const int min_distance_to_party = 5; // Monsters should not directly pop up next to the party
+	for (int xoff = -10; xoff < 10; xoff++) {
+		for (int yoff = -10; yoff < 10; yoff++) {
+			int monst_x = party->x + xoff;
+			int monst_y = party->y + yoff;
+
+			// Sort of, 40% chance of a new monster each turn
+			if (random(1,100) >= 60) {
+				if (abs(party->x - monst_x) >= min_distance_to_party || abs(party->y - monst_y) >= min_distance_to_party) {
+					if (walkable(monst_x, monst_y)) {
+						MapObj monster;
+						monster.set_origin(monst_x, monst_y);
+
+						// Determine type of monster using Lua
+
+
+
+						monster.move_mode = FOLLOWING;
+						monster.personality = HOSTILE;
+					}
+				}
+			}
+		}
+	}
+}
+
 
 // The "opposite" of attack(), so to speak:
 // lets those hostile objects attack the party if next to it.
