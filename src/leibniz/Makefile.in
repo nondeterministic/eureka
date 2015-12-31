@@ -108,20 +108,21 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_leibniz_OBJECTS = leibniz.$(OBJEXT) ../util.$(OBJEXT) \
 	../item.$(OBJEXT) ../weapon.$(OBJEXT) ../shield.$(OBJEXT) \
-	../gamecharacter.$(OBJEXT) ../creature.$(OBJEXT) \
-	../map.$(OBJEXT) obj.$(OBJEXT) ../action.$(OBJEXT) \
-	../actiontake.$(OBJEXT) ../actiononenter.$(OBJEXT) \
-	../actionpullpush.$(OBJEXT) ../actionopened.$(OBJEXT) \
-	addactionwin.$(OBJEXT) addobjectwin.$(OBJEXT) \
-	../mapobj.$(OBJEXT) ../gameevent.$(OBJEXT) \
-	../eventermap.$(OBJEXT) ../eventdeleteobj.$(OBJEXT) \
-	../eventplaysound.$(OBJEXT) ../eventprintcon.$(OBJEXT) \
-	../eventchangeicon.$(OBJEXT) ../eventluascript.$(OBJEXT) \
-	eventwin.$(OBJEXT) ../luawrapper.$(OBJEXT) \
-	../outdoorsmap.$(OBJEXT) ../indoorsmap.$(OBJEXT) \
-	../outdoorsicons.$(OBJEXT) ../iconprops.$(OBJEXT) \
-	../icons.$(OBJEXT) ../indoorsicons.$(OBJEXT) \
-	../spell.$(OBJEXT) ../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
+	../spellsbearer.$(OBJEXT) ../gamecharacter.$(OBJEXT) \
+	../creature.$(OBJEXT) ../map.$(OBJEXT) obj.$(OBJEXT) \
+	../action.$(OBJEXT) ../actiontake.$(OBJEXT) \
+	../actiononenter.$(OBJEXT) ../actionpullpush.$(OBJEXT) \
+	../actionopened.$(OBJEXT) addactionwin.$(OBJEXT) \
+	addobjectwin.$(OBJEXT) ../mapobj.$(OBJEXT) \
+	../gameevent.$(OBJEXT) ../eventermap.$(OBJEXT) \
+	../eventdeleteobj.$(OBJEXT) ../eventplaysound.$(OBJEXT) \
+	../eventprintcon.$(OBJEXT) ../eventchangeicon.$(OBJEXT) \
+	../eventluascript.$(OBJEXT) eventwin.$(OBJEXT) \
+	../luawrapper.$(OBJEXT) ../outdoorsmap.$(OBJEXT) \
+	../indoorsmap.$(OBJEXT) ../outdoorsicons.$(OBJEXT) \
+	../iconprops.$(OBJEXT) ../icons.$(OBJEXT) \
+	../indoorsicons.$(OBJEXT) ../spell.$(OBJEXT) \
+	../world.$(OBJEXT) ../gamerules.$(OBJEXT) \
 	iconpropswin.$(OBJEXT) newworldwin.$(OBJEXT) \
 	startupwin.$(OBJEXT) newmapwin.$(OBJEXT) sdleditor.$(OBJEXT) \
 	indoorssdleditor.$(OBJEXT) outdoorssdleditor.$(OBJEXT) \
@@ -375,6 +376,7 @@ leibniz_SOURCES = leibniz.cc \
 		../item.hh ../item.cc \
 		../weapon.hh ../weapon.cc \
 		../shield.hh ../shield.cc \
+		../spellsbearer.hh ../spellsbearer.cc \
 		../gamecharacter.hh ../gamecharacter.cc \
 		../creature.hh ../creature.cc \
 		../map.cc ../map.hh \
@@ -509,6 +511,8 @@ clean-binPROGRAMS:
 ../item.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../weapon.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
 ../shield.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
+../spellsbearer.$(OBJEXT): ../$(am__dirstamp) \
+	../$(DEPDIR)/$(am__dirstamp)
 ../gamecharacter.$(OBJEXT): ../$(am__dirstamp) \
 	../$(DEPDIR)/$(am__dirstamp)
 ../creature.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
@@ -593,6 +597,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/outdoorsmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/shield.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/spell.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/spellsbearer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/weapon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/world.Po@am__quote@

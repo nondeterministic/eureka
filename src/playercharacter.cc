@@ -43,17 +43,17 @@ bool PlayerCharacter::is_spell_caster()
 
 int PlayerCharacter::ep()
 {
-  return _ep;
+	return _ep;
 }
 
 void PlayerCharacter::inc_ep(int ne)
 {
-  _ep += ne;
+	_ep += ne;
 }
 
 PROFESSION PlayerCharacter::profession()
 {
-  return _prof;
+	return _prof;
 }
 
 void PlayerCharacter::set_profession(PROFESSION np)

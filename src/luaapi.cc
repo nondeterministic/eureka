@@ -52,6 +52,7 @@
 #include "gameeventhandler.hh"
 #include "eventchangeicon.hh"
 #include "eventplaysound.hh"
+#include "world.hh"
 
 extern "C" {
 #include <lua.h>
@@ -1122,13 +1123,74 @@ int l_magic_attack(lua_State* L)
 //
 // NOTE: Make sure to set combat pointer properly from the Lua script, prior to calling this
 // or the program will crash!!  (See above function to achieve this from Lua land.)
+//int simpl_get_hp(lua_State* L)
+//{
+//	int foe_nr = lua_tonumber(L, 1);
+//	Creature* c = combat->get_foes().get(foe_nr);
+//	lua_pushnumber(L, c->hp());
+//	return 1;
+//}
 
-int simpl_get_hp(lua_State* L)
+// At time of calling, the Lua stack contains an integer that describes how large the light radius around the party should be.
+
+int l_set_magic_light_radius(lua_State* L)
 {
-	int foe_nr = lua_tonumber(L, 1);
-	Creature* c = combat->get_foes().get(foe_nr);
-	lua_pushnumber(L, c->hp());
-	return 1;
+	Party& party = Party::Instance();
+	int radius   = lua_tonumber(L, 1);
+
+	party.set_magic_light_radius(radius);
+
+	return 0;
+}
+
+// Contains on the Lua stack at time of calling:
+// 1. string containing caster's name,
+// 2. string containing the spell name,
+// 3. duration of spell.
+// We need this information to reconstruct the full file path of the spell.
+
+int l_set_spell_duration_party(lua_State* L)
+{
+	std::string caster_name = lua_tostring(L, 1);
+	std::string spell_name = lua_tostring(L, 2);
+	int duration = lua_tonumber(L, 3);
+
+	PlayerCharacter* caster = Party::Instance().get_player(caster_name);
+
+	if (caster == NULL) {
+		std::cerr << "ERROR: luaapi.cc: caster == NULL. Spell casting failed! THIS IS A SERIOUS BUG, THE PROGRAM MAY ABORT UNEXPECTEDLY.\n";
+		return 0;
+	}
+
+	for (auto spell : *(World::Instance().get_spells())) {
+		if (spell.profession == caster->profession() && spell.name == spell_name)
+			Party::Instance().add_active_spell(spell.full_file_path, duration);
+	}
+
+	return 0;
+}
+
+int l_set_spell_duration_player(lua_State* L)
+{
+	std::string caster_name = lua_tostring(L, 1); // Name of casting player
+	std::string spell_name = lua_tostring(L, 2);
+	int duration = lua_tonumber(L, 3);
+	std::string player_name = lua_tostring(L, 4); // Name of player affected
+
+	PlayerCharacter* caster = Party::Instance().get_player(caster_name);
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+
+	if (caster == NULL || player == NULL) {
+		std::cerr << "ERROR: luaapi.cc: caster == NULL || player == NULL. Spell casting failed! THIS IS A SERIOUS BUG, THE PROGRAM MAY ABORT UNEXPECTEDLY.\n";
+		return 0;
+	}
+
+	for (auto spell : *(World::Instance().get_spells())) {
+		if (spell.profession == caster->profession() && spell.name == spell_name)
+			player->add_active_spell(spell.full_file_path, duration);
+	}
+
+	return 0;
 }
 
 void publicize_api(lua_State* L)
@@ -1253,6 +1315,15 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_level_up);
   lua_setglobal(L, "simpl_level_up");
+
+  lua_pushcfunction(L, l_set_spell_duration_party);
+  lua_setglobal(L, "simpl_set_spell_duration_party");
+
+  lua_pushcfunction(L, l_set_spell_duration_player);
+  lua_setglobal(L, "simpl_set_spell_duration_player");
+
+  lua_pushcfunction(L, l_set_magic_light_radius);
+  lua_setglobal(L, "simpl_set_magic_light_radius");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

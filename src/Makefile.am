@@ -22,6 +22,7 @@ simplicissimus_SOURCES = \
 	util.hh util.cc \
         luaapi.hh luaapi.cc \
 	luawrapper.hh luawrapper.cc \
+	spellsbearer.hh spellsbearer.cc \
 	gamecharacter.hh gamecharacter.cc \
 	creature.hh creature.cc \
 	sdlwindow.hh sdlwindow.cc \

@@ -2,11 +2,23 @@
 #include "party.hh"
 #include "jimmylock.hh"
 
+#include "luaapi.hh"
+#include "luawrapper.hh"
+
 #include <utility>
 #include <iostream>
 #include <memory>
+#include <map>
 
 #include <libxml++/libxml++.h>
+
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
 
 void Party::set_coords(int x, int y)
 {
@@ -35,6 +47,7 @@ Party::Party()
 	_jlocks = 0;
 	is_resting = false;
 	is_in_combat = false;
+	_magic_light_radius = 0;
 }
 
 Party& Party::Instance()
@@ -307,9 +320,16 @@ int Party::max_carrying_capacity()
 	return max_weight / 6.35;
 }
 
+// Sets the light radius around the party to radius for duration turns.
+
+void Party::set_magic_light_radius(int radius)
+{
+	_magic_light_radius = radius;
+}
+
 int Party::light_radius()
 {
-	int radius = 0;
+	int radius = _magic_light_radius;
 
 	for (PlayerCharacter &player: _players) {
 		if (player.weapon() != NULL) {

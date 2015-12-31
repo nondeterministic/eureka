@@ -94,8 +94,15 @@ int SpellCastHelper::choose()
 
 void SpellCastHelper::execute(Combat* combat)
 {
-	std::cout << "Executing spell!\n";
+	LuaWrapper lua(L);
+	lua.call_void_fn("cast");
+	ZtatsWin::Instance().update_player_list();
+}
 
+// Note that finish() is called from spellsbearer.cc
+
+void SpellCastHelper::init()
+{
 	LuaWrapper lua(L);
 
 	if (!enabled())
@@ -106,6 +113,5 @@ void SpellCastHelper::execute(Combat* combat)
 
 	player->set_sp(player->sp() - spell.sp);
 
-	lua.call_void_fn("cast");
-	ZtatsWin::Instance().update_player_list();
+	lua.call_void_fn("init");
 }

@@ -23,7 +23,10 @@
 #include "race.hh"
 #include "profession.hh"
 #include "gamecharacter.hh"
+
 #include <string>
+
+#include <boost/unordered_map.hpp>
 
 enum PlayerState {
   NORMAL_STATE, 
@@ -42,6 +45,7 @@ private:
   PROFESSION  _prof;
   int         _ep;
   int         _level;
+  boost::unordered_map<std::string, int> _active_spells;
 
 public:
   PlayerCharacter();

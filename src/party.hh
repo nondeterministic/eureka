@@ -1,18 +1,18 @@
 #ifndef PARTY_HH
 #define PARTY_HH
 
-#include <libxml++/libxml++.h>
-
 #include <utility>
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include "playercharacter.hh"
 #include "weapon.hh"
 #include "inventory.hh"
+#include "spellsbearer.hh"
 
-class Party
+class Party : public SpellsBearer
 {
 protected:
   std::vector<PlayerCharacter> _players;
@@ -23,6 +23,7 @@ protected:
   int _gold, _food;
   int _guard;
   int _jlocks;
+  int _magic_light_radius;
 
   Party();
 
@@ -68,6 +69,7 @@ public:
   void rm_jimmylock();
   void add_jimmylock();
   int jimmylock_count();
+  void set_magic_light_radius(int);
 };
 
 #endif

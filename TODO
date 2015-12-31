@@ -1,26 +1,28 @@
 TODO
 =====
 
-- Potions [prio med, skill med]
+- Create different foes inside combat.cc rather than just one type (prio low, skill med)
 
-- Magic system (prio high, skill high) [IS THIS DONE? I THINK SO.]
+- Appearance of random monsters in dungeon (prio low, skill med)
 
-- Add shepherd that joins party, called EMMA (prio: med, skill low)
-
-- Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
+- Check that save-game still works - perhaps write test for it? [prio med, skill med]
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
 
 - NPCs (prio med, skill high)
 
+- Potions [prio med, skill med]
+
+- Add shepherd that joins party, called EMMA (prio: med, skill low)
+
+- Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
+
 - In game music (prio low, skill low)
-
-- Appearance of random monsters in dungeon (prio low, skill med)
-
-- Create different foes inside combat.cc rather than just one type (prio low, skill med)
 
 IN PROGRESS
 ============
+
+- Magic system (prio high, skill high) [IS THIS DONE? MOSTLY YES, SPELLS ARE MISSING THOUGH, such as light spell.]
 
 DONE
 =====

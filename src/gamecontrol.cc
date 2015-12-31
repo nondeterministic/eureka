@@ -277,6 +277,13 @@ void GameControl::do_turn(bool resting)
 		}
 	}
 
+	// Decrease duration of ongoing spells
+	Party::Instance().decrease_spells(_lua_state);
+	for (int i = 0; i < Party::Instance().party_size(); i++) {
+		PlayerCharacter* pl = Party::Instance().get_player(i);
+		pl->decrease_spells(_lua_state, pl->name());
+	}
+
 	// Restore spell points
 	if (is_arena_outdoors()) {
 		if (_turns%20 == 0) {
@@ -705,6 +712,7 @@ void GameControl::cast_spell(int player_no, Spell spell)
 			return;
 		}
 
+		sch.init();
 		sch.choose();
 		sch.execute();
 	}

@@ -27,6 +27,7 @@ using namespace std;
 #include "weapon.hh"
 #include "shield.hh"
 #include "race.hh"
+#include "spellsbearer.hh"
 
 enum ATTITUDE {
   RIGHT, NEUTR, CHAOS
@@ -36,7 +37,7 @@ enum PlayerCondition {
   GOOD, POISONED, DEAD
 };
 
-class GameCharacter
+class GameCharacter : public SpellsBearer
 {
 protected:
   int _hp, _hp_max;             // Hit points

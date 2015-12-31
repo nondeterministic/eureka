@@ -44,7 +44,7 @@ Spell Spell::spell_from_file_path(std::string fp, lua_State* L)
 
 	// Now execute spell to extract missing data that we want to store in spell object
 	if (luaL_dofile(L, fp.c_str())) {
-		std::cerr << "ERROR: spell.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
+		std::cerr << "ERROR: spell.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << std::endl;
 		exit(1);
 	}
 

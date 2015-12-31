@@ -36,6 +36,8 @@ public:
 	void set_spell_path(std::string);
 	void execute(Combat* = NULL);
 	int choose();
+	void init();
+	// finish() is called from spellsbearer.cc
 	bool is_attack_spell_only();
 };
 

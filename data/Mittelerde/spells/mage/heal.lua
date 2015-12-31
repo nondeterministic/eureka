@@ -85,6 +85,14 @@ do
 	  end
    end
 
+   -- Spells that have a duration for multiple rounds need to define the following 'constructor' and 'destructor' functions. Other spells leave this blank!
+
+   function init()
+   end
+   
+   function finish(player)
+   end
+
    -- ---------------------------------------------------------------------------------
 
 end
