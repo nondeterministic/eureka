@@ -74,6 +74,7 @@ extern "C" {
 #include "tinywin.hh"
 #include "ztatswin.hh"
 #include "luaapi.hh"
+#include "luawrapper.hh"
 #include "soundsample.hh"
 #include "playlist.hh"
 #include "itemfactory.hh"
@@ -443,8 +444,8 @@ void GameControl::move_objects()
 		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 8 && abs((int)obj_y - party->y) < 8 ||
 					map_obj->move_mode == FOLLOWING)
 		{
-			// Only follow each round with 70% probability or the following leaves the player no space to breathe
-			if (random(0,100) < 40)
+			// Only follow each round with certain probability or the following leaves the player no space to breathe
+			if (random(0,100) < 60)
 				break;
 
 			PathFinding pf(arena->get_map().get());
@@ -1516,28 +1517,66 @@ void GameControl::create_random_monsters_in_dungeon()
 		if (map_obj->is_random_monster)
 			rand_monster_count++;
 	}
-	if (rand_monster_count > 15)
+	if (rand_monster_count >= 8)
 		return;
 
-	const int min_distance_to_party = 5; // Monsters should not directly pop up next to the party
-	for (int xoff = -10; xoff < 10; xoff++) {
-		for (int yoff = -10; yoff < 10; yoff++) {
+	const int min_distance_to_party = 7; // Monsters should not directly pop up next to the party
+	for (int xoff = -20; xoff < 20; xoff++) {
+		for (int yoff = -20; yoff < 20; yoff++) {
 			int monst_x = party->x + xoff;
 			int monst_y = party->y + yoff;
 
-			// Sort of, 40% chance of a new monster each turn
-			if (random(1,100) >= 60) {
+			// X% chance of a new monster each turn
+			if (random(1,100) <= 50) {
 				if (abs(party->x - monst_x) >= min_distance_to_party || abs(party->y - monst_y) >= min_distance_to_party) {
 					if (walkable(monst_x, monst_y)) {
 						MapObj monster;
 						monster.set_origin(monst_x, monst_y);
+						monster.set_coords((unsigned)monst_x, (unsigned)monst_y);
 
 						// Determine type of monster using Lua
+						LuaWrapper lua(_lua_state);
+						lua.push_fn_arg((std::string)"plain"); // TODO: Replace with dungeon here and in Lua defs.lua file!!
+						lua.call_fn_leave_ret_alone("rand_encounter");
 
+						// Iterate through result table (see also combat.cc for where I originally copied this more or less from)
+						lua_pushnil(_lua_state);
+						while (lua_next(_lua_state, -2) != 0) {
+							lua_pushnil(_lua_state);
+							while (lua_next(_lua_state, -2) != 0) {
+								// Only create first monster, in case bestiary/defs.lua spits out a whole array of monsters...
+								// So as soon as combat script is defined, skip the rest of the result set.
+								if (monster.get_combat_script_path().length() == 0) {
+									string __key = lua_tostring(_lua_state, -2);
 
+									// Name of monster
+									if (__key == "__name") {
+										std::string __name = lua_tostring(_lua_state, -1);
+										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(__name) + ".lua");
+										std::cout << "CREATING MONSTER: " << __name << "\n";
 
-						monster.move_mode = FOLLOWING;
-						monster.personality = HOSTILE;
+										monster.move_mode = FOLLOWING;
+										monster.personality = HOSTILE;
+										monster.set_type(MAPOBJ_MONSTER);
+
+										lua.push_fn_arg(boost::to_lower_copy(__name));
+										monster.set_icon(lua.call_fn<double>("get_default_icon"));
+										std::cout << "MONSTER ICON: " << monster.get_icon() << "\n";
+
+										arena->get_map()->push_obj(monster);
+										std::cout << "FINISHED CREATING MONSTER: " << monster.get_combat_script_path() << "\n";
+
+										// TODO: Can we simply do lua_settop(L, 0); instead
+										// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
+										lua_settop(_lua_state, 0);
+
+										return;
+									}
+								}
+								lua_pop(_lua_state, 1);
+							}
+							lua_pop(_lua_state, 1);
+						}
 					}
 				}
 			}

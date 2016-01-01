@@ -17,6 +17,18 @@ function deep_water_encounter()
    return water_encounter()
 end
 
+function get_default_icon(monster_name)
+   icons = {}
+   icons["orc"] = 355
+   icons["troll"] = 355
+
+   if (icons[monster_name]) then
+      return icons[monster_name]
+   else
+      return 0 -- This should never happen!
+   end
+end
+
 -- ---------------------
 -- Random monsters table
 -- ---------------------

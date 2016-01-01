@@ -25,6 +25,7 @@ MapObj::MapObj()
 	how_many = 1;
 	move_mode = STATIC;
 	personality = NEUTRAL;
+	_combat_script = "";
 
 	_type = MAPOBJ_ITEM;
 
