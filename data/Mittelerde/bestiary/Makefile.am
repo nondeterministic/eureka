@@ -1,4 +1,4 @@
-EXTRA_DIST = *.lua *.png
+EXTRA_DIST = $(wildcard *.lua) $(wildcard *.png)
 
 bestiarydir = $(datadir)/simplicissimus/data/Mittelerde/bestiary
 

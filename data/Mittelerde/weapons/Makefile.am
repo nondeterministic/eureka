@@ -1,4 +1,4 @@
-EXTRA_DIST = *.lua
+EXTRA_DIST = $(wildcard *.lua)
 
 weaponsdir = $(datadir)/simplicissimus/data/Mittelerde/weapons
 

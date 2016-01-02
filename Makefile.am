@@ -1,4 +1,6 @@
-AUTOMAKE_OPTIONS = dist-shar dist-zip dist-tarZ subdir-objects
+AUTOMAKE_OPTIONS = dist-zip subdir-objects no-dependencies
+
+# dist-tarZ dist-shar  
 
 SUBDIRS = src data m4
 
@@ -8,9 +10,10 @@ ACLOCAL_AMFLAGS = -I m4
 
 @MAINT@alldist: 
 @MAINT@	${MAKE} distcheck
-@MAINT@	${MAKE} dist-shar
 @MAINT@	${MAKE} dist-zip
-@MAINT@	${MAKE} dist-tarZ
+
+# @MAINT@	${MAKE} dist-shar
+# @MAINT@	${MAKE} dist-tarZ
 
 @MAINT@cvsclean: maintainer-clean
 @MAINT@	@-rm -f `find . -name Makefile.in`

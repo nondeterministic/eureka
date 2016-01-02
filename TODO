@@ -1,10 +1,6 @@
 TODO
 =====
 
-- Create different foes inside combat.cc rather than just one type (prio low, skill med)
-
-- Appearance of random monsters in dungeon (prio low, skill med)
-
 - Check that save-game still works - perhaps write test for it? [prio med, skill med]
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
@@ -24,6 +20,10 @@ IN PROGRESS
 
 DONE
 =====
+
+- Create different foes inside combat.cc rather than just one type (prio low, skill med)
+
+- Appearance of random monsters in dungeon (prio low, skill med)
 
 - Magic system (prio high, skill high) [IS THIS DONE? MOSTLY YES, SPELLS ARE MISSING THOUGH, such as light spell.]
 

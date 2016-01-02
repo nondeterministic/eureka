@@ -1,4 +1,4 @@
-EXTRA_DIST = *.png
+EXTRA_DIST = $(wildcard *.png)
 
 imagesdir = $(datadir)/simplicissimus/data/Mittelerde/images
 

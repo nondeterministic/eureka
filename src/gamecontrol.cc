@@ -1,6 +1,6 @@
+// This source file is part of Simplicissimus
 //
-//
-// Copyright (c) 2005  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1553,7 +1553,6 @@ void GameControl::create_random_monsters_in_dungeon()
 									if (__key == "__name") {
 										std::string __name = lua_tostring(_lua_state, -1);
 										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(__name) + ".lua");
-										std::cout << "CREATING MONSTER: " << __name << "\n";
 
 										monster.move_mode = FOLLOWING;
 										monster.personality = HOSTILE;
@@ -1561,10 +1560,8 @@ void GameControl::create_random_monsters_in_dungeon()
 
 										lua.push_fn_arg(boost::to_lower_copy(__name));
 										monster.set_icon(lua.call_fn<double>("get_default_icon"));
-										std::cout << "MONSTER ICON: " << monster.get_icon() << "\n";
 
 										arena->get_map()->push_obj(monster);
-										std::cout << "FINISHED CREATING MONSTER: " << monster.get_combat_script_path() << "\n";
 
 										// TODO: Can we simply do lua_settop(L, 0); instead
 										// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
@@ -1583,7 +1580,6 @@ void GameControl::create_random_monsters_in_dungeon()
 		}
 	}
 }
-
 
 // The "opposite" of attack(), so to speak:
 // lets those hostile objects attack the party if next to it.

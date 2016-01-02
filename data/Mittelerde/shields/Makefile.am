@@ -1,4 +1,4 @@
-EXTRA_DIST = *.lua
+EXTRA_DIST = $(wildcard *.lua)
 
 shieldsdir = $(datadir)/simplicissimus/data/Mittelerde/shields
 

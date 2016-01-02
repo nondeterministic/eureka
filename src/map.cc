@@ -1,6 +1,6 @@
-// leibniz
+// This source file is part of Simplicissimus
 //
-// Copyright (c) 2009  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -332,6 +332,8 @@ void Map::parse_objects_node(const xmlpp::Node* node)
 					new_obj.id = attribute->get_value().c_str();
 				else if (a_name == "removable")
 					new_obj.removable = attribute->get_value().uppercase() == "YES";
+				else if (a_name == "random_monster")
+					new_obj.is_random_monster = attribute->get_value().uppercase() == "YES";
 				else if (a_name == "locked") {
 					new_obj.openable = true;
 
@@ -723,6 +725,7 @@ bool Map::xml_write_map_data(std::string path)
 				object_node->set_attribute("lua_name", mapObj.lua_name);
 				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
 				object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
+				object_node->set_attribute("random_monster", (mapObj.is_random_monster? "yes" : "no"));
 
 				if (mapObj.openable) {
 					if (mapObj.lock_type == NORMAL_LOCK)

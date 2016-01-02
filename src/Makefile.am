@@ -4,13 +4,15 @@ SUBDIRS = leibniz
 
 # -std=c++0x
 
-AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 -Wdeprecated-declarations \
+AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11  \
 	$(LIBXMLPP_CFLAGS) \
 	$(SDL_CFLAGS) \
 	$(BOOST_CPPFLAGS) \
 	$(LUA_CFLAGS) \
 	-DDATADIR=\"@datadir@\" \
 	-DPREFIX=\"@prefix@\"
+
+AUTOMAKE_OPTIONS = no-dependencies
 
 LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_SIGNALS_LIBS@ \

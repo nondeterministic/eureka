@@ -147,9 +147,8 @@ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
+depcomp =
+am__depfiles_maybe =
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -212,7 +211,7 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
+am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -223,6 +222,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+BOOST_CXXFLAGS = @BOOST_CXXFLAGS@
 BOOST_FILESYSTEM_LDFLAGS = @BOOST_FILESYSTEM_LDFLAGS@
 BOOST_FILESYSTEM_LDPATH = @BOOST_FILESYSTEM_LDPATH@
 BOOST_FILESYSTEM_LIBS = @BOOST_FILESYSTEM_LIBS@
@@ -354,6 +354,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -362,7 +363,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 -Wdeprecated-declarations \
+AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \
@@ -370,7 +371,7 @@ AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 -Wdeprecated-declarat
 	    $(LUA_CFLAGS) \
 	    -DDATADIR=\"@datadir@\" -DPREFIX=\"@prefix@\"
 
-AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS = no-dependencies
 leibniz_SOURCES = leibniz.cc \
 		../util.hh ../util.cc \
 		../item.hh ../item.cc \
@@ -504,60 +505,37 @@ clean-binPROGRAMS:
 ../$(am__dirstamp):
 	@$(MKDIR_P) ..
 	@: > ../$(am__dirstamp)
-../$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../$(DEPDIR)
-	@: > ../$(DEPDIR)/$(am__dirstamp)
-../util.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../item.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../weapon.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../shield.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../spellsbearer.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../gamecharacter.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../creature.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../map.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../action.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../actiontake.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../actiononenter.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../actionpullpush.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../actionopened.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../mapobj.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../gameevent.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventermap.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventdeleteobj.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventplaysound.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventprintcon.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventchangeicon.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../eventluascript.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../luawrapper.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../outdoorsmap.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../indoorsmap.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../outdoorsicons.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../iconprops.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../icons.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../indoorsicons.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
-../spell.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../world.$(OBJEXT): ../$(am__dirstamp) ../$(DEPDIR)/$(am__dirstamp)
-../gamerules.$(OBJEXT): ../$(am__dirstamp) \
-	../$(DEPDIR)/$(am__dirstamp)
+../util.$(OBJEXT): ../$(am__dirstamp)
+../item.$(OBJEXT): ../$(am__dirstamp)
+../weapon.$(OBJEXT): ../$(am__dirstamp)
+../shield.$(OBJEXT): ../$(am__dirstamp)
+../spellsbearer.$(OBJEXT): ../$(am__dirstamp)
+../gamecharacter.$(OBJEXT): ../$(am__dirstamp)
+../creature.$(OBJEXT): ../$(am__dirstamp)
+../map.$(OBJEXT): ../$(am__dirstamp)
+../action.$(OBJEXT): ../$(am__dirstamp)
+../actiontake.$(OBJEXT): ../$(am__dirstamp)
+../actiononenter.$(OBJEXT): ../$(am__dirstamp)
+../actionpullpush.$(OBJEXT): ../$(am__dirstamp)
+../actionopened.$(OBJEXT): ../$(am__dirstamp)
+../mapobj.$(OBJEXT): ../$(am__dirstamp)
+../gameevent.$(OBJEXT): ../$(am__dirstamp)
+../eventermap.$(OBJEXT): ../$(am__dirstamp)
+../eventdeleteobj.$(OBJEXT): ../$(am__dirstamp)
+../eventplaysound.$(OBJEXT): ../$(am__dirstamp)
+../eventprintcon.$(OBJEXT): ../$(am__dirstamp)
+../eventchangeicon.$(OBJEXT): ../$(am__dirstamp)
+../eventluascript.$(OBJEXT): ../$(am__dirstamp)
+../luawrapper.$(OBJEXT): ../$(am__dirstamp)
+../outdoorsmap.$(OBJEXT): ../$(am__dirstamp)
+../indoorsmap.$(OBJEXT): ../$(am__dirstamp)
+../outdoorsicons.$(OBJEXT): ../$(am__dirstamp)
+../iconprops.$(OBJEXT): ../$(am__dirstamp)
+../icons.$(OBJEXT): ../$(am__dirstamp)
+../indoorsicons.$(OBJEXT): ../$(am__dirstamp)
+../spell.$(OBJEXT): ../$(am__dirstamp)
+../world.$(OBJEXT): ../$(am__dirstamp)
+../gamerules.$(OBJEXT): ../$(am__dirstamp)
 
 leibniz$(EXEEXT): $(leibniz_OBJECTS) $(leibniz_DEPENDENCIES) $(EXTRA_leibniz_DEPENDENCIES) 
 	@rm -f leibniz$(EXEEXT)
@@ -570,77 +548,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/action.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiononenter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actionopened.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actionpullpush.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/actiontake.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/creature.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventchangeicon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventdeleteobj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventermap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventluascript.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventplaysound.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/eventprintcon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gamecharacter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gameevent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/gamerules.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/iconprops.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/icons.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/indoorsicons.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/indoorsmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/item.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/luawrapper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/map.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/mapobj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/outdoorsicons.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/outdoorsmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/shield.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/spell.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/spellsbearer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/weapon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../$(DEPDIR)/world.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/addactionwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/addobjectwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/editorwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eventwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expandmapwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iconpropswin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/indoorssdleditor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leibniz.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newmapwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newworldwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obj.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/outdoorssdleditor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdleditor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/selectmapwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/startupwin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tabcontext.Po@am__quote@
-
 .cc.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
+	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ $<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+	$(AM_V_CXX)$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -763,7 +678,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f ../$(DEPDIR)/$(am__dirstamp)
 	-rm -f ../$(am__dirstamp)
 
 maintainer-clean-generic:
@@ -774,7 +688,6 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -820,7 +733,6 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ../$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

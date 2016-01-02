@@ -1,6 +1,6 @@
 bin_PROGRAMS = leibniz
 
-AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 -Wdeprecated-declarations \
+AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \
@@ -8,7 +8,7 @@ AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 -Wdeprecated-declarat
 	    $(LUA_CFLAGS) \
 	    -DDATADIR=\"@datadir@\" -DPREFIX=\"@prefix@\"
 
-AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS = no-dependencies
 
 leibniz_SOURCES = leibniz.cc \
 		../util.hh ../util.cc \

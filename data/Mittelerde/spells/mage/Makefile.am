@@ -1,4 +1,4 @@
-EXTRA_DIST = *.lua
+EXTRA_DIST = $(wildcard *.lua)
 
 magedir = $(datadir)/simplicissimus/data/Mittelerde/spells/mage
 
