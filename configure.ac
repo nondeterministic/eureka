@@ -46,6 +46,7 @@ AC_SUBST(LIBXMLPP_LIBS)
 
 BOOST_REQUIRE([1.58.0])
 BOOST_FILESYSTEM
+BOOST_REGEX
 BOOST_STRING_ALGO
 BOOST_SIGNALS
 BOOST_BIND
@@ -64,10 +65,10 @@ AC_MSG_RESULT($LUA_LIBS)
 AC_SUBST([LUA_CFLAGS])
 AC_SUBST([LUA_LIBS])
 
-AC_DEFINE(WORLD_NAME, "Mittelerde", 
-		      [Name of the game world. Do not change!])
-AC_DEFINE_UNQUOTED([SAMPLES_PATH], ["$PACKAGE/data/Mittelerde/sound/"],
-		      [Path to sound samples.])
+# AC_DEFINE(WORLD_NAME, "Mittelerde", 
+# 		      [Name of the game world. Do not change!])
+# AC_DEFINE_UNQUOTED([SAMPLES_PATH], ["$PACKAGE/data/Mittelerde/sound/"],
+# 		      [Path to sound samples.])
 
 AC_CONFIG_FILES([Makefile \
 	         src/Makefile 
@@ -103,5 +104,6 @@ echo "
   		   Boost: $BOOST_SIGNALS_LIBS
   		          $BOOST_FILESYSTEM_LIBS 
 		          $BOOST_SYSTEM_LIBS
+			  $BOOST_REGEX_LIBS
 		     Lua: $LUA_LIBS
 		    Libs: $LIBS"

@@ -5,6 +5,7 @@
 #include "shield.hh"
 #include "profession.hh"
 #include "soundsample.hh"
+#include "config.h"
 
 #include <string>
 #include <memory>
@@ -13,6 +14,12 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem/path.hpp>
+
+extern std::string             conf_world_name;
+extern boost::filesystem::path conf_data_path;
+extern boost::filesystem::path conf_world_path;
+extern boost::filesystem::path conf_savegame_path;
 
 enum Alignment
 {

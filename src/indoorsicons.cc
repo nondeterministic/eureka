@@ -1,22 +1,32 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include <SDL.h>
 #include <SDL_image.h>
+
+#ifndef EDITOR_COMPILE
+#include "simplicissimus.hh"
+#else
+#include "leibniz.hh"
+#endif
+
 #include "indoorsicons.hh"
 #include "world.hh"
 #include "config.h"
+
 IndoorsIcons::IndoorsIcons()
 {
   unsigned icon_size = World::Instance().get_indoors_tile_size();
 
   // Load indoors icon set
-  std::string icon_path = 
-    (std::string)DATADIR + "/simplicissimus/data/" + 
-    (std::string)WORLD_NAME + "/images/icons_indoors.png";
-  _ptr_icon_surf = IMG_Load(icon_path.c_str());
+//  std::string icon_path =
+//    (std::string)DATADIR + "/simplicissimus/data/" +
+//    (std::string)WORLD_NAME + "/images/icons_indoors.png";
+
+  _ptr_icon_surf = IMG_Load((conf_world_path / "images" / "icons_indoors.png").c_str());
   if (!_ptr_icon_surf)
-    std::cerr << "Couldn't load indoors icons: " << IMG_GetError() << std::endl;
+    std::cerr << "ERROR: indooricons.cc: Couldn't load indoors icons: " << IMG_GetError() << ": " << (conf_world_path / "images" / "icons_indoors.png").c_str() << std::endl;
   
   // TODO: Why oh why do I have to disable alpha first?
   SDL_SetAlpha(_ptr_icon_surf, 

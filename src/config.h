@@ -13,6 +13,9 @@
 /* Define to 1 if you have <boost/filesystem/path.hpp> */
 #define HAVE_BOOST_FILESYSTEM_PATH_HPP 1
 
+/* Define to 1 if you have <boost/regex.hpp> */
+#define HAVE_BOOST_REGEX_HPP 1
+
 /* Define to 1 if you have <boost/signal.hpp> */
 #define HAVE_BOOST_SIGNAL_HPP 1
 
@@ -83,14 +86,8 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.0.1"
 
-/* Path to sound samples. */
-#define SAMPLES_PATH "simplicissimus/data/Mittelerde/sound/"
-
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
 #define VERSION "0.0.1"
-
-/* Name of the game world. Do not change! */
-#define WORLD_NAME "Mittelerde"

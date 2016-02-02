@@ -21,11 +21,13 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-
 #include <memory>
-#include <boost/unordered_set.hpp>
+
 #include <boost/bind.hpp>
+#include <boost/unordered_set.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <SDL.h>
 #include <SDL_keysym.h>
@@ -453,12 +455,12 @@ int Combat::foes_fight()
 		// Load corresponding Lua monster definition.
 		//
 		// Indoors map defined monster (e.g., town folk)
-		if (luaL_dofile(_lua_state, ((std::string)DATADIR + "/" +
-				(std::string)PACKAGE + "/data/" +
-				(std::string)WORLD_NAME + "/bestiary/" +
-				boost::algorithm::to_lower_copy(foe->name()) +
-				(std::string)".lua").c_str()))
-		{
+
+		boost::filesystem::path beast_path(conf_world_path);
+		beast_path /= "bestiary";
+		beast_path /= boost::algorithm::to_lower_copy(foe->name()) + (std::string)".lua";
+
+		if (luaL_dofile(_lua_state, beast_path.string().c_str())) {
 			cerr << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
 			cerr << "Assuming instead that we're fighting with someone from an indoors map...\n";
 
@@ -627,17 +629,16 @@ boost::unordered_set<std::string> Combat::advance_foes()
 bool Combat::create_monsters_from_init_path(std::string script_file)
 {
 	LuaWrapper lua(_lua_state);
-	std::string lua_scripts_path = (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/";
 
 	// Load corresponding Lua conversation file
-	if (luaL_dofile(_lua_state, (lua_scripts_path + boost::algorithm::to_lower_copy(script_file)).c_str())) {
+	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str())) {
 		std::cerr << "ERROR: combat.cc::create_monsters_from_init_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Load generic Lua script for fighting which is referenced by every town folk
 	// Town folk don't have dedicated combat functions as it's not the norm that the party will attack town people.
-	lua.push_fn_arg(lua_scripts_path + (std::string)"people/generic_fight.lua");
+	lua.push_fn_arg((conf_world_path / (std::string)"people/generic_fight.lua").c_str());
 	lua.call_fn_leave_ret_alone("load_generic_fight_file");
 
 	// Push c_values table onto Lua stack...
@@ -664,10 +665,9 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 bool Combat::create_monsters_from_combat_path(std::string script_file)
 {
 	LuaWrapper lua(_lua_state);
-	std::string lua_scripts_path = (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/";
 
 	// Load corresponding Lua combat file (i.e., a monster definition)
-	if (luaL_dofile(_lua_state, (lua_scripts_path + boost::algorithm::to_lower_copy(script_file)).c_str())) {
+	if (luaL_dofile(_lua_state, ((conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str()))) {
 		std::cerr << "ERROR: combat.cc::create_monsters_from_combat_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -772,10 +772,9 @@ bool Combat::create_random_monsters()
 			std::shared_ptr<Creature> monster(new Creature());
 
 			// Load corresponding Lua monster definition
-			if (luaL_dofile(_lua_state, ((string) DATADIR + "/" + (string)PACKAGE + "/data/" +
-					(string) WORLD_NAME + "/bestiary/" +
-					boost::algorithm::to_lower_copy(__name) +
-					(string) ".lua").c_str())) {
+			boost::filesystem::path beast_path(conf_world_path / "bestiary");
+			beast_path /= boost::algorithm::to_lower_copy(__name) + (string)".lua";
+			if (luaL_dofile(_lua_state, beast_path.c_str())) {
 				cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
 				exit(EXIT_FAILURE);
 			}

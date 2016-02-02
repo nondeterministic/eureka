@@ -17,12 +17,13 @@ extern "C"
 #include <string>
 #include <iostream>
 
+#include "config.h"
 #include "luawrapper.hh"
 #include "luaapi.hh"
 #include "charset.hh"
 #include "console.hh"
-#include "config.h"
 #include "conversation.hh"
+#include "simplicissimus.hh"
 
 Conversation::Conversation(MapObj& mo) : obj(mo)
 {
@@ -40,9 +41,7 @@ void Conversation::initiate()
 	std::string lua_conversation_file = obj.get_init_script_path();
 
 	// Load corresponding Lua conversation file
-	if (luaL_dofile(_lua_state, ((std::string) DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string) WORLD_NAME + "/" +
-			        boost::algorithm::to_lower_copy(lua_conversation_file)).c_str()))
-	{
+	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(lua_conversation_file)).c_str())) {
 		std::cerr << "ERROR: conversation.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}

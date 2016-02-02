@@ -6,11 +6,11 @@ AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
 	    $(SDL_CFLAGS) \
 	    $(BOOST_CPPFLAGS) \
 	    $(LUA_CFLAGS) \
-	    -DDATADIR=\"@datadir@\" -DPREFIX=\"@prefix@\"
+	    -DDATADIR=\"@datadir@\" -DPREFIX=\"@prefix@\" -DEDITOR_COMPILE=\"YES\"
 
 AUTOMAKE_OPTIONS = no-dependencies
 
-leibniz_SOURCES = leibniz.cc \
+leibniz_SOURCES = leibniz.hh leibniz.cc \
 		../util.hh ../util.cc \
 		../item.hh ../item.cc \
 		../weapon.hh ../weapon.cc \
@@ -59,5 +59,5 @@ leibniz_SOURCES = leibniz.cc \
 		editorwin.cc editorwin.hh
 
 LIBS = @GTKMM_LIBS@ @LIBXMLPP_LIBS@ @SDL_LIBS@ \
-	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ \
+	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_REGEX_LIBS@ \
 	@LUA_LIBS@ @LIBS@

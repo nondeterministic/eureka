@@ -25,7 +25,6 @@ using namespace std;
 
 Item::Item()
 {
-	std::cout << "Item()" << std::endl;
 	_name = "";
 	_plural_name = "";
 	_gold = 0;
@@ -35,7 +34,6 @@ Item::Item()
 
 Item::Item(const Item& i)
 {
-	std::cout << "Item(const Item&): i: " << i.icon << std::endl;
 	_name = i._name;
 	_plural_name = i._plural_name;
 	_weight = i._weight;
@@ -45,7 +43,6 @@ Item::Item(const Item& i)
 
 Item& Item::operator=(const Item& i)
 {
-	std::cout << "Item::operator=" << std::endl;
 	_name = i._name;
 	_plural_name = i._plural_name;
 	_weight = i._weight;

@@ -1,22 +1,21 @@
-/* *********************************************************************
- * This file is part of Simplicissimus/Leibniz.
- *
- * Copyright (c) Andreas Bauer <baueran@gmail.com>
- *
- * Simplicissimus/Leibniz is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- *
- * Simplicissimus/Leibniz is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Simplicissimus/Leibniz.  If not, see 
- * <http://www.gnu.org/licenses/>. 
- * ********************************************************************* */
+// This source file is part of Simplicissimus
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
 
 #include "config.h"
 #include "charset.hh"
@@ -48,6 +47,7 @@
 #include <memory>
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/signals.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/algorithm/string.hpp>
@@ -59,6 +59,9 @@ extern "C" {
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+
+#include <getopt.h>
+
 #include <lua.h>
 #include <lualib.h>
 #include <lualib.h>
@@ -84,6 +87,29 @@ Uint32 tick_callback(Uint32 interval, void *param)
 	return(interval);
 }
 
+static struct option long_options[] =
+{
+	{"help",         no_argument,       NULL, 1},
+	{"width",        required_argument, NULL, 2},
+	{"height",       required_argument, NULL, 3},
+	{"version",      no_argument,       NULL, 4},
+	{"datapath",     required_argument, NULL, 5},
+	{"savegamepath", required_argument, NULL, 6},
+	{0, 0, 0, 0}
+};
+
+int res_w = 1024, res_h=768;
+
+std::string conf_world_name;
+boost::filesystem::path conf_world_path;
+boost::filesystem::path conf_data_path;
+boost::filesystem::path conf_savegame_path;
+
+// ******************************************************************************
+// Function definitions
+// ******************************************************************************
+
+void get_opts (int, char*[]);
 int start_game(int,int);
 int intro(int, int);
 
@@ -93,20 +119,48 @@ int intro(int, int);
 
 int main(int argc, char *argv[])
 {
-	int res_w = 1024, res_h=768;
+	res_w = 1024;
+	res_h = 768;
+	// TODO 800x600 is not possible due to various graphic ratios.
+	// 800x577 works though and should be a fall-back for small
+	// displays such as EeePcs or other small, embedded devices.  The
+	// game is intended to be played in 1024x768 anyway.
+	// res_w = 800; res_h=577;
+
+	// Read the user's command line options.
+	if (argc > 1)
+		get_opts (argc, argv);
+	else {
+		std::cerr << "ERROR: No world name given as command-line argument. Minimal call pattern is '"
+				  << argv[0]
+				  << " <WORLDNAME>'.\nTry '" << argv[0] << " --help' for further information.\n";
+		exit(0);
+	}
+
+	// Remaining command line arguments (not options). i.e., worldname
+	if (optind < argc) {
+		while (optind < argc) {
+			conf_world_name = argv[optind++];
+			std::cout << "INFO: Setting world name to '" << conf_world_name << "'.\n";
+			break;
+		}
+	}
+
+	// Set some standard configurations
+	conf_savegame_path = boost::filesystem::path((std::string)getenv("HOME"));
+	conf_savegame_path /= ("." + (std::string)PACKAGE_NAME);
+	std::cout << "INFO: Setting savegame path to '" << conf_savegame_path.string() << "'.\n";
+
+	conf_data_path = boost::filesystem::path((std::string)(DATADIR));
+	conf_data_path /= (std::string)PACKAGE_NAME;
+	conf_data_path /= "data";
+	std::cout << "INFO: Setting data path to '" << conf_data_path.string() << "'.\n";
+
+	conf_world_path = boost::filesystem::path(conf_data_path / conf_world_name);
+	std::cout << "INFO: Setting world path to '" << conf_world_path.string() << "'.\n";
 
 	// Initialise random number generator
 	std::srand(std::time(NULL));
-
-	// TODO make proper argument handling happen via getopt.  For now I
-	// just need a switch to change resolution w/o having to recompile.
-	if (argc == 2) {
-		// TODO 800x600 is not possible due to various graphic ratios.
-		// 800x577 works though and should be a fall-back for small
-		// displays such as EeePcs or other small, embedded devices.  The
-		// game is intended to be played in 1024x768 anyway.
-		res_w = 800; res_h=577;
-	}
 
 	// Initialise Lua engine
 	_lua_state = luaL_newstate();
@@ -122,39 +176,98 @@ int main(int argc, char *argv[])
 	return start_game(res_w, res_h);
 }
 
+// Evaluate command line arguments
+
+void get_opts (int argc, char* argv[])
+{
+  int option = 0;
+  int option_index = 0;
+
+  while ((option = getopt_long(argc, argv, "hx:y:v", long_options, &option_index)) != -1) {
+      switch (option) {
+      	  case 'h':
+      	  case 1:
+      		  std::cout << PACKAGE_NAME << " - Ye olde roleplaying game engine.\n";
+      		  std::cout << "Lets you play games, defined for " << PACKAGE_NAME << "." << std::endl << std::endl;
+      		  std::cout << "Usage: " << PACKAGE_NAME << " [OPTIONS] <WORLDNAME>" << std::endl << std::endl;
+              std::cout << "If a long option shows an argument as mandatory, then it is mandatory for the equivalent short option also.\n\n";
+              std::cout << "Options:" << std::endl;
+              std::cout << "  -h,       --help               ";
+              std::cout << "Display this help information\n";
+              std::cout << "  -x <ARG>, --width=<ARG>        ";
+              std::cout << "Set width of game window (default is 1024)\n";
+              std::cout << "  -y <ARG>, --height=<ARG>       ";
+              std::cout << "Set height of game window (default is 768)\n";
+              std::cout << "            --datapath=<ARG>     ";
+              std::cout << "Set data directory, which is also where all the available game worlds are stored (the default is where make install put them)\n";
+              std::cout << "            --savegamepath=<ARG> ";
+              std::cout << "Set the directory, where the saved games will end up in (default is $HOME/." << PACKAGE_NAME << "/)\n";
+              std::cout << "  -v,       --version            ";
+              std::cout << "Show version information\n\n";
+              std::cout << "Report bugs to <baueran@gmail.com>.\n";
+      		  exit(0);
+      	  case 'x':
+      	  case 2:
+      		  res_w = std::stoi(optarg);
+      		  break;
+      	  case 'y':
+      	  case 3:
+      		  res_h = std::stoi(optarg);
+      		  break;
+      	  case 'v':
+      	  case 4:
+      		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
+      		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
+      		  std::cout << "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
+      		  exit(0);
+      	  case 5:
+      		  conf_data_path = boost::filesystem::path(optarg);
+      		  break;
+      	  case 6:
+      		  conf_savegame_path = boost::filesystem::path(optarg);
+      		  break;
+      }
+  }
+}
+
 int intro(int res_w, int res_h)
 {
-    SDL_Surface* img;
+    SDL_Surface* img = NULL;
 
-    if (!(img = IMG_Load(((std::string)DATADIR + "/simplicissimus/data/intro.png").c_str()))) {
-		std::cerr << "Couldn't load frame png: " << IMG_GetError() << std::endl;
-		return -1;
-	}
+    boost::filesystem::path path_intro_pic((std::string)DATADIR);
+    path_intro_pic /= PACKAGE_NAME;
+    path_intro_pic /= "data";
+    path_intro_pic /= "intro.png";
+
+    if (!(img = IMG_Load(path_intro_pic.string().c_str())))
+		std::cerr << "ERROR: Couldn't load frame png: " << IMG_GetError() << std::endl;
 
     // Initialize the SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-    	cerr << "SDL_Init() Failed: " << SDL_GetError() << endl;
+    	std::cerr << "ERROR: SDL_Init() Failed: " << SDL_GetError() << std::endl;
     	exit(1);
     }
 
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
-		std::cerr << "Error: Could not initialize audio.\n";
+		std::cerr << "ERROR: Could not initialize audio.\n";
 
+	boost::filesystem::path path_intro_music = conf_world_path.string();
+	path_intro_music /= "sound";
+	path_intro_music /= "LocusIste.ogg";
 	SoundSample sample_intro;
 	sample_intro.set_channel(4711);
 	sample_intro.set_volume(128);
-	sample_intro.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/LocusIste.ogg", 1);
+	sample_intro.play(path_intro_music.string(), 1);
 
     // Set the video mode
-    SDL_Surface* display;
-    display = SDL_SetVideoMode(res_w, res_h, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_Surface* display = SDL_SetVideoMode(res_w, res_h, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     if (display == NULL) {
-    	cerr << "SDL_SetVideoMode() Failed: " << SDL_GetError() << endl;
+    	std::cerr << "ERROR: SDL_SetVideoMode() Failed: " << SDL_GetError() << std::endl;
     	exit(1);
     }
 
     if (SDL_BlitSurface(img, NULL, display, NULL) != 0) {
-    	cerr << "SDL_BlitSurface() Failed: " << SDL_GetError() << endl;
+    	std::cerr << "ERROR: SDL_BlitSurface() Failed: " << SDL_GetError() << std::endl;
     	exit(1);
     }
 
@@ -163,14 +276,11 @@ int intro(int res_w, int res_h)
 
     // Main loop
     SDL_Event event;
-    while(1)
-    {
+    while(1) {
     	// Check for messages
-    	if (SDL_PollEvent(&event))
-    	{
+    	if (SDL_PollEvent(&event)) {
     		// Check for the quit message
-    		if (event.type == SDL_KEYUP)
-    		{
+    		if (event.type == SDL_KEYUP) {
     			// Quit the program
     			break;
     		}
@@ -195,8 +305,8 @@ int start_game(int res_w, int res_h)
 	int x = 13, y = 21; // Some default values for starting position in wilderness
 
 	// Load game data
-	if (! World::Instance().xml_load_world_data(((std::string)DATADIR + "/simplicissimus/data/" + (std::string)WORLD_NAME + ".xml").c_str())) {
-		std::cerr << "ERROR: Error loading game data. Did you run make install?" << std::endl;
+	if (! World::Instance().xml_load_world_data(conf_world_path.string() + ".xml")) {
+		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml" << ". Did you run make install?" << std::endl;
 		return -1;
 	}
 
@@ -209,7 +319,7 @@ int start_game(int res_w, int res_h)
 		arena = Arena::create("outdoors", "Landschaft");
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "Error: MapNotFound exception." << std::endl;
+		std::cerr << "ERROR: MapNotFound exception." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -224,7 +334,7 @@ int start_game(int res_w, int res_h)
 	SoundSample game_music;
 	game_music.set_channel(4711);
 	game_music.set_volume(128);
-	game_music.play((std::string)DATADIR + "/simplicissimus/data/Mittelerde/sound/travel.ogg", 1);
+	game_music.play((conf_world_path / "sound" / "travel.ogg").string(), 1);
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
@@ -260,16 +370,15 @@ int start_game(int res_w, int res_h)
 	}
 
 	// Path to saved game
-	boost::filesystem::path dir(std::string(getenv("HOME")) + "/.simplicissimus/");
+	// boost::filesystem::path dir(std::string(getenv("HOME")) + "/." + PACKAGE_NAME + "/");
 
 	// Check if there's a saved game to return to and load it, if there is.
-	if (boost::filesystem::exists(dir)) {
+	if (boost::filesystem::exists(conf_savegame_path)) {
 		Console::Instance().print(&normalFont, "Restoring previous game state.", false);
 		Console::Instance().print(&normalFont, "", false);
 
-		dir /= "party.xml";
-		xmlpp::TextReader reader(dir.string());
-		std::cout << "INFO: Loading game data from file " << dir.string() << std::endl;
+		xmlpp::TextReader reader((conf_savegame_path / "party.xml").string());
+		std::cout << "INFO: Loading game data from file " << (conf_savegame_path / "party.xml").string() << std::endl;
 
 		while (reader.read()) {
 			if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
@@ -441,7 +550,7 @@ int start_game(int res_w, int res_h)
 
 	Console::Instance().
 			print(&normalFont,
-					"Welcome to Merowing!\nA game (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
+					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
 					false);
 
 	Console::Instance().

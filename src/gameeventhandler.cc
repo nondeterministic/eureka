@@ -72,13 +72,8 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)
 {
-	std::string file_name = (std::string)DATADIR + "/" +
-			 	 	 	 	(std::string)PACKAGE + "/data/" +
-							(std::string)WORLD_NAME + "/maps/" +
-							event->file_name;
-
-	if (luaL_dofile(_lua_state, file_name.c_str())) {
-		std::cerr << "ERROR: gameeventhandler.cc: Couldn't execute lua file: " << file_name << "\n";
+	if (luaL_dofile(_lua_state, (conf_world_path / "maps" / event->file_name).c_str())) {
+		std::cerr << "ERROR: gameeventhandler.cc: Couldn't execute lua file: " << (conf_world_path / "maps" / event->file_name).string() << "\n";
 		return false;
 	}
 

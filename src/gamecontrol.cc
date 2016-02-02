@@ -186,22 +186,15 @@ void GameControl::draw_status(bool update_status_image)
     break;
   }
 
-
   if (update_status_image && !party->indoors()) {
 	  static SDL_Surface* _tmp_surf = NULL;
 
 	  if (filename_old != filename) {
-		std::string tmp_filename =
-		  (std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" +
-		  (std::string)WORLD_NAME + "/images/" + filename;
+		  if (_tmp_surf != NULL)
+			  SDL_FreeSurface(_tmp_surf);
 
-		if (_tmp_surf != NULL)
-		  SDL_FreeSurface(_tmp_surf);
-
-		if ((_tmp_surf = IMG_Load(tmp_filename.c_str())) == NULL)
-		  cerr << "Error: miniwin could not load surface.\n";
-
-		// mwin.surface_from_file((std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" + (std::string)WORLD_NAME + "/images/" + filename);
+		  if ((_tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL)
+			  std::cerr << "ERROR: gamecontrol.cc: miniwin could not load surface.\n";
 	  }
 
 	  if (_tmp_surf != NULL)

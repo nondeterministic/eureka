@@ -25,7 +25,6 @@ using namespace std;
 
 Weapon::Weapon()
 {
-  std::cout << "Weapon()\n";
   _destroy_after = 0;
   _light_radius = 0;
   _range = 10;
@@ -36,7 +35,6 @@ Weapon::Weapon()
 
 Weapon::Weapon(const Weapon& w): Item(w)
 {
-  std::cout << "Weapon(const Weapon&): " << name() << "\n";
   _range = w._range;
   _hands = w._hands;
   _dmg_min = w._dmg_min;
@@ -59,7 +57,6 @@ Weapon::Weapon(const Weapon& w): Item(w)
 
 Weapon::~Weapon()
 {
-  std::cout << "~Weapon(): " << name() << "\n";
 }
 
 std::string Weapon::luaName()

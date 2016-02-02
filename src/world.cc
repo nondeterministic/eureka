@@ -26,13 +26,13 @@
 #include <boost/algorithm/string.hpp>
 
 #include <libxml++/libxml++.h>
+#include <string>
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
 
 #include "world.hh"
 #include "config.h"
-#include "simplicissimus.hh"
 #include "map.hh"
 #include "indoorsmap.hh"
 #include "outdoorsmap.hh"
@@ -43,6 +43,12 @@
 #include "weapon.hh"
 #include "spell.hh"
 #include "luawrapper.hh"
+
+#ifndef EDITOR_COMPILE
+#include "simplicissimus.hh"
+#else
+#include "leibniz.hh"
+#endif
 
 extern "C"
 {
@@ -179,7 +185,7 @@ std::vector<Creature>* World::get_creatures()
     return &_creatures;
 }
 
-bool World::xml_load_world_data(const char* filename)
+bool World::xml_load_world_data(const std::string filename)
 {
 	try {
     	xmlpp::TextReader reader(filename);
@@ -395,20 +401,20 @@ void World::load_world_elements(lua_State* L)
 	int number_of_elems = sizeof(elems) / sizeof(std::string);
 
 	for (int i = 0; i < number_of_elems; i++) {
-		if (luaL_dofile(L, ((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/" + elems[i] + "/defs.lua").c_str())) {
-			cerr << "Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
+		if (luaL_dofile(L, (conf_world_path / elems[i] / "defs.lua").c_str())) {
+			cerr << "ERROR: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
 			exit(1);
 		}
 
-		for (boost::filesystem::directory_iterator itr(((string)DATADIR + "/simplicissimus/data/" + (string) WORLD_NAME + "/" + elems[i]));
+		for (boost::filesystem::directory_iterator itr((conf_world_path / elems[i]).string());
 				itr != boost::filesystem::directory_iterator();
 				++itr)
 		{
 			const string fname = itr->path().filename().string();
 
 			if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
-				if (luaL_dofile(L, ((string) DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/" + elems[i] + "/" + fname).c_str())) {
-					cerr << "Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << endl;
+				if (luaL_dofile(L, (conf_world_path / elems[i] / fname).c_str())) {
+					cerr << "ERROR: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << endl;
 					exit(1);
 				}
 			}
@@ -417,7 +423,7 @@ void World::load_world_elements(lua_State* L)
 
 	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
 
-	boost::filesystem::path targetDir((string)DATADIR + "/simplicissimus/data/" + (string)WORLD_NAME + "/spells/");
+	boost::filesystem::path targetDir(conf_world_path / "spells");
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {

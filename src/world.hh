@@ -72,7 +72,7 @@ public:
   void set_indoors_tile_size(unsigned);
   // Returns false if file was not found, or something else went
   // wrong.
-  bool xml_load_world_data(const char*);
+  bool xml_load_world_data(const std::string);
   // bool xml_load_world_elements(const char*);
   void load_world_elements(lua_State* L);
   void xml_write_world_data(std::string = "");

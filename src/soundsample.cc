@@ -5,10 +5,13 @@
  * Created on 1 January 2013, 2:15 PM
  */
 
-#include <SDL_mixer.h>
 #include <string>
 #include <iostream>
 #include <algorithm>
+
+#include <boost/filesystem/path.hpp>
+
+#include <SDL_mixer.h>
 
 #include "soundsample.hh"
 #include "config.h"
@@ -48,8 +51,7 @@ SoundSample::~SoundSample()
   Mix_FreeChunk(hit_wav);
   Mix_FreeChunk(foe_hit_wav);
   if (other_wav != NULL)
-    Mix_FreeChunk(other_wav); 
-  std::cout << "~SoundSample: " << _filename << "\n";   
+	  Mix_FreeChunk(other_wav);
 }
 
 // Toggle all audio
@@ -75,9 +77,8 @@ void SoundSample::play(int loop)
 
 void SoundSample::play(std::string filename, int loop)
 {
-	_filename = filename;
-	std::cout << "Info: Wanting to play file " << _filename << "." << std::endl;
-	other_wav = Mix_LoadWAV(_filename.c_str());
+	boost::filesystem::path filepath(filename);
+	other_wav = Mix_LoadWAV(filepath.string().c_str());
 	play_chunk(other_wav, loop);
 	_audio_on = true;
 }
@@ -119,9 +120,7 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 		_audio_on = true;
 	}
 	else
-		std::cerr << "Warning: Cannot play file. Check soundsample.cc.\n";
-
-	// std::cout << "Channel: " << _chan << "\n";
+		std::cerr << "WARNING: Cannot play file. Check soundsample.cc.\n";
 }
 
 void SoundSample::stop()

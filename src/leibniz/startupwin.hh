@@ -25,8 +25,8 @@
 class StartupWin : public Gtk::Window
 {
 public:
-  StartupWin(void);
-  virtual ~StartupWin(void);
+  StartupWin();
+  virtual ~StartupWin();
 
 protected:
   // Child elements

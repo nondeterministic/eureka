@@ -17,35 +17,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#include "shield.hh"
-#include "item.hh"
-#include <iostream>
+#ifndef __LEIBNIZ_HH
+#define __LEIBNIZ_HH
 
-Shield::Shield()
-{
-	_protection = 0;
-}
+#include <boost/filesystem/path.hpp>
 
-Shield::~Shield()
-{
-}
+extern boost::filesystem::path conf_data_path;
+extern boost::filesystem::path conf_world_path;
 
-Shield::Shield(const Shield& s): Item(s)
-{
-  _protection = s._protection;
-}
+#endif
 
-int Shield::protection()
-{
-  return _protection;
-}
-
-void Shield::protection(int p)
-{
-  _protection = p;
-}
-
-std::string Shield::luaName()
-{
-	return "shields::" + name();
-}

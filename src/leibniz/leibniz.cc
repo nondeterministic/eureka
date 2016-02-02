@@ -18,7 +18,14 @@
 // USA.
 
 #include <iostream>
+#include <string>
+
 #include <gtkmm.h>
+
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
+
+#include "leibniz.hh"
 #include "startupwin.hh"
 #include "config.h"
 
@@ -30,13 +37,20 @@
 //   return(X_handler(d,e));
 // }
 
+boost::filesystem::path conf_data_path;
+boost::filesystem::path conf_world_path;
+
 int main(int argc, char *argv[])
 {
-  Gtk::Main kit(argc, argv);
-  StartupWin startupwin;
+	conf_data_path = boost::filesystem::path((std::string)DATADIR);
+	conf_data_path /= (std::string)PACKAGE_NAME;
+	conf_data_path /= "data";
 
-  // XSetErrorHandler(shm_errhandler);
+	Gtk::Main kit(argc, argv);
+	StartupWin startupwin;
 
-  kit.run(startupwin);
-  return 0;
+	// XSetErrorHandler(shm_errhandler);
+
+	kit.run(startupwin);
+	return 0;
 }
