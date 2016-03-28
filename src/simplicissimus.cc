@@ -31,6 +31,7 @@
 #include "luaapi.hh"
 #include "weapon.hh"
 #include "shield.hh"
+#include "map.hh"
 #include "jimmylock.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
@@ -95,6 +96,7 @@ static struct option long_options[] =
 	{"version",      no_argument,       NULL, 4},
 	{"datapath",     required_argument, NULL, 5},
 	{"savegamepath", required_argument, NULL, 6},
+	{"show-config",  no_argument,       NULL, 7},
 	{0, 0, 0, 0}
 };
 
@@ -104,6 +106,10 @@ std::string conf_world_name;
 boost::filesystem::path conf_world_path;
 boost::filesystem::path conf_data_path;
 boost::filesystem::path conf_savegame_path;
+
+// Only used for proper handling of getops
+bool _getops_exit_after_print = false;
+bool _getops_print_config = false;
 
 // ******************************************************************************
 // Function definitions
@@ -141,7 +147,6 @@ int main(int argc, char *argv[])
 	if (optind < argc) {
 		while (optind < argc) {
 			conf_world_name = argv[optind++];
-			std::cout << "INFO: Setting world name to '" << conf_world_name << "'.\n";
 			break;
 		}
 	}
@@ -149,15 +154,24 @@ int main(int argc, char *argv[])
 	// Set some standard configurations
 	conf_savegame_path = boost::filesystem::path((std::string)getenv("HOME"));
 	conf_savegame_path /= ("." + (std::string)PACKAGE_NAME);
-	std::cout << "INFO: Setting savegame path to '" << conf_savegame_path.string() << "'.\n";
 
 	conf_data_path = boost::filesystem::path((std::string)(DATADIR));
 	conf_data_path /= (std::string)PACKAGE_NAME;
 	conf_data_path /= "data";
-	std::cout << "INFO: Setting data path to '" << conf_data_path.string() << "'.\n";
 
 	conf_world_path = boost::filesystem::path(conf_data_path / conf_world_name);
-	std::cout << "INFO: Setting world path to '" << conf_world_path.string() << "'.\n";
+
+	// Finish up with getops
+	if (_getops_print_config) {
+		std::cout << "Current data path:                 " << conf_data_path << "\n";
+		std::cout << "Current savegame path:             " << conf_savegame_path << "\n";
+		std::cout << "Current world name (may be empty): " << conf_world_name << "\n";
+		std::cout << "Current world path (may be empty): " << conf_world_path << "\n";
+		std::cout << "Current game resolution:           " << res_w << "x" << res_h << "\n";
+	}
+
+	if (_getops_exit_after_print)
+		exit(0);
 
 	// Initialise random number generator
 	std::srand(std::time(NULL));
@@ -183,29 +197,33 @@ void get_opts (int argc, char* argv[])
   int option = 0;
   int option_index = 0;
 
-  while ((option = getopt_long(argc, argv, "hx:y:v", long_options, &option_index)) != -1) {
+  while ((option = getopt_long(argc, argv, "chx:y:v", long_options, &option_index)) != -1) {
       switch (option) {
       	  case 'h':
       	  case 1:
-      		  std::cout << PACKAGE_NAME << " - Ye olde roleplaying game engine.\n";
-      		  std::cout << "Lets you play games, defined for " << PACKAGE_NAME << "." << std::endl << std::endl;
-      		  std::cout << "Usage: " << PACKAGE_NAME << " [OPTIONS] <WORLDNAME>" << std::endl << std::endl;
+      		  std::cout << PACKAGE_NAME << " - ye olde roleplaying game engine.\n";
+      		  std::cout << "Lets you play games that have been designed for " << PACKAGE_NAME << "." << std::endl << std::endl;
+      		  std::cout << "Usage:   " << argv[0] << " [OPTIONS] <WORLDNAME>" << std::endl;
+      		  std::cout << "Example: " << argv[0] << " MyExcitingGameWorld" << std::endl << std::endl;
               std::cout << "If a long option shows an argument as mandatory, then it is mandatory for the equivalent short option also.\n\n";
               std::cout << "Options:" << std::endl;
-              std::cout << "  -h,       --help               ";
-              std::cout << "Display this help information\n";
               std::cout << "  -x <ARG>, --width=<ARG>        ";
               std::cout << "Set width of game window (default is 1024)\n";
               std::cout << "  -y <ARG>, --height=<ARG>       ";
               std::cout << "Set height of game window (default is 768)\n";
               std::cout << "            --datapath=<ARG>     ";
-              std::cout << "Set data directory, which is also where all the available game worlds are stored (the default is where make install put them)\n";
+              std::cout << "Set data directory, which is also where all the available game worlds are stored (the default is where 'make install' put them)\n";
+              std::cout << "  -c        --show-config        ";
+              std::cout << "Show the current default configuration of " << PACKAGE_NAME << "\n";
               std::cout << "            --savegamepath=<ARG> ";
               std::cout << "Set the directory, where the saved games will end up in (default is $HOME/." << PACKAGE_NAME << "/)\n";
+              std::cout << "  -h,       --help               ";
+              std::cout << "Display this help information\n";
               std::cout << "  -v,       --version            ";
               std::cout << "Show version information\n\n";
               std::cout << "Report bugs to <baueran@gmail.com>.\n";
-      		  exit(0);
+              _getops_exit_after_print = true;
+              break;
       	  case 'x':
       	  case 2:
       		  res_w = std::stoi(optarg);
@@ -219,12 +237,18 @@ void get_opts (int argc, char* argv[])
       		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
       		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
       		  std::cout << "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
-      		  exit(0);
+              _getops_exit_after_print = true;
+              break;
       	  case 5:
       		  conf_data_path = boost::filesystem::path(optarg);
       		  break;
       	  case 6:
       		  conf_savegame_path = boost::filesystem::path(optarg);
+      		  break;
+      	  case 'c':
+      	  case 7:
+      		  _getops_print_config = true;
+      		  _getops_exit_after_print = true;
       		  break;
       }
   }
@@ -251,7 +275,7 @@ int intro(int res_w, int res_h)
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
 		std::cerr << "ERROR: Could not initialize audio.\n";
 
-	boost::filesystem::path path_intro_music = conf_world_path.string();
+	boost::filesystem::path path_intro_music(conf_world_path.string());
 	path_intro_music /= "sound";
 	path_intro_music /= "LocusIste.ogg";
 	SoundSample sample_intro;

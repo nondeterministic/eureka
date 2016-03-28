@@ -3,8 +3,6 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
--- dofile(simpl_datapath() .. "weapons/defs.lua")
-
 Shields["small shield"]  = { 
    name         = "small shield", 
    plural_name  = "small shields", 
@@ -13,6 +11,3 @@ Shields["small shield"]  = {
    icon         = 623,
    gold         = 5
 }
-
--- simpl_pushshield(Shields.small_shield)
--- print("lua: small_shield.lua: added shield " .. Shields.small_shield.name)

@@ -33,6 +33,9 @@
 #include <string>
 #include <iostream>
 
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
+
 SDLWindow::SDLWindow()
 {
 	_interior = NULL;
@@ -103,12 +106,12 @@ int SDLWindow::init(int width, int height, int bpp, Uint32 flags)
 		return -1;
 
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
-		std::cerr << "Error: Could not initialize audio.\n";
+		std::cerr << "ERROR: sdlwindow.cc: Could not initialize audio.\n";
 
 	if (!SDL_JoystickOpen(0))
-		std::cerr << "Warning: No joystick found!\n";
+		std::cerr << "INFO: sdlwindow.cc: No joystick found!\n";
 	else
-		std::cerr << "Info: Joystick detected.\n";
+		std::cerr << "INFO: sdlwindow.cc: Joystick detected.\n";
 
 	return 0;
 }
@@ -136,8 +139,6 @@ int SDLWindow::create_console_surface()
 
 	// Fill surface only temporarily to see where to move it to...
 	// SDL_FillRect(_console, NULL, SDL_MapRGBA(_console->format, 50, 50, 50, amask));
-
-	std::cout << "Created console SDL_Surface\n";
 	return 0;
 }
 
@@ -179,7 +180,6 @@ int SDLWindow::create_mini_win_surface()
 		return -1;
 
 	// SDL_FillRect(_mini_win, NULL, SDL_MapRGB(_mini_win->format, 50, 50, 50));
-	// std::cout << "Created _mini_win SDL_Surface\n";
 
 	return 0;
 }
@@ -343,7 +343,7 @@ int SDLWindow::scroll_console(int amount, int delay)
 			scroll_console(amount - 1, delay);
 		}
 		else {
-			std::cout << "sdlwindow::scroll_console() FAILED\n";
+			std::cerr << "ERROR: sdlwindow.cc: sdlwindow::scroll_console() FAILED\n";
 			return -1;
 		}
 	}
@@ -359,9 +359,12 @@ int SDLWindow::draw_frame(int _arena_width, int _arena_height)
 {
 	SDL_Surface* _frame = NULL;
 
+	boost::filesystem::path frame_path((std::string)DATADIR);
+	frame_path = frame_path / (std::string)PACKAGE_NAME / "data" / "frame.png";
+
 	// Load png
-	if (!(_frame = IMG_Load(((std::string)DATADIR + "/simplicissimus/data/frame.png").c_str()))) {
-		std::cerr << "Couldn't load frame png: " << IMG_GetError() << std::endl;
+	if (!(_frame = IMG_Load(frame_path.c_str()))) {
+		std::cerr << "ERROR: sdlwindow.cc: Couldn't load frame png: " << IMG_GetError() << std::endl;
 		return -1;
 	}
 
@@ -379,7 +382,7 @@ int SDLWindow::draw_frame(int _arena_width, int _arena_height)
 			if (!(surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _frame_icon_size, _frame_icon_size, 32,
 					rmask, gmask, bmask, amask)))
 			{
-				std::cerr << "Couldn't create frame surface: " << IMG_GetError() << std::endl;
+				std::cerr << "ERROR: sdlwindow.cc: Couldn't create frame surface: " << IMG_GetError() << std::endl;
 				return -1;
 			}
 

@@ -111,7 +111,7 @@ void Type::printch(SDL_Surface* surf, int c, int x, int y, SDL_Color* bgcol, SDL
     }
   }
   else
-    std::cerr << "Warning: charSurf == NULL inside type.cc for ASCII code: " << c << std::endl;
+    std::cerr << "WARNING: type.cc: charSurf == NULL for ASCII code: " << c << std::endl;
 }
 
 int Type::char_width()

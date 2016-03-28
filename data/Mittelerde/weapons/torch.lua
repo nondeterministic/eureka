@@ -3,8 +3,6 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
--- dofile(simpl_datapath() .. "weapons/defs.lua")
-
 Weapons["torch"]  = { 
    name          = "torch", 
    plural_name   = "torches", 

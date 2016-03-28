@@ -286,10 +286,7 @@ boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* Map::objs(void
 
 bool Map::exists_on_disk(void)
 {
-	return boost::filesystem::exists(World::Instance().get_path() + "/" +
-			World::Instance().get_name() + "/" +
-			"maps/" +
-			_name + ".xml");
+	return boost::filesystem::exists(World::Instance().get_path() /	World::Instance().get_name() / "maps" / (_name + ".xml"));
 }
 
 void Map::parse_objects_node(const xmlpp::Node* node)
@@ -566,14 +563,20 @@ void Map::parse_node(const xmlpp::Node* node)
 	}
 }
 
+bool Map::xml_load_map_data()
+{
+	boost::filesystem::path empty_path;
+	return xml_load_map_data(empty_path);
+}
+
 // A DOM parser that reads map data from disk
 
-bool Map::xml_load_map_data(std::string pathToFile)
+bool Map::xml_load_map_data(boost::filesystem::path pathToFile)
 {
-	std::string filepath;
+	boost::filesystem::path filepath;
 
-	if (pathToFile.length() == 0)
-		filepath = World::Instance().get_path() + "/" + World::Instance().get_name() + "/maps/" + _name + ".xml";
+	if (pathToFile.empty())
+		filepath = World::Instance().get_path() / World::Instance().get_name() / "maps" / (_name + ".xml");
 	else
 		filepath = pathToFile;
 
@@ -582,7 +585,7 @@ bool Map::xml_load_map_data(std::string pathToFile)
 		// We just want the text to be resolved/unescaped automatically.
 		// TODO: do we?
 		parser.set_substitute_entities();
-		parser.parse_file(filepath);
+		parser.parse_file(filepath.c_str());
 		if (parser) {
 			// Deleted by DomParser:
 			const xmlpp::Node* pNode = parser.get_document()->get_root_node();
@@ -676,7 +679,13 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 	}
 }
 
-bool Map::xml_write_map_data(std::string path)
+bool Map::xml_write_map_data()
+{
+	boost::filesystem::path empty_path;
+	return xml_write_map_data(empty_path);
+}
+
+bool Map::xml_write_map_data(boost::filesystem::path path)
 {
 	xmlpp::Document* _main_map_xml_file;
 	xmlpp::Node* _main_map_xml_root;
@@ -793,22 +802,20 @@ bool Map::xml_write_map_data(std::string path)
 			}
 		}
 
-		if (path.length() == 0) { // Default
-			_main_map_xml_file->write_to_file_formatted(World::Instance().get_path() + "/" +
-														World::Instance().get_name() + "/" +
-														"maps/" + _name + ".xml");
+		if (path.empty()) { // Default
+			_main_map_xml_file->write_to_file_formatted((World::Instance().get_path() / World::Instance().get_name() / "maps" / (_name + ".xml")).c_str());
 		}
 		else { // For saving game-status
-			std::string save_to_where = path + World::Instance().get_name() + "/" + "maps/" + _name + ".xml";
-			std::cout << "Saving map to " << save_to_where << std::endl;
-			_main_map_xml_file->write_to_file_formatted(save_to_where);
+			boost::filesystem::path save_to_where = path / World::Instance().get_name() / "maps" / (_name + ".xml");
+			std::cout << "INFO: Saving map to " << save_to_where.string() << std::endl;
+			_main_map_xml_file->write_to_file_formatted(save_to_where.c_str());
 		}
 
 		_modified = false;
 	}
 	catch (...)
 	{
-		std::cerr << "map.cc:xml_write_world_data() failed." << std::endl;
+		std::cerr << "ERROR: map.cc: xml_write_world_data() failed." << std::endl;
 		return false;
 	}
 

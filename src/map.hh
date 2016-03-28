@@ -21,6 +21,8 @@
 #define __GENERALMAP_HH
 
 #include "boost/unordered_map.hpp"
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
 #include <string>
 #include <vector>
 #include <utility>
@@ -45,8 +47,10 @@ public:
   // Loads the map from disk and overwrites any changes that may have
   // been made to the map stored in memory.  That is, the disk data
   // will shamelessly overwrite the currently used memory of the map.
-  bool xml_load_map_data(std::string = "");
-  bool xml_write_map_data(std::string = "");
+  bool xml_load_map_data(boost::filesystem::path);
+  bool xml_load_map_data();
+  bool xml_write_map_data(boost::filesystem::path);
+  bool xml_write_map_data();
   // Returns true if this map has been written on disk before, i.e.,
   // this can be indirectly used to check whether the map is new or
   // not.

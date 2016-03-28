@@ -33,7 +33,6 @@
 #include <SDL_keysym.h>
 
 #include "simplicissimus.hh"
-#include "soundsample.hh"
 #include "console.hh"
 #include "creature.hh"
 #include "gamecontrol.hh"
@@ -362,7 +361,7 @@ int Combat::fight(std::vector<AttackOption*> attack_commands)
   foes_fight();
 
   for (auto ac: attack_commands) {
-	  std::cout << "Info: combat:cc: Deleting party attack command.\n";
+	  std::cout << "INFO: combat:cc: Deleting party attack command.\n";
 	  delete ac;
   }
 
@@ -381,7 +380,7 @@ void Combat::add_to_bounty(Item* i)
 int Combat::party_fight(std::vector<AttackOption*> attacks)
 {
 	if ((int)attacks.size() < party->party_size())
-		std::cerr << "Warning: Attack choices < party size. This is serious.\n";
+		std::cerr << "WARNING: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
 	int i = 0;
@@ -740,7 +739,7 @@ bool Combat::create_random_monsters()
 					if (lua_tonumber(_lua_state, -1) > 0)
 						__distance = lua_tonumber(_lua_state, -1);
 					else
-						cerr << "Lua error: " << lua_tostring(_lua_state, -1) << endl;
+						cerr << "ERROR: combat.cc: Lua error: " << lua_tostring(_lua_state, -1) << endl;
 				}
 			} // How many of the monster attack?
 			else if (__key == "__number") {
@@ -749,7 +748,7 @@ bool Combat::create_random_monsters()
 					foes.count()->insert(std::make_pair(__name, __number));
 			}
 			else {
-				cerr << "Error: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
+				cerr << "ERROR: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
 				exit(EXIT_FAILURE);
 			}
 			lua_pop(_lua_state, 1);

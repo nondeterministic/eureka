@@ -25,6 +25,8 @@
 #include <cstdio>
 
 #include <boost/unordered_set.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "config.h"
@@ -135,13 +137,13 @@ int l_printcon(lua_State* L)
 {
 	// First argument MUST be a string, so check it
 	if (!lua_isstring(L, 1)) {
-		std::cerr << "Error: Lua: l_printcon needs to be called with a string argument.\n";
+		std::cerr << "ERROR: luaapi.cc: l_printcon needs to be called with a string argument.\n";
 		exit(EXIT_FAILURE);
 	}
 
 	// Second argument is optional, but must be bool
 	if (lua_gettop(L) == 2 && !lua_isboolean(L, 2)) {
-		std::cerr << "Error: Lua: l_printcon can optionally take as second argument a bool, but only a bool.\n";
+		std::cerr << "ERROR: luaapi.cc: l_printcon can optionally take as second argument a bool, but only a bool.\n";
 		exit(EXIT_FAILURE);
 	}
 
@@ -150,7 +152,7 @@ int l_printcon(lua_State* L)
 	else if (lua_gettop(L) == 2)
 		GameControl::Instance().printcon(lua_tostring(L, 1), lua_toboolean(L, 2));
 	else {
-		std::cerr << "Error: Lua: wrong number of arguments to l_printcon.\n";
+		std::cerr << "ERROR: luaapi.cc: wrong number of arguments to l_printcon.\n";
 		exit(EXIT_FAILURE);
 	}
 
@@ -611,7 +613,7 @@ int l_buyservice_old(lua_State* L)
     	else if (key == "gold")
     		gold = lua_tonumber(L, -1);
     	else
-    		std::cerr << "luaapi.cc: ERROR: unknown service bought: " << key << "\n";
+    		std::cerr << "ERROR: luaapi.cc: Unknown service bought: " << key << "\n";
 
     	lua_pop(L, 1);
     }
@@ -631,10 +633,14 @@ int l_buyservice_old(lua_State* L)
 	return 1;
 }
 
+// Pass current datapath to Lua-land
+
 int l_datapath(lua_State* L)
 {
-  lua_pushstring(L, ((string)DATADIR + "/" + (string)PACKAGE + "/data/" + (string)WORLD_NAME + "/").c_str());
-  return 1;
+	boost::filesystem::path tmp_path = boost::filesystem::path((std::string)DATADIR);
+	tmp_path = tmp_path / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name();
+	lua_pushstring(L, tmp_path.c_str());
+	return 1;
 }
 
 int l_set_combat_ptr(lua_State* L)
@@ -657,7 +663,7 @@ int l_get_player_ac(lua_State* L)
   std::string player_name = (std::string)(lua_tostring(L, 1));
   PlayerCharacter* player = Party::Instance().get_player(player_name);
   if (player == NULL) {
-    std::cerr << "Error: no player named " << player_name << " found.\n";
+    std::cerr << "ERROR: luaapi.cc: no player named " << player_name << " found.\n";
     exit(EXIT_FAILURE);
   }
   lua_pushnumber(L, player->armour_class());
@@ -963,7 +969,7 @@ int l_is_dead(lua_State* L)
 int l_make_guards(lua_State* L)
 {
 	if (!lua_isstring(L, 1)) {
-		std::cerr << "Error: Lua: l_make_guards() wrong argument.\n";
+		std::cerr << "ERROR: luaapi.cc: l_make_guards() wrong argument.\n";
 		exit(EXIT_FAILURE);
 	}
 
@@ -987,7 +993,7 @@ int l_play_sound(lua_State* L)
 	std::string filename = "";
 
 	if (!lua_isstring(L, 1)) {
-		std::cerr << "Error: Lua: l_play_sound() wrong argument.\n";
+		std::cerr << "ERROR: luaapi.cc: l_play_sound() wrong argument from Lua. Lua script broken?\n";
 		exit(EXIT_FAILURE);
 	}
 	filename = lua_tostring(L, 1);
@@ -1049,6 +1055,11 @@ int l_magic_attack(lua_State* L)
 	int  damage              = lua_tonumber(L, 5);
 	int  spell_lasts         = lua_tonumber(L, 6);
     std::string caster       = lua_tostring(L, 7);
+
+    if (caster.length() == 0) {
+        std::cerr << "ERROR: luaapi.cc: caster not set. (This is serious. Could be a bug in the spell script.)\n";
+        return 0;
+    }
 
     PlayerCharacter* player = Party::Instance().get_player(caster);
 

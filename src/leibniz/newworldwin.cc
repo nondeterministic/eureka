@@ -21,6 +21,9 @@
 #include "newworldwin.hh"
 #include "../world.hh"
 
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
+
 NewWorldWin::NewWorldWin(void)
   :  name_lbl("World identifier/name:"),
      path_lbl("World path:")
@@ -93,7 +96,8 @@ void NewWorldWin::on_button_cancel(void)
 
 void NewWorldWin::on_button_ok(void)
 {
-  World::Instance().set_name(name_entry.get_text().c_str());
-  World::Instance().set_world_path(path_entry.get_text().c_str());
-  hide();
+	boost::filesystem::path tmp_path(path_entry.get_text());
+	World::Instance().set_name(name_entry.get_text().c_str());
+	World::Instance().set_world_path(tmp_path.c_str());
+	hide();
 }

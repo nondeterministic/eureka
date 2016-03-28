@@ -20,10 +20,6 @@ IndoorsIcons::IndoorsIcons()
   unsigned icon_size = World::Instance().get_indoors_tile_size();
 
   // Load indoors icon set
-//  std::string icon_path =
-//    (std::string)DATADIR + "/simplicissimus/data/" +
-//    (std::string)WORLD_NAME + "/images/icons_indoors.png";
-
   _ptr_icon_surf = IMG_Load((conf_world_path / "images" / "icons_indoors.png").c_str());
   if (!_ptr_icon_surf)
     std::cerr << "ERROR: indooricons.cc: Couldn't load indoors icons: " << IMG_GetError() << ": " << (conf_world_path / "images" / "icons_indoors.png").c_str() << std::endl;

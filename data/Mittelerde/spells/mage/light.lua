@@ -47,7 +47,7 @@ do
    end
    
    function get_sound_path()
-      return simpl_datapath() .. "sound/spell_normal.wav"
+      return simpl_datapath() .. "/sound/spell_normal.wav"
    end
 
    -- ---------------------------------------------------------------------------------

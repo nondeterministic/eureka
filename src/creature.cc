@@ -1,6 +1,6 @@
+// This source file is part of Simplicissimus
 //
-//
-// Copyright (c) 2005  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,13 +75,13 @@ std::string Creature::img()
 
 SDL_Surface* Creature::load_img()
 {
-  if (_image_surf != NULL)
-    SDL_FreeSurface(_image_surf);
+	if (_image_surf != NULL)
+		SDL_FreeSurface(_image_surf);
 
-  if ((_image_surf = IMG_Load(_image.c_str())) == NULL)
-    cerr << "creature.cc: _image_surf just returned NULL, this is serious!\n";
+	if ((_image_surf = IMG_Load(_image.c_str())) == NULL)
+		cerr << "ERROR: creature.cc: _image_surf == NULL after attempting to load '" << _image << "'.\n";
 
-  return _image_surf;
+	return _image_surf;
 }
 
 // SDL_Surface* Creature::img_surf()

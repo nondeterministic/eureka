@@ -104,7 +104,10 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 	static SoundSample sample;  // If this isn't static, then the var
 	                            // gets discarded before the sample has
                                 // finished playing
-	sample.play((std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + event->filename);
+	boost::filesystem::path samples_path((std::string)DATADIR);
+	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
+
+	sample.play((samples_path / event->filename).c_str());
 	return true;
 }
 
@@ -138,9 +141,10 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	gc->printcon("Entering " + event->get_map_name());
 
+	boost::filesystem::path tmp_path((std::string)DATADIR);
+	tmp_path /= tmp_path / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";
 	mw->save_surf();
-	mw->surface_from_file((std::string)DATADIR + "/" + (std::string)PACKAGE + "/data/" +
-						   (std::string)WORLD_NAME + "/images/indoors_city.png");
+	mw->surface_from_file(tmp_path.string());
 
 	if (!party->indoors())
 		party->store_outside_coords();

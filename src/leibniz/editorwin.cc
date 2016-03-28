@@ -36,12 +36,8 @@
 #include "../eventchangeicon.hh"
 
 EditorWin::EditorWin(bool new_world)
-  : _indoors_icon_pic(World::Instance().get_path() + "/" +
-                      World::Instance().get_name() + "/images/" +
-                      "icons_indoors.png"),
-  _outdoors_icon_pic(World::Instance().get_path() + "/" +
-                     World::Instance().get_name() + "/images/" +
-                     "icons_outdoors.png"),
+  : _indoors_icon_pic((World::Instance().get_path() / World::Instance().get_name() / "images" / "icons_indoors.png").c_str()),
+    _outdoors_icon_pic((World::Instance().get_path() / World::Instance().get_name() / "images" / "icons_outdoors.png").c_str()),
   rb_draw_map("Draw map"),
   rb_fill_map("Fill map"),
   rb_draw_obj("Draw object"),

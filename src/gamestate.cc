@@ -1,9 +1,21 @@
-/*
- * gamestate.cc
- *
- *  Created on: Nov 2, 2014
- *      Author: baueran
- */
+// This source file is part of Simplicissimus
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
 
 #include "gamestate.hh"
 #include "map.hh"
@@ -79,10 +91,10 @@ bool GameState::save_party(std::string fullFilePath)
 
 bool GameState::save(std::string fullFilePath)
 {
-	boost::filesystem::path dir; // (std::string(getenv("HOME")) + "/.simplicissimus/");  // TODO: Does this use of dir ensure platform-independence?
+	boost::filesystem::path dir(getenv("HOME")); // (std::string(getenv("HOME")) + "/.simplicissimus/");  // TODO: Does this use of dir ensure platform-independence?
 
 	if (fullFilePath == "")
-		dir = std::string(getenv("HOME")) + "/.simplicissimus/";
+		dir /= ".simplicissimus";
 	else
 		dir = fullFilePath;
 
@@ -101,13 +113,13 @@ bool GameState::save(std::string fullFilePath)
 		std::string file = dir.string() + "maps/" + map->get_name() + ".xml";
 
 		if (boost::filesystem::exists(file)) {
-			std::cout << "gamestate.cc: Removing file " << file << ".\n";
+			std::cout << "INFO: gamestate.cc: gamestate.cc: Removing file " << file << ".\n";
 			boost::filesystem::remove(file);
 		}
 
-		std::cout << "gamestate.cc: Writing " << file << ".\n";
+		std::cout << "INFO: gamestate.cc: Writing " << file << ".\n";
 		map->xml_write_map_data(dir.string());
-		std::cout << "gamestate.cc: Written.\n";
+		std::cout << "INFO: gamestate.cc: Written.\n";
 	}
 
 	// Store party state
@@ -119,13 +131,13 @@ bool GameState::save(std::string fullFilePath)
 	// Save world map
 	std::string world_file = dir.string() + World::Instance().get_name() + ".xml";
 	if (boost::filesystem::exists(world_file)) {
-		std::cout << "gamestate.cc: Removing file " << world_file << ".\n";
+		std::cout << "INFO: gamestate.cc: Removing file " << world_file << ".\n";
 		boost::filesystem::remove(world_file);
 	}
 
-	std::cout << "gamestate.cc: Writing " << world_file << ".\n";
+	std::cout << "INFO: gamestate.cc: Writing " << world_file << ".\n";
 	World::Instance().xml_write_world_data(dir.string());
-	std::cout << "gamestate.cc: Written.\n";
+	std::cout << "INFO: gamestate.cc: Written.\n";
 
 	return true;
 }

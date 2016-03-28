@@ -21,7 +21,8 @@
 #define BOOST_NO_SCOPED_ENUMS
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 
-#include <boost/filesystem.hpp>
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -86,19 +87,19 @@ std::string World::get_name(void)
     return _name;
 }
 
-std::string World::get_path(void)
+boost::filesystem::path World::get_path(void)
 {
     return _path;
+}
+
+void World::set_world_path(boost::filesystem::path new_path)
+{
+    _path = new_path;
 }
 
 void World::set_name(const char* new_name)
 {
     _name = new_name;
-}
-
-void World::set_world_path(const char* new_path)
-{
-    _path = new_path;
 }
 
 bool World::add_map(std::shared_ptr<Map> new_map)
@@ -287,7 +288,15 @@ bool World::xml_load_world_data(const std::string filename)
     return true;
 }
 
-void World::xml_write_world_data(std::string path)
+// Simulate default argument for xml_write_world_data.
+
+void World::xml_write_world_data()
+{
+	boost::filesystem::path empty_path;
+	xml_write_world_data(empty_path);
+}
+
+void World::xml_write_world_data(boost::filesystem::path path)
 {
 	try {
 		_main_world_xml_file = new xmlpp::Document();
@@ -349,10 +358,10 @@ void World::xml_write_world_data(std::string path)
 			icon_node->add_child_text(OutdoorsIcons::Instance().get_props(i)->get_name().c_str());
 		}
 
-		if (path.length() == 0) // Default!
-			_main_world_xml_file->write_to_file_formatted(get_path() + _name + ".xml");
+		if (path.empty()) // Default!
+			_main_world_xml_file->write_to_file_formatted((get_path() / (_name + ".xml")).c_str());
 		else
-			_main_world_xml_file->write_to_file_formatted(path + _name + ".xml");
+			_main_world_xml_file->write_to_file_formatted((path / (_name + ".xml")).c_str());
 	}
 	catch (...) {
 		std::cerr << "world.cc: xml_write_world_data() failed." << std::endl;

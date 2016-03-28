@@ -23,17 +23,10 @@ OutdoorsIcons::OutdoorsIcons()
 	unsigned icon_size = World::Instance().get_outdoors_tile_size() - 1;
 
 	// Load outdoors icon set
-//	std::string icon_path =
-//			(std::string)DATADIR + "/simplicissimus/data/" +
-//			(std::string)WORLD_NAME + "/images/icons_outdoors.png";
 	_ptr_icon_surf = IMG_Load((conf_world_path / "images" / "icons_outdoors.png").c_str());
 
 	if (!_ptr_icon_surf)
 		std::cerr << "ERROR: outdoorsicons.cc: Couldn't load outdoors icons: " << IMG_GetError() << std::endl;
-
-	//  std::cout << "pic width: " << _ptr_icon_surf->w
-	//	    << " icon size: " << icon_size
-	//	    << std::endl;
 
 	SDL_SetAlpha(_ptr_icon_surf,
 			!SDL_SRCALPHA
@@ -53,8 +46,8 @@ OutdoorsIcons::OutdoorsIcons()
 			Uint32 rmask, gmask, bmask, amask;
 
 			/* SDL interprets each pixel as a 32-bit number, so our
-	     masks must depend on the endianness (byte order) of the
-	     machine */
+	     	   masks must depend on the endianness (byte order) of the
+	     	   machine */
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 			rmask = 0xff000000;
 			gmask = 0x00ff0000;

@@ -79,7 +79,7 @@ public:
     _win = s;
 
     if (_win == NULL) {
-      std::cerr << "Error: sdlwindowregion.hh: _win == NULL.\n";
+      std::cerr << "ERROR: sdlwindowregion.hh: _win == NULL.\n";
       exit(EXIT_FAILURE);
     }
 
@@ -97,10 +97,10 @@ public:
     save_surf();
     
     if (!s)
-      std::cerr << "HARMLESS: surface s is null\n";
+      std::cerr << "INFO: sdlwindowregion.hh: surface s is null (harmless).\n";
     
     if (SDL_BlitSurface(s, NULL, _win, NULL) != 0)
-      std::cerr << "HARMLESS: miniwin.cc::display_surf failed\n";
+      std::cerr << "INFO: sdlwindowregion.hh: miniwin.cc::display_surf failed (harmless).\n";
   }
 
   SDL_Surface* get_surface()

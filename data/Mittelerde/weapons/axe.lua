@@ -3,8 +3,6 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
--- dofile(simpl_datapath() .. "weapons/defs.lua")
-
 Weapons["axe"]  = { 
    name         = "axe", 
    plural_name  = "axes", 
@@ -19,6 +17,3 @@ Weapons["axe"]  = {
    light_radius = 0,
    destroy_after = 0 
 }
-
--- simpl_pushweapon(Weapons.axe)
--- print("lua: axe.lua: added weapon " .. Weapons.axe.name)

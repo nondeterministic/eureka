@@ -1,9 +1,21 @@
-/*
- * File:   SoundSample.cc
- * Author: baueran
- *
- * Created on 1 January 2013, 2:15 PM
- */
+// This source file is part of Simplicissimus
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
 
 #include <string>
 #include <iostream>
@@ -13,45 +25,48 @@
 
 #include <SDL_mixer.h>
 
+#include "world.hh"
 #include "soundsample.hh"
 #include "config.h"
 
 SoundSample::SoundSample()
 {
-  _filename = "";
-  init();
+	_filename = "";
+	init();
 }
 
 SoundSample::SoundSample(std::string filename)
 {
-  _filename = filename;
-  init();
+	_filename = filename;
+	init();
 }
 
 void SoundSample::init()
 {
-  // _chan = -1 ; // TODO: is this a good init value? -1 is an error in
-  _chan = 1 ;  // TODO: is this a good init value? -1 is an error in
-	           // Mix_PlayChannel, so it should be, i.e., any other
-	           // value will be the actual channel.
-  std::string file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "walk.wav";
-  walk_wav = Mix_LoadWAV(file.c_str());
-  file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "hit.wav";
-  hit_wav = Mix_LoadWAV(file.c_str());
-  file = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + "foe_hit.wav";
-  foe_hit_wav = Mix_LoadWAV(file.c_str());
-  other_wav = NULL;
-  // _vol = 24;
-  _vol = 128; // TODO: I used to think it a good idea to make background noises more quiet (ie vol = 24) Not so sure anymore...
+	// _chan = -1 ; // TODO: is this a good init value? -1 is an error in
+	_chan = 1 ;  // TODO: is this a good init value? -1 is an error in
+	             // Mix_PlayChannel, so it should be, i.e., any other
+	             // value will be the actual channel.
+	boost::filesystem::path samples_path((std::string)DATADIR);
+	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
+	boost::filesystem::path file = samples_path / "walk.wav";
+	walk_wav = Mix_LoadWAV(file.c_str());
+	file = samples_path /  "hit.wav";
+	hit_wav = Mix_LoadWAV(file.c_str());
+	file = samples_path / "foe_hit.wav";
+	foe_hit_wav = Mix_LoadWAV(file.c_str());
+	other_wav = NULL;
+	// _vol = 24;
+	_vol = 128; // TODO: I used to think it a good idea to make background noises more quiet (ie vol = 24) Not so sure anymore...
 }
 
 SoundSample::~SoundSample()
 {
-  Mix_FreeChunk(walk_wav);
-  Mix_FreeChunk(hit_wav);
-  Mix_FreeChunk(foe_hit_wav);
-  if (other_wav != NULL)
-	  Mix_FreeChunk(other_wav);
+	Mix_FreeChunk(walk_wav);
+	Mix_FreeChunk(hit_wav);
+	Mix_FreeChunk(foe_hit_wav);
+	if (other_wav != NULL)
+		Mix_FreeChunk(other_wav);
 }
 
 // Toggle all audio
@@ -79,6 +94,7 @@ void SoundSample::play(std::string filename, int loop)
 {
 	boost::filesystem::path filepath(filename);
 	other_wav = Mix_LoadWAV(filepath.string().c_str());
+	std::cout << "LOADING SOUNDSAMPLE: " << filepath << std::endl;
 	play_chunk(other_wav, loop);
 	_audio_on = true;
 }
@@ -120,24 +136,24 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 		_audio_on = true;
 	}
 	else
-		std::cerr << "WARNING: Cannot play file. Check soundsample.cc.\n";
+		std::cerr << "WARNING: Cannot play file '" << _filename << "'. Check soundsample.cc.\n";
 }
 
 void SoundSample::stop()
 {
-  if (_chan != -1) {
-    Mix_ExpireChannel(_chan, 200);
-    _chan = -1;
-	_audio_on = false;
-  }
+	if (_chan != -1) {
+		Mix_ExpireChannel(_chan, 200);
+		_chan = -1;
+		_audio_on = false;
+	}
 }
 
 std::string SoundSample::filename()
 {
-  return _filename;
+	return _filename;
 }
 
 bool SoundSample::stopped()
 {
-  return _chan == -1;
+	return _chan == -1;
 }

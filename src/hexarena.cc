@@ -37,10 +37,9 @@ void HexArena::set_SDL_surface(SDL_Surface* s)
   _sdl_surf = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCALPHA,
 				   s->w + 100, s->h + 100,
 				   32, 0, 0, 0, 0);
+
   if (_sdl_surf == NULL)
-    std::cerr << "hexarena.cc::_sdl_surf == null\n";
-  else
-    std::cerr << "hexarena.cc::_sdl_surf != null\n";
+    std::cerr << "ERROR: hexarena.cc: hexarena.cc::_sdl_surf == null\n";
 }
 
 // x and y are screen coordinates in pixels
@@ -48,12 +47,12 @@ void HexArena::set_SDL_surface(SDL_Surface* s)
 int HexArena::put_tile(int x, int y, SDL_Surface* brush)
 {
   if (x < 0 || y < 0) {
-      std::cerr << "Warning: put_tile has wrong coords." << std::endl;
+      std::cerr << "ERROR: hexarena.cc: put_tile has wrong coords." << std::endl;
       return -1;
   }
   
   if (brush == NULL) {
-    std::cerr << "Warning: Brush to paint tile is NULL. " << std::endl;
+    std::cerr << "ERROR: hexarena.cc: brush to paint tile is NULL. " << std::endl;
     return 0;
   }
   
@@ -88,7 +87,7 @@ int HexArena::get_screen_y(int hex_y) const
 SDL_Rect HexArena::get_tile_coords(int x, int y) const
 {
   if (x < 0 || y < 0)
-    std::cerr << "Warning: get_tile_coords has wrong coords." << std::endl;
+    std::cerr << "ERROR: hexarena.cc: get_tile_coords has wrong coords." << std::endl;
 
   SDL_Rect rect;
   rect.x = x;
@@ -242,17 +241,17 @@ bool HexArena::adjacent(int x1, int y1, int x2, int y2)
   if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
     return false;
 
+  /*
   std::cout << "adj x1: " << x1 << ", y1: " << y1 << ", x2: " << x2 << ", y2: " << y2;
   if ( (x1 == x2 && abs(y1 - y2) <= 2) ||
        (abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1) )
-    std::cout << " adj" << "\n";
+	  std::cout << " adj" << "\n";
   else
-    std::cout << " !adj" << "\n";
+	  std::cout << " !adj" << "\n";
+  */
 
   return ( (x1 == x2 && abs(y1 - y2) <= 2) ||
 	   (abs(x1 - x2) <= 1 && abs(y1 - y2) <= 2) );
-  // return (x1 == x2 && abs(y1-y2) == 2) || (abs(x1-x2) == 1 &&
-  // abs(y1-y2) <= 1);
 }
 
 // Conditional compare, i.e., the enum "sign" is used to determine
@@ -457,7 +456,7 @@ void HexArena::show_map(int x_width, int y_width)
 				int puttile_errno = 0;
 
 				if (tileno < 0)
-					std::cerr << "Invalid tile number in HexArena::show_map(): " << tileno << std::endl;
+					std::cerr << "WARNING: hexarena.cc: Invalid tile number in HexArena::show_map(): " << tileno << std::endl;
 
 				int party_x, party_y;
 				map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
@@ -476,11 +475,11 @@ void HexArena::show_map(int x_width, int y_width)
 					// ...
 
 					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
-						std::cerr << "put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
+						std::cerr << "ERROR: hexarena.cc: put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
 				}
 				else {
 					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(10))) != 0)
-						std::cerr << "put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
+						std::cerr << "ERROR: hexarena.cc: put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
 				}
 			}
 

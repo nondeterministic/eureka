@@ -3,8 +3,6 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
--- dofile(simpl_datapath() .. "weapons/defs.lua")
-
 Edibles["iron ration"]  = { 
    name                   = "iron ration", 
    plural_name            = "iron rations", 
@@ -20,6 +18,3 @@ Edibles["iron ration"]  = {
    weight                 = 2,
    icon                   = 5
 }
-
--- simpl_pushweapon(Weapons.axe)
--- print("lua: axe.lua: added weapon " .. Weapons.axe.name)

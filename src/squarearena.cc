@@ -26,10 +26,9 @@ SquareArena::SquareArena(std::shared_ptr<Map> map)
   if (iconsize > 0) {
     for (int i = 0; i < iconsize; i++)
       _drawn_icons.push_back(-1);
-    std::cout << iconsize << " icons loaded\n";
   }
   else {
-    std::cerr << "squarearena.cc: Initialisation error. Icons not yet loaded.\n";
+    std::cerr << "ERROR: squarearena.cc: Initialisation error. Icons not yet loaded.\n";
     exit(0);
   }
 
@@ -58,12 +57,12 @@ void SquareArena::set_SDL_surface(SDL_Surface* s)
 int SquareArena::put_tile(int x, int y, SDL_Surface* brush)
 {
   if (x < 0 || y < 0) {
-    std::cerr << "Warning: put_tile has wrong coords." << std::endl;
+    std::cerr << "WARNING: put_tile has wrong coords." << std::endl;
     return -1;
   }
 
   if (brush == NULL) {
-    std::cerr << "Warning: Brush to paint tile is NULL. " << std::endl;
+    std::cerr << "WARNING: Brush to paint tile is NULL. " << std::endl;
     return 0;
   }
 
@@ -455,16 +454,16 @@ void SquareArena::show_map(int x_width, int y_width)
 			int puttile_errno = 0;
 
 			if (tileno < 0) {
-				std::cerr << "Invalid tile number in SquareArena::show_map()." << std::endl;
+				std::cerr << "ERROR: squarearena.cc: Invalid tile number in SquareArena::show_map()" << tileno << std::endl;
 				exit(0);
 			}
 
 			// Check for sound effects to be played for particular icon
 			if (IndoorsIcons::Instance().get_props(tileno)->sound_effect().size() > 0) {
-				std::string sample_path = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + IndoorsIcons::Instance().get_props(tileno)->sound_effect();
-				playlist.add_wav(sample_path);
-				sound_effects_added.push_back(sample_path);
-				// std::cout << "Adding to playlist: " << sample_path << "\n";
+				boost::filesystem::path sample_path((std::string)DATADIR);
+				sample_path = sample_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound" / IndoorsIcons::Instance().get_props(tileno)->sound_effect();
+				playlist.add_wav(sample_path.string());
+				sound_effects_added.push_back(sample_path.string());
 			}
 
 			int party_x, party_y;
@@ -518,9 +517,10 @@ void SquareArena::show_map(int x_width, int y_width)
 
 					// Check for sound effects to be played for particular object??
 					if (IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect().size() > 0) {
-						std::string sample_path = (std::string)DATADIR + "/" + (std::string)SAMPLES_PATH + IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect();
-						playlist.add_wav(sample_path);
-						sound_effects_added.push_back(sample_path);
+						boost::filesystem::path sample_path((std::string)DATADIR);
+						sample_path = sample_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound" / IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect();
+						playlist.add_wav(sample_path.string());
+						sound_effects_added.push_back(sample_path.string());
 					}
 				}
 			}
@@ -601,9 +601,6 @@ std::pair<int, int> SquareArena::show_party(int x, int y)
 
   int mx, my;
   screen_to_map(x, y, mx, my);
-
-  // std::cerr << "show_party: " << x << ", " << y
-  //        << " => " << mx << ", " << my << "\n";
 
   std::pair<int, int> new_coords;
   new_coords.first = mx;

@@ -107,13 +107,22 @@ void StartupWin::on_button_reopen(void)
 	{
 	case(Gtk::RESPONSE_OK): {
 		std::string filename = dialog.get_filename();
-
-		// Extract world name from filename
-		boost::iterator_range<std::string::iterator> r = boost::algorithm::find_regex(filename, boost::regex{".*([^\\/])+\\.xml"});
 		std::string world_name = "";
 
-		std::cout << "INFO: Loading world with name '" << r[0] << "'.\n";
-		exit(0);
+		// This regex should work, but somehow doesn't.  Weird!
+		// boost::regex regex(".*(?:\\|\/)([^\\\/]+)\.xml", boost::regex::perl|boost::regex::icase);
+
+		// Extract world name from filename
+		boost::regex regex("([^\\\/]+)\.xml", boost::regex::perl|boost::regex::icase);
+		boost::match_results<std::string::const_iterator> results;
+
+		if (boost::regex_search(filename, results, regex)) {
+			world_name = results[1];
+		}
+		else {
+			std::cout << "ERROR: Could not extract world name of path '" << filename << "'. Did you use spaces or hidden characters?\n";
+			exit(0);
+		}
 
 		// Set some global configuration variable
 		conf_world_path = boost::filesystem::path(conf_data_path / world_name);
@@ -150,6 +159,9 @@ void StartupWin::on_button_new(void)
 	NewWorldWin newworld_win;
 	if (!newworld_win.run())
 		return;
+
+	// template only: boost::filesystem::path conf_world_path = boost::filesystem::path(conf_data_path / world_name);
+	// TODO
 
 	std::string data_dir = World::Instance().get_path().c_str();
 	std::string world_dir  =  data_dir

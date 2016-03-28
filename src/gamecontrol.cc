@@ -1239,7 +1239,6 @@ void GameControl::use()
 					}
 				}
 			}
-			// ----------------------------------------------------------------------------------
 
 			// Remove one such item from inventory
 			party->inventory()->remove(item->name());
@@ -1376,7 +1375,7 @@ std::pair<int, int> GameControl::select_coords()
       arena->get_map()->pop_obj(old_x, old_y);
       return std::make_pair(-1, -1);
     default:
-      std::cerr << "Warning: Pressed unhandled key.\n";
+      std::cerr << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
     }
 
     if (! _ind) {
@@ -1881,7 +1880,6 @@ void GameControl::get_item()
 
 					// Perform action events
 					for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
-						std::cout << "Trying to perform action...\n";
 						if ((*action)->name() == "ACT_ON_TAKE") {
 							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
 								gh.handle(*curr_ev, arena->get_map());
@@ -2226,7 +2224,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	party->y += y_diff;
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
-	std::cout << "Info: Party: " << party->x << ", " << party->y << "\n";
+	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
 	return moved;
 }
@@ -2357,7 +2355,6 @@ bool GameControl::leave_map()
 					unsigned ox, oy;
 					map_obj.get_origin(ox, oy);
 					if (ox != 0 || oy != 0) {
-						cout << "Resetting coords for " << map_obj.id << "\n";
 						map_obj.set_coords(ox, oy);
 
 						// Make guards neutral on reentry
@@ -2400,7 +2397,7 @@ bool GameControl::leave_map()
 		// Now change maps over...
 		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
 		if (!arena->get_map())
-			std::cout << "Warning arena->get_map NULL\n";
+			std::cout << "WARNING: gamecontrol.cc: arena->get_map == NULL\n";
 
 		arena->get_map()->xml_load_map_data();
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
