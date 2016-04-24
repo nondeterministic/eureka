@@ -637,7 +637,7 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 
 	// Load generic Lua script for fighting which is referenced by every town folk
 	// Town folk don't have dedicated combat functions as it's not the norm that the party will attack town people.
-	lua.push_fn_arg((conf_world_path / (std::string)"people/generic_fight.lua").c_str());
+	lua.push_fn_arg((conf_world_path / "people" / "generic_fight.lua").c_str());
 	lua.call_fn_leave_ret_alone("load_generic_fight_file");
 
 	// Push c_values table onto Lua stack...

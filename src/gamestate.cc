@@ -17,14 +17,17 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
+#include "simplicissimus.hh"
 #include "gamestate.hh"
 #include "map.hh"
 #include "world.hh"
 #include "party.hh"
+
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <memory>
+
 #include <boost/filesystem.hpp>
 
 GameState::GameState()
@@ -70,17 +73,17 @@ std::shared_ptr<IndoorsMap> GameState::get_map(std::string map_name)
 
 // protected, called by save()
 
-bool GameState::save_party(std::string fullFilePath)
+bool GameState::save_party(boost::filesystem::path fullFilePath)
 {
-	boost::filesystem::path the_file = fullFilePath + "party.xml";
+	boost::filesystem::path the_file = fullFilePath / "party.xml";
 	std::string party_xml = Party::Instance().to_xml();
 
 	if (boost::filesystem::exists(the_file)) {
-		std::cout << "gamestate.cc: Removing file " << the_file.c_str() << ".\n";
+		std::cout << "INFO: gamestate.cc: Removing file " << the_file.c_str() << ".\n";
 		boost::filesystem::remove(the_file);
 	}
 
-	std::cout << "Writring to " << the_file.string() << std::endl;
+	std::cout << "INFO: gamestate.cc: Writing party data to " << the_file.string() << std::endl;
     std::ofstream out;
     out.open(the_file.string());
     out << party_xml;
@@ -89,28 +92,23 @@ bool GameState::save_party(std::string fullFilePath)
 	return true;
 }
 
-bool GameState::save(std::string fullFilePath)
+bool GameState::save()
 {
-	boost::filesystem::path dir(getenv("HOME")); // (std::string(getenv("HOME")) + "/.simplicissimus/");  // TODO: Does this use of dir ensure platform-independence?
-
-	if (fullFilePath == "")
-		dir /= ".simplicissimus";
-	else
-		dir = fullFilePath;
+	boost::filesystem::path dir = conf_savegame_path;
 
 	// Create output file structure if need be
 	if (!boost::filesystem::create_directory(dir))
-		std::cout << "gamestate.cc: Could not create config directory: " << dir << std::endl;
+		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << dir << std::endl;
 
-	if (!boost::filesystem::create_directory(dir.string() + World::Instance().get_name()))
-		std::cout << "gamestate.cc: Could not create config directory: " << (dir.string() + World::Instance().get_name()) << std::endl;
+	if (!boost::filesystem::create_directory(dir / World::Instance().get_name()))
+		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name()).string() << std::endl;
 
-	if (!boost::filesystem::create_directory(dir.string() + World::Instance().get_name() + "/maps/"))
-		std::cout << "gamestate.cc: Could not create config directory: " << (dir.string() + World::Instance().get_name() + "/maps/") << std::endl;
+	if (!boost::filesystem::create_directory(dir / World::Instance().get_name() / "maps"))
+		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << std::endl;
 
 	// Store indoors maps
 	for (auto map: _maps) {
-		std::string file = dir.string() + "maps/" + map->get_name() + ".xml";
+		boost::filesystem::path file = dir / "maps" / (map->get_name() + ".xml");
 
 		if (boost::filesystem::exists(file)) {
 			std::cout << "INFO: gamestate.cc: gamestate.cc: Removing file " << file << ".\n";
@@ -118,12 +116,12 @@ bool GameState::save(std::string fullFilePath)
 		}
 
 		std::cout << "INFO: gamestate.cc: Writing " << file << ".\n";
-		map->xml_write_map_data(dir.string());
+		map->xml_write_map_data(dir);
 		std::cout << "INFO: gamestate.cc: Written.\n";
 	}
 
 	// Store party state
-	save_party(dir.string());
+	save_party(dir);
 
 	// Clear map state again
 	_maps.clear();
@@ -142,7 +140,7 @@ bool GameState::save(std::string fullFilePath)
 	return true;
 }
 
-bool GameState::load(std::string fullFilePath)
+bool GameState::load()
 {
 	return true;
 }
