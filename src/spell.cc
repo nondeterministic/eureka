@@ -68,7 +68,6 @@ Spell Spell::spell_from_file_path(std::string fp, lua_State* L)
 
 	boost::filesystem::path sound_path(lua.call_fn<std::string>("get_sound_path"));
 	spell.sound_path     = sound_path.string();
-	std::cout << "SOUNDPATH: " << spell.sound_path << std::endl;
 
 	return spell;
 }

@@ -18,10 +18,11 @@ TODO
 IN PROGRESS
 ============
 
-- Change all paths to boost::filesystem::path for modularity and allowing new worlds to be included as well as future OS interoperability
 
 DONE
 =====
+
+- Change all paths to boost::filesystem::path for modularity and allowing new worlds to be included as well as future OS interoperability
 
 - Create different foes inside combat.cc rather than just one type (prio low, skill med)
 

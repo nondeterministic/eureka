@@ -39,6 +39,7 @@ public:
 	virtual ~AttackOption();
 	virtual void execute(Combat* = NULL);
 	void set_target(int);
+	PlayerCharacter* attacking_player();
 };
 
 class DefendOption : public AttackOption

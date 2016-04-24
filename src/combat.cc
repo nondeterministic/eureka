@@ -247,14 +247,14 @@ std::vector<AttackOption*> Combat::attack_options()
 	options.reserve(party->party_size());
 	options.resize(party->party_size());
 
-	for (int i = 0; i < party->party_size(); i++) {
-		PlayerCharacter* player = party->get_player(i);
+	for (int player_no = 0; player_no < party->party_size(); player_no++) {
+		PlayerCharacter* player = party->get_player(player_no);
 		std::string key_inputs = "adr";
 
 		if (player->condition() == DEAD)
 			continue;
 
-		ZtatsWin::Instance().highlight_lines(i * 2, i * 2 + 2);
+		ZtatsWin::Instance().highlight_lines(player_no * 2, player_no * 2 + 2);
 
 		std::stringstream ss;
 		ss << player->name() << " has these options this battle round:\n";
@@ -274,10 +274,10 @@ std::vector<AttackOption*> Combat::attack_options()
 		char input = em->get_key(key_inputs.c_str());
 
 		if (input == 'a') {
-			options[i] = new AttackOption(i, _lua_state);
+			options[player_no] = new AttackOption(player_no, _lua_state);
 
 			if (foes.count()->size() == 1) {
-				options[i]->set_target(1);
+				options[player_no]->set_target(1);
 			}
 			else {
 				// int attacked = select_enemy(i);
@@ -291,20 +291,20 @@ std::vector<AttackOption*> Combat::attack_options()
 					j++;
 				}
 				printcon(player->name() + " will attack " + (Util::vowel(attacked_name[0]) ? "an " : "a ") + attacked_name + " in the next round.");
-				options[i]->set_target(attacked);
+				options[player_no]->set_target(attacked);
 			}
 		}
 		else if (input == 'c') {
-			std::string spell_file_path = GameControl::Instance().select_spell(i);
+			std::string spell_file_path = GameControl::Instance().select_spell(player_no);
 
 			if (spell_file_path == "") {
 				printcon("Changed our mind in the last minute, didn't we?");
-				options[i] = new DefendOption();
+				options[player_no] = new DefendOption();
 			}
 			else {
 				LuaWrapper lua(_lua_state);
 				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, _lua_state);
-				SpellCastHelper* sch = new SpellCastHelper(i, _lua_state);
+				SpellCastHelper* sch = new SpellCastHelper(player_no, _lua_state);
 				sch->set_spell_path(spell_file_path);
 
 				// Convert the this-pointer to string and push it to Lua-land
@@ -324,21 +324,21 @@ std::vector<AttackOption*> Combat::attack_options()
 
 				if (sch->choose() >= 0) {
 					printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
-					options[i] = sch;
+					options[player_no] = sch;
 				}
 				else {
-					printcon("Changed our mind in the last minute, didn't we?");
-					options[i] = new DefendOption();
+					printcon("cccChanged our mind in the last minute, didn't we?");
+					options[player_no] = new DefendOption();
 					delete sch;
 				}
 			}
 		}
 		else if (input == 'd') {
 			printcon(player->name() + " will defend in the next round.");
-			options[i] = new DefendOption();
+			options[player_no] = new DefendOption();
 		}
 		else { // (R)eady item
-			std::string new_weapon = GameControl::Instance().ready_item(i);
+			std::string new_weapon = GameControl::Instance().ready_item(player_no);
 
 			if (new_weapon != "") {
 				ss << player->name() + " will ready a" << (Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
@@ -347,9 +347,9 @@ std::vector<AttackOption*> Combat::attack_options()
 			else
 				printcon(player->name() + " will defend in the next round.");
 
-			options[i] = new DefendOption();
+			options[player_no] = new DefendOption();
 		}
-		ZtatsWin::Instance().unhighlight_lines(i * 2, i * 2 + 2);
+		ZtatsWin::Instance().unhighlight_lines(player_no * 2, player_no * 2 + 2);
 	}
 
 	return options;
@@ -357,15 +357,15 @@ std::vector<AttackOption*> Combat::attack_options()
 
 int Combat::fight(std::vector<AttackOption*> attack_commands)
 {
-  party_fight(attack_commands);
-  foes_fight();
+	party_fight(attack_commands);
+	foes_fight();
 
-  for (auto ac: attack_commands) {
-	  std::cout << "INFO: combat:cc: Deleting party attack command.\n";
-	  delete ac;
-  }
+	for (auto ac: attack_commands) {
+		std::cout << "INFO: combat:cc: Deleting party attack command for player " << ac->attacking_player()->name() << ".\n";
+		delete ac;
+	}
 
-  return 0;
+	return 0;
 }
 
 void Combat::add_to_bounty(Item* i)

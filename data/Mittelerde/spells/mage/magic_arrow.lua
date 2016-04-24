@@ -48,7 +48,7 @@ do
    end
    
    function get_sound_path()
-      return simpl_datapath() .. "/sound/shallow_water.wav"
+      return "shallow_water.wav"
    end
 
    function set_combat_ptr(ptr)

@@ -47,7 +47,7 @@ do
    end
    
    function get_sound_path()
-      return simpl_datapath() .. "/sound/spell_normal.wav"
+      return "spell_normal.wav"
    end
 
    -- ---------------------------------------------------------------------------------
@@ -56,6 +56,8 @@ do
    -- Does the actual casting of spell, after choose() was called
    
    function cast()
+      simpl_play_sound(get_sound_path())
+      simpl_printcon(caster .. " casts a light spell and the surroundings become more clear and visible.")
       simpl_set_magic_light_radius(4)
    end
 
@@ -71,7 +73,7 @@ do
    end
    
    function finish(player)
-   	  simpl_printcon("Mooboo")
+      simpl_printcon("The light spell seems to have faded...")
       simpl_set_magic_light_radius(0)
    end
    

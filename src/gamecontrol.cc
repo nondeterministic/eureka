@@ -694,6 +694,8 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	return 0;
 }
 
+// "Civilian" use of magic during non-combat...
+
 void GameControl::cast_spell(int player_no, Spell spell)
 {
 	PlayerCharacter* player = party->get_player(player_no);
@@ -1573,8 +1575,7 @@ void GameControl::create_random_monsters_in_dungeon()
 	}
 }
 
-// The "opposite" of attack(), so to speak:
-// lets those hostile objects attack the party if next to it.
+// The "opposite" of attack(), so to speak: lets those hostile objects attack the party if next to it.
 
 void GameControl::get_attacked()
 {
@@ -1594,7 +1595,7 @@ void GameControl::get_attacked()
 						return;
 					}
 					else
-						std::cerr << "WARNING: gamecontrol.cc: I would attack, had I got an init script defined in the Lua script: " << map_obj->id << "\n";
+						std::cerr << "WARNING: gamecontrol.cc: I would attack, had I got an init script defined in the Lua script: '" << map_obj->id << "'.\n";
 				}
 				else if (map_obj->get_type() == MAPOBJ_MONSTER) {
 					// We have foes from previous attack left, so do not initiate fresh combat
@@ -1620,7 +1621,7 @@ void GameControl::get_attacked()
 					}
 				}
 				else
-					std::cerr << "WARNING: gamecontrol.cc: Unexpected case in get_attacked(): " << map_obj->id << "\n";
+					std::cerr << "WARNING: gamecontrol.cc: Unexpected case in get_attacked(): '" << map_obj->id << "'.\n";
 			}
 		}
 	}

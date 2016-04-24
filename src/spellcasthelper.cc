@@ -120,6 +120,11 @@ void SpellCastHelper::init()
 	if (!enabled())
 		return;
 
+	if (player == NULL)
+		std::cerr << "ERROR: spellcasthelper.cc: player == NULL. This is serious.\n";
+	else
+		std::cout << "SETTING SPELLCASTER: " << player->name() << "\n";
+
 	lua.push_fn_arg(player->name());
 	lua.call_void_fn("set_caster");
 

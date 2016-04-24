@@ -1,3 +1,22 @@
+// This source file is part of Simplicissimus
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include "sdlwindow.hh"
 #include "gameeventhandler.hh"
 #include "gameevent.hh"
@@ -98,6 +117,7 @@ bool GameEventHandler::handle_event_printcon(std::shared_ptr<EventPrintcon> even
 }
 
 // TODO: Variable map currently not used. Can be null.
+// Assumes that file name given by 'event' does *** NOT *** already contain the default sound sample path!
 
 bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> event, std::shared_ptr<Map> map)
 {
@@ -107,8 +127,14 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 
-	sample.play((samples_path / event->filename).c_str());
-	return true;
+	if (boost::filesystem::exists(samples_path / event->filename)) {
+		sample.play((samples_path / event->filename).c_str());
+		return true;
+	}
+	else {
+		std::cerr << "ERROR: gameeventhandler.cc: Sample to be played cannot be found: " << (samples_path / event->filename).c_str() << ".\n";
+		return false;
+	}
 }
 
 bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> event, std::shared_ptr<Map> map)

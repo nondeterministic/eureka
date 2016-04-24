@@ -94,7 +94,6 @@ void SoundSample::play(std::string filename, int loop)
 {
 	boost::filesystem::path filepath(filename);
 	other_wav = Mix_LoadWAV(filepath.string().c_str());
-	std::cout << "LOADING SOUNDSAMPLE: " << filepath << std::endl;
 	play_chunk(other_wav, loop);
 	_audio_on = true;
 }
@@ -103,17 +102,17 @@ void SoundSample::play(std::string filename, int loop)
 
 void SoundSample::play(SampleType t, int loop)
 {
-	  switch (t) {
-	  case WALK:
+	switch (t) {
+	case WALK:
 		play_chunk(walk_wav, loop);
 		break;
-	  case HIT:
+	case HIT:
 		play_chunk(hit_wav, loop);
 		break;
-	  case FOE_HIT:
+	case FOE_HIT:
 		play_chunk(foe_hit_wav, loop);
 		break;
-	  }
+	}
 }
 
 // 0 (min) - 128 (max)
