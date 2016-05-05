@@ -87,7 +87,7 @@ bool SpellCastHelper::is_attack_spell_only()
 	return lua.call_fn<bool>("is_attack_spell");
 }
 
-// Execute choose function in Lua spell file
+// Execute choose (monsters) function in Lua spell file
 
 int SpellCastHelper::choose()
 {

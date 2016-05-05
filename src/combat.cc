@@ -299,7 +299,7 @@ std::vector<AttackOption*> Combat::attack_options()
 
 			if (spell_file_path == "") {
 				printcon("Changed our mind in the last minute, didn't we?");
-				options[player_no] = new DefendOption();
+				options[player_no] = new DefendOption(player_no);
 			}
 			else {
 				LuaWrapper lua(_lua_state);
@@ -322,20 +322,22 @@ std::vector<AttackOption*> Combat::attack_options()
 				lua.push_fn_arg((std::string)thiss.str());
 				lua.call_void_fn("set_combat_ptr");
 
+				sch->init();
+
 				if (sch->choose() >= 0) {
 					printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
 					options[player_no] = sch;
 				}
 				else {
 					printcon("cccChanged our mind in the last minute, didn't we?");
-					options[player_no] = new DefendOption();
+					options[player_no] = new DefendOption(player_no);
 					delete sch;
 				}
 			}
 		}
 		else if (input == 'd') {
 			printcon(player->name() + " will defend in the next round.");
-			options[player_no] = new DefendOption();
+			options[player_no] = new DefendOption(player_no);
 		}
 		else { // (R)eady item
 			std::string new_weapon = GameControl::Instance().ready_item(player_no);
@@ -347,7 +349,7 @@ std::vector<AttackOption*> Combat::attack_options()
 			else
 				printcon(player->name() + " will defend in the next round.");
 
-			options[player_no] = new DefendOption();
+			options[player_no] = new DefendOption(player_no);
 		}
 		ZtatsWin::Instance().unhighlight_lines(player_no * 2, player_no * 2 + 2);
 	}
@@ -361,7 +363,7 @@ int Combat::fight(std::vector<AttackOption*> attack_commands)
 	foes_fight();
 
 	for (auto ac: attack_commands) {
-		std::cout << "INFO: combat:cc: Deleting party attack command for player " << ac->attacking_player()->name() << ".\n";
+		std::cout << "INFO: combat:cc: Deleting party attack/defend command for player " << ac->attacking_player()->name() << ".\n";
 		delete ac;
 	}
 

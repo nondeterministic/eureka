@@ -151,6 +151,6 @@ void AttackOption::printcon(const std::string s, bool wait)
   Console::Instance().print(&normal_font, s, wait);
 }
 
-DefendOption::DefendOption() /* int pl, lua_State* ls)*/ : AttackOption(-1, NULL) { }
+DefendOption::DefendOption(int pl) /*, lua_State* ls)*/ : AttackOption(pl, NULL) { }
 DefendOption::~DefendOption() { }
 void DefendOption::execute(Combat* combat) { }

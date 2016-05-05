@@ -45,7 +45,7 @@ public:
 class DefendOption : public AttackOption
 {
 public:
-	DefendOption(); // int, lua_State*);
+	DefendOption(int); // , lua_State*);
 	~DefendOption();
 	void execute(Combat* = NULL);
 };
