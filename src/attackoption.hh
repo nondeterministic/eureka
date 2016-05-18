@@ -48,6 +48,7 @@ public:
 	DefendOption(int); // , lua_State*);
 	~DefendOption();
 	void execute(Combat* = NULL);
+	std::string message;  // If non-empty, will be printed during defend action.
 };
 
 #endif

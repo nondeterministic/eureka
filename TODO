@@ -18,6 +18,7 @@ TODO
 IN PROGRESS
 ============
 
+- Magic system (prio high, skill high) [MOSTLY DONE BUT VARIOUS BUGS EXIST STILL.]
 
 DONE
 =====
@@ -27,8 +28,6 @@ DONE
 - Create different foes inside combat.cc rather than just one type (prio low, skill med)
 
 - Appearance of random monsters in dungeon (prio low, skill med)
-
-- Magic system (prio high, skill high) [IS THIS DONE? MOSTLY YES, SPELLS ARE MISSING THOUGH, such as light spell.]
 
 - Spell points recover from walking + resting (prio: med, skill low)
 

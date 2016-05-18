@@ -93,9 +93,6 @@ int SpellCastHelper::choose()
 {
 	LuaWrapper lua(L);
 
-	if (!enabled())
-		return -1;
-
 	lua.call_void_fn("choose");
 	int targets = lua.call_fn<double>("get_targets");
 
@@ -108,6 +105,7 @@ void SpellCastHelper::execute(Combat* combat)
 {
 	LuaWrapper lua(L);
 	lua.call_void_fn("cast");
+	player->set_sp(player->sp() - spell.sp);
 	ZtatsWin::Instance().update_player_list();
 }
 
@@ -115,20 +113,17 @@ void SpellCastHelper::execute(Combat* combat)
 
 void SpellCastHelper::init()
 {
+	SpellNotEnabledException notEnabled;
 	LuaWrapper lua(L);
 
 	if (!enabled())
-		return;
+		throw notEnabled;
 
 	if (player == NULL)
 		std::cerr << "ERROR: spellcasthelper.cc: player == NULL. This is serious.\n";
-	else
-		std::cout << "SETTING SPELLCASTER: " << player->name() << "\n";
 
 	lua.push_fn_arg(player->name());
 	lua.call_void_fn("set_caster");
-
-	player->set_sp(player->sp() - spell.sp);
 
 	lua.call_void_fn("init");
 }

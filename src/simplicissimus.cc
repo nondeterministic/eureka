@@ -580,8 +580,8 @@ int start_game(int res_w, int res_h)
 	Console::Instance().
 			print(&normalFont,
 					"This is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
-					"(d)rop item, (e)nter, (i)nventory, (l)ook, (o)pen, (p)pull/push, (q)uit, (r)eady item, "
-					"(t)alk, (u)use item, (y)ield item, (z)tats.\n",
+					"(d)rop item, (e)nter, (i)nventory, (l)ook, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
+					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
 					false);
 
 	// Activate event handling

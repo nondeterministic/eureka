@@ -12,6 +12,7 @@
 #include "combat.hh"
 
 #include <string>
+#include <exception>
 
 extern "C"
 {
@@ -22,6 +23,13 @@ extern "C"
 }
 
 class Combat;
+
+class SpellNotEnabledException: public exception
+{
+	virtual const char* what() const throw() {
+		return "My exception happened";
+	}
+};
 
 class SpellCastHelper : public AttackOption
 {

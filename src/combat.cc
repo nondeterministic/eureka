@@ -302,6 +302,7 @@ std::vector<AttackOption*> Combat::attack_options()
 				options[player_no] = new DefendOption(player_no);
 			}
 			else {
+				std::string defend_message = "";
 				LuaWrapper lua(_lua_state);
 				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, _lua_state);
 				SpellCastHelper* sch = new SpellCastHelper(player_no, _lua_state);
@@ -322,16 +323,24 @@ std::vector<AttackOption*> Combat::attack_options()
 				lua.push_fn_arg((std::string)thiss.str());
 				lua.call_void_fn("set_combat_ptr");
 
-				sch->init();
+				try
+				{
+					sch->init();
 
-				if (sch->choose() >= 0) {
-					printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
-					options[player_no] = sch;
+					if (sch->choose() >= 0) {
+						printcon(player->name() + " will attempt to cast '" + tmp_spell.name + "' in the next round.");
+						options[player_no] = sch;
+					}
+					else {
+						printcon("Changed our mind in the last minute, didn't we?");
+						options[player_no] = new DefendOption(player_no);
+						delete sch;
+					}
 				}
-				else {
-					printcon("cccChanged our mind in the last minute, didn't we?");
-					options[player_no] = new DefendOption(player_no);
-					delete sch;
+				catch (SpellNotEnabledException &ex) {
+					DefendOption* tmp_defend_option = new DefendOption(player_no);
+					printcon(player->name() + " will instead defend in the next round.");
+					options[player_no] = tmp_defend_option;
 				}
 			}
 		}
@@ -382,7 +391,7 @@ void Combat::add_to_bounty(Item* i)
 int Combat::party_fight(std::vector<AttackOption*> attacks)
 {
 	if ((int)attacks.size() < party->party_size())
-		std::cerr << "WARNING: Attack choices < party size. This is serious.\n";
+		std::cerr << "ERROR: combat.cc: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
 	int i = 0;

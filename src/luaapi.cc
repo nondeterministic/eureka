@@ -1047,6 +1047,8 @@ int l_get_single_monster_name(lua_State* L)
 
 int l_magic_attack(lua_State* L)
 {
+	static SoundSample sample;
+
 	// Get Lua parameters; see attack spell script.
 	int  targets             = lua_tonumber(L, 1);
 	bool attack_whole_group  = lua_tonumber(L, 2) == 1? true : false;
@@ -1100,6 +1102,9 @@ int l_magic_attack(lua_State* L)
 				opponent->set_hp(opponent->hp() - damage);
 				lua.push_fn_arg((double)(opponent->hp() - damage));
 				lua.call_void_fn("set_hp");
+
+				MiniWin::Instance().alarm();
+				sample.play(FOE_HIT);
 			}
 			else {
 				ss << player->name() << " casts a spell, killing the " << opponent->name() << ".";
@@ -1107,6 +1112,9 @@ int l_magic_attack(lua_State* L)
 
 				// Add experience points to player's balance
 				player->inc_ep(lua.call_fn<double>("get_ep"));
+
+				MiniWin::Instance().alarm();
+				sample.play(FOE_HIT);
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.

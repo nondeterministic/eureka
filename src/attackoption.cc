@@ -151,6 +151,17 @@ void AttackOption::printcon(const std::string s, bool wait)
   Console::Instance().print(&normal_font, s, wait);
 }
 
-DefendOption::DefendOption(int pl) /*, lua_State* ls)*/ : AttackOption(pl, NULL) { }
-DefendOption::~DefendOption() { }
-void DefendOption::execute(Combat* combat) { }
+DefendOption::DefendOption(int pl) : AttackOption(pl, NULL)
+{
+	message = ""; // see attackoption.hh
+}
+
+DefendOption::~DefendOption()
+{
+}
+
+void DefendOption::execute(Combat* combat)
+{
+	if (message.length() > 0)
+		printcon(message, true);
+}
