@@ -236,7 +236,8 @@ void get_opts (int argc, char* argv[])
       	  case 4:
       		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
       		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
-      		  std::cout << "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
+      		  std::cout << "This is free software; see the source for copying conditions.\n"
+      				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
               _getops_exit_after_print = true;
               break;
       	  case 5:
@@ -275,8 +276,9 @@ int intro(int res_w, int res_h)
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
 		std::cerr << "ERROR: Could not initialize audio.\n";
 
-	boost::filesystem::path path_intro_music(conf_world_path.string());
-	path_intro_music /= "sound";
+	boost::filesystem::path path_intro_music(DATADIR);
+	path_intro_music /= PACKAGE_NAME;
+	path_intro_music /= "data";
 	path_intro_music /= "intro.ogg";
 	SoundSample sample_intro;
 	sample_intro.set_channel(4711);
@@ -318,7 +320,7 @@ int intro(int res_w, int res_h)
     return 0;
 }
 
-int init_game_environment(int res_w, int res_h)
+int start_game(int res_w, int res_h)
 {
 	EventManager* em = &EventManager::Instance();
 	Party* party     = &Party::Instance();
