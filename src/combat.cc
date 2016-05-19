@@ -328,7 +328,7 @@ std::vector<AttackOption*> Combat::attack_options()
 					sch->init();
 
 					if (sch->choose() >= 0) {
-						printcon(player->name() + " will attempt to cast '" + tmp_spell.name + "' in the next round.");
+						printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
 						options[player_no] = sch;
 					}
 					else {
@@ -337,6 +337,12 @@ std::vector<AttackOption*> Combat::attack_options()
 						delete sch;
 					}
 				}
+				// This exception is thrown, e.g., when a light spell is chosen, where no target or party member needs to be selected.
+				catch (NoChooseFunctionException &ex) {
+					printcon(player->name() + " will ccast '" + tmp_spell.name + "' in the next round.");
+					options[player_no] = sch;
+				}
+				// This will be thrown, e.g., when the caster does not have enough spell points
 				catch (SpellNotEnabledException &ex) {
 					DefendOption* tmp_defend_option = new DefendOption(player_no);
 					printcon(player->name() + " will instead defend in the next round.");

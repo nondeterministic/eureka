@@ -42,6 +42,14 @@ do
      return false
    end
 
+   function is_choose_function_defined()
+      if (choose == nil) then
+	 return false
+      else
+	 return false
+      end
+   end   
+
    function get_targets()
       return targets
    end
@@ -49,7 +57,7 @@ do
    function get_sound_path()
       return "spell_normal.wav"
    end
-
+   
    -- ---------------------------------------------------------------------------------
    -- Cast spell
 

@@ -42,6 +42,14 @@ do
      return false
    end
 
+   function is_choose_function_defined()
+      if (choose == nil) then
+	 return false
+      else
+	 return false
+      end
+   end   
+
    function get_targets()
       return targets
    end
@@ -61,10 +69,11 @@ do
       simpl_set_magic_light_radius(4)
    end
 
-   -- Choose target for attack or party member, e.g., for healing. Is empty for, say, a light spell.
+   -- Define a function choose() if either an opponent is to be chosen before casting (e.g., magic missile)
+   -- or for healing a party member. Otherwise, do not define this function!
 
-   function choose()
-   end
+   -- function choose()
+   -- end
 
    -- Spells that have a duration for multiple rounds need to define the following 'constructor' and 'destructor' functions. Other spells leave this blank!
 

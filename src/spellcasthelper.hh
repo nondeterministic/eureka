@@ -27,7 +27,14 @@ class Combat;
 class SpellNotEnabledException: public exception
 {
 	virtual const char* what() const throw() {
-		return "My exception happened";
+		return "Spell cannot be cast";
+	}
+};
+
+class NoChooseFunctionException: public exception
+{
+	virtual const char* what() const throw() {
+		return "No choose function";
 	}
 };
 

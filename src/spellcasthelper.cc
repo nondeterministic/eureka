@@ -91,7 +91,14 @@ bool SpellCastHelper::is_attack_spell_only()
 
 int SpellCastHelper::choose()
 {
+	NoChooseFunctionException noChooseFunction;
 	LuaWrapper lua(L);
+
+	if (!lua.call_fn<bool>("is_choose_function_defined")) {
+		std::cout << "CHOOSE FUNCTRION NOT DEFINED!!\n";
+		throw noChooseFunction;
+	}
+	std::cout << "CHOOSE FUNCTRION IS DEFINED!!\n";
 
 	lua.call_void_fn("choose");
 	int targets = lua.call_fn<double>("get_targets");
