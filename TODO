@@ -18,10 +18,11 @@ TODO
 IN PROGRESS
 ============
 
-- Magic system (prio high, skill high) [MOSTLY DONE BUT VARIOUS BUGS EXIST STILL.]
 
 DONE
 =====
+
+- Magic system (prio high, skill high)
 
 - Change all paths to boost::filesystem::path for modularity and allowing new worlds to be included as well as future OS interoperability
 

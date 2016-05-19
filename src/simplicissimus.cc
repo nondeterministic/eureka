@@ -277,7 +277,7 @@ int intro(int res_w, int res_h)
 
 	boost::filesystem::path path_intro_music(conf_world_path.string());
 	path_intro_music /= "sound";
-	path_intro_music /= "LocusIste.ogg";
+	path_intro_music /= "intro.ogg";
 	SoundSample sample_intro;
 	sample_intro.set_channel(4711);
 	sample_intro.set_volume(128);
@@ -318,7 +318,7 @@ int intro(int res_w, int res_h)
     return 0;
 }
 
-int start_game(int res_w, int res_h)
+int init_game_environment(int res_w, int res_h)
 {
 	EventManager* em = &EventManager::Instance();
 	Party* party     = &Party::Instance();
@@ -343,7 +343,7 @@ int start_game(int res_w, int res_h)
 		arena = Arena::create("outdoors", "Landschaft");
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: MapNotFound exception." << std::endl;
+		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
