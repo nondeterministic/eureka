@@ -2,6 +2,8 @@
 <map>
   <name>Landschaft</name>
   <outdoors>true</outdoors>
+  <initial_x>13</initial_x>
+  <initial_y>21</initial_y>
   <dungeon>false</dungeon>
   <guarded_city>false</guarded_city>
   <data>

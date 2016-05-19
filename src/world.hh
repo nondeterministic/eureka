@@ -69,6 +69,7 @@ public:
   bool delete_map(std::shared_ptr<Map>);
   bool exists_map(const char*);
   std::shared_ptr<Map> get_map(const char*);
+  std::shared_ptr<Map> get_initial_map();
   std::vector<std::shared_ptr<Map>>* get_maps();
   unsigned get_indoors_tile_size() const;
   unsigned get_outdoors_tile_size() const;

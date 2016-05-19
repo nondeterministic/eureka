@@ -1,7 +1,17 @@
 COPYRIGHT OF GAME SUPPORT FILES IN THIS DIRECTORY:
 ==================================================
-- intro.ogg: is really the file Locus Iste.ogg and is taken from
-  https://archive.org/details/LocusIste
+- intro.ogg: Is a converted file from MusOpen Open Music Library
+  https://musopen.org/music/2554/johann-sebastian-bach/prelude-and-fugue-in-dm-bwv-539/
+
+- main.ogg: Is converted file from MusOpen Open Music Library
+  https://musopen.org/music/2554/johann-sebastian-bach/prelude-and-fugue-in-dm-bwv-539/
 
 - charset.png and frame.png are both taken from the GPL'ed game Nazghul
   https://sourceforge.net/projects/nazghul/
+
+
+OLD
+
+- intro.ogg: is really the file Locus Iste.ogg and is taken from
+  https://archive.org/details/LocusIste
+

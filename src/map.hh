@@ -34,6 +34,16 @@
 #include "action.hh"
 #include "gameevent.hh"
 
+class NoInitialCoordsException
+{
+protected:
+  std::string err;
+
+public:
+  NoInitialCoordsException(std::string s) { err = s; }
+  std::string print() const { return err; }
+};
+
 class Map
 {
 public:
@@ -51,6 +61,7 @@ public:
   bool xml_load_map_data();
   bool xml_write_map_data(boost::filesystem::path);
   bool xml_write_map_data();
+  std::pair<int,int> get_initial_coords();
   // Returns true if this map has been written on disk before, i.e.,
   // this can be indirectly used to check whether the map is new or
   // not.
@@ -86,6 +97,7 @@ public:
 
   bool guarded_city;
   bool is_dungeon;
+  bool initial;
 
 protected:
   // Variables
@@ -93,6 +105,7 @@ protected:
   // xmlpp::Document* _main_map_xml_file;
   // xmlpp::Node* _main_map_xml_root;
   bool _modified;
+  int initial_x, initial_y;
 
   // XML-helper functions
   void parse_node(const xmlpp::Node*);

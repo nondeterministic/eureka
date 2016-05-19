@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world>
   <name>Mittelerde</name>
-  <map href="./Mittelerde/maps/Landschaft.xml" type="outdoors">Landschaft</map>
+  <map href="./Mittelerde/maps/Landschaft.xml" type="outdoors" initial="yes">Landschaft</map>
   <map href="./Mittelerde/maps/Stadtkarte1.xml" type="indoors">Stadtkarte1</map>
   <map href="./Mittelerde/maps/Dungeon1.xml" type="indoors">Dungeon1</map>
   <map href="./Mittelerde/maps/Mitwok.xml" type="indoors">Mitwok</map>

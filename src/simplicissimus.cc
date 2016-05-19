@@ -38,6 +38,8 @@
 #include "util.hh"
 #include "profession.hh"
 #include "soundsample.hh"
+#include "outdoorsmap.hh"
+#include "indoorsmap.hh"
 #include "simplicissimus.hh"
 
 #include <iostream>
@@ -116,8 +118,9 @@ bool _getops_print_config = false;
 // ******************************************************************************
 
 void get_opts (int, char*[]);
-int start_game(int,int);
 int intro(int, int);
+int init_game_env(int,int);
+int start_game();
 
 // ******************************************************************************
 // Main
@@ -183,11 +186,14 @@ int main(int argc, char *argv[])
 	// Make the simplicissimus API visible to Lua
 	publicize_api(_lua_state);
 
-	// Show intro
+	// Init sound and video, show intro
 	intro(res_w, res_h);
 
-	// Start game
-	return start_game(res_w, res_h);
+	// Init screen
+	init_game_env(res_w, res_h);
+
+	// Start actual game
+	return start_game();
 }
 
 // Evaluate command line arguments
@@ -320,34 +326,9 @@ int intro(int res_w, int res_h)
     return 0;
 }
 
-int start_game(int res_w, int res_h)
+int init_game_env(int res_w, int res_h)
 {
-	EventManager* em = &EventManager::Instance();
-	Party* party     = &Party::Instance();
 	SDLWindow* win   = &SDLWindow::Instance();
-	GameControl* gc  = &GameControl::Instance();
-	Charset normalFont;
-
-	int x = 13, y = 21; // Some default values for starting position in wilderness
-
-	// Load game data
-	if (! World::Instance().xml_load_world_data(conf_world_path.string() + ".xml")) {
-		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml" << ". Did you run make install?" << std::endl;
-		return -1;
-	}
-
-	// Load Lua scripts, basically.
-	World::Instance().load_world_elements(_lua_state);
-
-	// Create an arena and load a map
-	std::shared_ptr<Arena> arena;
-	try {
-		arena = Arena::create("outdoors", "Landschaft");
-	}
-	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception." << std::endl;
-		exit(EXIT_FAILURE);
-	}
 
 	// Now create shared_ptr from raw pointer
 	//  std::shared_ptr<HexArena> arena = std::dynamic_pointer_cast<HexArena>(_arena);
@@ -356,11 +337,15 @@ int start_game(int res_w, int res_h)
 	// TODO: Not sure which flags are required.
 	win->init(res_w, res_h); // , 32, SDL_HWPALETTE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
-	// TODO
+	boost::filesystem::path path_main_music(DATADIR);
+	path_main_music /= PACKAGE_NAME;
+	path_main_music /= "data";
+	path_main_music /= "main.ogg";
+
 	SoundSample game_music;
 	game_music.set_channel(4711);
 	game_music.set_volume(128);
-	game_music.play((conf_world_path / "sound" / "travel.ogg").string(), 1);
+	game_music.play(path_main_music.string(), 1);
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
@@ -395,8 +380,54 @@ int start_game(int res_w, int res_h)
 		exit(EXIT_FAILURE);
 	}
 
-	// Path to saved game
-	// boost::filesystem::path dir(std::string(getenv("HOME")) + "/." + PACKAGE_NAME + "/");
+	return 0;
+}
+
+int start_game()
+{
+	SDLWindow* win   = &SDLWindow::Instance();
+	Party* party     = &Party::Instance();
+	GameControl* gc  = &GameControl::Instance();
+	EventManager* em = &EventManager::Instance();
+	Charset normalFont;
+	int x = -1;
+	int y = -1;
+
+	// Load game data
+	if (! World::Instance().xml_load_world_data(conf_world_path.string() + ".xml")) {
+		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml" << ". Did you run make install?" << std::endl;
+		return -1;
+	}
+
+	// Load Lua scripts, basically.
+	World::Instance().load_world_elements(_lua_state);
+	std::shared_ptr<Map> initial_map;
+	bool initial_map_indoors = true;
+
+	// Determine initial game map
+	try {
+		initial_map = World::Instance().get_initial_map();
+	}
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map))
+		initial_map_indoors = false;
+
+	// Create an arena for initial game map
+	std::shared_ptr<Arena> arena;
+	try {
+		if (initial_map_indoors)
+			arena = Arena::create("indoors", initial_map->get_name());
+		else
+			arena = Arena::create("outdoors", initial_map->get_name());
+	}
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	// Check if there's a saved game to return to and load it, if there is.
 	if (boost::filesystem::exists(conf_savegame_path)) {
@@ -559,6 +590,24 @@ int start_game(int res_w, int res_h)
 	// Load map data
 	arena->get_map()->xml_load_map_data();
 
+	// Determine initial game position
+	try {
+		x = initial_map->get_initial_coords().first;
+		y = initial_map->get_initial_coords().second;
+	}
+	catch (NoInitialCoordsException& e)
+	{
+		std::cerr << "ERROR: simplicissimus.cc: Exception thrown. No initial coordinates in initial game map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	if (x < 0 || y < 0) {
+		std::cerr << "ERROR: simplicissimus.cc: No initial coordinates in initial game map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	else
+		std::cout << "INFO: simplicissimus.cc: Setting initial party coordinates to (" << x << ", " << y << ").\n";
+
 	// Draw map
 	arena->set_SDL_surface(win->get_drawing_area_SDL_surface());
 	arena->determine_offsets();
@@ -570,6 +619,12 @@ int start_game(int res_w, int res_h)
 	gc->set_map_name("Landschaft");
 	gc->show_win();
 	gc->draw_status();
+
+	SoundSample game_music;
+	game_music.set_channel(4711);
+	game_music.set_volume(128);
+	game_music.play((conf_world_path / "sound" / "travel.ogg").string(), 1);
+
 	gc->set_game_music(&game_music);
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);

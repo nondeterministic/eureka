@@ -150,7 +150,15 @@ std::shared_ptr<Map> World::get_map(const char* map_name)
     for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
         if ((*curr_map)->get_name() == map_name)
             return *curr_map;
-    throw MapNotFound("MapNotFound exception in World::get_open_map(" + (std::string)map_name + ")");
+    throw MapNotFound("MapNotFound exception in World::get_map(" + (std::string)map_name + ")");
+}
+
+std::shared_ptr<Map> World::get_initial_map()
+{
+    for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++)
+        if ((*curr_map)->initial)
+            return *curr_map;
+    throw MapNotFound("MapNotFound exception in World::get_initial_map()");
 }
 
 std::vector<std::shared_ptr<Map>>* World::get_maps(void)
@@ -201,8 +209,9 @@ bool World::xml_load_world_data(const std::string filename)
                 reader.next();
             }
             else if (reader.get_name() == "map") {
-                std::shared_ptr<Map> new_map; //  = NULL;
-                std::string new_map_name = reader.read_string();
+                bool outdoors = false;
+                bool initial = false;
+            	std::string new_map_name = reader.read_string();
                 std::string new_map_path;
 
                 reader.move_to_first_attribute();
@@ -211,16 +220,30 @@ bool World::xml_load_world_data(const std::string filename)
                         new_map_path = reader.get_value();
                     }
                     else if (reader.get_name().uppercase() == "TYPE") {
-                        if (reader.get_value().uppercase() == "INDOORS")
-                            new_map = std::make_shared<IndoorsMap>(new_map_name.c_str(), new_map_path.c_str());
-                        else // if (reader.get_value().uppercase() == "OUTDOORS")
-                            new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str(), new_map_path.c_str());
+                    	if (reader.get_value().uppercase() == "OUTDOORS")
+                    		outdoors = true;
+                    }
+                    else if (reader.get_name().uppercase() == "INITIAL") {
+                        if (reader.get_value().uppercase() == "YES")
+                        	initial = true;
                     }
                 }
                 while (reader.move_to_next_attribute());
                 reader.move_to_element();
 
+                // Create the actual map from read attributes
+                std::shared_ptr<Map> new_map; //  = NULL;
+
+                if (!outdoors)
+                    new_map = std::make_shared<IndoorsMap>(new_map_name.c_str(), new_map_path.c_str());
+                else
+                    new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str(), new_map_path.c_str());
+
+                if (initial)
+                	new_map->initial = true;
+
                 new_map->set_notmodified();
+
                 World::Instance().add_map(new_map);
                 reader.next();
             }
@@ -311,6 +334,8 @@ void World::xml_write_world_data(boost::filesystem::path path)
 			xmlpp::Element* map_node = _main_world_xml_root->add_child("map");
 			map_node->set_attribute("href", "./" + _name + "/maps/" + (*curr_map)->get_name() + ".xml");
 			map_node->set_attribute("type", ((*curr_map)->is_outdoors() ? "outdoors" : "indoors"));
+			if ((*curr_map)->initial)
+				map_node->set_attribute("initial", "yes");
 			map_node->add_child_text((*curr_map)->get_name());
 		}
 

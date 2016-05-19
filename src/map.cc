@@ -55,6 +55,9 @@ Map::Map()
 	is_dungeon = false;
 	guarded_city = false;
 	_modified = true;
+	initial = false;
+	initial_x = -1;
+	initial_y = -1;
 	// _main_map_xml_root = NULL;
 	// _main_map_xml_file = NULL;
 }
@@ -68,6 +71,9 @@ Map::Map(const Map& p)
 	_data = p._data;
 	_map_objects = p._map_objects;
 	_actions = p._actions;
+	initial = p.initial;
+	initial_x = p.initial_x;
+	initial_y = p.initial_y;
 	std::cout << "DEEP MAP COPY MOTHERFUCKER\n";
 }
 
@@ -162,6 +168,14 @@ void Map::add_event_to_action(unsigned x, unsigned y, std::shared_ptr<GameEvent>
 			return;
 		}
 	}
+}
+
+std::pair<int,int> Map::get_initial_coords()
+{
+	if (initial_x < 0 || initial_y < 0)
+		throw NoInitialCoordsException("This map contains no initial coordinates.");
+	else
+		return std::make_pair(initial_x, initial_y);
 }
 
 void Map::add_action(Action* new_act)
@@ -544,6 +558,10 @@ void Map::parse_node(const xmlpp::Node* node)
 			is_dungeon = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
 		else if (nodeElement->get_name().uppercase() == "GUARDED_CITY")
 			guarded_city = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
+		else if (nodeElement->get_name().uppercase() == "INITIAL_X")
+			initial_x = std::stoi(nodeElement->get_child_text()->get_content().c_str());
+		else if (nodeElement->get_name().uppercase() == "INITIAL_Y")
+			initial_y = std::stoi(nodeElement->get_child_text()->get_content().c_str());
 		else if (nodeElement->get_name().uppercase() == "OBJECTS")
 			parse_objects_node(node);
 		else if (nodeElement->get_name().uppercase() == "DATA")
@@ -699,6 +717,10 @@ bool Map::xml_write_map_data(boost::filesystem::path path)
 		_main_map_xml_root->add_child("outdoors")->add_child_text((is_outdoors()? "true" : "false"));
 		_main_map_xml_root->add_child("dungeon")->add_child_text((is_dungeon? "true" : "false"));
 		_main_map_xml_root->add_child("guarded_city")->add_child_text((guarded_city? "true" : "false"));
+		if (initial_x >= 0 && initial_y >= 0) {
+			_main_map_xml_root->add_child("initial_x")->add_child_text(std::to_string(initial_x));
+			_main_map_xml_root->add_child("initial_y")->add_child_text(std::to_string(initial_y));
+		}
 		xmlpp::Element* data_entry = _main_map_xml_root->add_child("data");
 		std::ostringstream curr_row;
 
