@@ -117,13 +117,18 @@ int GameControl::set_party(int x, int y)
   return 0;
 }
 
+// Returns 0 on success, a negative value if no map can be drawn for whatever reason
+
 int GameControl::show_win()
 {
-  arena->show_map(get_viewport().first, get_viewport().second);
-  arena->show_party(screen_pos_party.first, screen_pos_party.second);
-  arena->update();
-  SDLWindow::Instance().blit_interior();
-  return 0;
+	if (arena != NULL && arena->get_map() != NULL) {
+		arena->show_map(get_viewport().first, get_viewport().second);
+		arena->show_party(screen_pos_party.first, screen_pos_party.second);
+		arena->update();
+		SDLWindow::Instance().blit_interior();
+		return 0;
+	}
+	return -1;
 }
 
 /**

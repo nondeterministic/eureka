@@ -611,7 +611,7 @@ bool Map::xml_load_map_data(boost::filesystem::path pathToFile)
 		}
 	}
 	catch(const std::exception& ex) {
-		std::cout << "Exception upon loading map: " << ex.what() << std::endl;
+		std::cerr << "ERROR: map.cc: Exception upon loading map: " << ex.what() << std::endl;
 		return false;
 	}
 

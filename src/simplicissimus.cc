@@ -120,7 +120,75 @@ bool _getops_print_config = false;
 void get_opts (int, char*[]);
 int intro(int, int);
 int init_game_env(int,int);
+int create_character();
 int start_game();
+
+// ******************************************************************************
+// Util
+// ******************************************************************************
+
+void get_opts (int argc, char* argv[])
+{
+  int option = 0;
+  int option_index = 0;
+
+  while ((option = getopt_long(argc, argv, "chx:y:v", long_options, &option_index)) != -1) {
+      switch (option) {
+      	  case 'h':
+      	  case 1:
+      		  std::cout << PACKAGE_NAME << " - ye olde roleplaying game engine.\n";
+      		  std::cout << "Lets you play games that have been designed for " << PACKAGE_NAME << "." << std::endl << std::endl;
+      		  std::cout << "Usage:   " << argv[0] << " [OPTIONS] <WORLDNAME>" << std::endl;
+      		  std::cout << "Example: " << argv[0] << " MyExcitingGameWorld" << std::endl << std::endl;
+              std::cout << "If a long option shows an argument as mandatory, then it is mandatory for the equivalent short option also.\n\n";
+              std::cout << "Options:" << std::endl;
+              std::cout << "  -x <ARG>, --width=<ARG>        ";
+              std::cout << "Set width of game window (default is 1024)\n";
+              std::cout << "  -y <ARG>, --height=<ARG>       ";
+              std::cout << "Set height of game window (default is 768)\n";
+              std::cout << "            --datapath=<ARG>     ";
+              std::cout << "Set data directory, which is also where all the available game worlds are stored (the default is where 'make install' put them)\n";
+              std::cout << "  -c        --show-config        ";
+              std::cout << "Show the current default configuration of " << PACKAGE_NAME << "\n";
+              std::cout << "            --savegamepath=<ARG> ";
+              std::cout << "Set the directory, where the saved games will end up in (default is $HOME/." << PACKAGE_NAME << "/)\n";
+              std::cout << "  -h,       --help               ";
+              std::cout << "Display this help information\n";
+              std::cout << "  -v,       --version            ";
+              std::cout << "Show version information\n\n";
+              std::cout << "Report bugs to <baueran@gmail.com>.\n";
+              _getops_exit_after_print = true;
+              break;
+      	  case 'x':
+      	  case 2:
+      		  res_w = std::stoi(optarg);
+      		  break;
+      	  case 'y':
+      	  case 3:
+      		  res_h = std::stoi(optarg);
+      		  break;
+      	  case 'v':
+      	  case 4:
+      		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
+      		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
+      		  std::cout << "This is free software; see the source for copying conditions.\n"
+      				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
+              _getops_exit_after_print = true;
+              break;
+      	  case 5:
+      		  conf_data_path = boost::filesystem::path(optarg);
+      		  break;
+      	  case 6:
+      		  conf_savegame_path = boost::filesystem::path(optarg);
+      		  break;
+      	  case 'c':
+      	  case 7:
+      		  _getops_print_config = true;
+      		  _getops_exit_after_print = true;
+      		  break;
+      }
+  }
+}
 
 // ******************************************************************************
 // Main
@@ -192,74 +260,51 @@ int main(int argc, char *argv[])
 	// Init screen
 	init_game_env(res_w, res_h);
 
+	// Set main theme
+	boost::filesystem::path path_main_music(DATADIR);
+	path_main_music /= PACKAGE_NAME;
+	path_main_music /= "data";
+	path_main_music /= "main.ogg";
+
+	SoundSample game_music;
+	game_music.set_channel(4711);
+	game_music.set_volume(128);
+	game_music.play(path_main_music.string(), 1);
+
+	// Character creation?!
+	EventManager* em = &EventManager::Instance();
+	Charset normalFont;
+	bool choice_is_made = false;
+	while (!choice_is_made) {
+		Console::Instance().print(&normalFont, "Current game world loaded is " + conf_world_name + ". Would you like to\n" +
+											   "(J)ourney onward\n" +
+											   "(C)reate new character, or\n" +
+											   "(Q)uit game?", false);
+		 switch (em->get_key("jcq")) {
+		 case 'q':
+			 exit(0);
+		 case 'c':
+			 Console::Instance().print(&normalFont, "Creating new game character.", false);
+			 choice_is_made = true;
+			 break;
+		 case 'j':
+			 if (!boost::filesystem::exists(conf_savegame_path))
+				 Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
+			 else
+				 choice_is_made = true;
+			 break;
+		 }
+	}
+
+	game_music.stop();
+
 	// Start actual game
 	return start_game();
 }
 
-// Evaluate command line arguments
-
-void get_opts (int argc, char* argv[])
-{
-  int option = 0;
-  int option_index = 0;
-
-  while ((option = getopt_long(argc, argv, "chx:y:v", long_options, &option_index)) != -1) {
-      switch (option) {
-      	  case 'h':
-      	  case 1:
-      		  std::cout << PACKAGE_NAME << " - ye olde roleplaying game engine.\n";
-      		  std::cout << "Lets you play games that have been designed for " << PACKAGE_NAME << "." << std::endl << std::endl;
-      		  std::cout << "Usage:   " << argv[0] << " [OPTIONS] <WORLDNAME>" << std::endl;
-      		  std::cout << "Example: " << argv[0] << " MyExcitingGameWorld" << std::endl << std::endl;
-              std::cout << "If a long option shows an argument as mandatory, then it is mandatory for the equivalent short option also.\n\n";
-              std::cout << "Options:" << std::endl;
-              std::cout << "  -x <ARG>, --width=<ARG>        ";
-              std::cout << "Set width of game window (default is 1024)\n";
-              std::cout << "  -y <ARG>, --height=<ARG>       ";
-              std::cout << "Set height of game window (default is 768)\n";
-              std::cout << "            --datapath=<ARG>     ";
-              std::cout << "Set data directory, which is also where all the available game worlds are stored (the default is where 'make install' put them)\n";
-              std::cout << "  -c        --show-config        ";
-              std::cout << "Show the current default configuration of " << PACKAGE_NAME << "\n";
-              std::cout << "            --savegamepath=<ARG> ";
-              std::cout << "Set the directory, where the saved games will end up in (default is $HOME/." << PACKAGE_NAME << "/)\n";
-              std::cout << "  -h,       --help               ";
-              std::cout << "Display this help information\n";
-              std::cout << "  -v,       --version            ";
-              std::cout << "Show version information\n\n";
-              std::cout << "Report bugs to <baueran@gmail.com>.\n";
-              _getops_exit_after_print = true;
-              break;
-      	  case 'x':
-      	  case 2:
-      		  res_w = std::stoi(optarg);
-      		  break;
-      	  case 'y':
-      	  case 3:
-      		  res_h = std::stoi(optarg);
-      		  break;
-      	  case 'v':
-      	  case 4:
-      		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
-      		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
-      		  std::cout << "This is free software; see the source for copying conditions.\n"
-      				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
-              _getops_exit_after_print = true;
-              break;
-      	  case 5:
-      		  conf_data_path = boost::filesystem::path(optarg);
-      		  break;
-      	  case 6:
-      		  conf_savegame_path = boost::filesystem::path(optarg);
-      		  break;
-      	  case 'c':
-      	  case 7:
-      		  _getops_print_config = true;
-      		  _getops_exit_after_print = true;
-      		  break;
-      }
-  }
-}
+// ******************************************************************************
+// Rest of functions...
+// ******************************************************************************
 
 int intro(int res_w, int res_h)
 {
@@ -328,6 +373,8 @@ int intro(int res_w, int res_h)
 
 int init_game_env(int res_w, int res_h)
 {
+	EventManager* em = &EventManager::Instance();
+	Charset normalFont;
 	SDLWindow* win   = &SDLWindow::Instance();
 
 	// Now create shared_ptr from raw pointer
@@ -336,16 +383,6 @@ int init_game_env(int res_w, int res_h)
 	// Create window
 	// TODO: Not sure which flags are required.
 	win->init(res_w, res_h); // , 32, SDL_HWPALETTE | SDL_HWSURFACE | SDL_DOUBLEBUF);
-
-	boost::filesystem::path path_main_music(DATADIR);
-	path_main_music /= PACKAGE_NAME;
-	path_main_music /= "data";
-	path_main_music /= "main.ogg";
-
-	SoundSample game_music;
-	game_music.set_channel(4711);
-	game_music.set_volume(128);
-	game_music.play(path_main_music.string(), 1);
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
@@ -380,6 +417,26 @@ int init_game_env(int res_w, int res_h)
 		exit(EXIT_FAILURE);
 	}
 
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
+	Console::Instance().
+			print(&normalFont,
+					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
+					false);
+
+	// Activate event handling
+	SDL_TimerID tick;
+	if (!(tick = em->add_event(500, tick_callback, NULL))) {
+		std::cerr << "Could not initialize timer.\n";
+		return -1;
+	}
+
+	return 0;
+}
+
+int create_character()
+{
+	std::cout << "MOO\n";
 	return 0;
 }
 
@@ -421,8 +478,10 @@ int start_game()
 	try {
 		if (initial_map_indoors)
 			arena = Arena::create("indoors", initial_map->get_name());
-		else
+		else {
 			arena = Arena::create("outdoors", initial_map->get_name());
+			std::cout << "Outdoors\n";
+		}
 	}
 	catch (const MapNotFound& e) {
 		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
@@ -588,7 +647,8 @@ int start_game()
 	}
 
 	// Load map data
-	arena->get_map()->xml_load_map_data();
+	if (!arena->get_map()->xml_load_map_data())
+		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
 
 	// Determine initial game position
 	try {
@@ -615,8 +675,8 @@ int start_game()
 	// Set up game window and game control
 	gc->set_arena(arena);
 	gc->set_party(x,y);
-	gc->set_outdoors(true);
-	gc->set_map_name("Landschaft");
+	gc->set_outdoors(!initial_map_indoors);
+	gc->set_map_name(arena->get_map()->get_name().c_str());
 	gc->show_win();
 	gc->draw_status();
 
@@ -627,26 +687,26 @@ int start_game()
 
 	gc->set_game_music(&game_music);
 
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-
+//	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+//
+//	Console::Instance().
+//			print(&normalFont,
+//					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
+//					false);
+//
 	Console::Instance().
 			print(&normalFont,
-					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
-					false);
-
-	Console::Instance().
-			print(&normalFont,
-					"This is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
+					"Remember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
 					"(d)rop item, (e)nter, (i)nventory, (l)ook, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
 					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
 					false);
-
-	// Activate event handling
-	SDL_TimerID tick;
-	if (!(tick = em->add_event(500, tick_callback, NULL))) {
-		std::cerr << "Could not initialize timer.\n";
-		return -1;
-	}
+//
+//	// Activate event handling
+//	SDL_TimerID tick;
+//	if (!(tick = em->add_event(500, tick_callback, NULL))) {
+//		std::cerr << "Could not initialize timer.\n";
+//		return -1;
+//	}
 
 	// Start event handling
 	gc->key_event_handler();

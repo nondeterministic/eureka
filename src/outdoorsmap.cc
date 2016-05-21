@@ -66,17 +66,20 @@ int OutdoorsMap::get_tile(unsigned x, unsigned y)
 
 int OutdoorsMap::set_tile(unsigned x, unsigned y, unsigned icon_no)
 {
-  if (y%2 == 0)
-    y = y/2;
-  else
-    y = (y-1)/2;
+	if (y%2 == 0)
+		y = y/2;
+	else
+		y = (y-1)/2;
 
-  if (y < _data.size() && x < (_data[0]).size()) {
-    (_data[y])[x] = icon_no;
-    _modified = true;
-    return 0;
-  }
-  return -1;
+	if (_data.size() <= 0)
+		std::cerr << "WARNING: outdoorsmap.cc: _data.size() <= 0.\n";
+
+	if (y < _data.size() && x < (_data[0]).size()) {
+		(_data[y])[x] = icon_no;
+		_modified = true;
+		return 0;
+	}
+	return -1;
 }
 
 void OutdoorsMap::expand_map(int top, int bot, int right, int left)
