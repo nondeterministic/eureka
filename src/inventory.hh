@@ -30,6 +30,7 @@ public:
   unsigned size();
   unsigned number_items();
   void add_all(Inventory&);
+  void remove_all();
 };
 
 #endif

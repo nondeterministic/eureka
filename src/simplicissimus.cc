@@ -127,6 +127,7 @@ PlayerCharacter create_character();
 int start_game();
 int setup_dummy_game(); // TODO: Remove this later again!
 int create_fresh_game_state(PlayerCharacter);
+int recreate_old_game_state();
 
 // ******************************************************************************
 // Util
@@ -302,12 +303,7 @@ int main(int argc, char *argv[])
 				 Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
 			 else {
 				 choice_is_made = true;
-				 if (GameState::Instance().load())
-					 GameState::Instance().apply();
-				 else {
-					 std::cerr << "ERROR: simplicissimus.cc: Loading of game file failed.\n";
-					 exit(-1);
-				 }
+				 recreate_old_game_state();
 			 }
 			 break;
 		 }
@@ -699,6 +695,48 @@ int setup_dummy_game()
 	return 0;
 }
 
+int recreate_old_game_state()
+{
+	GameState* gstate = &GameState::Instance();
+	std::shared_ptr<Map> cur_map;
+
+	// Load game state from disk
+	if (gstate->load())
+		gstate->apply();
+	else {
+		std::cerr << "ERROR: simplicissimus.cc: Loading of game file failed.\n";
+		exit(-1);
+	}
+
+	// Now load referenced world data from disk
+	try {
+		cur_map = World::Instance().get_map(gstate->get_cur_map_name().c_str());
+		std::cout << "CURRENT MAP NAME: " << gstate->get_cur_map_name() << "\n";
+	}
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// Create an arena for current game map
+	try {
+		if (std::dynamic_pointer_cast<OutdoorsMap>(cur_map))
+			arena = Arena::create("outdoors", cur_map->get_name());
+		else
+			arena = Arena::create("indoors", cur_map->get_name());
+	}
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << cur_map->get_name() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// Load current map's data
+	if (!arena->get_map()->xml_load_map_data())
+		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
+
+	return 0;
+}
+
 int create_fresh_game_state(PlayerCharacter player)
 {
 	Party* party     = &Party::Instance();
@@ -734,7 +772,6 @@ int create_fresh_game_state(PlayerCharacter player)
 	try {
 		x = initial_map->get_initial_coords().first;
 		y = initial_map->get_initial_coords().second;
-		std::cout << "Map name: " << initial_map->get_name() << ", x: " << x << ", y: " << y << "'n";
 	}
 	catch (NoInitialCoordsException& e)
 	{
@@ -746,8 +783,6 @@ int create_fresh_game_state(PlayerCharacter player)
 		std::cerr << "ERROR: simplicissimus.cc: No initial coordinates in initial game map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	else
-		std::cout << "INFO: simplicissimus.cc: Setting initial party coordinates to (" << x << ", " << y << ").\n";
 
 	party->set_coords(x,y);
 	ZtatsWin::Instance().update_player_list();

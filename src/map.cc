@@ -74,12 +74,12 @@ Map::Map(const Map& p)
 	initial = p.initial;
 	initial_x = p.initial_x;
 	initial_y = p.initial_y;
-	std::cout << "DEEP MAP COPY MOTHERFUCKER\n";
+	// std::cout << "DEEP MAP COPY MOTHERFUCKER\n";
 }
 
 Map::~Map()
 {
-	std::cout << "WARNING: map.cc::~Map(): Also destroyed all objects " << _name << " contained!" << std::endl;
+	// std::cerr << "WARNING: map.cc::~Map(): Also destroyed all objects " << _name << " contained!" << std::endl;
 	unload_map_data();
 
 	// Memory was new'ed in EditorWin::add_event().

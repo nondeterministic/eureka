@@ -1,6 +1,9 @@
 TODO
 =====
 
+- When saving a game, first delete old save game or previously lying around map data may be outdated.
+  (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
+
 - Check that save-game still works - perhaps write test for it? [prio med, skill med]
 
 - Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
@@ -18,10 +21,11 @@ TODO
 IN PROGRESS
 ============
 
-- Shift load stuff into GameState, where it belongs and free simplicissimus.cc
 
 DONE
 =====
+
+- Shift load stuff into GameState, where it belongs and free simplicissimus.cc
 
 - Magic system (prio high, skill high)
 
@@ -69,14 +73,16 @@ DONE
 BUGS
 =====
 
+- GameState does not save games properly and cannot do indoors game saving...
+
+- Game crashes after conversations with town folks
+
+- Save T.O.D. with game status
+
 - Do not let players ready an item like a jimmy lock! [MED]
 
 - When first 3 in a party of 4 die during battle, program seems to crash during battle [SEVERE]
   SOLUTION? When member dies put immediately in the back of party, so that alive members move forward.
-
-- Save T.O.D. with game status
-
-- Save game only in wilderness, not in cities or dungeons
 
 - Inside gamecontrol::ready_item do not recreate readied items or the number of turns that a torch
   lasts will be reset each time it is unreadied/readied. (Is this fixed? CHECK!)

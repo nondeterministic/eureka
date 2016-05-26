@@ -156,7 +156,8 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 		std::shared_ptr<Map> tmp_map = World::Instance().get_map(event->get_map_name().c_str());
 		IndoorsMap tmp_map2 = *((IndoorsMap*)tmp_map.get()); // Create deep copy of map because otherwise xml_load_data fucks up the map's state
 		tmp_map2.xml_load_map_data();
-		if (tmp_map2.guarded_city &&
+		if (gc->get_map()->is_outdoors() && // Only check guards, when entering a city from the wilderness, not from an indoors map already.
+			tmp_map2.guarded_city &&
 				(gc->get_clock()->tod() == NIGHT || gc->get_clock()->tod() == EARLY_MORNING || gc->get_clock()->tod() == MIDNIGHT))
 		{
 			gc->printcon("No entry. At this ungodly hour, " + event->get_map_name() + " is under lock and key.");

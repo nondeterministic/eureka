@@ -44,7 +44,7 @@ int Inventory::weight()
 
 	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
 		_w += ptr->second.at(0)->weight() * ptr->second.size();
-		std::cout << ptr->second.at(0)->name() << " weighs " << ptr->second.at(0)->weight() << "\n";
+		// std::cout << ptr->second.at(0)->name() << " weighs " << ptr->second.at(0)->weight() << "\n";
 	}
 
 	return (int)(_w/6.35);
@@ -178,6 +178,7 @@ void Inventory::remove(std::string item_name)
 			delete(removed_item);
 	}
 	catch (std::out_of_range& oor) {
+		std::cerr << "WARNING: inventory.cc: out_of_range_exception in remove().\n";
 	}
 }
 
@@ -200,7 +201,7 @@ int Inventory::remove_all(std::string item_name)
     _items.erase(item_name);
   }
   catch (std::out_of_range& oor) {
-    std::cerr << "+++++++++++ Failed to remove " << item_name << "\n";
+    std::cerr << "ERROR: inventory.cc: Failed to remove " << item_name << "\n";
   }
 
   return how_many;
@@ -232,4 +233,21 @@ void Inventory::add_all(Inventory& inv2)
       add(new_item);
     }
   }
+}
+
+void Inventory::remove_all()
+{
+	std::vector<std::string> all_item_names;
+
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
+		all_item_names.push_back(ptr->first);
+
+	for (auto const& item_name: all_item_names)
+		remove_all(item_name);
+
+	if (size() > 0)
+		std::cerr << "WARNING: inventory.cc: Just tried to remove_all() but size() is " << size() << ".\n";
+
+	if (number_items() > 0)
+		std::cerr << "WARNING: inventory.cc: Just tried to remove_all() but number_items() is " << number_items() << ".\n";
 }

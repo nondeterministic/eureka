@@ -38,6 +38,11 @@ GameState::GameState()
 {
 	_cur_outdoors = true;
 	_cur_map_name = "";
+	_jimmylocks = 0;
+	_gold = 0;
+	_food = 0;
+	_x = 0;
+	_y = 0;
 }
 
 GameState::~GameState()
@@ -148,10 +153,6 @@ bool GameState::save()
 
 bool GameState::load()
 {
-	Party* party     = &Party::Instance();
-	int x = -1;
-	int y = -1;
-
 	// Check if there's a saved game to return to and load it, if there is.
 	if (boost::filesystem::exists(conf_savegame_path)) {
 		xmlpp::TextReader reader((conf_savegame_path / "party.xml").string());
@@ -160,22 +161,19 @@ bool GameState::load()
 		while (reader.read()) {
 			if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
 				if (reader.get_name() == "x")
-					x = std::stoi(reader.read_string());
+					_x = std::stoi(reader.read_string());
 				else if (reader.get_name() == "y")
-					y = std::stoi(reader.read_string());
+					_y = std::stoi(reader.read_string());
 				else if (reader.get_name() == "map")
 					_cur_map_name = reader.read_string().c_str();
 				else if (reader.get_name() == "indoors")
 					_cur_outdoors = reader.read_string() == "0"? true : false;
-				else if (reader.get_name() == "jimmylocks") {
-					int locks = std::stoi(reader.read_string().c_str());
-					for (int l = 0; l < locks; l++)
-						party->add_jimmylock();
-				}
+				else if (reader.get_name() == "jimmylocks")
+					_jimmylocks = std::stoi(reader.read_string().c_str());
 				else if (reader.get_name() == "gold")
-					party->set_gold(std::stoi(reader.read_string().c_str()));
+					_gold = std::stoi(reader.read_string().c_str());
 				else if (reader.get_name() == "food")
-					party->set_food(std::stoi(reader.read_string().c_str()));
+					_food = std::stoi(reader.read_string().c_str());
 				// Inventory
 				else if (reader.get_name() == "inventory") {
 					while (reader.read() && reader.get_name() != "inventory") {
@@ -192,14 +190,12 @@ bool GameState::load()
 								// TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
 								if (is_weapon) {
 									for (int i = 0; i < how_many; i++)
-										party->inventory()->add(WeaponHelper::createFromLua(short_name));
+										_inventory.add(WeaponHelper::createFromLua(short_name));
 								}
 								else {
 									for (int i = 0; i < how_many; i++)
-										party->inventory()->add(ShieldHelper::createFromLua(short_name));
+										_inventory.add(ShieldHelper::createFromLua(short_name));
 								}
-
-								std::cout << "Items: " << reader.read_string() << how_many << std::endl;
 							}
 						}
 					}
@@ -266,7 +262,7 @@ bool GameState::load()
 								}
 							} // player-while-end
 
-							party->add_player(player);
+							_players.push_back(player);
 						}
 					} // players-while-end
 				} // players-else-if-end
@@ -276,20 +272,60 @@ bool GameState::load()
 		// ***************************************************************
 		// TODO: Add maps to GameState object, update map in arena, etc.
 		// ***************************************************************
-
-		party->set_coords(x,y);
 	}
 
 	return true;
 }
 
+std::string GameState::get_cur_map_name()
+{
+	return _cur_map_name;
+}
+
+bool GameState::is_cur_map_outdoors()
+{
+	return _cur_outdoors;
+}
+
+// This method should be called after loading a new game state from disk to make the loaded data effective.
+
 bool GameState::apply()
 {
+	Party* party     = &Party::Instance();
 	GameControl* gc  = &GameControl::Instance();
 	ZtatsWin::Instance().update_player_list();
 
+	for (auto const& player: _players)
+		party->add_player(player);
+
 	gc->set_map_name(_cur_map_name.c_str());
 	gc->set_outdoors(_cur_outdoors);
+
+	for (int l = 0; l < _jimmylocks; l++)
+		party->add_jimmylock();
+
+	party->set_gold(_gold);
+	party->set_food(_food);
+	party->inventory()->add_all(_inventory);
+	party->set_coords(_x, _y);
+
+	return true;
+}
+
+bool GameState::reset()
+{
+	_gold = 0;
+	_food = 0;
+	_x = 0;
+	_y = 0;
+	_jimmylocks = 0;
+	_inventory.remove_all();
+	_players.clear();
+	_maps.clear(); // TODO: Do we need to destroy the shared_ptrs inside first?
+
+	// Not sure if it matters to "reset" the following...
+	// _cur_map_name = "";
+	// _cur_outdoors = true;
 
 	return true;
 }

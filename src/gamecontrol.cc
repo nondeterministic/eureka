@@ -779,12 +779,17 @@ void GameControl::quit()
 {
 	EventManager& em = EventManager::Instance();
 
-	printcon("Save game (y/n)?");
-	char save_game = em.get_key("yn");
-	printcon(std::string(1, save_game) + " ");
+	// TODO: Enable save game indoors as well!!! Check GameState for missing functionality in this regard!
+	if (!party->indoors()) {
+		printcon("Save game (y/n)?");
+		char save_game = em.get_key("yn");
+		printcon(std::string(1, save_game) + " ");
 
-	if (save_game == 'y')
-		GameState::Instance().save();
+		if (save_game == 'y')
+			GameState::Instance().save();
+	}
+	else
+		printcon("Cannot save game, when indoors.");
 
 	printcon("Quit game (y/n)?");
 	char really_quit = em.get_key("yn");
@@ -2368,6 +2373,7 @@ bool GameControl::leave_map()
 							map_obj.personality = NEUTRAL;
 
 						// TODO: Should we reset the FLEEING flag as well?! I think so...
+						// Might need to store original move_mode first in mapobj.
 					}
 				}
 

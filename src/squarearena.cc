@@ -128,11 +128,8 @@ Offsets SquareArena::move(int dir)
 
 Offsets SquareArena::determine_offsets()
 {
-	std::cerr << "Offsets:\n";
 	unsigned screen_width = _sdl_surf->w;
-	std::cerr << "sdl_surf->w" << screen_width << "\n";
 	unsigned screen_height = _sdl_surf->h;
-	std::cerr << "sdl_surf->h" << screen_height << "\n";
 
 	unsigned map_width  = get_map()->width()  * tile_size();
 	unsigned map_height = get_map()->height() * tile_size();

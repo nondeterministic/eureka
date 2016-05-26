@@ -21,6 +21,8 @@
 #define GAMESTATE_HH_
 
 #include "indoorsmap.hh"
+#include "playercharacter.hh"
+#include "inventory.hh"
 
 #include <vector>
 #include <memory>
@@ -36,6 +38,12 @@ protected:
 	bool save_party(boost::filesystem::path);
 	bool _cur_outdoors;
 	std::string _cur_map_name;
+	std::vector<PlayerCharacter> _players;
+	Inventory _inventory;
+	int _jimmylocks;
+	int _gold;
+	int _food;
+	int _x, _y;
 
 public:
 	static GameState& Instance();
@@ -43,8 +51,11 @@ public:
 	bool save();
 	bool load();
 	bool apply();
+	bool reset();
 	void add_map(std::shared_ptr<IndoorsMap>);
 	std::shared_ptr<IndoorsMap> get_map(std::string);
+	std::string get_cur_map_name();
+	bool is_cur_map_outdoors();
 };
 
 #endif /* GAMESTATE_HH_ */
