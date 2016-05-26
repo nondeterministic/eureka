@@ -23,9 +23,9 @@
 #include <string>
 #include "indoorsmap.hh"
 
-// TODO: What about newpath, Einstein?
-IndoorsMap::IndoorsMap(const char* newname, const char* newpath)
+IndoorsMap::IndoorsMap(const char* newname)
 {
+	_is_dungeon = false;
 	set_name(newname);
 }
 
@@ -41,6 +41,7 @@ IndoorsMap::IndoorsMap(unsigned columns, unsigned rows)
 	}
 
 	_modified = true;
+	_is_dungeon = false;
 }
 
 IndoorsMap::~IndoorsMap()
@@ -54,9 +55,15 @@ bool IndoorsMap::is_outdoors(void) const
 
 int IndoorsMap::get_tile(unsigned x, unsigned y)
 {
-  if (y < _data.size() && x < (_data[0]).size())
-    return (_data[y])[x];
-  return -1;
+	if (_data.size() == 0) {
+		std::cerr << "ERROR: indoorsmap.cc: _data.size() == 0.\n";
+		return -1;
+	}
+
+	if (y < _data.size() && x < (_data[0]).size())
+		return (_data[y])[x];
+
+	return -1;
 }
 
 int IndoorsMap::set_tile(unsigned x, unsigned y, unsigned icon_no)

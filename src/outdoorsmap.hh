@@ -26,7 +26,7 @@ class OutdoorsMap : public Map
 {
 public:
   OutdoorsMap(unsigned, unsigned);
-  OutdoorsMap(const char*, const char*);
+  OutdoorsMap(const char*);
   ~OutdoorsMap();
 
   bool is_outdoors() const;

@@ -40,6 +40,7 @@
 #include "soundsample.hh"
 #include "outdoorsmap.hh"
 #include "indoorsmap.hh"
+#include "gamestate.hh"
 #include "simplicissimus.hh"
 
 #include <iostream>
@@ -113,6 +114,8 @@ boost::filesystem::path conf_savegame_path;
 bool _getops_exit_after_print = false;
 bool _getops_print_config = false;
 
+std::shared_ptr<Arena> arena;
+
 // ******************************************************************************
 // Function definitions
 // ******************************************************************************
@@ -120,8 +123,10 @@ bool _getops_print_config = false;
 void get_opts (int, char*[]);
 int intro(int, int);
 int init_game_env(int,int);
-int create_character();
+PlayerCharacter create_character();
 int start_game();
+int setup_dummy_game(); // TODO: Remove this later again!
+int create_fresh_game_state(PlayerCharacter);
 
 // ******************************************************************************
 // Util
@@ -257,7 +262,7 @@ int main(int argc, char *argv[])
 	// Init sound and video, show intro
 	intro(res_w, res_h);
 
-	// Init screen
+	// Init screen, sound, world data, Lua, etc.
 	init_game_env(res_w, res_h);
 
 	// Set main theme
@@ -278,28 +283,38 @@ int main(int argc, char *argv[])
 	while (!choice_is_made) {
 		Console::Instance().print(&normalFont, "Current game world loaded is " + conf_world_name + ". Would you like to\n" +
 											   "(J)ourney onward\n" +
-											   "(C)reate new character, or\n" +
+											   "(C)reate a new game character, or\n" +
 											   "(Q)uit game?", false);
-		 switch (em->get_key("jcq")) {
+		 switch (em->get_key("djcq")) {
+		 case 'd': // SECRET DEVELOPMENT CHOICE *EVIL LAUGHTER*
+			 choice_is_made = true;
+			 setup_dummy_game();
+			 break;
 		 case 'q':
 			 exit(0);
 		 case 'c':
-			 Console::Instance().print(&normalFont, "Creating new game character.", false);
+			 Console::Instance().print(&normalFont, "Creating new game character.\n", false);
 			 choice_is_made = true;
+			 create_fresh_game_state(create_character());
 			 break;
 		 case 'j':
-			 if (!boost::filesystem::exists(conf_savegame_path))
+			 if (!boost::filesystem::exists(conf_savegame_path / "party.xml"))
 				 Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
-			 else
+			 else {
 				 choice_is_made = true;
+				 if (GameState::Instance().load())
+					 GameState::Instance().apply();
+				 else {
+					 std::cerr << "ERROR: simplicissimus.cc: Loading of game file failed.\n";
+					 exit(-1);
+				 }
+			 }
 			 break;
 		 }
 	}
 
-	game_music.stop();
-
-	// Start actual game
-	return start_game();
+	 game_music.stop();
+	 return start_game();
 }
 
 // ******************************************************************************
@@ -363,6 +378,8 @@ int intro(int res_w, int res_h)
     		}
     	}
     }
+
+	 sample_intro.stop();
 
     // Tell the SDL to clean up and shut down
     SDL_Quit();
@@ -431,25 +448,6 @@ int init_game_env(int res_w, int res_h)
 		return -1;
 	}
 
-	return 0;
-}
-
-int create_character()
-{
-	std::cout << "MOO\n";
-	return 0;
-}
-
-int start_game()
-{
-	SDLWindow* win   = &SDLWindow::Instance();
-	Party* party     = &Party::Instance();
-	GameControl* gc  = &GameControl::Instance();
-	EventManager* em = &EventManager::Instance();
-	Charset normalFont;
-	int x = -1;
-	int y = -1;
-
 	// Load game data
 	if (! World::Instance().xml_load_world_data(conf_world_path.string() + ".xml")) {
 		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml" << ". Did you run make install?" << std::endl;
@@ -458,8 +456,191 @@ int start_game()
 
 	// Load Lua scripts, basically.
 	World::Instance().load_world_elements(_lua_state);
+
+	return 0;
+}
+
+PlayerCharacter create_character()
+{
+	Party* party     = &Party::Instance();
+	GameControl* gc  = &GameControl::Instance();
+	EventManager* em = &EventManager::Instance();
+	Charset normalFont;
+	Console* cons = &Console::Instance();
+	PlayerCharacter player;
+
+	bool cont = false;
+	while (!cont) {
+		cons->print(&normalFont, "Is character (m)ale or (f)emale?", false);
+
+		switch (em->get_key("mf")) {
+		case 'f':
+			player.set_sex(false);
+			cons->print(&normalFont, "Female chosen.");
+			break;
+		case 'm':
+			player.set_sex(true);
+			cons->print(&normalFont, "Male chosen.");
+			break;
+		}
+
+		cons->print(&normalFont, "Accept choice? (y/n)");
+		switch (em->get_key("yn")) {
+		case 'y':
+			cont = true;
+			break;
+		}
+	}
+
+	cont = false;
+	while (!cont) {
+		cons->print(&normalFont, "Choose a race:\n1) Human\n2) Elf\n3) Hobbit\n4) Half Elf\n5) Dwarf", false);
+
+		switch (em->get_key("12345")) {
+		case '1':
+			player.set_race(HUMAN);
+			cons->print(&normalFont, "Human chosen.");
+			break;
+		case '2':
+			player.set_race(ELF);
+			cons->print(&normalFont, "Elf chosen.");
+			break;
+		case '3':
+			player.set_race(HOBBIT);
+			cons->print(&normalFont, "Hobbit chosen.");
+			break;
+		case '4':
+			player.set_race(HALF_ELF);
+			cons->print(&normalFont, "Half Elf chosen.");
+			break;
+		case '5':
+			player.set_race(DWARF);
+			cons->print(&normalFont, "Dawrf chosen.");
+			break;
+		}
+		cons->print(&normalFont, "Accept choice? (y/n)");
+		switch (em->get_key("yn")) {
+		case 'y':
+			cont = true;
+			break;
+		}
+	}
+
+	cont = false;
+	while (!cont) {
+		cons->print(&normalFont, "Choose a profession:\n(F)ighter\n(P)aladin\n(T)hief\n(B)ard\n(M)age\n(D)ruid\n(S)hepherd", false);
+
+		switch (em->get_key("fptbmcds")) {
+		case 'f':
+			player.set_profession(FIGHTER);
+			cons->print(&normalFont, "Fighter chosen.");
+			break;
+		case 'p':
+			player.set_profession(PALADIN);
+			cons->print(&normalFont, "Paladin chosen.");
+			break;
+		case 't':
+			player.set_profession(THIEF);
+			cons->print(&normalFont, "Thief chosen.");
+			break;
+		case 'b':
+			player.set_profession(BARD);
+			cons->print(&normalFont, "Bard chosen.");
+			break;
+		case 'm':
+			player.set_profession(MAGE);
+			cons->print(&normalFont, "Mage chosen.");
+			break;
+		case 'd':
+			player.set_profession(DRUID);
+			cons->print(&normalFont, "Druid chosen.");
+			break;
+		case 's':
+			player.set_profession(SHEPHERD);
+			cons->print(&normalFont, "Shepherd chosen.");
+			break;
+		}
+		cons->print(&normalFont, "Accept choice? (y/n)");
+		switch (em->get_key("yn")) {
+		case 'y':
+			cont = true;
+			break;
+		}
+	}
+
+	cont = false;
+	int val = 0;
+	while (!cont) {
+		cons->print(&normalFont, "Randomly generated character values:\n", false);
+
+		val = gc->random(10,20);
+		player.set_hpm(val);
+		player.set_hp(val);
+		cons->print(&normalFont, "HP: " + std::to_string(val), false);
+
+		if (player.is_spell_caster())
+			val = gc->random(10,20);
+		else
+			val = 0;
+		player.set_spm(val);
+		player.set_sp(val);
+		cons->print(&normalFont, "SP: " + std::to_string(val) + "\n", false);
+
+		val = gc->random(3,18);
+		player.set_str(val);
+		cons->print(&normalFont, "Str: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_end(val);
+		cons->print(&normalFont, "End: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_dxt(val);
+		cons->print(&normalFont, "Dxt: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_iq(val);
+		cons->print(&normalFont, "Int: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_luck(val);
+		cons->print(&normalFont, "Lck: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_wis(val);
+		cons->print(&normalFont, "Wis: " + std::to_string(val), false);
+
+		val = gc->random(3,18);
+		player.set_char(val);
+		cons->print(&normalFont, "Char: " + std::to_string(val), false);
+
+		cons->print(&normalFont, "Accept values? (y/n)");
+		switch (em->get_key("yn")) {
+		case 'y':
+			cont = true;
+			break;
+		}
+	}
+
+	cons->print(&normalFont, "You are almost done. Now choose a name for your player:\n", false);
+	player.set_name(cons->gets());
+
+	cons->print(&normalFont, "\nCharacter generation complete. Press any key to start game!\n", false);
+	em->get_key();
+
+	party->set_food(300);
+	party->set_gold(25);
+	party->add_player(player);
+
+	return player;
+}
+
+// TODO: For testing, add some party members.  All have an axe - how handy!  Remove it later again.
+
+int setup_dummy_game()
+{
 	std::shared_ptr<Map> initial_map;
-	bool initial_map_indoors = true;
+	Party* party     = &Party::Instance();
 
 	// Determine initial game map
 	try {
@@ -470,180 +651,79 @@ int start_game()
 		exit(EXIT_FAILURE);
 	}
 
-	if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map))
-		initial_map_indoors = false;
-
 	// Create an arena for initial game map
-	std::shared_ptr<Arena> arena;
 	try {
-		if (initial_map_indoors)
-			arena = Arena::create("indoors", initial_map->get_name());
-		else {
+		if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map))
 			arena = Arena::create("outdoors", initial_map->get_name());
-			std::cout << "Outdoors\n";
-		}
+		else
+			arena = Arena::create("indoors", initial_map->get_name());
 	}
 	catch (const MapNotFound& e) {
 		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	// Check if there's a saved game to return to and load it, if there is.
-	if (boost::filesystem::exists(conf_savegame_path)) {
-		Console::Instance().print(&normalFont, "Restoring previous game state.", false);
-		Console::Instance().print(&normalFont, "", false);
+	// Load map data
+	if (!arena->get_map()->xml_load_map_data())
+		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
 
-		xmlpp::TextReader reader((conf_savegame_path / "party.xml").string());
-		std::cout << "INFO: Loading game data from file " << (conf_savegame_path / "party.xml").string() << std::endl;
+	PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
+	// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
+	party->add_player(p1);
+	party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
+	PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, 1, HUMAN, MAGE);
+	// PlayerCharacter p2("Gandalf", 1, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
+	party->add_player(p2);
+	party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
+	// PlayerCharacter p3("Aragorn", 2, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
+	PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, 1, HUMAN, FIGHTER);
+	party->add_player(p3);
+	party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
+	ZtatsWin::Instance().update_player_list();
 
-		while (reader.read()) {
-			if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
-				if (reader.get_name() == "x")
-					x = std::stoi(reader.read_string());
-				else if (reader.get_name() == "y")
-					y = std::stoi(reader.read_string());
-				else if (reader.get_name() == "map")
-					gc->set_map_name(reader.read_string().c_str());
-				else if (reader.get_name() == "indoors")
-					gc->set_outdoors(reader.read_string() == "0"? true : false);
-				else if (reader.get_name() == "jimmylocks") {
-					int locks = std::stoi(reader.read_string().c_str());
-					for (int l = 0; l < locks; l++)
-						party->add_jimmylock();
-				}
-				else if (reader.get_name() == "gold")
-					party->set_gold(std::stoi(reader.read_string().c_str()));
-				else if (reader.get_name() == "food")
-					party->set_food(std::stoi(reader.read_string().c_str()));
-				// Inventory
-				else if (reader.get_name() == "inventory") {
-					while (reader.read() && reader.get_name() != "inventory") {
-						if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
-							if (reader.get_name() == "item") {
-								reader.move_to_next_attribute();
-								int how_many = std::atoi(reader.get_value().c_str());
+	// Add some stuff to the inventory
+	party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	party->inventory()->add(WeaponHelper::createFromLua("sword"));
+	party->inventory()->add(WeaponHelper::createFromLua("axe"));
+	party->inventory()->add(ShieldHelper::createFromLua("small shield"));
+	party->add_jimmylock();
+	party->add_jimmylock();
+	party->add_jimmylock();
 
-								reader.move_to_element();
-								std::string item_name = reader.read_string();
-								std::string short_name = item_name.substr(item_name.find("::") + 2);
-								bool is_weapon = item_name.substr(0, item_name.find("::")) == "weapons";
+	party->set_food(300);
+	party->set_gold(25);
+	party->set_coords(13,21);
 
-								// TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
-								if (is_weapon) {
-									for (int i = 0; i < how_many; i++)
-										party->inventory()->add(WeaponHelper::createFromLua(short_name));
-								}
-								else {
-									for (int i = 0; i < how_many; i++)
-										party->inventory()->add(ShieldHelper::createFromLua(short_name));
-								}
+	return 0;
+}
 
-								std::cout << "Items: " << reader.read_string() << how_many << std::endl;
-							}
-						}
-					}
-				}
-				// Players
-				else if (reader.get_name() == "players") {
-					while (reader.read() && reader.get_name() != "players") {
-						if (reader.get_name() == "player") {
-							PlayerCharacter player;
+int create_fresh_game_state(PlayerCharacter player)
+{
+	Party* party     = &Party::Instance();
+	std::shared_ptr<Map> initial_map;
+	int x = -1; int y = -1;
 
-							// Set player name from attribute
-							reader.move_to_next_attribute();
-							player.set_name(reader.get_value());
-
-							// Parse properties of player until </player> tag is found
-							while (reader.read() && reader.get_name() != "player") {
-								if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
-									if (reader.get_name() == "profession") {
-										std::string prof = reader.read_string();
-										player.set_profession(stringToProfession.at(prof));
-									}
-									else if (reader.get_name() == "ep")
-										player.inc_ep(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "hp")
-										player.set_hp(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "hpm")
-										player.set_hpm(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "sp")
-										player.set_sp(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "spm")
-										player.set_spm(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "str")
-										player.set_str(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "luck")
-										player.set_luck(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "dxt")
-										player.set_dxt(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "wis")
-										player.set_wis(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "charr")
-										player.set_char(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "iq")
-										player.set_iq(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "end")
-										player.set_end(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "sex") {
-										int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
-										player.set_sex(sex);
-									}
-									else if (reader.get_name() == "level")
-										player.set_level(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "race")
-										player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
-									else if (reader.get_name() == "weapon") {
-										std::string weap_name = reader.read_string();
-										std::string short_name = weap_name.substr(weap_name.find("::") + 2);
-										player.set_weapon(WeaponHelper::createFromLua(short_name));
-									}
-									else if (reader.get_name() == "shield") {
-										std::string shield_name = reader.read_string();
-										std::string short_name = shield_name.substr(shield_name.find("::") + 2);
-										player.set_shield(ShieldHelper::createFromLua(short_name));
-									}
-								}
-							} // player-while-end
-
-							party->add_player(player);
-						}
-					} // players-while-end
-				} // players-else-if-end
-			}
-		}
-
-		ZtatsWin::Instance().update_player_list();
+	// Determine initial game map
+	try {
+		initial_map = World::Instance().get_initial_map();
 	}
-	// Start fresh game with some dummy values
-	else {
-		// TODO: For testing, add some party members.  All have an axe - how handy!
-		PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
-		// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
-		party->add_player(p1);
-		party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield"));
-		PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, 1, HUMAN, MAGE);
-		// PlayerCharacter p2("Gandalf", 1, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
-		party->add_player(p2);
-		party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword"));
-		// PlayerCharacter p3("Aragorn", 2, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
-		PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, 1, HUMAN, FIGHTER);
-		party->add_player(p3);
-		party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe"));
-		ZtatsWin::Instance().update_player_list();
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
-		// Add some stuff to the inventory
-		party->inventory()->add(WeaponHelper::createFromLua("sword"));
-		party->inventory()->add(WeaponHelper::createFromLua("sword"));
-		party->inventory()->add(WeaponHelper::createFromLua("sword"));
-		party->inventory()->add(WeaponHelper::createFromLua("sword"));
-		party->inventory()->add(WeaponHelper::createFromLua("axe"));
-		party->inventory()->add(ShieldHelper::createFromLua("small shield"));
-		party->add_jimmylock();
-		party->add_jimmylock();
-		party->add_jimmylock();
-
-		party->set_food(200);
-		party->set_gold(11);
+	// Create an arena for initial game map
+	try {
+		if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map))
+			arena = Arena::create("outdoors", initial_map->get_name());
+		else
+			arena = Arena::create("indoors", initial_map->get_name());
+	}
+	catch (const MapNotFound& e) {
+		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
 	// Load map data
@@ -654,6 +734,7 @@ int start_game()
 	try {
 		x = initial_map->get_initial_coords().first;
 		y = initial_map->get_initial_coords().second;
+		std::cout << "Map name: " << initial_map->get_name() << ", x: " << x << ", y: " << y << "'n";
 	}
 	catch (NoInitialCoordsException& e)
 	{
@@ -668,14 +749,34 @@ int start_game()
 	else
 		std::cout << "INFO: simplicissimus.cc: Setting initial party coordinates to (" << x << ", " << y << ").\n";
 
+	party->set_coords(x,y);
+	ZtatsWin::Instance().update_player_list();
+
+	return 0;
+}
+
+int start_game()
+{
+	SDLWindow* win   = &SDLWindow::Instance();
+	GameControl* gc  = &GameControl::Instance();
+	Party* party     = &Party::Instance();
+	Charset normalFont;
+
 	// Draw map
 	arena->set_SDL_surface(win->get_drawing_area_SDL_surface());
 	arena->determine_offsets();
 
 	// Set up game window and game control
 	gc->set_arena(arena);
-	gc->set_party(x,y);
-	gc->set_outdoors(!initial_map_indoors);
+
+	// TODO: This is a bit odd, but set_party does more than just set the party coordinates, which are already set, obviously.  Maybe rename methods someday...
+	gc->set_party(party->x, party->y);
+
+	if (std::dynamic_pointer_cast<OutdoorsMap>(arena->get_map()) != NULL)
+		gc->set_outdoors(true);
+	else
+		gc->set_outdoors(false);
+
 	gc->set_map_name(arena->get_map()->get_name().c_str());
 	gc->show_win();
 	gc->draw_status();
@@ -687,26 +788,12 @@ int start_game()
 
 	gc->set_game_music(&game_music);
 
-//	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-//
-//	Console::Instance().
-//			print(&normalFont,
-//					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
-//					false);
-//
 	Console::Instance().
 			print(&normalFont,
 					"Remember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
 					"(d)rop item, (e)nter, (i)nventory, (l)ook, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
 					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
 					false);
-//
-//	// Activate event handling
-//	SDL_TimerID tick;
-//	if (!(tick = em->add_event(500, tick_callback, NULL))) {
-//		std::cerr << "Could not initialize timer.\n";
-//		return -1;
-//	}
 
 	// Start event handling
 	gc->key_event_handler();

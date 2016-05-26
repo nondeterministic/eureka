@@ -22,6 +22,10 @@
 #include "map.hh"
 #include "world.hh"
 #include "party.hh"
+#include "gamecontrol.hh"
+#include "ztatswin.hh"
+#include "weaponhelper.hh"
+#include "shieldhelper.hh"
 
 #include <vector>
 #include <iostream>
@@ -32,12 +36,12 @@
 
 GameState::GameState()
 {
-	// TODO Auto-generated constructor stub
+	_cur_outdoors = true;
+	_cur_map_name = "";
 }
 
 GameState::~GameState()
 {
-	// TODO Auto-generated destructor stub
 }
 
 GameState& GameState::Instance()
@@ -51,13 +55,13 @@ void GameState::add_map(std::shared_ptr<IndoorsMap> map)
 	// First delete map, if already exists in game state
 	for (auto b = _maps.begin(); b != _maps.end(); b++) {
 		if ((*b)->get_name() == map->get_name()) {
-			std::cerr << "Info: gamestate.cc: Erased old map " << (*b)->get_name() << " from current game state.\n";
+			std::cerr << "INFO: gamestate.cc: Erased old map " << (*b)->get_name() << " from current game state.\n";
 			_maps.erase(b);
 			break;
 		}
 	}
 
-	std::cerr << "Info: gamestate.cc: Adding new map " << map->get_name() << " to current game state.\n";
+	std::cerr << "INFO: gamestate.cc: Adding new map " << map->get_name() << " to current game state.\n";
 	_maps.push_back(map);
 }
 
@@ -140,7 +144,152 @@ bool GameState::save()
 	return true;
 }
 
+// TODO: This was simply copied from simplicissimus.cc. FIX!
+
 bool GameState::load()
 {
+	Party* party     = &Party::Instance();
+	int x = -1;
+	int y = -1;
+
+	// Check if there's a saved game to return to and load it, if there is.
+	if (boost::filesystem::exists(conf_savegame_path)) {
+		xmlpp::TextReader reader((conf_savegame_path / "party.xml").string());
+		std::cout << "INFO: gamestate.cc: Loading game data from file " << (conf_savegame_path / "party.xml").string() << std::endl;
+
+		while (reader.read()) {
+			if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+				if (reader.get_name() == "x")
+					x = std::stoi(reader.read_string());
+				else if (reader.get_name() == "y")
+					y = std::stoi(reader.read_string());
+				else if (reader.get_name() == "map")
+					_cur_map_name = reader.read_string().c_str();
+				else if (reader.get_name() == "indoors")
+					_cur_outdoors = reader.read_string() == "0"? true : false;
+				else if (reader.get_name() == "jimmylocks") {
+					int locks = std::stoi(reader.read_string().c_str());
+					for (int l = 0; l < locks; l++)
+						party->add_jimmylock();
+				}
+				else if (reader.get_name() == "gold")
+					party->set_gold(std::stoi(reader.read_string().c_str()));
+				else if (reader.get_name() == "food")
+					party->set_food(std::stoi(reader.read_string().c_str()));
+				// Inventory
+				else if (reader.get_name() == "inventory") {
+					while (reader.read() && reader.get_name() != "inventory") {
+						if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+							if (reader.get_name() == "item") {
+								reader.move_to_next_attribute();
+								int how_many = std::atoi(reader.get_value().c_str());
+
+								reader.move_to_element();
+								std::string item_name = reader.read_string();
+								std::string short_name = item_name.substr(item_name.find("::") + 2);
+								bool is_weapon = item_name.substr(0, item_name.find("::")) == "weapons";
+
+								// TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
+								if (is_weapon) {
+									for (int i = 0; i < how_many; i++)
+										party->inventory()->add(WeaponHelper::createFromLua(short_name));
+								}
+								else {
+									for (int i = 0; i < how_many; i++)
+										party->inventory()->add(ShieldHelper::createFromLua(short_name));
+								}
+
+								std::cout << "Items: " << reader.read_string() << how_many << std::endl;
+							}
+						}
+					}
+				}
+				// Players
+				else if (reader.get_name() == "players") {
+					while (reader.read() && reader.get_name() != "players") {
+						if (reader.get_name() == "player") {
+							PlayerCharacter player;
+
+							// Set player name from attribute
+							reader.move_to_next_attribute();
+							player.set_name(reader.get_value());
+
+							// Parse properties of player until </player> tag is found
+							while (reader.read() && reader.get_name() != "player") {
+								if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+									if (reader.get_name() == "profession") {
+										std::string prof = reader.read_string();
+										player.set_profession(stringToProfession.at(prof));
+									}
+									else if (reader.get_name() == "ep")
+										player.inc_ep(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "hp")
+										player.set_hp(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "hpm")
+										player.set_hpm(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "sp")
+										player.set_sp(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "spm")
+										player.set_spm(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "str")
+										player.set_str(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "luck")
+										player.set_luck(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "dxt")
+										player.set_dxt(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "wis")
+										player.set_wis(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "charr")
+										player.set_char(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "iq")
+										player.set_iq(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "end")
+										player.set_end(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "sex") {
+										int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
+										player.set_sex(sex);
+									}
+									else if (reader.get_name() == "level")
+										player.set_level(std::atoi(reader.read_string().c_str()));
+									else if (reader.get_name() == "race")
+										player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
+									else if (reader.get_name() == "weapon") {
+										std::string weap_name = reader.read_string();
+										std::string short_name = weap_name.substr(weap_name.find("::") + 2);
+										player.set_weapon(WeaponHelper::createFromLua(short_name));
+									}
+									else if (reader.get_name() == "shield") {
+										std::string shield_name = reader.read_string();
+										std::string short_name = shield_name.substr(shield_name.find("::") + 2);
+										player.set_shield(ShieldHelper::createFromLua(short_name));
+									}
+								}
+							} // player-while-end
+
+							party->add_player(player);
+						}
+					} // players-while-end
+				} // players-else-if-end
+			}
+		}
+
+		// ***************************************************************
+		// TODO: Add maps to GameState object, update map in arena, etc.
+		// ***************************************************************
+
+		party->set_coords(x,y);
+	}
+
+	return true;
+}
+
+bool GameState::apply()
+{
+	GameControl* gc  = &GameControl::Instance();
+	ZtatsWin::Instance().update_player_list();
+
+	gc->set_map_name(_cur_map_name.c_str());
+	gc->set_outdoors(_cur_outdoors);
+
 	return true;
 }

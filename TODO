@@ -18,6 +18,7 @@ TODO
 IN PROGRESS
 ============
 
+- Shift load stuff into GameState, where it belongs and free simplicissimus.cc
 
 DONE
 =====

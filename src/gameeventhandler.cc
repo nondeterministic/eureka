@@ -167,8 +167,8 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	gc->printcon("Entering " + event->get_map_name());
 
-	boost::filesystem::path tmp_path((std::string)DATADIR);
-	tmp_path /= tmp_path / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";
+	boost::filesystem::path tmp_path;
+	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";
 	mw->save_surf();
 	mw->surface_from_file(tmp_path.string());
 

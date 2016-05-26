@@ -235,9 +235,9 @@ bool World::xml_load_world_data(const std::string filename)
                 std::shared_ptr<Map> new_map; //  = NULL;
 
                 if (!outdoors)
-                    new_map = std::make_shared<IndoorsMap>(new_map_name.c_str(), new_map_path.c_str());
+                    new_map = std::make_shared<IndoorsMap>(new_map_name.c_str()); // , new_map_path.c_str());
                 else
-                    new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str(), new_map_path.c_str());
+                    new_map = std::make_shared<OutdoorsMap>(new_map_name.c_str()); // , new_map_path.c_str());
 
                 if (initial)
                 	new_map->initial = true;

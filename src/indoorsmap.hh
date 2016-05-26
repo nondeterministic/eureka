@@ -29,7 +29,7 @@ private:
 
 public:
 	IndoorsMap(unsigned, unsigned);
-	IndoorsMap(const char*, const char*);
+	IndoorsMap(const char*);
 	~IndoorsMap();
 
 	bool is_outdoors() const;

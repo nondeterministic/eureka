@@ -10,6 +10,7 @@ PlayerCharacter::PlayerCharacter()
 {
 	_level = 1;
 	_ep = 0;
+	_condition = GOOD;
 }
 
 PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm, 

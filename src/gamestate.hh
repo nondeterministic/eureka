@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 #include <boost/filesystem.hpp>
 
@@ -33,12 +34,15 @@ protected:
 	std::vector<std::shared_ptr<IndoorsMap>> _maps;
 	GameState();
 	bool save_party(boost::filesystem::path);
+	bool _cur_outdoors;
+	std::string _cur_map_name;
 
 public:
 	static GameState& Instance();
 	virtual ~GameState();
 	bool save();
 	bool load();
+	bool apply();
 	void add_map(std::shared_ptr<IndoorsMap>);
 	std::shared_ptr<IndoorsMap> get_map(std::string);
 };

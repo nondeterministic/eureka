@@ -23,10 +23,9 @@
 #include <string>
 #include "outdoorsmap.hh"
 
-OutdoorsMap::OutdoorsMap(const char* newname, const char* newpath)
+OutdoorsMap::OutdoorsMap(const char* newname)
 {
   set_name(newname);
-  std::cout << newpath << std::endl;
 }
 
 OutdoorsMap::OutdoorsMap(unsigned columns, unsigned rows)
