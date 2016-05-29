@@ -13,6 +13,8 @@ do
 		iq = 15, endd = 7, sex = "MALE", profession = "TINKER", weapon = Weapons["axe"], shield = Shields["small shield"] 
 	} 
 
+	conv_over = false
+	
 	-- -----------------------------------------------
 	-- Standard functions
 	-- -----------------------------------------------
@@ -28,7 +30,11 @@ do
 	function load_generic_fight_file(name)
 		dofile(name) -- To enable combat, must be inserted AFTER c_values is defined!
 	end
-	
+
+	function conversation_over()
+	   return conv_over
+	end
+
 	-- -----------------------------------------------
 	-- Standard terms
 	-- -----------------------------------------------
