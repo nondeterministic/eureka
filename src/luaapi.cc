@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -32,7 +32,7 @@
 #include "config.h"
 #include "weapon.hh"
 #include "shield.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "gamecontrol.hh"
 #include "creature.hh"
 #include "combat.hh"

@@ -21,7 +21,7 @@
 #define SERVICE_HH
 
 #include "item.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include <string>
 
 class Service : public Item

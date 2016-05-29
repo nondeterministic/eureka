@@ -7,7 +7,7 @@
 #include "map.hh"
 #include "party.hh"
 #include "indoorsicons.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "soundsample.hh"
 #include "playlist.hh"
 #include "config.h"

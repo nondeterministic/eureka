@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Axe definition file for simplicissimus
+-- Axe definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 

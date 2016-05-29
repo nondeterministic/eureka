@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 
 #ifndef EDITOR_COMPILE
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #else
 #include "leibniz.hh"
 #endif

@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -32,7 +32,7 @@
 #include "miniwin.hh"
 #include "world.hh"
 #include "soundsample.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "config.h"
@@ -194,7 +194,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	// If a map is stored inside the current game status, it means the player modified it in the past,
 	// and we should load it instead of loading it from the original game files.
-	boost::filesystem::path dir((std::string(getenv("HOME")) + "/.simplicissimus/" + World::Instance().get_name() + "/maps/"));
+	boost::filesystem::path dir((std::string(getenv("HOME")) + "/.eureka/" + World::Instance().get_name() + "/maps/"));
 	std::string old_map_file = dir.string() + gc->get_arena()->get_map()->get_name() + ".xml";
 
 	std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(gc->get_arena()->get_map()->get_name());

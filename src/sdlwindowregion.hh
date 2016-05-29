@@ -25,7 +25,7 @@
 
 #include <string>
 
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "charset.hh"
 #include "sdlwindow.hh"
 

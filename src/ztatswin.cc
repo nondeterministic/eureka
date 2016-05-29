@@ -5,7 +5,7 @@
 #include "sdltricks.hh"
 #include "gamecontrol.hh"
 #include "eventmanager.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 #include <boost/bind.hpp>
 #include <boost/tuple/tuple.hpp>

@@ -1,4 +1,4 @@
-bin_PROGRAMS = simplicissimus
+bin_PROGRAMS = eureka 
 
 SUBDIRS = leibniz
 
@@ -18,8 +18,8 @@ LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_SIGNALS_LIBS@ @BOOST_REGEX_LIBS@ \
 	@LUA_LIBS@ @LIBS@
 
-simplicissimus_SOURCES = \
-        simplicissimus.hh simplicissimus.cc \
+eureka_SOURCES = \
+        eureka.hh eureka.cc \
 	clock.hh clock.cc \
 	util.hh util.cc \
         luaapi.hh luaapi.cc \

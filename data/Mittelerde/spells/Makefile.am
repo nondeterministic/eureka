@@ -1,5 +1,5 @@
 SUBDIRS = mage
 
-spellsdir = $(datadir)/simplicissimus/data/Mittelerde/spells
+spellsdir = $(datadir)/eureka/data/Mittelerde/spells
 
 MAINTAINERCLEANFILES = Makefile.in

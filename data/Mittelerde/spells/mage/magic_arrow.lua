@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Spell definition file for simplicissimus
+-- Spell definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 

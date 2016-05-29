@@ -2,8 +2,8 @@ EXTRA_DIST = intro.png charset.png frame.png intro.ogg main.ogg Mittelerde.xml C
 
 SUBDIRS = Mittelerde leibniz
 
-simplicissimusdatadir = $(datadir)/simplicissimus/data
+eurekadatadir = $(datadir)/eureka/data
 
-simplicissimusdata_DATA = $(EXTRA_DIST)
+eurekadata_DATA = $(EXTRA_DIST)
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Edibles definition file for simplicissimus
+-- Edibles definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 

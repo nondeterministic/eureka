@@ -7,7 +7,7 @@
 #include "sdlwindowregion.hh"
 #include "type.hh"
 #include "charset.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 class ZtatsWin : public SDLWindowRegion
 {

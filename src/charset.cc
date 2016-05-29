@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -18,7 +18,7 @@
 // USA.
 
 #include "charset.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 #include <SDL.h>
 #include <SDL_image.h>

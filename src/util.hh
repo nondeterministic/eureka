@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 namespace Util
 {

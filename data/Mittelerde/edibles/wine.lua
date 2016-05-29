@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Edibles definition file for simplicissimus
+-- Edibles definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
@@ -12,7 +12,7 @@ Edibles["wine"]  = {
    poison_healing_power   = "none",
    poisonous              = "none",
    magic_herb             = false,
-   intoxicating_effect    = "some",     -- see simplicissimus.hh
+   intoxicating_effect    = "some",     -- see eureka.hh
 
    gold          = 1,
    weight        = 1,

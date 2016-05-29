@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="simplicissimus"
+PKG_NAME="eureka"
 DIE=0
 
 (test -f $srcdir/configure.ac \

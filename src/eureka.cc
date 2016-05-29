@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -41,7 +41,7 @@
 #include "outdoorsmap.hh"
 #include "indoorsmap.hh"
 #include "gamestate.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 #include <iostream>
 #include <cstdlib>
@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
 	_lua_state = luaL_newstate();
 	luaL_openlibs(_lua_state); /* Load Lua libraries */
 
-	// Make the simplicissimus API visible to Lua
+	// Make the eureka API visible to Lua
 	publicize_api(_lua_state);
 
 	// Init sound and video, show intro
@@ -643,7 +643,7 @@ int setup_dummy_game()
 		initial_map = World::Instance().get_initial_map();
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		std::cerr << "ERROR: eureka.cc: Game world XML-file seems to have no initial map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -655,13 +655,13 @@ int setup_dummy_game()
 			arena = Arena::create("indoors", initial_map->get_name());
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
+		std::cerr << "ERROR: eureka.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Load map data
 	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
+		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
 
 	PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
 	// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
@@ -704,7 +704,7 @@ int recreate_old_game_state()
 	if (gstate->load())
 		gstate->apply();
 	else {
-		std::cerr << "ERROR: simplicissimus.cc: Loading of game file failed.\n";
+		std::cerr << "ERROR: eureka.cc: Loading of game file failed.\n";
 		exit(-1);
 	}
 
@@ -714,7 +714,7 @@ int recreate_old_game_state()
 		std::cout << "CURRENT MAP NAME: " << gstate->get_cur_map_name() << "\n";
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		std::cerr << "ERROR: eureka.cc: Game world XML-file seems to have no initial map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -726,13 +726,13 @@ int recreate_old_game_state()
 			arena = Arena::create("indoors", cur_map->get_name());
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << cur_map->get_name() << std::endl;
+		std::cerr << "ERROR: eureka.cc: MapNotFound exception for map: " << cur_map->get_name() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Load current map's data
 	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
+		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
 
 	return 0;
 }
@@ -748,7 +748,7 @@ int create_fresh_game_state(PlayerCharacter player)
 		initial_map = World::Instance().get_initial_map();
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: Game world XML-file seems to have no initial map defined." << std::endl;
+		std::cerr << "ERROR: eureka.cc: Game world XML-file seems to have no initial map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -760,13 +760,13 @@ int create_fresh_game_state(PlayerCharacter player)
 			arena = Arena::create("indoors", initial_map->get_name());
 	}
 	catch (const MapNotFound& e) {
-		std::cerr << "ERROR: simplicissimus.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
+		std::cerr << "ERROR: eureka.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Load map data
 	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: simplicissimus.cc: Could not load map data.\n";
+		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
 
 	// Determine initial game position
 	try {
@@ -775,12 +775,12 @@ int create_fresh_game_state(PlayerCharacter player)
 	}
 	catch (NoInitialCoordsException& e)
 	{
-		std::cerr << "ERROR: simplicissimus.cc: Exception thrown. No initial coordinates in initial game map defined." << std::endl;
+		std::cerr << "ERROR: eureka.cc: Exception thrown. No initial coordinates in initial game map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	if (x < 0 || y < 0) {
-		std::cerr << "ERROR: simplicissimus.cc: No initial coordinates in initial game map defined." << std::endl;
+		std::cerr << "ERROR: eureka.cc: No initial coordinates in initial game map defined." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 

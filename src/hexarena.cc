@@ -6,7 +6,7 @@
 #include "map.hh"
 #include "party.hh"
 #include "outdoorsicons.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 HexArena::HexArena(std::shared_ptr<Map> map)
 {

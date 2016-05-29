@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Troll definition file for simplicissimus
+-- Troll definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 

@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -43,7 +43,7 @@ extern "C" {
 #include "SDL_keysym.h"
 // *******************************************
 
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "gamecontrol.hh"
 #include "clock.hh"
 #include "combat.hh"

@@ -1,5 +1,5 @@
 -- -----------------------------------------------
--- Definition file for simplicissimus
+-- Definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 

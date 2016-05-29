@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -17,7 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "gamestate.hh"
 #include "map.hh"
 #include "world.hh"
@@ -149,7 +149,7 @@ bool GameState::save()
 	return true;
 }
 
-// TODO: This was simply copied from simplicissimus.cc. FIX!
+// TODO: This was simply copied from eureka.cc. FIX!
 
 bool GameState::load()
 {

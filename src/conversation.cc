@@ -23,7 +23,7 @@ extern "C"
 #include "charset.hh"
 #include "console.hh"
 #include "conversation.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 Conversation::Conversation(MapObj& mo) : obj(mo)
 {

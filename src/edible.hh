@@ -21,7 +21,7 @@
 #define EDIBLE_HH
 
 #include "item.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include <string>
 
 class Edible : public Item

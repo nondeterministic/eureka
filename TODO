@@ -25,7 +25,7 @@ IN PROGRESS
 DONE
 =====
 
-- Shift load stuff into GameState, where it belongs and free simplicissimus.cc
+- Shift load stuff into GameState, where it belongs and free eureka.cc
 
 - Magic system (prio high, skill high)
 

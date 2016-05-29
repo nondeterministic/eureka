@@ -1,4 +1,4 @@
-// This source file is part of Simplicissimus
+// This source file is part of eureka
 //
 // Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
@@ -27,7 +27,7 @@
 
 #include "spell.hh"
 #include "luawrapper.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "party.hh"
 #include "playercharacter.hh"
 #include "gamecontrol.hh"

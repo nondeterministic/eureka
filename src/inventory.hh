@@ -2,7 +2,7 @@
 #define INVENTORY_HH
 
 #include "item.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 #include <list>
 #include <memory>

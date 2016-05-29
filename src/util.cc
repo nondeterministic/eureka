@@ -5,7 +5,7 @@
 #include <cstddef>        // std::size_t
 
 #include "util.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 
 bool Util::vowel(const char c)
 {

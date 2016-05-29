@@ -1,25 +1,25 @@
 /* *********************************************************************
- * This file is part of Simplicissimus/Leibniz.
+ * This file is part of eureka/Leibniz.
  *
  * Copyright (c) Andreas Bauer <baueran@gmail.com>
  *
- * Simplicissimus/Leibniz is free software: you can redistribute it
+ * eureka/Leibniz is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
- * Simplicissimus/Leibniz is distributed in the hope that it will be
+ * eureka/Leibniz is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Simplicissimus/Leibniz.  If not, see 
+ * along with eureka/Leibniz.  If not, see 
  * <http://www.gnu.org/licenses/>. 
  * ********************************************************************* */
 
 #include "sdlwindow.hh"
-#include "simplicissimus.hh"
+#include "eureka.hh"
 #include "config.h"
 
 // Testing only

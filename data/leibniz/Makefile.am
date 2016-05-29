@@ -1,6 +1,6 @@
 EXTRA_DIST = 34x34hex.png logo.png
 
-leibnizdir = $(datadir)/simplicissimus/data/leibniz
+leibnizdir = $(datadir)/eureka/data/leibniz
 
 leibniz_DATA = $(EXTRA_DIST)
 

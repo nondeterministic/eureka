@@ -1,5 +1,5 @@
 -- -------------------------------------------------
--- Generic combat definition file for simplicissimus
+-- Generic combat definition file for eureka
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -------------------------------------------------
 

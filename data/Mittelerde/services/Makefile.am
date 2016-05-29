@@ -1,5 +1,5 @@
 EXTRA_DIST = $(wildcard *.lua)
 
-servicesdir = $(datadir)/simplicissimus/data/Mittelerde/services
+servicesdir = $(datadir)/eureka/data/Mittelerde/services
 
 services_DATA = $(EXTRA_DIST)

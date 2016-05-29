@@ -66,19 +66,19 @@
 #define LT_OBJDIR ".libs/"
 
 /* Name of package */
-#define PACKAGE "simplicissimus"
+#define PACKAGE "eureka"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "baueran@gmail.com"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "simplicissimus"
+#define PACKAGE_NAME "eureka"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "simplicissimus 0.0.1"
+#define PACKAGE_STRING "eureka 0.0.1"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "simplicissimus"
+#define PACKAGE_TARNAME "eureka"
 
 /* Define to the home page for this package. */
 #define PACKAGE_URL ""

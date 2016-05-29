@@ -2,12 +2,11 @@ Game development started in ca. 2009
 
 This package contains
 
-- simplicissimus, an old-fashioned CRPG
+- eureka, an old-fashioned CRPG engine
 
-- leibniz, a buggy editor, which has been used to create simplicissimus
+- leibniz, a buggy editor, which has been used to create eureka
 
-Leibniz is intended to be used only by the programmer of simplicissimus
+Leibniz is intended to be used only by the programmer of eureka
 and will not be supported.
-
 
     - Andreas Bauer, January 26, 2010.

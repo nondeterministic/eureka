@@ -1,6 +1,6 @@
-AC_INIT([simplicissimus], [0.0.1], [baueran@gmail.com]) 
+AC_INIT([eureka], [0.0.1], [baueran@gmail.com]) 
 
-AC_CONFIG_SRCDIR([src/simplicissimus.cc])
+AC_CONFIG_SRCDIR([src/eureka.cc])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
