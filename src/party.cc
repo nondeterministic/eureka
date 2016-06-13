@@ -17,13 +17,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#include "eureka.hh"
-#include "party.hh"
-#include "jimmylock.hh"
-
-#include "luaapi.hh"
-#include "luawrapper.hh"
-
 #include <utility>
 #include <iostream>
 #include <memory>
@@ -39,14 +32,20 @@ extern "C"
 #include <lauxlib.h>
 }
 
+#include "eureka.hh"
+#include "party.hh"
+#include "jimmylock.hh"
+#include "luaapi.hh"
+#include "luawrapper.hh"
+
 void Party::set_coords(int x, int y)
 {
-  this->x = x; this->y = y;
+	this->x = x; this->y = y;
 }
 
 void Party::set_coords(std::pair<int, int> coords)
 {
-  this->x = coords.first; this->y = coords.second;
+	this->x = coords.first; this->y = coords.second;
 }
 
 std::pair<int, int> Party::get_coords()
@@ -67,6 +66,8 @@ Party::Party()
 	is_resting = false;
 	is_in_combat = false;
 	_magic_light_radius = 0;
+	prev_x = -1;
+	prev_y = -1;
 }
 
 Party& Party::Instance()
@@ -126,10 +127,17 @@ void Party::store_outside_coords()
 //	prev_map_name = _map_name;
 }
 
-void Party::restore_outside_coords()
+bool Party::restore_outside_coords()
 {
-  x = prev_x;
-  y = prev_y;
+	if (prev_x >= 0 && prev_y >= 0) {
+		x = prev_x;
+		y = prev_y;
+		return true;
+	}
+
+	std::cerr << "WARNING: party.cc: No previous or initial coordinates for current map found.\n";
+	return false;
+
 //  _indoors = prev_indoors;
 //  _map_name = prev_map_name;
 }
@@ -157,7 +165,7 @@ std::string Party::map_name()
 void Party::add_player(PlayerCharacter player)
 {
   _players.push_back(player);
-  std::cout << "Added player " << player.name() << " to roaster.\n";
+  std::cout << "INFO: party.cc: Added player " << player.name() << " to roaster.\n";
 }
 
 PlayerCharacter* Party::get_player(int number)

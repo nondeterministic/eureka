@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+  <name>hut</name>
+  <outdoors>false</outdoors>
+  <dungeon>false</dungeon>
+  <guarded_city>false</guarded_city>
+  <initial_x>3</initial_x>
+  <initial_y>3</initial_y>
+  <data>
+    <row>4 82 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 5 5 5 5 4 4 1034 1034 4 1034 1034 4 5 5 5 5 4 4 4 4 4 4 4 5 5 4 4</row>
+    <row>4 82 5 5 4 4 4 1060 1060 1034 1034 4 1034 1034 1060 1060 4 4 4 5 5 5 82 5 4 5 5 5 4 4</row>
+    <row>4 4 5 5 4 4 190 190 190 198 190 168 190 198 190 190 190 190 190 4 5 5 5 4 4 4 5 5 4 4</row>
+    <row>4 5 82 5 4 4 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 5 5 5 5 4 82 4 4 4</row>
+    <row>5 5 5 5 4 4 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 82 4 4 5 5 4 4</row>
+    <row>4 5 5 5 4 4 190 190 190 147 190 89 190 190 190 147 89 148 190 4 4 4 5 5 5 4 4 5 4 4</row>
+    <row>4 5 5 5 4 4 190 89 89 89 89 89 89 508 190 89 89 508 190 4 4 4 4 5 5 4 4 4 4 4</row>
+    <row>4 5 5 4 4 4 190 415 89 187 185 186 89 89 190 458 89 89 190 4 4 4 5 5 5 4 5 4 4 4</row>
+    <row>4 5 4 82 4 4 190 89 89 89 89 89 89 465 190 89 89 89 190 4 4 5 5 5 5 5 82 5 4 4</row>
+    <row>4 5 5 5 4 4 190 89 89 89 89 89 89 465 190 120 89 89 190 4 5 5 4 4 82 82 5 5 4 4</row>
+    <row>4 4 5 5 4 4 190 190 198 190 190 190 198 190 190 190 198 190 190 4 4 4 4 4 4 5 4 5 4 4</row>
+    <row>4 4 5 4 5 4 4 4 4 4 4 4 4 4 4 5 5 4 4 4 4 4 4 4 4 5 4 5 5 4</row>
+    <row>4 4 5 82 5 4 5 4 4 4 4 4 4 4 4 5 5 4 4 4 4 910 910 910 4 5 4 5 5 4</row>
+    <row>4 5 5 4 4 5 5 4 5 4 82 5 4 5 4 5 5 4 4 4 4 910 963 910 4 5 4 4 5 4</row>
+    <row>4 4 5 4 4 5 4 4 82 4 4 5 4 5 5 5 5 4 4 4 4 910 1060 910 4 4 4 5 4 4</row>
+    <row>4 4 5 5 5 4 5 5 5 4 4 5 4 4 6 4 4 5 5 4 5 910 1060 910 4 5 4 5 4 4</row>
+    <row>4 5 5 5 4 4 4 4 84 168 84 84 6 6 4 5 4 5 4 4 4 910 910 910 5 4 4 5 4 4</row>
+    <row>4 5 5 5 5 82 4 4 84 1141 1141 84 4 6 6 5 5 5 5 4 4 4 5 4 4 4 6 4 5 5</row>
+    <row>4 5 4 5 4 4 4 4 84 1141 1141 84 4 6 5 5 82 5 5 5 5 4 4 4 4 4 6 4 4 4</row>
+    <row>5 6 5 5 5 4 4 4 84 84 84 84 6 4 6 5 5 5 5 5 4 4 4 4 6 4 6 4 4 4</row>
+    <row>4 4 5 6 6 4 4 4 6 6 4 4 4 4 6 5 5 5 5 5 6 6 6 6 6 6 4 4 4 5</row>
+    <row>4 5 4 5 6 5 4 4 5 5 4 4 4 4 4 4 4 5 5 4 4 4 5 5 4 4 4 4 5 4</row>
+    <row>4 5 5 4 4 5 5 4 4 5 5 5 4 4 4 4 4 5 5 5 4 4 5 5 5 4 5 5 4 4</row>
+    <row>5 4 4 5 5 6 4 4 4 4 4 5 5 5 4 5 6 5 5 4 5 5 4 4 5 82 5 5 4 4</row>
+    <row>5 4 4 4 82 4 6 5 5 4 4 6 6 4 4 5 4 5 4 4 4 6 6 4 5 4 4 4 4 4</row>
+    <row>4 5 4 4 82 5 4 4 5 5 5 4 4 4 5 5 4 5 5 82 82 5 5 5 5 5 5 5 4 4</row>
+    <row>4 5 5 5 5 5 4 82 4 82 82 82 82 5 5 4 5 5 5 5 5 5 5 5 5 5 5 5 4 4</row>
+    <row>4 4 4 4 4 5 4 4 82 82 4 4 4 4 4 4 4 4 4 4 4 5 4 5 5 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 5 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+  </data>
+  <objects>
+    <object x="10" y="18" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="8" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="8" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="4" ox="0" oy="0" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
+    <object x="10" y="19" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="17" ox="0" oy="0" icon_no="171" layer="0" id="sheddoor" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="3" ox="0" oy="0" icon_no="169" layer="0" id="frontdoor" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+  </objects>
+</map>

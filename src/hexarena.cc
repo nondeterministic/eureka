@@ -53,7 +53,7 @@ int HexArena::put_tile(int x, int y, SDL_Surface* brush)
   
   if (brush == NULL) {
     std::cerr << "ERROR: hexarena.cc: brush to paint tile is NULL. " << std::endl;
-    return 0;
+    return -1;
   }
   
   SDL_Rect rect = get_tile_coords(x, y);

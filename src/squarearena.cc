@@ -157,10 +157,10 @@ Offsets SquareArena::determine_offsets()
 			_right_hidden = 0;
 	}
 
-	std::cout << "top_hidden: " << _top_hidden << ", "
-			  << "bot_hidden: " << _bot_hidden << ", "
-	          << "left_hidden: " << _left_hidden << ", "
-	          << "right_hidden: " << _right_hidden << "\n";
+//	std::cout << "top_hidden: " << _top_hidden << ", "
+//			  << "bot_hidden: " << _bot_hidden << ", "
+//	          << "left_hidden: " << _left_hidden << ", "
+//	          << "right_hidden: " << _right_hidden << "\n";
 
 	return offsets();
 }

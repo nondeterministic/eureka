@@ -635,6 +635,7 @@ PlayerCharacter create_character()
 
 int setup_dummy_game()
 {
+	int x = 13, y = 21;
 	std::shared_ptr<Map> initial_map;
 	Party* party     = &Party::Instance();
 
@@ -649,10 +650,14 @@ int setup_dummy_game()
 
 	// Create an arena for initial game map
 	try {
-		if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map))
+		if (std::dynamic_pointer_cast<OutdoorsMap>(initial_map)) {
 			arena = Arena::create("outdoors", initial_map->get_name());
-		else
+			std::cout << "INFO: eureka.cc: Starting outdoors game.\n";
+		}
+		else {
 			arena = Arena::create("indoors", initial_map->get_name());
+			std::cout << "INFO: eureka.cc: Starting indoors game.\n";
+		}
 	}
 	catch (const MapNotFound& e) {
 		std::cerr << "ERROR: eureka.cc: MapNotFound exception for map: " << initial_map->get_name() << std::endl;
@@ -662,6 +667,17 @@ int setup_dummy_game()
 	// Load map data
 	if (!arena->get_map()->xml_load_map_data())
 		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
+
+	// Determine initial game position
+	try {
+		x = initial_map->get_initial_coords().first;
+		y = initial_map->get_initial_coords().second;
+	}
+	catch (NoInitialCoordsException& e)
+	{
+		std::cerr << "ERROR: eureka.cc: Exception thrown. No initial coordinates in initial game map defined." << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
 	// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
@@ -690,7 +706,7 @@ int setup_dummy_game()
 
 	party->set_food(300);
 	party->set_gold(25);
-	party->set_coords(13,21);
+	party->set_coords(x,y);
 
 	return 0;
 }

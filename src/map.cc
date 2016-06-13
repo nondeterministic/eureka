@@ -172,8 +172,9 @@ void Map::add_event_to_action(unsigned x, unsigned y, std::shared_ptr<GameEvent>
 
 std::pair<int,int> Map::get_initial_coords()
 {
-	if (initial_x < 0 || initial_y < 0)
+	if (initial_x < 0 || initial_y < 0) {
 		throw NoInitialCoordsException("This map contains no initial coordinates.");
+	}
 	else
 		return std::make_pair(initial_x, initial_y);
 }

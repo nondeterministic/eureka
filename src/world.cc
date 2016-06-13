@@ -436,8 +436,8 @@ void World::load_world_elements(lua_State* L)
 
 	for (int i = 0; i < number_of_elems; i++) {
 		if (luaL_dofile(L, (conf_world_path / elems[i] / "defs.lua").c_str())) {
-			cerr << "ERROR: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
-			exit(1);
+			cerr << "WARNING: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
+			continue;
 		}
 
 		for (boost::filesystem::directory_iterator itr((conf_world_path / elems[i]).string());
@@ -448,8 +448,8 @@ void World::load_world_elements(lua_State* L)
 
 			if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
 				if (luaL_dofile(L, (conf_world_path / elems[i] / fname).c_str())) {
-					cerr << "ERROR: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << endl;
-					exit(1);
+					cerr << "WARNING: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
+					continue;
 				}
 			}
 		}
@@ -457,14 +457,19 @@ void World::load_world_elements(lua_State* L)
 
 	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
 
-	boost::filesystem::path targetDir(conf_world_path / "spells");
-	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+	try {
+		boost::filesystem::path targetDir(conf_world_path / "spells");
+		boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
-	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
-	    if (is_regular_file(i)) {
-	    	Spell spell = Spell::spell_from_file_path(i.string(), L);
-	    	_spells.push_back(spell);
-	    }
+		BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
+			if (is_regular_file(i)) {
+				Spell spell = Spell::spell_from_file_path(i.string(), L);
+				_spells.push_back(spell);
+			}
+		}
+	}
+	catch (...) {
+		cerr << "WARNING: world.cc: Reading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
 	}
 }
 

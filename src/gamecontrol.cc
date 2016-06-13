@@ -2352,6 +2352,9 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 
 bool GameControl::leave_map()
 {
+	std::string curr_map_name = arena->get_map()->get_name();
+	std::string old_map_name = party->map_name();
+
 	printcon("Do you wish to leave? (y/n)");
 
 	switch (em->get_key("yn")) {
@@ -2402,16 +2405,45 @@ bool GameControl::leave_map()
 		arena = NULL;
 		// ****************************************************************
 
-		// Restore previously saved state to remember party position, etc. in old map.
-		party->restore_outside_coords();
-		party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
-
 		// Now change maps over...
-		set_arena(Arena::create((party->indoors()? "indoors" : "outdoors"), party->map_name()));
+		if (old_map_name == curr_map_name) {
+			// The above test is only ever positive, if the game was actually started inside an indoors map as opposed to the outdoors.
+			// In this case, we simply find the first best outdoors map (most games will only have one), and use it as the new map.
+			for (std::vector<std::shared_ptr<Map>>::iterator map = World::Instance().get_maps()->begin(); map != World::Instance().get_maps()->end(); map++) {
+				if (map->get()->is_outdoors()) {
+					old_map_name = map->get()->get_name();
+					break;
+				}
+
+			}
+		}
+		if (World::Instance().get_map(old_map_name.c_str()).get()->is_outdoors()) {
+			set_arena(Arena::create("outdoors", old_map_name));
+			party->set_indoors(false);
+		}
+		else {
+			set_arena(Arena::create("indoors", old_map_name));
+			party->set_indoors(true);
+		}
 		if (!arena->get_map())
-			std::cout << "WARNING: gamecontrol.cc: arena->get_map == NULL\n";
+			std::cerr << "WARNING: gamecontrol.cc: arena->get_map == NULL\n";
 
 		arena->get_map()->xml_load_map_data();
+
+		// Restore previously saved state to remember party position, etc. in old map.
+		if (!party->restore_outside_coords()) {
+			try {
+				std::pair<int,int> initial_coords = arena->get_map()->get_initial_coords();
+				party->set_coords(initial_coords);
+				std::cout << "SETTING PARTY TO: " << initial_coords.first << " " << initial_coords.second << std::endl;
+				party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
+			}
+			catch (...) {
+				std::cerr << "ERROR: gamecontrol.cc: The current map should have initial coordinates defined, but doesn't. Not sure where to put party on map. Bye!\n";
+				exit(-1);
+			}
+		}
+
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();
 		arena->show_map(get_viewport().first, get_viewport().second);

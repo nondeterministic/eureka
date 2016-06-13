@@ -75,7 +75,14 @@ AC_CONFIG_FILES([Makefile \
 		 src/leibniz/Makefile 
 		 m4/Makefile 
 		 data/Makefile
-		 data/leibniz/Makefile 
+		 data/leibniz/Makefile
+		 data/Demoworld/Makefile
+		 data/Demoworld/images/Makefile
+		 data/Demoworld/maps/Makefile
+		 data/Demoworld/sound/Makefile
+		 data/Demoworld/weapons/Makefile
+		 data/Demoworld/shields/Makefile
+		 data/Demoworld/bestiary/Makefile
 		 data/Mittelerde/Makefile
 		 data/Mittelerde/spells/Makefile
 		 data/Mittelerde/spells/mage/Makefile

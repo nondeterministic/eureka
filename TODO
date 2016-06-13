@@ -18,6 +18,11 @@ TODO
 
 - In game music (prio low, skill low)
 
+- hexarena.cc:
+// TODO: PUT THIS CHECK BACK INTO PLACE!
+//				if (tileno < 0)
+//					std::cerr << "WARNING: hexarena.cc: Invalid tile number in HexArena::show_map(): " << tileno << std::endl;
+
 IN PROGRESS
 ============
 
