@@ -820,13 +820,13 @@ int start_game()
 	// Set up game window and game control
 	gc->set_arena(arena);
 
-	// TODO: This is a bit odd, but set_party does more than just set the party coordinates, which are already set, obviously.  Maybe rename methods someday...
-	gc->set_party(party->x, party->y);
-
 	if (std::dynamic_pointer_cast<OutdoorsMap>(arena->get_map()) != NULL)
 		gc->set_outdoors(true);
 	else
 		gc->set_outdoors(false);
+
+	// TODO: This is a bit odd, but set_party does more than just set the party coordinates, which are already set, obviously.  Maybe rename methods someday...
+	gc->set_party(party->x, party->y);
 
 	gc->set_map_name(arena->get_map()->get_name().c_str());
 	gc->show_win();

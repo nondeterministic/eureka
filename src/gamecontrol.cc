@@ -111,10 +111,10 @@ void GameControl::set_game_music(SoundSample* gm)
 
 int GameControl::set_party(int x, int y)
 {
-  party->set_coords(x, y);
-  arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-  arena->show_party(screen_pos_party.first, screen_pos_party.second);
-  return 0;
+	party->set_coords(x, y);
+	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
+	arena->show_party(screen_pos_party.first, screen_pos_party.second);
+	return 0;
 }
 
 // Returns 0 on success, a negative value if no map can be drawn for whatever reason
@@ -128,6 +128,7 @@ int GameControl::show_win()
 		SDLWindow::Instance().blit_interior();
 		return 0;
 	}
+	std::cout << "WARNING: gamecontrol.cc: show_win() failed.\n";
 	return -1;
 }
 
@@ -2431,9 +2432,10 @@ bool GameControl::leave_map()
 		arena->get_map()->xml_load_map_data();
 
 		// Restore previously saved state to remember party position, etc. in old map.
+		std::pair<int,int> initial_coords;
 		if (!party->restore_outside_coords()) {
 			try {
-				std::pair<int,int> initial_coords = arena->get_map()->get_initial_coords();
+				initial_coords = arena->get_map()->get_initial_coords();
 				party->set_coords(initial_coords);
 				std::cout << "SETTING PARTY TO: " << initial_coords.first << " " << initial_coords.second << std::endl;
 				party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
@@ -2447,6 +2449,13 @@ bool GameControl::leave_map()
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();
 		arena->show_map(get_viewport().first, get_viewport().second);
+
+		set_party(1, 1);
+		for (unsigned x = 1; party->get_coords().first < initial_coords.first; x++)
+			move_party_quietly(DIR_RIGHT, true);
+		for (unsigned y = 1; party->get_coords().second < initial_coords.second; y++)
+			move_party_quietly(DIR_DOWN, true);
+
 		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
 		// Stop sound

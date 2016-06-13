@@ -1,3 +1,22 @@
+// This source file is part of eureka
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include <iostream>
 #include <utility>
 #include <memory>
@@ -142,49 +161,45 @@ Offsets HexArena::move(int dir)
 
 Offsets HexArena::determine_offsets()
 {
-  unsigned screen_width = _sdl_surf->w;
-  unsigned screen_height = _sdl_surf->h;
+	unsigned screen_width = _sdl_surf->w;
+	unsigned screen_height = _sdl_surf->h;
 
-  // Determining the exact width of the hex map in pixels is a bit of
-  // a bitch...
-  unsigned map_width  = (get_map()->width())*(tile_size()-10) + 9;
-  // ...height is easy though...
-  unsigned map_height = get_map()->height()*(tile_size()-1);
-  
-  // Does the map height fit into the window height?
-  if (map_height <= screen_height)
-    {
-      _bot_hidden = 0;
-      _top_hidden = 0;
-    }
-  else
-    {
-      if (screen_height + _top_hidden < map_height)
-	_bot_hidden = map_height - _top_hidden - screen_height;
-      else
-	_bot_hidden = 0;
-    }
-  
-  if (map_width <= screen_width)
-    {
-      _left_hidden = 0;
-      _right_hidden = 0;
-    }
-  else
-    {
-      if (screen_width + _left_hidden < map_width)
-	_right_hidden = map_width - _left_hidden - screen_width;
-      else
-	_right_hidden = 0;
-    }
+	// Determining the exact width of the hex map in pixels is a bit of
+	// a bitch...
+	unsigned map_width  = (get_map()->width())*(tile_size()-10) + 9;
+	// ...height is easy though...
+	unsigned map_height = get_map()->height()*(tile_size()-1);
 
-  // std::cout 
-  //   << "top: " << _top_hidden << ", "
-  //   << "bot: " << _bot_hidden << ", "
-  //   << "left: " << _left_hidden << ", "
-  //   << "right: " << _right_hidden << std::endl;
+	// Does the map height fit into the window height?
+	if (map_height <= screen_height) {
+		_bot_hidden = 0;
+		_top_hidden = 0;
+	}
+	else {
+		if (screen_height + _top_hidden < map_height)
+			_bot_hidden = map_height - _top_hidden - screen_height;
+		else
+			_bot_hidden = 0;
+	}
 
-  return offsets();
+	if (map_width <= screen_width) {
+		_left_hidden = 0;
+		_right_hidden = 0;
+	}
+	else   {
+		if (screen_width + _left_hidden < map_width)
+			_right_hidden = map_width - _left_hidden - screen_width;
+		else
+			_right_hidden = 0;
+	}
+
+//	 std::cout
+//	   << "top: " << _top_hidden << ", "
+//	   << "bot: " << _bot_hidden << ", "
+//	   << "left: " << _left_hidden << ", "
+//	   << "right: " << _right_hidden << std::endl;
+
+	return offsets();
 }
 
 // Returns 0 when tile hex-x-coordinate in the upper left corner is
@@ -524,25 +539,25 @@ void HexArena::get_center_coords(int& x, int& y)
 
 std::pair<int, int> HexArena::show_party(int x, int y)
 {
-  // Draw party in the middle on default values
-  if (x == -1 && y == -1)
-    get_center_coords(x, y);
-  // TODO: else draw custom position
-  // ...
+	// Draw party in the middle on default values
+	if (x == -1 && y == -1)
+		get_center_coords(x, y);
+	// TODO: else draw custom position
+	// ...
 
-  put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20));
+	put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20));
 
-  int mx, my;
-  screen_to_map(x, y, mx, my);
-  
-  // std::cerr << "show_party: " << x << ", " << y 
-  // 	    << " => " << mx << ", " << my << "\n";
+	int mx, my;
+	screen_to_map(x, y, mx, my);
 
-  std::pair<int, int> new_coords;
-  new_coords.first = mx;
-  new_coords.second = my;
+	// std::cerr << "show_party: " << x << ", " << y
+	// 	    << " => " << mx << ", " << my << "\n";
 
-  return new_coords;
+	std::pair<int, int> new_coords;
+	new_coords.first = mx;
+	new_coords.second = my;
+
+	return new_coords;
 }
 
 // Some extra blitting is required if a hex arena is used to fill
