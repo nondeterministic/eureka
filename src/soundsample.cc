@@ -135,7 +135,7 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 		_audio_on = true;
 	}
 	else
-		std::cerr << "WARNING: Cannot play file '" << _filename << "'. Check soundsample.cc.\n";
+		std::cerr << "WARNING: soundsample.cc: Cannot play file '" << _filename << "'.\n";
 }
 
 void SoundSample::stop()

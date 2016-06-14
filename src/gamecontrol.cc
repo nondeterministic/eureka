@@ -2236,7 +2236,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	party->y += y_diff;
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
-	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+	// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
 	return moved;
 }
@@ -2354,7 +2354,9 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 bool GameControl::leave_map()
 {
 	std::string curr_map_name = arena->get_map()->get_name();
-	std::string old_map_name = party->map_name();
+	std::string old_map_name  = party->map_name();
+
+	std::cout << "INFO: gamecontrol.cc: Leaving " << curr_map_name << " for " << old_map_name << ".\n";
 
 	printcon("Do you wish to leave? (y/n)");
 
@@ -2432,12 +2434,13 @@ bool GameControl::leave_map()
 		arena->get_map()->xml_load_map_data();
 
 		// Restore previously saved state to remember party position, etc. in old map.
-		std::pair<int,int> initial_coords;
+		std::pair<int,int> old_coords;
 		if (!party->restore_outside_coords()) {
+			std::cout << "INFO: gamecontrol.cc: No outside coords stored. Trying to determine initial map coordinates...\n";
 			try {
-				initial_coords = arena->get_map()->get_initial_coords();
-				party->set_coords(initial_coords);
-				std::cout << "SETTING PARTY TO: " << initial_coords.first << " " << initial_coords.second << std::endl;
+				old_coords = arena->get_map()->get_initial_coords();
+				party->set_coords(old_coords);
+				std::cout << "SETTING PARTY TO: " << old_coords.first << " " << old_coords.second << std::endl;
 				party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
 			}
 			catch (...) {
@@ -2445,15 +2448,21 @@ bool GameControl::leave_map()
 				exit(-1);
 			}
 		}
+		else {
+			old_coords.first  = party->x;
+			old_coords.second = party->y;
+		}
+
+		std::cout << "INFO: gamecontrol.cc: old coords: " << old_coords.first << ", " << old_coords.second << std::endl;
 
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();
 		arena->show_map(get_viewport().first, get_viewport().second);
 
 		set_party(1, 1);
-		for (unsigned x = 1; party->get_coords().first < initial_coords.first; x++)
+		for (unsigned x = 1; party->get_coords().first < old_coords.first; x++)
 			move_party_quietly(DIR_RIGHT, true);
-		for (unsigned y = 1; party->get_coords().second < initial_coords.second; y++)
+		for (unsigned y = 1; party->get_coords().second < old_coords.second; y++)
 			move_party_quietly(DIR_DOWN, true);
 
 		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
