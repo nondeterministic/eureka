@@ -477,8 +477,8 @@ int Combat::foes_fight()
 		beast_path /= boost::algorithm::to_lower_copy(foe->name()) + (std::string)".lua";
 
 		if (luaL_dofile(_lua_state, beast_path.string().c_str())) {
-			cerr << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
-			cerr << "Assuming instead that we're fighting with someone from an indoors map...\n";
+			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
 
 			if (lua.call_fn<bool>("attack") && !fled)
 				lua.call_fn<double>("fight");

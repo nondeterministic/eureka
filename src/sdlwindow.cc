@@ -109,9 +109,9 @@ int SDLWindow::init(int width, int height, int bpp, Uint32 flags)
 		std::cerr << "ERROR: sdlwindow.cc: Could not initialize audio.\n";
 
 	if (!SDL_JoystickOpen(0))
-		std::cerr << "INFO: sdlwindow.cc: No joystick found!\n";
+		std::cout << "INFO: sdlwindow.cc: No joystick found!\n";
 	else
-		std::cerr << "INFO: sdlwindow.cc: Joystick detected.\n";
+		std::cout << "INFO: sdlwindow.cc: Joystick detected.\n";
 
 	return 0;
 }
@@ -347,6 +347,8 @@ int SDLWindow::scroll_console(int amount, int delay)
 			return -1;
 		}
 	}
+
+	return 0;
 }
 
 int SDLWindow::frame_icon_size()

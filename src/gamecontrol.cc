@@ -128,7 +128,7 @@ int GameControl::show_win()
 		SDLWindow::Instance().blit_interior();
 		return 0;
 	}
-	std::cout << "WARNING: gamecontrol.cc: show_win() failed.\n";
+	std::cerr << "WARNING: gamecontrol.cc: show_win() failed.\n";
 	return -1;
 }
 
@@ -1319,7 +1319,7 @@ std::string GameControl::ready_item(int selected_player)
 				party->inventory()->remove(shield->name());
 			}
 			else
-				std::cerr << "Warning: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
+				std::cerr << "WARNING: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
 
 			// After readying an item, the AC may have changed, for example.
 			zwin.update_player_list();
@@ -1388,7 +1388,7 @@ std::pair<int, int> GameControl::select_coords()
       arena->get_map()->pop_obj(old_x, old_y);
       return std::make_pair(-1, -1);
     default:
-      std::cerr << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
+      std::cout << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
     }
 
     if (! _ind) {
@@ -2236,7 +2236,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	party->y += y_diff;
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
-	// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
 	return moved;
 }
@@ -2356,8 +2356,6 @@ bool GameControl::leave_map()
 	std::string curr_map_name = arena->get_map()->get_name();
 	std::string old_map_name  = party->map_name();
 
-	std::cout << "INFO: gamecontrol.cc: Leaving " << curr_map_name << " for " << old_map_name << ".\n";
-
 	printcon("Do you wish to leave? (y/n)");
 
 	switch (em->get_key("yn")) {
@@ -2415,9 +2413,9 @@ bool GameControl::leave_map()
 			for (std::vector<std::shared_ptr<Map>>::iterator map = World::Instance().get_maps()->begin(); map != World::Instance().get_maps()->end(); map++) {
 				if (map->get()->is_outdoors()) {
 					old_map_name = map->get()->get_name();
+					party->set_map_name(old_map_name.c_str());
 					break;
 				}
-
 			}
 		}
 		if (World::Instance().get_map(old_map_name.c_str()).get()->is_outdoors()) {
@@ -2436,11 +2434,9 @@ bool GameControl::leave_map()
 		// Restore previously saved state to remember party position, etc. in old map.
 		std::pair<int,int> old_coords;
 		if (!party->restore_outside_coords()) {
-			std::cout << "INFO: gamecontrol.cc: No outside coords stored. Trying to determine initial map coordinates...\n";
 			try {
 				old_coords = arena->get_map()->get_initial_coords();
 				party->set_coords(old_coords);
-				std::cout << "SETTING PARTY TO: " << old_coords.first << " " << old_coords.second << std::endl;
 				party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
 			}
 			catch (...) {
@@ -2452,8 +2448,6 @@ bool GameControl::leave_map()
 			old_coords.first  = party->x;
 			old_coords.second = party->y;
 		}
-
-		std::cout << "INFO: gamecontrol.cc: old coords: " << old_coords.first << ", " << old_coords.second << std::endl;
 
 		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
 		arena->determine_offsets();

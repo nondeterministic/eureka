@@ -60,13 +60,13 @@ void GameState::add_map(std::shared_ptr<IndoorsMap> map)
 	// First delete map, if already exists in game state
 	for (auto b = _maps.begin(); b != _maps.end(); b++) {
 		if ((*b)->get_name() == map->get_name()) {
-			std::cerr << "INFO: gamestate.cc: Erased old map " << (*b)->get_name() << " from current game state.\n";
+			std::cout << "INFO: gamestate.cc: Erased old map " << (*b)->get_name() << " from current game state.\n";
 			_maps.erase(b);
 			break;
 		}
 	}
 
-	std::cerr << "INFO: gamestate.cc: Adding new map " << map->get_name() << " to current game state.\n";
+	std::cout << "INFO: gamestate.cc: Adding new map " << map->get_name() << " to current game state.\n";
 	_maps.push_back(map);
 }
 
