@@ -44,6 +44,7 @@
 #include "eventplaysound.hh"
 #include "eventluascript.hh"
 #include "eventdeleteobj.hh"
+#include "eventaddobj.hh"
 #include "action.hh"
 #include "actiontake.hh"
 #include "actiononenter.hh"
@@ -58,6 +59,7 @@ Map::Map()
 	initial = false;
 	initial_x = -1;
 	initial_y = -1;
+	_longname = "";
 	// _main_map_xml_root = NULL;
 	// _main_map_xml_file = NULL;
 }
@@ -67,6 +69,7 @@ Map::Map(const Map& p)
 	is_dungeon = p.is_dungeon;
 	guarded_city = p.guarded_city;
 	_name = p._name;
+	_longname = p._longname;
 	_modified = p._modified;
 	_data = p._data;
 	_map_objects = p._map_objects;
@@ -95,6 +98,7 @@ void Map::unload_map_data(void)
 		for (unsigned i = 0; i < _data.size(); i++)
 			_data[i].clear();
 	_data.clear();
+	_longname = "";
 	_map_objects.clear();
 	_modified = false;
 }
@@ -127,6 +131,17 @@ std::string Map::get_name(void)
 void Map::set_name(const char* new_name)
 {
 	_name = new_name;
+	_modified = true;
+}
+
+std::string Map::get_longname(void)
+{
+	return _longname;
+}
+
+void Map::set_longname(const char* new_name)
+{
+	_longname = new_name;
 	_modified = true;
 }
 
@@ -304,107 +319,111 @@ bool Map::exists_on_disk(void)
 	return boost::filesystem::exists(World::Instance().get_path() /	World::Instance().get_name() / "maps" / (_name + ".xml"));
 }
 
+MapObj Map::return_object_node(const xmlpp::Element* objElement)
+{
+	MapObj new_obj;
+	int x = 0, y = 0, ox = 0, oy = 0;
+	const xmlpp::Element::AttributeList& attributes = objElement->get_attributes();
+
+	// Could be empty, if object doesn't have an actions tag
+	xmlpp::Node::NodeList actions_node = (objElement)->get_children("actions");
+
+	// Iterate through attributes of object node
+	for (auto iter = attributes.begin(); iter != attributes.end(); ++iter) {
+		const xmlpp::Attribute* attribute = *iter;
+		std::string a_name = attribute->get_name();
+		if (a_name == "x")
+			x = atoi(attribute->get_value().c_str());
+		else if (a_name == "y")
+			y = atoi(attribute->get_value().c_str());
+		else if (a_name == "ox")
+			ox = atoi(attribute->get_value().c_str());
+		else if (a_name == "oy")
+			oy = atoi(attribute->get_value().c_str());
+		else if (a_name == "icon_no")
+			new_obj.set_icon(atoi(attribute->get_value().c_str()));
+		else if (a_name == "layer")
+			new_obj.set_layer(atoi(attribute->get_value().c_str()));
+		else if (a_name == "init_script")
+			new_obj.set_init_script_path(attribute->get_value().c_str());
+		else if (a_name == "combat_script")
+			new_obj.set_combat_script_path(attribute->get_value().c_str());
+		else if (a_name == "id")
+			new_obj.id = attribute->get_value().c_str();
+		else if (a_name == "removable")
+			new_obj.removable = attribute->get_value().uppercase() == "YES";
+		else if (a_name == "random_monster")
+			new_obj.is_random_monster = attribute->get_value().uppercase() == "YES";
+		else if (a_name == "locked") {
+			new_obj.openable = true;
+
+			if (attribute->get_value().uppercase() == "NORMAL")
+				new_obj.lock_type = NORMAL_LOCK;
+			else if (attribute->get_value().uppercase() == "MAGIC")
+				new_obj.lock_type = MAGIC_LOCK;
+			else // if (attribute->get_value().uppercase() == "UNLOCKED")
+				new_obj.lock_type = UNLOCKED;
+		}
+		else if (a_name == "personality") {
+			if (attribute->get_value().uppercase() == "HOSTILE")
+				new_obj.personality = HOSTILE;
+			else if (attribute->get_value().uppercase() == "RIGHTEOUS")
+				new_obj.personality = RIGHTEOUS;
+		}
+		else if (a_name == "move_mode") {
+			if (attribute->get_value().uppercase() == "FLEE")
+				new_obj.move_mode = FLEE;
+			else if (attribute->get_value().uppercase() == "FOLLOWING")
+				new_obj.move_mode = FOLLOWING;
+			else if (attribute->get_value().uppercase() == "ROAM")
+				new_obj.move_mode = ROAM;
+		}
+		else if (a_name == "type") {
+			if (attribute->get_value().uppercase() == "ITEM")
+				new_obj.set_type(MAPOBJ_ITEM);
+			else if (attribute->get_value().uppercase() == "MONSTER")
+				new_obj.set_type(MAPOBJ_MONSTER);
+			else if (attribute->get_value().uppercase() == "PERSON")
+				new_obj.set_type(MAPOBJ_PERSON);
+			else
+				new_obj.set_type(MAPOBJ_ANIMAL);
+		}
+		else if (a_name == "lua_name")
+			new_obj.lua_name = attribute->get_value().c_str();
+		else if (a_name == "how_many")
+			new_obj.how_many = atoi(attribute->get_value().c_str());
+	}
+
+	// Parse actions, if there are any associated to the object
+	if (actions_node.size() > 0) {
+		std::vector<std::shared_ptr<Action>> actions = parse_actions_node(actions_node.front());
+
+		for (auto action = actions.begin(); action != actions.end(); ++action) {
+			new_obj.add_action(*action);
+		}
+	}
+
+	new_obj.set_coords(x, y);
+
+	if (ox != 0 || oy != 0)
+		new_obj.set_origin(ox, oy);
+
+	if (new_obj.get_type() != MAPOBJ_ITEM && (ox != 0 || oy != 0))
+		new_obj.set_coords(ox, oy);
+
+	return new_obj;
+}
+
 void Map::parse_objects_node(const xmlpp::Node* node)
 {
 	xmlpp::Node::NodeList list = node->get_children();
 	for (xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		MapObj new_obj;
-		int x = 0, y = 0, ox = 0, oy = 0;
-
-		// NOTE THAT default values for the below are set inside MapObj.cc.
-
-		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*iter);
-		if (nodeElement) {
-			const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
-
-			// Could be empty, if object doesn't have an actions tag
-			xmlpp::Node::NodeList actions_node = (*iter)->get_children("actions");
-
-			// Iterate through attributes of object node
-			for (auto iter = attributes.begin(); iter != attributes.end(); ++iter) {
-				const xmlpp::Attribute* attribute = *iter;
-				std::string a_name = attribute->get_name();
-				if (a_name == "x")
-					x = atoi(attribute->get_value().c_str());
-				else if (a_name == "y")
-					y = atoi(attribute->get_value().c_str());
-				else if (a_name == "ox")
-					ox = atoi(attribute->get_value().c_str());
-				else if (a_name == "oy")
-					oy = atoi(attribute->get_value().c_str());
-				else if (a_name == "icon_no")
-					new_obj.set_icon(atoi(attribute->get_value().c_str()));
-				else if (a_name == "layer")
-					new_obj.set_layer(atoi(attribute->get_value().c_str()));
-				else if (a_name == "init_script")
-					new_obj.set_init_script_path(attribute->get_value().c_str());
-				else if (a_name == "combat_script")
-					new_obj.set_combat_script_path(attribute->get_value().c_str());
-				else if (a_name == "id")
-					new_obj.id = attribute->get_value().c_str();
-				else if (a_name == "removable")
-					new_obj.removable = attribute->get_value().uppercase() == "YES";
-				else if (a_name == "random_monster")
-					new_obj.is_random_monster = attribute->get_value().uppercase() == "YES";
-				else if (a_name == "locked") {
-					new_obj.openable = true;
-
-					if (attribute->get_value().uppercase() == "NORMAL")
-						new_obj.lock_type = NORMAL_LOCK;
-					else if (attribute->get_value().uppercase() == "MAGIC")
-						new_obj.lock_type = MAGIC_LOCK;
-					else // if (attribute->get_value().uppercase() == "UNLOCKED")
-						new_obj.lock_type = UNLOCKED;
-				}
-				else if (a_name == "personality") {
-					if (attribute->get_value().uppercase() == "HOSTILE")
-						new_obj.personality = HOSTILE;
-					else if (attribute->get_value().uppercase() == "RIGHTEOUS")
-						new_obj.personality = RIGHTEOUS;
-				}
-				else if (a_name == "move_mode") {
-					if (attribute->get_value().uppercase() == "FLEE")
-						new_obj.move_mode = FLEE;
-					else if (attribute->get_value().uppercase() == "FOLLOWING")
-						new_obj.move_mode = FOLLOWING;
-					else if (attribute->get_value().uppercase() == "ROAM")
-						new_obj.move_mode = ROAM;
-				}
-				else if (a_name == "type") {
-					if (attribute->get_value().uppercase() == "ITEM")
-						new_obj.set_type(MAPOBJ_ITEM);
-					else if (attribute->get_value().uppercase() == "MONSTER")
-						new_obj.set_type(MAPOBJ_MONSTER);
-					else if (attribute->get_value().uppercase() == "PERSON")
-						new_obj.set_type(MAPOBJ_PERSON);
-					else
-						new_obj.set_type(MAPOBJ_ANIMAL);
-				}
-				else if (a_name == "lua_name")
-					new_obj.lua_name = attribute->get_value().c_str();
-				else if (a_name == "how_many")
-					new_obj.how_many = atoi(attribute->get_value().c_str());
-			}
-
-			// Parse actions, if there are any associated to the object
-			if (actions_node.size() > 0) {
-				std::vector<std::shared_ptr<Action>> actions = parse_actions_node(actions_node.front());
-
-				for (auto action = actions.begin(); action != actions.end(); ++action) {
-					new_obj.add_action(*action);
-				}
-			}
-
-			new_obj.set_coords(x, y);
-
-			if (ox != 0 || oy != 0)
-				new_obj.set_origin(ox, oy);
-
-			if (new_obj.get_type() != MAPOBJ_ITEM && (ox != 0 || oy != 0))
-				new_obj.set_coords(ox, oy);
-
+		const xmlpp::Element* objectElement = dynamic_cast<const xmlpp::Element*>(*iter);
+		if (objectElement) {
+			MapObj new_obj = return_object_node(objectElement);
 			push_obj(new_obj);
 		}
+		// else std::cout << "INFO: parse_objects_node: Tried to parse object node '" + node->get_name() + "', but got an objects node instead?!\n";
 	}
 }
 
@@ -465,11 +484,22 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 							_act->add_event(new_ev);
 						}
 						else
-							std::cerr << "XML load error: EVENT_ENTER_MAP malformed?" << std::endl;
+							std::cerr << "ERROR: map.cc: XML load error: EVENT_ENTER_MAP malformed?" << std::endl;
 					}
 					else if (event_type_s == "EVENT_DELETE_OBJECT") {
 						std::shared_ptr<EventDeleteObject> new_ev(new EventDeleteObject());
 						_act->add_event(new_ev);
+					}
+					else if (event_type_s == "EVENT_ADD_OBJECT") {
+						xmlpp::Element* objElement = (xmlpp::Element*)(*event)->get_children("object").front();
+
+						if (objElement != NULL) {
+							MapObj addedObject = return_object_node(objElement);
+							std::shared_ptr<EventAddObject> new_ev(new EventAddObject(addedObject));
+							_act->add_event(new_ev);
+						}
+						else
+							std::cerr << "ERROR: map.cc: Tried to add an object to event, but no object found. Is map the XML-file OK?\n";
 					}
 					else if (event_type_s == "EVENT_PLAY_SOUND") {
 						std::string filename = eventElement->get_child_text()->get_content().c_str();
@@ -491,7 +521,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 							_act->add_event(new_ev);
 						}
 						else
-							std::cerr << "XML load error: EVENT_CHANGE_ICON malformed?" << std::endl;
+							std::cerr << "ERROR: map.cc: XML load error: EVENT_CHANGE_ICON malformed?" << std::endl;
 					}
 					else if (event_type_s == "EVENT_PRINTCON") {
 						std::shared_ptr<EventPrintcon> new_ev(new EventPrintcon());
@@ -506,7 +536,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						_act->add_event(new_ev);
 					}
 					else
-						std::cerr << "XML load error: unsupported event type in map file: " << event_type_s << std::endl;
+						std::cerr << "ERROR: map.cc: XML load error: unsupported event type in map file: " << event_type_s << std::endl;
 				}
 			}
 
@@ -555,6 +585,8 @@ void Map::parse_node(const xmlpp::Node* node)
 	if (nodeElement) {
 		if (nodeElement->get_name().uppercase() == "NAME")
 			_name = nodeElement->get_child_text()->get_content();
+		else if (nodeElement->get_name().uppercase() == "LONGNAME")
+			_longname = nodeElement->get_child_text()->get_content();
 		else if (nodeElement->get_name().uppercase() == "DUNGEON")
 			is_dungeon = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
 		else if (nodeElement->get_name().uppercase() == "GUARDED_CITY")
@@ -715,6 +747,8 @@ bool Map::xml_write_map_data(boost::filesystem::path path)
 		// TODO: Check if _main_map_xml_root needs to be deleted again.
 		_main_map_xml_root = _main_map_xml_file->create_root_node("map");
 		_main_map_xml_root->add_child("name")->add_child_text(_name);
+		if (_longname.length() > 0)
+			_main_map_xml_root->add_child("longname")->add_child_text(_longname);
 		_main_map_xml_root->add_child("outdoors")->add_child_text((is_outdoors()? "true" : "false"));
 		_main_map_xml_root->add_child("dungeon")->add_child_text((is_dungeon? "true" : "false"));
 		_main_map_xml_root->add_child("guarded_city")->add_child_text((guarded_city? "true" : "false"));

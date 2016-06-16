@@ -494,7 +494,7 @@
       <icon no="486" trans="full" walk="full">nothing special</icon>
       <icon no="487" trans="full" walk="full">nothing special</icon>
       <icon no="488" trans="full" walk="full">nothing special</icon>
-      <icon no="489" trans="full" walk="full">nothing special</icon>
+      <icon no="489" trans="full" walk="not">open chest</icon>
       <icon no="490" trans="full" walk="full">nothing special</icon>
       <icon no="491" trans="full" walk="full">nothing special</icon>
       <icon no="492" trans="full" walk="full">nothing special</icon>
@@ -630,9 +630,9 @@
       <icon no="622" trans="full" walk="full">horned helmet</icon>
       <icon no="623" trans="full" walk="full">small shield</icon>
       <icon no="624" trans="full" walk="full">nothing special</icon>
-      <icon no="625" trans="full" walk="full">nothing special</icon>
-      <icon no="626" trans="full" walk="full">nothing special</icon>
-      <icon no="627" trans="full" walk="full">nothing special</icon>
+      <icon no="625" trans="not" walk="not">stone wall</icon>
+      <icon no="626" trans="not" walk="not">stone wall</icon>
+      <icon no="627" trans="full" walk="not">window</icon>
       <icon no="628" trans="full" walk="full">nothing special</icon>
       <icon no="629" trans="full" walk="full">nothing special</icon>
       <icon no="630" trans="full" walk="full">nothing special</icon>

@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map>
   <name>hut</name>
+  <longname>a small and comfortable hut</longname>
   <outdoors>false</outdoors>
   <dungeon>false</dungeon>
   <guarded_city>false</guarded_city>
   <initial_x>3</initial_x>
   <initial_y>3</initial_y>
   <data>
-    <row>4 82 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
-    <row>4 4 4 5 5 5 5 4 4 1034 1034 4 1034 1034 4 5 5 5 5 4 4 4 4 4 4 4 5 5 4 4</row>
-    <row>4 82 5 5 4 4 4 1060 1060 1034 1034 4 1034 1034 1060 1060 4 4 4 5 5 5 82 5 4 5 5 5 4 4</row>
-    <row>4 4 5 5 4 4 190 190 190 198 190 168 190 198 190 190 190 190 190 4 5 5 5 4 4 4 5 5 4 4</row>
-    <row>4 5 82 5 4 4 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 5 5 5 5 4 82 4 4 4</row>
-    <row>5 5 5 5 4 4 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 82 4 4 5 5 4 4</row>
-    <row>4 5 5 5 4 4 190 190 190 147 190 89 190 190 190 147 89 148 190 4 4 4 5 5 5 4 4 5 4 4</row>
-    <row>4 5 5 5 4 4 190 89 89 89 89 89 89 508 190 89 89 508 190 4 4 4 4 5 5 4 4 4 4 4</row>
-    <row>4 5 5 4 4 4 190 415 89 187 185 186 89 89 190 458 89 89 190 4 4 4 5 5 5 4 5 4 4 4</row>
-    <row>4 5 4 82 4 4 190 89 89 89 89 89 89 465 190 89 89 89 190 4 4 5 5 5 5 5 82 5 4 4</row>
-    <row>4 5 5 5 4 4 190 89 89 89 89 89 89 465 190 120 89 89 190 4 5 5 4 4 82 82 5 5 4 4</row>
-    <row>4 4 5 5 4 4 190 190 198 190 190 190 198 190 190 190 198 190 190 4 4 4 4 4 4 5 4 5 4 4</row>
-    <row>4 4 5 4 5 4 4 4 4 4 4 4 4 4 4 5 5 4 4 4 4 4 4 4 4 5 4 5 5 4</row>
-    <row>4 4 5 82 5 4 5 4 4 4 4 4 4 4 4 5 5 4 4 4 4 910 910 910 4 5 4 5 5 4</row>
-    <row>4 5 5 4 4 5 5 4 5 4 82 5 4 5 4 5 5 4 4 4 4 910 963 910 4 5 4 4 5 4</row>
-    <row>4 4 5 4 4 5 4 4 82 4 4 5 4 5 5 5 5 4 4 4 4 910 1060 910 4 4 4 5 4 4</row>
+    <row>4 4 4 4 4 4 5 5 5 4 4 4 4 5 5 5 5 5 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 5 5 4 4 5 5 4 4 4 4 4 4 4 4 4 4 5 5 5 5 4 4 5 5 4 4</row>
+    <row>4 82 4 4 4 4 4 4 4 4 4 216 292 292 292 292 292 292 292 292 292 218 4 5 5 5 5 5 4 4</row>
+    <row>4 4 4 5 5 5 5 4 4 1034 1034 244 1034 1034 4 5 5 5 5 4 4 244 4 4 4 4 5 5 4 4</row>
+    <row>4 82 5 5 4 4 4 1060 1060 1034 1034 4 1034 1034 1060 1060 4 4 4 5 5 244 82 5 4 5 5 5 4 4</row>
+    <row>4 4 5 5 4 4 625 625 625 627 625 167 625 627 625 625 625 625 625 4 5 5 5 4 4 4 5 5 4 4</row>
+    <row>4 5 82 5 4 4 625 89 89 89 89 89 89 89 89 89 89 89 625 4 4 244 5 5 5 4 82 4 4 4</row>
+    <row>5 5 5 5 4 4 625 89 89 89 89 89 89 89 89 89 89 89 625 4 4 244 5 82 4 4 5 5 4 4</row>
+    <row>4 5 5 5 4 4 625 625 625 626 625 89 625 625 625 626 89 626 625 4 4 244 5 5 5 4 4 5 4 4</row>
+    <row>4 5 5 5 4 4 625 89 89 89 89 89 89 89 625 89 89 89 625 4 4 244 4 5 5 4 4 4 4 4</row>
+    <row>4 5 5 4 4 4 625 434 89 187 185 186 89 89 625 458 89 89 625 4 4 244 5 5 5 4 5 4 4 4</row>
+    <row>4 5 4 82 4 4 625 89 89 89 89 89 89 465 625 89 89 89 625 4 4 5 5 5 5 5 82 5 4 4</row>
+    <row>4 5 5 5 4 4 625 89 89 89 89 89 89 465 625 120 89 89 625 4 5 5 4 4 82 82 5 5 4 4</row>
+    <row>4 4 5 5 4 4 625 625 627 625 625 625 627 625 625 625 627 625 625 4 4 244 4 4 4 5 4 5 4 4</row>
+    <row>4 4 5 4 5 4 4 4 4 4 4 4 4 4 4 5 5 4 4 216 292 243 4 4 4 5 4 5 5 4</row>
+    <row>4 4 5 82 5 4 5 4 4 4 4 4 4 4 4 5 5 4 4 244 4 910 910 910 4 5 4 5 5 4</row>
+    <row>4 5 5 4 4 5 5 122 5 4 82 5 4 5 4 5 5 4 4 244 4 910 963 910 4 5 4 4 5 4</row>
+    <row>4 4 5 4 4 5 4 4 82 4 4 5 292 292 5 5 5 292 292 268 4 910 1060 910 4 4 4 5 4 4</row>
     <row>4 4 5 5 5 4 5 5 5 4 4 5 4 4 6 4 4 5 5 4 5 910 1060 910 4 5 4 5 4 4</row>
     <row>4 5 5 5 4 4 4 4 84 168 84 84 6 6 4 5 4 5 4 4 4 910 910 910 5 4 4 5 4 4</row>
     <row>4 5 5 5 5 82 4 4 84 1141 1141 84 4 6 6 5 5 5 5 4 4 4 5 4 4 4 6 4 5 5</row>
@@ -39,12 +42,42 @@
     <row>4 4 4 4 4 4 5 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
   </data>
   <objects>
-    <object x="10" y="18" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="8" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="8" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="4" ox="0" oy="0" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
-    <object x="10" y="19" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="17" ox="0" oy="0" icon_no="171" layer="0" id="sheddoor" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="3" ox="0" oy="0" icon_no="169" layer="0" id="frontdoor" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="26" ox="0" oy="0" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="10" y="20" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="17" y="11" ox="0" oy="0" icon_no="123" layer="0" id="torch3" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="13" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_lounge_room" lua_name="" how_many="1" removable="no" locked="unlocked" random_monster="no" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_OPENED" x="13" y="7">
+          <event type="EVENT_DELETE_OBJECT"/>
+	  <event type="EVENT_ADD_OBJECT">
+	    <object x="13" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_lounge_room_opened" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item" />
+	  </event>
+	</action>
+      </actions>
+    </object>
+    <object x="11" y="10" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="19" ox="0" oy="0" icon_no="171" layer="0" id="sheddoor" lua_name="" how_many="1" removable="no" random_monster="no" locked="normal" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
+        </action>
+      </actions>
+    </object>
+    <object x="7" y="9" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="10" y="21" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="5" ox="0" oy="0" icon_no="169" layer="0" id="frontdoor" lua_name="" how_many="1" removable="no" random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
+        </action>
+      </actions>
+    </object>
+    <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="17" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_bed_room" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_PULLPUSH" x="17" y="7"/>
+      </actions>
+    </object>
+    <object x="7" y="12" ox="0" oy="0" icon_no="172" layer="0" id="torch2" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
 </map>

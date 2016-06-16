@@ -53,7 +53,9 @@ public:
 
   void unload_map_data();
   std::string get_name();
+  std::string get_longname();
   void set_name(const char*);
+  void set_longname(const char*);
   // Loads the map from disk and overwrites any changes that may have
   // been made to the map stored in memory.  That is, the disk data
   // will shamelessly overwrite the currently used memory of the map.
@@ -102,6 +104,7 @@ public:
 protected:
   // Variables
   std::string _name;
+  std::string _longname;
   // xmlpp::Document* _main_map_xml_file;
   // xmlpp::Node* _main_map_xml_root;
   bool _modified;
@@ -110,6 +113,7 @@ protected:
   // XML-helper functions
   void parse_node(const xmlpp::Node*);
   void parse_objects_node(const xmlpp::Node*);
+  MapObj return_object_node(const xmlpp::Element*);
   void parse_data_node(const xmlpp::Node*);
   std::vector<std::shared_ptr<Action>> parse_actions_node(const xmlpp::Node*);
   void write_action_node(xmlpp::Element*, Action*);

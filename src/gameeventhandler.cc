@@ -28,6 +28,7 @@
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
 #include "eventdeleteobj.hh"
+#include "eventaddobj.hh"
 #include "gamecontrol.hh"
 #include "miniwin.hh"
 #include "world.hh"
@@ -67,8 +68,13 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 		return handle_event_change_icon(std::dynamic_pointer_cast<EventChangeIcon>(event), map);
 	else if (std::dynamic_pointer_cast<EventDeleteObject>(event))
 		return handle_event_delete_object(map, obj);
+	else if (std::dynamic_pointer_cast<EventAddObject>(event)) {
+		EventAddObject* add_event = std::dynamic_pointer_cast<EventAddObject>(event).get();
+		MapObj new_obj = add_event->get_obj();
+		return handle_event_add_object(map, &new_obj);
+	}
 	else
-		std::cerr << "Error: Not handling UNKNOWN EVENT\n";
+		std::cerr << "ERROR: gameeventhandler.cc: Not handling UNKNOWN EVENT\n";
 
 	return false;
 }
@@ -86,6 +92,19 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 	obj->get_coords(x, y);
 	map->pop_obj((int)x, (int)y);
 
+	return true;
+}
+
+// Deletes one (not all!) object from map; see pop_obj() for details.
+
+bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj* obj)
+{
+	if (obj == NULL) {
+		std::cerr << "ERROR: gameeventhandler.cc: Trying to add NULL-object.\n";
+		return false;
+	}
+
+	map->push_obj(obj->copy());
 	return true;
 }
 
@@ -142,6 +161,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	Party* party = &Party::Instance();
 	GameControl* gc = &GameControl::Instance();
 	MiniWin* mw = &MiniWin::Instance();
+	std::string map_long_name = event->get_map_name();
 
 	// Before changing map, when indoors (e.g. climb down a ladder), store state
 	if (party->indoors()) {
@@ -152,21 +172,24 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	}
 
 	// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
+	// TODO: We're now using this code for a bit more: to find out if there is a longname tag, and if so, use it!
 	{
 		std::shared_ptr<Map> tmp_map = World::Instance().get_map(event->get_map_name().c_str());
+		if (tmp_map->get_longname().length() > 0)
+			map_long_name = tmp_map->get_longname();
 		IndoorsMap tmp_map2 = *((IndoorsMap*)tmp_map.get()); // Create deep copy of map because otherwise xml_load_data fucks up the map's state
 		tmp_map2.xml_load_map_data();
 		if (gc->get_map()->is_outdoors() && // Only check guards, when entering a city from the wilderness, not from an indoors map already.
 			tmp_map2.guarded_city &&
 				(gc->get_clock()->tod() == NIGHT || gc->get_clock()->tod() == EARLY_MORNING || gc->get_clock()->tod() == MIDNIGHT))
 		{
-			gc->printcon("No entry. At this ungodly hour, " + event->get_map_name() + " is under lock and key.");
+			gc->printcon("No entry. At this ungodly hour, " + map_long_name + " is under lock and key.");
 			gc->do_turn();
 			return true;
 		}
 	}
 
-	gc->printcon("Entering " + event->get_map_name());
+	gc->printcon("Entering " + map_long_name);
 
 	boost::filesystem::path tmp_path;
 	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";

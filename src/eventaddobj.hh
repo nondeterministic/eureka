@@ -17,23 +17,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#ifndef __GAMEEVENT_HH
-#define __GAMEEVENT_HH
+#ifndef __EVENT_ADDOBJ_HH
+#define __EVENT_ADDOBJ_HH
 
-enum EVENT_TYPES
+#include <string>
+#include "gameevent.hh"
+#include "mapobj.hh"
+
+class EventAddObject : public GameEvent
 {
-	EVENT_CHANGE_ICON,     // E.g., when a lever is switched
-    EVENT_CHANGE_MUSIC,
-    EVENT_ENTER_MAP        // E.g., when a city or dungeon is entered
-};
+private:
+	MapObj obj;
 
-// TODO: Add field for precondition, which is a path to a lua program, returning true or false!
-
-class GameEvent
-{
 public:
-  GameEvent();
-  virtual ~GameEvent();
+	EventAddObject(MapObj);
+	MapObj get_obj();
+	int dummy();
 };
 
 #endif
