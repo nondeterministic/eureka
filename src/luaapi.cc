@@ -412,7 +412,14 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 
     	// Simple test to see, if the item can be sold at all.
     	// Not nice to allocate and deallocate for that purpose, but not so bad either...
-    	Item* item = ItemFactory::create_plain_name(item_name);
+    	Item* item = NULL;
+    	try {
+    		ItemFactory::create_plain_name(item_name);
+    	}
+		catch (std::exception const& e) {
+		    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
+		    return 0;
+		}
 
     	if (item != NULL) {
     		// Buying price is item price - price_reduction %
@@ -454,7 +461,14 @@ int l_additemtoinv(lua_State* L)
 	int left_border = 9;
 
 	std::string item_name = (std::string)(lua_tostring(L, 1));
-	Item* item = ItemFactory::create_plain_name(item_name);
+	Item* item = NULL;
+	try {
+		item = ItemFactory::create_plain_name(item_name);
+	}
+	catch (std::exception const& e) {
+	    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+	    return 0;
+	}
 
 	if (item == NULL) {
 		std::cerr << "WARNING: luaapi.cc::l_additemtoinv: cannot create item " << item_name << ".\n";
@@ -480,7 +494,13 @@ int l_additemtoinv(lua_State* L)
 int l_buyitem(lua_State* L)
 {
 	std::string item_name = (std::string)(lua_tostring(L, 1));
-	Item* item = ItemFactory::create_plain_name(item_name);
+	Item* item = NULL;
+	try {
+		item = ItemFactory::create_plain_name(item_name);
+	}
+	catch (std::exception const& e) {
+	    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
+	}
 
 	if (item != NULL) {
 		if (true) { // TODO: Replace and check weight restrictions...
@@ -543,7 +563,13 @@ int l_buyservice(lua_State* L)
     std::string selected_service = lua_tostring(L, 2);
     int selected_player          = lua_tonumber(L, 1);
 
-    Service* service = (Service*)(ItemFactory::create_plain_name(selected_service));
+    Service* service = NULL;
+    try {
+    	service = (Service*)(ItemFactory::create_plain_name(selected_service));
+    }
+    catch (std::exception const& e) {
+	    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
+    }
 
     if (service != NULL) {
 		if (service->gold() > Party::Instance().gold()) {

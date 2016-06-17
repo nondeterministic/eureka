@@ -36,20 +36,20 @@ Item* ItemFactory::create(std::string lua_name)
 {
 	std::vector<std::string> lname_split = Util::splitString(lua_name, "::");
 
-	if (lname_split[0] == "weapons")
-		return WeaponHelper::createFromLua(lname_split[1]);
-	else if (lname_split[0] == "shields")
-		return ShieldHelper::createFromLua(lname_split[1]);
-	else if (lname_split[0] == "edibles")
-		return EdiblesHelper::createFromLua(lname_split[1]);
-	else if (lname_split[0] == "services")
-		return ServicesHelper::createFromLua(lname_split[1]);
-	else {
-		// We didn't know which item to create. Should not happen.
-		// TODO: Maybe throw exception?
-		std::cout << "Don't know what to create in create(): " << lua_name << "." << std::endl;
-		return new Item();
+	if (lname_split.size() > 0) {
+		if (lname_split[0] == "weapons")
+			return WeaponHelper::createFromLua(lname_split[1]);
+		else if (lname_split[0] == "shields")
+			return ShieldHelper::createFromLua(lname_split[1]);
+		else if (lname_split[0] == "edibles")
+			return EdiblesHelper::createFromLua(lname_split[1]);
+		else if (lname_split[0] == "services")
+			return ServicesHelper::createFromLua(lname_split[1]);
+		else
+			throw std::runtime_error("create(): Don't know how to create item with lua_name '" + lua_name + "'.");
 	}
+	else
+		throw std::runtime_error("create(): Cannot extract Lua name from '" + lua_name + "'.");
 }
 
 /**

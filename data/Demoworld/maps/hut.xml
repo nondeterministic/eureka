@@ -52,6 +52,9 @@
 	  <event type="EVENT_ADD_OBJECT">
 	    <object x="13" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_lounge_room_opened" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item" />
 	  </event>
+	  <event type="EVENT_ADD_OBJECT">
+	    <object x="13" y="9" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="100" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item" />
+	  </event>
 	</action>
       </actions>
     </object>
@@ -72,7 +75,7 @@
         </action>
       </actions>
     </object>
-    <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="" how_many="25" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_bed_room" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
         <action type="ACT_ON_PULLPUSH" x="17" y="7"/>

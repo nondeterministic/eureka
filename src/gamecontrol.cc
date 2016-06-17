@@ -1119,7 +1119,19 @@ void GameControl::use()
 		}
 		else if (EdiblesHelper::exists(selected_item_name)) {
 			// Create a temporary item
-			Edible* item = (Edible*)ItemFactory::create_plain_name(selected_item_name);
+			Edible* item = NULL;
+			try {
+				item = (Edible*)ItemFactory::create_plain_name(selected_item_name);
+			}
+			catch (std::exception const& e) {
+			    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+			    return;
+			}
+
+			if (item == NULL) {
+			    std::cerr << "ERROR: gamecontrol.cc: Cannot use item as it is NULL.\n";
+			    return;
+			}
 
 			// ----------------------------------------------------------------------------------
 			// Now eat it and compute effects of edible...
@@ -1805,7 +1817,16 @@ void GameControl::get_item()
 					// simply dissect the lua name.  But this way, we keep the mapping bewteen icons
 					// and the actual item inside the respective factory functions, centrally. So it
 					// probably is a good idea to do it as it is done now.
-					Item* item = ItemFactory::create(the_obj.lua_name);
+					Item* item = NULL;
+					try {
+						item = ItemFactory::create(the_obj.lua_name);
+					}
+					catch (std::exception const& e) {
+					    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+					    std::cerr << "ERROR: gamecontrol.cc: Aborting get_item() due to earlier errors.\n";
+					    return;
+					}
+
 					if (the_obj.how_many > 1)
 						items.insert(std::pair<std::string, int>(item->plural_name(), the_obj.how_many));
 					else
@@ -1840,7 +1861,15 @@ void GameControl::get_item()
 		if (curr_obj->removable) {
 			if (curr_obj->lua_name.length() > 0) {
 				// Depending on the name the MapObj has, we look up in the Lua list of items, and create one accordingly for pick up.
-				Item* item = ItemFactory::create(curr_obj->lua_name);
+				Item* item = NULL;
+				try {
+					item = ItemFactory::create(curr_obj->lua_name);
+				}
+				catch (std::exception const& e) {
+				    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+				    std::cerr << "ERROR: gamecontrol.cc: Aborting get_item() due to earlier errors.\n";
+				    return;
+				}
 
 				// Picking up more than 1 of the same item
 				if (curr_obj->how_many > 1) {
@@ -1867,7 +1896,14 @@ void GameControl::get_item()
 
 					// Let's now create the n new items to be taken individually via a factory...
 					for (int i = 0; i < taking; i++) {
-						party->inventory()->add(ItemFactory::create(curr_obj->lua_name));
+						try {
+							party->inventory()->add(ItemFactory::create(curr_obj->lua_name));
+						}
+						catch (std::exception const& e) {
+						    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+						    std::cerr << "ERROR: gamecontrol.cc: Aborting adding item to inventory due to earlier errors.\n";
+						    continue;
+						}
 
 						// Perform action events
 						for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
@@ -1943,7 +1979,7 @@ void GameControl::look()
 			ss << "Besides, there" << (found_obj.first->second.how_many > 1 ? " are " : " is ");
 
 			// Now draw the objects, if there are any
-			for (auto curr_obj = found_obj.first; curr_obj != found_obj.second;) { // curr_obj++) {
+			for (auto curr_obj = found_obj.first; curr_obj != found_obj.second;) {
 				MapObj map_obj = curr_obj->second;
 
 				// First, determine the displayed tile of the object, lua_name overrides the icon's name inside the xml-file
@@ -1951,14 +1987,28 @@ void GameControl::look()
 					// There can only be multiple items if they have a lua correspondence.
 					// So instead of using the icon_name, we use the map_obj lua_name to
 					// temporarily create that item just in order to get its properties.
-					Item* item = ItemFactory::create(map_obj.lua_name);
+					Item* item = NULL;
+					try {
+						item = ItemFactory::create(map_obj.lua_name);
+					}
+					catch (std::exception const& e) {
+						// This case here isn't actually an error: it merely means there is no Lua object for the tile looked at.
+						// TODO: However, we should really have a Lua correspondence for all objects that can lie around in many...
+						ss << map_obj.how_many << " " << IndoorsIcons::Instance().get_props(map_obj.get_icon())->get_name();
+						if (++curr_obj != found_obj.second)
+							ss << ", ";
+					    continue;
+					}
+
 					ss << map_obj.how_many << " " << item->plural_name();
-					delete item;
+					if (item != NULL)
+						delete item;
 				}
 				else {
 					int obj_icon_no = map_obj.get_icon();
 					std::string icon_name = IndoorsIcons::Instance().get_props(obj_icon_no)->get_name();
-					ss << (Util::vowel(icon_name[0])? "an " : "a ") << icon_name;
+					// ss << (Util::vowel(icon_name[0])? "an " : "a ") << icon_name;
+					ss << icon_name;
 				}
 
 				if (++curr_obj != found_obj.second)
