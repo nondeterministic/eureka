@@ -43,7 +43,7 @@
   </data>
   <objects>
     <object x="23" y="26" ox="0" oy="0" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
-    <object x="10" y="20" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="10" y="20" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="weapons::axe" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="11" ox="0" oy="0" icon_no="123" layer="0" id="torch3" lua_name="weapons::torch" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="13" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_lounge_room" lua_name="" how_many="1" removable="no" locked="unlocked" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
@@ -87,9 +87,14 @@
     <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::goldcoin" how_many="25" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_bed_room" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
-        <action type="ACT_ON_PULLPUSH" x="17" y="7"/>
+        <action type="ACT_ON_PULLPUSH"/>
       </actions>
     </object>
     <object x="7" y="12" ox="0" oy="0" icon_no="172" layer="0" id="torch2" lua_name="weapons::torch" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
+  <actions>
+    <action type="ACT_ON_LOOK" x="22" y="16">
+      <event type="EVENT_PRINTCON">The tombstone reads: Edward 437 - 445. It makes you feel sad.</event>
+    </action>
+  </actions>
 </map>
