@@ -23,8 +23,6 @@
 
 Edible::Edible()
 {
-	std::cout << "Edible()\n";
-
 	food_up = 0;
 	healing_power = NONE;
 	poison_healing_power = NONE;
@@ -35,7 +33,6 @@ Edible::Edible()
 
 Edible::~Edible()
 {
-  std::cout << "~Edible(): " << name() << "\n";
 }
 
 Edible::Edible(const Edible& s): Item(s)

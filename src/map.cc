@@ -50,6 +50,7 @@
 #include "actiononenter.hh"
 #include "actionpullpush.hh"
 #include "actionopened.hh"
+#include "actonlook.hh"
 
 Map::Map()
 {
@@ -486,6 +487,15 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 			else if (curr_act_name == "ACT_ON_TAKE") {
 				_act = std::make_shared<ActionOnTake>("ACT_ON_TAKE");
 			}
+			else if (curr_act_name == "ACT_ON_LOOK") {
+				std::string xs = nodeElement->get_attribute_value("x");
+				std::string ys = nodeElement->get_attribute_value("y");
+
+				if (xs.length() > 0 && ys.length() > 0)
+					_act = std::make_shared<ActionOnLook>(atoi(xs.c_str()), atoi(ys.c_str()), "ACT_ON_LOOK");
+				else
+					_act = std::make_shared<ActionOnLook>("ACT_ON_LOOK");
+			}
 			else
 				continue;
 
@@ -703,6 +713,14 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		node->set_attribute("type", "ACT_ON_PULLPUSH");
 		node->set_attribute("x", s_x.str());
 		node->set_attribute("y", s_y.str());
+	}
+	else if (dynamic_cast<ActionOnLook*>(action)) {
+		ActionOnLook* act = dynamic_cast<ActionOnLook*>(action);
+		node->set_attribute("type", "ACT_ON_LOOK");
+		if (act->x >= 0 && act->y >=0) {
+			node->set_attribute("x", s_x.str());
+			node->set_attribute("y", s_y.str());
+		}
 	}
 	else if (dynamic_cast<ActionOpened*>(action)) {
 		node->set_attribute("type", "ACT_ON_OPENED");

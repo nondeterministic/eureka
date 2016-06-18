@@ -51,6 +51,7 @@ eureka_SOURCES = \
 	actiononenter.hh actiononenter.cc \
 	actionpullpush.hh actionpullpush.cc \
 	actionopened.hh actionopened.cc \
+	actonlook.hh actonlook.cc \
 	playlist.hh playlist.cc \
 	soundsample.hh soundsample.cc \
 	eventmanager.hh eventmanager.cc \

@@ -1020,16 +1020,12 @@ void GameControl::open_act()
 						std::shared_ptr<Action> tmp_act = (*act);
 						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
 
-						if (action == NULL) {
-							printcon("Nothing to open here.");
+						if (action != NULL) {
+							GameEventHandler gh;
+							for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+								gh.handle(*curr_ev, arena->get_map(), &the_obj);
 							return;
 						}
-
-						GameEventHandler gh;
-						for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-							gh.handle(*curr_ev, arena->get_map(), &the_obj);
-
-						return;
 					}
 				}
 			}
@@ -1919,8 +1915,6 @@ void GameControl::get_item()
 								for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
 									gh.handle(*curr_ev, arena->get_map());
 							}
-							else
-								std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
 						}
 					}
 					// See if some items are leftover after taking...
@@ -1951,8 +1945,6 @@ void GameControl::get_item()
 							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
 								gh.handle(*curr_ev, arena->get_map());
 						}
-						else
-							std::cerr << "WARNING: Couldn't perform action on take: " << (*action)->name() << ".\n";
 					}
 
 					arena->get_map()->pop_obj(coords.first, coords.second);
@@ -1972,6 +1964,7 @@ void GameControl::get_item()
 
 void GameControl::look()
 {
+	GameEventHandler gh;
 	printcon("Look - which direction?");
 	std::pair<int, int> coords = select_coords();
 	int icon_no = arena->get_map()->get_tile(coords.first, coords.second);
@@ -2034,6 +2027,22 @@ void GameControl::look()
 					ss << ", ";
 			}
 			printcon(ss.str());
+		}
+
+		// Perform action events
+		for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+			unsigned int tmp_x, tmp_y;
+			MapObj map_obj = curr_obj->second;
+			map_obj.get_coords(tmp_x, tmp_y);
+
+			if ((int)tmp_x == coords.first && (int)tmp_y == coords.second) {
+				for (auto action = map_obj.actions()->begin(); action != map_obj.actions()->end(); action++) {
+					if ((*action)->name() == "ACT_ON_LOOK") {
+						for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+							gh.handle(*curr_ev, arena->get_map());
+					}
+				}
+			}
 		}
 	}
 	else
