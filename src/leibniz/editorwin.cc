@@ -632,7 +632,8 @@ void EditorWin::add_action(int x, int y)
 	// If the current icon already hosts an action, then try to add
 	// events to the action.  Only one action per icon though, but many
 	// events per actions - if that makes any sense.  :-)
-	if (get_curr_map()->get_action((unsigned)map_x, (unsigned)map_y)) {
+	// TODO: I think, I just removed the one action per tile constraint...
+	if (get_curr_map()->get_actions((unsigned)map_x, (unsigned)map_y).size() > 0) {
 		EventWin event_win;
 		if (event_win.run()) {
 			if (event_win.get_type() == EVENT_ENTER_MAP) {

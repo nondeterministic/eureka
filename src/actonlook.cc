@@ -2,24 +2,20 @@
 #include "action.hh"
 #include "actonlook.hh"
 
-ActionOnLook::ActionOnLook(int x, int y, const char* name)
+ActionOnLook::ActionOnLook(int xx, int yy, const char* name)
 {
-	this->x = x;
-	this->y = y;
+	set_x(xx);
+	set_y(yy);
 	_name = name;
 }
 
 ActionOnLook::ActionOnLook(const char* name)
 {
-	x = -1;
-	y = -1;
 	_name = name;
 }
 
 ActionOnLook::~ActionOnLook()
 {
-	x = -1;
-	y = -1;
 	_name = "";
 }
 

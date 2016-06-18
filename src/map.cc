@@ -163,17 +163,16 @@ std::vector<MapObj*> Map::get_objs(unsigned x, unsigned y)
 	return results;
 }
 
-std::shared_ptr<Action> Map::get_action(unsigned x, unsigned y)
+std::vector<std::shared_ptr<Action>> Map::get_actions(unsigned x, unsigned y)
 {
-	for (auto curr_act: _actions)
+	std::vector<std::shared_ptr<Action>> return_actions;
+
+	for (auto curr_act: _actions) {
 		if (curr_act->get_x() == x && curr_act->get_y() == y)
-			return curr_act;
+			return_actions.push_back(curr_act);
+	}
 
-	// std::cerr << "ERROR: map.cc::get_action(): returning empty shared_ptr (NULL) for an action at " << x << ", " << y << ".\n";
-	// exit(-1);
-
-	std::shared_ptr<Action> nullinger;
-	return nullinger;
+	return return_actions;
 }
 
 void Map::add_event_to_action(unsigned x, unsigned y, std::shared_ptr<GameEvent> ev)
@@ -697,7 +696,6 @@ bool Map::xml_load_map_data(boost::filesystem::path pathToFile)
 
 void Map::write_action_node(xmlpp::Element* node, Action* action)
 {
-	// ActionOnEnter* action_on_enter = dynamic_cast<ActionOnEnter*>(action);
 	std::stringstream s_x;
 	s_x << action->get_x();
 	std::stringstream s_y;
@@ -710,14 +708,17 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		node->set_attribute("y", s_y.str());
 	}
 	else if (dynamic_cast<ActionPullPush*>(action)) {
+		ActionPullPush* act = dynamic_cast<ActionPullPush*>(action);
 		node->set_attribute("type", "ACT_ON_PULLPUSH");
-		node->set_attribute("x", s_x.str());
-		node->set_attribute("y", s_y.str());
+		if (act->get_x() > 0 && act->get_y() > 0) {
+			node->set_attribute("x", s_x.str());
+			node->set_attribute("y", s_y.str());
+		}
 	}
 	else if (dynamic_cast<ActionOnLook*>(action)) {
 		ActionOnLook* act = dynamic_cast<ActionOnLook*>(action);
 		node->set_attribute("type", "ACT_ON_LOOK");
-		if (act->x >= 0 && act->y >=0) {
+		if (act->get_x() > 0 && act->get_y() > 0) {
 			node->set_attribute("x", s_x.str());
 			node->set_attribute("y", s_y.str());
 		}
@@ -756,6 +757,13 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		else if (std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev)) {
 			ev_node->set_attribute("type", "EVENT_DELETE_OBJECT");
 		}
+		else if (std::dynamic_pointer_cast<EventAddObject>(*curr_ev)) {
+			std::shared_ptr<EventAddObject> ev_obj = std::dynamic_pointer_cast<EventAddObject>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_ADD_OBJECT");
+			xmlpp::Element* object_node = ev_node->add_child("object");
+			MapObj mapObj = ev_obj->get_obj();
+			write_obj_xml_node(mapObj, object_node);
+		}
 		else if (std::dynamic_pointer_cast<EventPrintcon>(*curr_ev)) {
 			std::shared_ptr<EventPrintcon> event_printcon = std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PRINTCON");
@@ -782,6 +790,83 @@ bool Map::xml_write_map_data()
 {
 	boost::filesystem::path empty_path;
 	return xml_write_map_data(empty_path);
+}
+
+bool Map::write_obj_xml_node(MapObj mapObj, xmlpp::Element* object_node)
+{
+	unsigned x, y;
+	unsigned ox, oy;
+
+	mapObj.get_coords(x, y);
+	mapObj.get_origin(ox, oy);
+
+	object_node->set_attribute("x", std::to_string(x));
+	object_node->set_attribute("y", std::to_string(y));
+	object_node->set_attribute("ox", std::to_string(ox));
+	object_node->set_attribute("oy", std::to_string(oy));
+	object_node->set_attribute("icon_no", std::to_string(mapObj.get_icon()));
+	object_node->set_attribute("layer", std::to_string(mapObj.get_layer()));
+	object_node->set_attribute("id", mapObj.id);
+	object_node->set_attribute("lua_name", mapObj.lua_name);
+	object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
+	object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
+	object_node->set_attribute("random_monster", (mapObj.is_random_monster? "yes" : "no"));
+
+	if (mapObj.openable) {
+		if (mapObj.lock_type == NORMAL_LOCK)
+			object_node->set_attribute("locked","normal");
+		else if (mapObj.lock_type == MAGIC_LOCK)
+			object_node->set_attribute("locked","magic");
+		else if (mapObj.lock_type == UNLOCKED)
+			object_node->set_attribute("locked","unlocked");
+	}
+
+	if (mapObj.personality == HOSTILE)
+		object_node->set_attribute("personality","hostile");
+	else if (mapObj.personality == RIGHTEOUS)
+		object_node->set_attribute("personality","righteous");
+	else
+		object_node->set_attribute("personality","neutral");
+
+	if (mapObj.move_mode == FLEE)
+		object_node->set_attribute("move_mode","flee");
+	else if (mapObj.move_mode == FOLLOWING)
+		object_node->set_attribute("move_mode","following");
+	else if (mapObj.move_mode == ROAM)
+		object_node->set_attribute("move_mode","roam");
+	else
+		object_node->set_attribute("move_mode","static");
+
+	switch (mapObj.get_type()) {
+	case MAPOBJ_ITEM:
+		object_node->set_attribute("type", "item");
+		break;
+	case MAPOBJ_ANIMAL:
+		object_node->set_attribute("type", "animal");
+		break;
+	case MAPOBJ_PERSON:
+		object_node->set_attribute("type", "person");
+		break;
+	default:
+		object_node->set_attribute("type", "monster");
+		break;
+	}
+	if (mapObj.get_init_script_path().length() > 0)
+		object_node->set_attribute("init_script", mapObj.get_init_script_path());
+	if (mapObj.get_combat_script_path().length() > 0)
+		object_node->set_attribute("combat_script", mapObj.get_combat_script_path());
+
+	// Write object actions, if there are any
+	if (mapObj.actions()->size() > 0) {
+		xmlpp::Element* actions_node = object_node->add_child("actions");
+
+		for (auto curr_act = mapObj.actions()->begin(); curr_act != mapObj.actions()->end(); curr_act++) {
+			xmlpp::Element* action_node = actions_node->add_child("action");
+			write_action_node(action_node, curr_act->get());
+		}
+	}
+
+	return true;
 }
 
 bool Map::xml_write_map_data(boost::filesystem::path path)
@@ -823,77 +908,7 @@ bool Map::xml_write_map_data(boost::filesystem::path path)
 			for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
 				xmlpp::Element* object_node = objects_node->add_child("object");
 				MapObj mapObj = curr_obj->second;
-				unsigned x, y;
-				unsigned ox, oy;
-
-				mapObj.get_coords(x, y);
-				mapObj.get_origin(ox, oy);
-
-				object_node->set_attribute("x", std::to_string(x));
-				object_node->set_attribute("y", std::to_string(y));
-				object_node->set_attribute("ox", std::to_string(ox));
-				object_node->set_attribute("oy", std::to_string(oy));
-				object_node->set_attribute("icon_no", std::to_string(mapObj.get_icon()));
-				object_node->set_attribute("layer", std::to_string(mapObj.get_layer()));
-				object_node->set_attribute("id", mapObj.id);
-				object_node->set_attribute("lua_name", mapObj.lua_name);
-				object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
-				object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
-				object_node->set_attribute("random_monster", (mapObj.is_random_monster? "yes" : "no"));
-
-				if (mapObj.openable) {
-					if (mapObj.lock_type == NORMAL_LOCK)
-						object_node->set_attribute("locked","normal");
-					else if (mapObj.lock_type == MAGIC_LOCK)
-						object_node->set_attribute("locked","magic");
-					else if (mapObj.lock_type == UNLOCKED)
-						object_node->set_attribute("locked","unlocked");
-				}
-
-				if (mapObj.personality == HOSTILE)
-					object_node->set_attribute("personality","hostile");
-				else if (mapObj.personality == RIGHTEOUS)
-					object_node->set_attribute("personality","righteous");
-				else
-					object_node->set_attribute("personality","neutral");
-
-				if (mapObj.move_mode == FLEE)
-					object_node->set_attribute("move_mode","flee");
-				else if (mapObj.move_mode == FOLLOWING)
-					object_node->set_attribute("move_mode","following");
-				else if (mapObj.move_mode == ROAM)
-					object_node->set_attribute("move_mode","roam");
-				else
-					object_node->set_attribute("move_mode","static");
-
-				switch (mapObj.get_type()) {
-				case MAPOBJ_ITEM:
-					object_node->set_attribute("type", "item");
-					break;
-				case MAPOBJ_ANIMAL:
-					object_node->set_attribute("type", "animal");
-					break;
-				case MAPOBJ_PERSON:
-					object_node->set_attribute("type", "person");
-					break;
-				default:
-					object_node->set_attribute("type", "monster");
-					break;
-				}
-				if (mapObj.get_init_script_path().length() > 0)
-					object_node->set_attribute("init_script", mapObj.get_init_script_path());
-				if (mapObj.get_combat_script_path().length() > 0)
-					object_node->set_attribute("combat_script", mapObj.get_combat_script_path());
-
-				// Write object actions, if there are any
-				if (mapObj.actions()->size() > 0) {
-					xmlpp::Element* actions_node = object_node->add_child("actions");
-
-					for (auto curr_act = mapObj.actions()->begin(); curr_act != mapObj.actions()->end(); curr_act++) {
-						xmlpp::Element* action_node = actions_node->add_child("action");
-						write_action_node(action_node, curr_act->get());
-					}
-				}
+				write_obj_xml_node(mapObj, object_node);
 			}
 		}
 

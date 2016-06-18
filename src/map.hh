@@ -91,7 +91,7 @@ public:
   void push_icon(int, int, unsigned);
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);
-  std::shared_ptr<Action> get_action(unsigned, unsigned);
+  std::vector<std::shared_ptr<Action>> get_actions(unsigned, unsigned);
   void add_action(Action*);
   void add_action(std::shared_ptr<Action>);
   void add_event_to_action(unsigned, unsigned, std::shared_ptr<GameEvent>);
@@ -118,6 +118,7 @@ protected:
   void parse_data_node(const xmlpp::Node*);
   std::vector<std::shared_ptr<Action>> parse_actions_node(const xmlpp::Node*);
   void write_action_node(xmlpp::Element*, Action*);
+  bool write_obj_xml_node(MapObj, xmlpp::Element*);
 
   // Map data and stuff...
   std::vector<std::vector<unsigned>>                               _data;

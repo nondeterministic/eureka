@@ -11,7 +11,6 @@ public:
   ActionOnLook(const char*);
   ~ActionOnLook();
   std::string name();
-  int x, y;
 };
 
 #endif

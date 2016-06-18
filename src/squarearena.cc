@@ -523,9 +523,9 @@ void SquareArena::show_map(int x_width, int y_width)
 			}
 
 			if (_show_act) {
-				std::shared_ptr<Action> _act = _map->get_action(x, y);
+				std::vector<std::shared_ptr<Action>> _acts = _map->get_actions(x, y);
 				// TODO: Below, 150 is just some randomly chosen icon...
-				if (_act != NULL)
+				if (_acts.size() > 0)
 					put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(150));
 			}
 		}

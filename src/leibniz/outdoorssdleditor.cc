@@ -371,8 +371,8 @@ void OutdoorsSDLEditor::show_map(void)
 			}
 
 			if (_show_act) {
-				std::shared_ptr<Action> _act = _map->get_action(x, y);
-				if (_act != NULL) {
+				std::vector<std::shared_ptr<Action>> _acts = _map->get_actions(x, y);
+				if (_acts.size() == 0) {
 					// std::cout << "Putting action ("
 					//     << x << ", " << y << ")"
 					//     << " to " << "(" << x2 << ", " << y2 << ")"

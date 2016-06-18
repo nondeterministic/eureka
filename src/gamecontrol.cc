@@ -583,15 +583,18 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_e: {
 					// Check if party is on enterable icon, i.e., if there is an enter-action associated to it.
-					std::shared_ptr<Action> act = arena->get_map()->get_action(party->x, party->y);
+					std::vector<std::shared_ptr<Action>> acts = arena->get_map()->get_actions(party->x, party->y);
 
-					if (act != NULL) {
-						std::shared_ptr<ActionOnEnter> act_on_enter = std::dynamic_pointer_cast<ActionOnEnter>(act);
-
-						if (act_on_enter == NULL)
+					if (acts.size() > 0) {
+						bool entered = false;
+						for (auto act : acts) {
+							if (std::dynamic_pointer_cast<ActionOnEnter>(act)) {
+								action_on_enter(std::dynamic_pointer_cast<ActionOnEnter>(act));
+								entered = true;
+							}
+						}
+						if (!entered)
 							printcon("Nothing to enter");
-						else
-							action_on_enter(act_on_enter);
 					}
 					else
 						printcon("Nothing to enter");
@@ -2029,7 +2032,7 @@ void GameControl::look()
 			printcon(ss.str());
 		}
 
-		// Perform action events
+		// Perform action events for objects at the given coordinates
 		for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
 			unsigned int tmp_x, tmp_y;
 			MapObj map_obj = curr_obj->second;
@@ -2042,6 +2045,14 @@ void GameControl::look()
 							gh.handle(*curr_ev, arena->get_map());
 					}
 				}
+			}
+		}
+
+		// Perform look actions that are associated with the given coordinates rather than objects
+		for (auto action : arena->get_map()->get_actions(coords.first, coords.second)) {
+			if (action->name() == "ACT_ON_LOOK") {
+				for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+					gh.handle(*curr_ev, arena->get_map());
 			}
 		}
 	}
@@ -2394,26 +2405,40 @@ std::pair<int, int> GameControl::get_viewport()
 void GameControl::pull_push()
 {
 	printcon("Pull/push - which direction?");
-
 	std::pair<int, int> coords = select_coords();
-	std::shared_ptr<Action> act = arena->get_map()->get_action(coords.first, coords.second);
 
-	if (act == NULL) {
+	// First go through objects which may have a pull/push action
+	bool has_paction = false;
+	for (auto obj: arena->get_map()->get_objs(coords.first, coords.second)) {
+		for (auto act: *(obj->actions())) {
+			if (std::dynamic_pointer_cast<ActionPullPush>(act)) {
+				GameEventHandler gh;
+				has_paction = true;
+				for (auto curr_ev = act->events_begin(); curr_ev != act->events_end(); curr_ev++)
+					gh.handle(*curr_ev, arena->get_map());
+			}
+		}
+	}
+
+	// Now go through map actions which are not associated with an object
+	std::vector<std::shared_ptr<Action>> acts = arena->get_map()->get_actions(coords.first, coords.second);
+	if (acts.size() == 0 && !has_paction) {
 		printcon("Nothing to pull or push here");
 		return;
 	}
 
-	std::shared_ptr<ActionPullPush> action = std::dynamic_pointer_cast<ActionPullPush>(act);
-
-	if (action == NULL) {
-		printcon("Nothing to pull or push here");
-		return;
+	has_paction = false;
+	for (auto action: acts) {
+		if (std::dynamic_pointer_cast<ActionPullPush>(action)) {
+			GameEventHandler gh;
+			has_paction = true;
+			for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
+				gh.handle(*curr_ev, arena->get_map());
+		}
 	}
 
-	GameEventHandler gh;
-
-	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-		gh.handle(*curr_ev, arena->get_map());
+	if (!has_paction)
+		printcon("Nothing to pull or push here");
 }
 
 void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
