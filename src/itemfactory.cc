@@ -11,6 +11,7 @@
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "serviceshelper.hh"
+#include "mischelper.hh"
 #include "util.hh"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -45,6 +46,8 @@ Item* ItemFactory::create(std::string lua_name)
 			return EdiblesHelper::createFromLua(lname_split[1]);
 		else if (lname_split[0] == "services")
 			return ServicesHelper::createFromLua(lname_split[1]);
+		else if (lname_split[0] == "miscitems")
+			return MiscHelper::createFromLua(lname_split[1]);
 		else
 			throw std::runtime_error("create(): Don't know how to create item with lua_name '" + lua_name + "'.");
 	}

@@ -83,6 +83,31 @@ MapObj MapObj::copy()
 	return tmp;
 }
 
+bool MapObj::operator==(const MapObj& rhs) const
+{
+	return
+			_x == rhs._x &&
+			_y == rhs._y &&
+			_ox == rhs._ox &&
+			_oy == rhs._oy &&
+			_icon == rhs._icon &&
+			how_many == rhs.how_many &&
+			_type == rhs._type &&
+			removable == rhs.removable &&
+			lua_name == rhs.lua_name &&
+			openable == rhs.openable &&
+			move_mode == rhs.move_mode &&
+			personality == rhs.personality &&
+			lock_type == rhs.lock_type &&
+			is_random_monster == rhs.is_random_monster &&
+			_init_script == rhs._init_script &&
+			_combat_script == rhs._combat_script &&
+			// TODO: Leave attackers out, because otherwise I need to include it here and therefore have a new dependency in the editor!
+			// _foes.size() == rhs._foes.size() && // TODO: I believe it's ok to not directly compare all foes, but BEWARE!
+			_actions.size() == rhs._actions.size() // TODO: I believe it's ok to not directly compare all actions, but BEWARE!
+	;
+}
+
 MapObj::~MapObj()
 {
 	_actions.clear();

@@ -1614,7 +1614,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
 						if (combat.initiate())
-							get_map()->pop_obj(map_obj->id);
+							get_map()->rm_obj(map_obj->id);
 						return;
 					}
 					else
@@ -1626,7 +1626,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.set_foes(map_obj->get_foes());
 						if (combat.initiate()) {
-							get_map()->pop_obj(map_obj->id);
+							get_map()->rm_obj(map_obj->id);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1636,7 +1636,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
 						if (combat.initiate()) {
-							get_map()->pop_obj(map_obj->id);
+							get_map()->rm_obj(map_obj->id);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1686,7 +1686,7 @@ void GameControl::attack()
 					make_guards(HOSTILE);
 
 					if (combat.initiate())
-						get_map()->pop_obj(the_obj.id);
+						get_map()->rm_obj(the_obj.id);
 					return;
 				}
 				else {
@@ -1700,7 +1700,7 @@ void GameControl::attack()
 					Combat combat;
 					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
 					if (combat.initiate()) {
-						get_map()->pop_obj(the_obj.id);
+						get_map()->rm_obj(the_obj.id);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());
@@ -1711,7 +1711,7 @@ void GameControl::attack()
 					Combat combat;
 					combat.set_foes(the_obj.get_foes());
 					if (combat.initiate()) {
-						get_map()->pop_obj(the_obj.id);
+						get_map()->rm_obj(the_obj.id);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());
@@ -1784,25 +1784,23 @@ void GameControl::get_item()
 	// Range of available MapObjects. These are not the actual items!
 	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
 
+	// Determine if there's *anything* that can be gotten at all...
+	int number_of_removable_items = 0;
+	for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
+		MapObj map_obj = curr_obj->second;
+		if (map_obj.removable)
+			number_of_removable_items++;
+	}
+
 	if (avail_objects.first != avail_objects.second) {
-		int size = 0; // Determine actual number of MapObjects
-		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++, size++);
+		//		int size = 0; // Determine actual number of MapObjects, e.g., a chest and 100 coins equals 2, not 101.
+		//		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++, size++);
 
 		MapObj* curr_obj = 0;
 		std::vector<MapObj> map_objs; // Convenience only: For storing and quicker looking up the various map objects in a given location.
 
 		// TODO: If there are multiple items, check which one needs to be picked up (or all)
-		if (size > 1) {
-			printcon("Select item from the list");
-
-			MiniWin& mwin = MiniWin::Instance();
-			ZtatsWin& zwin = ZtatsWin::Instance();
-
-			mwin.save_surf();
-			mwin.clear();
-			mwin.println(0, "Get item", CENTERALIGN);
-			mwin.println(1, "(Press space to get selected item, q to exit)");
-
+		if (number_of_removable_items > 0) {
 			std::map<std::string, int> items;
 			for (auto obj_itr = avail_objects.first; obj_itr != avail_objects.second; obj_itr++) {
 				MapObj the_obj = obj_itr->second;
@@ -1840,6 +1838,16 @@ void GameControl::get_item()
 				curr_obj = &(map_objs[0]);
 			}
 			else {
+				printcon("Select item from the list");
+
+				MiniWin& mwin = MiniWin::Instance();
+				ZtatsWin& zwin = ZtatsWin::Instance();
+
+				mwin.save_surf();
+				mwin.clear();
+				mwin.println(0, "Get item", CENTERALIGN);
+				mwin.println(1, "(Press space to get selected item, q to exit)");
+
 				std::vector<line_tuple> items_l = Util::to_line_tuples(items);
 				zwin.set_lines(items_l);
 				zwin.clear();
@@ -1916,10 +1924,21 @@ void GameControl::get_item()
 						}
 					}
 					// See if some items are leftover after taking...
-					if (curr_obj->how_many - taking == 0)
+					if (curr_obj->how_many - taking == 0) {
 						arena->get_map()->pop_obj(coords.first, coords.second);
-					else
-						curr_obj->how_many -= taking;
+					}
+					else {
+						// As we're dealing with instances rather than pointers, we first remove the object from the map...
+						if (arena->get_map()->rm_obj(curr_obj->copy()) > 0) {
+							// ...then decrease the how_many counter...
+							curr_obj->how_many -= taking;
+							// ...and finally add it again
+							MapObj tmp_obj = curr_obj->copy();
+							arena->get_map()->push_obj(tmp_obj);
+						}
+						else
+							std::cerr << "ERROR: gamecontrol.cc: Could not remove selected item from map.\n";
+					}
 				}
 				// Picking up exactly 1 item
 				else {

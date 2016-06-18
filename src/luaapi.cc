@@ -952,7 +952,7 @@ int l_join(lua_State* L)
 int l_remove_from_current_map(lua_State* L)
 {
 	std::string id = lua_tostring(L, 1); // This is the id used inside the current map XML-file!
-	GameControl::Instance().get_map()->pop_obj(id);
+	GameControl::Instance().get_map()->rm_obj(id);
 
 	return 0;
 }

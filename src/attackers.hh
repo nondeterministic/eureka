@@ -49,7 +49,7 @@ public:
   int get_distance(const std::string&);
   Creature* get_attacker(int distance);
   boost::unordered_map<std::string, int>* count();
-  int size();
+  int size() const;
   int closest_range();
   bool vowel(const char);
   boost::unordered_map<int, std::string> distances();

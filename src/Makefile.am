@@ -33,6 +33,7 @@ eureka_SOURCES = \
 	map.hh map.cc \
 	spell.hh spell.cc \
 	spellcasthelper.hh spellcasthelper.cc \
+	mischelper.hh mischelper.cc \
 	world.hh world.cc \
 	type.hh type.cc \
 	sdltricks.hh sdltricks.cc \
@@ -80,6 +81,7 @@ eureka_SOURCES = \
 	gold.hh gold.cc \
 	edible.hh edible.cc \
 	service.hh service.cc \
+	miscitem.hh miscitem.cc \
 	shield.hh shield.cc \
 	weapon.hh weapon.cc \
 	itemfactory.hh itemfactory.cc \

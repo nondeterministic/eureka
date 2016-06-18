@@ -200,7 +200,7 @@ std::string Attackers::to_string()
   return ss.str();
 }
 
-int Attackers::size()
+int Attackers::size() const
 {
   return _enemies.size();
 }

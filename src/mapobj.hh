@@ -51,6 +51,7 @@ class MapObj
 public:
 	MapObj();
 	~MapObj();
+	bool operator==(const MapObj&) const;
 	void set_origin(unsigned, unsigned);
 	void get_origin(unsigned&, unsigned&);
 	void set_coords(unsigned, unsigned);

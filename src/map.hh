@@ -86,7 +86,8 @@ public:
   void expand_map_data(int, int, int, int);
   void push_obj(MapObj);
   void pop_obj(int, int);
-  void pop_obj(std::string);
+  int rm_obj(std::string);
+  int rm_obj(MapObj);
   void push_icon(int, int, unsigned);
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);

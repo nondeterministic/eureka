@@ -241,7 +241,6 @@ void Map::pop_obj(int x, int y)
 	boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
 	found_objs = _map_objects.equal_range(coords);
 
-	// for (boost::unordered_multimap <std::pair<unsigned, unsigned>, MapObj>::iterator curr_obj = found_objs.first, next_obj = found_objs.first;
 	for (auto curr_obj = found_objs.first, next_obj = found_objs.first;
 			curr_obj != found_objs.second;
 			curr_obj++)
@@ -255,8 +254,11 @@ void Map::pop_obj(int x, int y)
 	}
 }
 
-void Map::pop_obj(std::string pop_id)
+// Returns the number of deleted MapObj.
+
+int Map::rm_obj(std::string pop_id)
 {
+	int deleted = 0;
 	bool done = false;
 
 	while (!done) {
@@ -266,12 +268,40 @@ void Map::pop_obj(std::string pop_id)
 			MapObj& mo = (curr_obj->second);
 			if (mo.id == pop_id) {
 				_map_objects.erase(curr_obj);
+				deleted++;
 				_modified = true;
 				done = false;
 				break;
 			}
 		}
 	}
+
+	return deleted;
+}
+
+// Returns the number of deleted MapObj.
+
+int Map::rm_obj(MapObj delmo)
+{
+	int deleted = 0;
+	bool done = false;
+
+	while (!done) {
+		done = true;
+
+		for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
+			MapObj& mo = (curr_obj->second);
+			if (mo == delmo) {
+				_map_objects.erase(curr_obj);
+				deleted++;
+				_modified = true;
+				done = false;
+				break;
+			}
+		}
+	}
+
+	return deleted;
 }
 
 void Map::push_obj(MapObj obj)
