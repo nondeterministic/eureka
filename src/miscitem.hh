@@ -20,18 +20,26 @@
 #ifndef MISCITEM_HH
 #define MISCITEM_HH
 
-#include "item.hh"
-#include "eureka.hh"
 #include <string>
+
+#include "item.hh"
+#include "mapobj.hh"
 
 class MiscItem : public Item
 {
-public:
-  MiscItem();
-  ~MiscItem();
-  MiscItem(const MiscItem&);
+private:
+	MapObj _mapObj;
+	bool _has_mapobj;
 
-  std::string luaName();
+public:
+	MiscItem();
+	~MiscItem();
+	MiscItem(const MiscItem&);
+
+	MapObj get_obj();
+	void set_obj(MapObj);
+	std::string luaName();
+	bool has_mapobj();
 };
 
 #endif

@@ -11,13 +11,14 @@
 #include <string>
 
 #include "miscitem.hh"
+#include "mapobj.hh"
 
 class MiscHelper
 {
 public:
   MiscHelper();
   virtual ~MiscHelper();
-  static MiscItem* createFromLua(std::string);
+  static MiscItem* createFromLua(std::string, MapObj* = NULL);
   static bool exists(std::string);
   //  static void apply(MiscItem*, int);
 };

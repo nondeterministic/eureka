@@ -25,6 +25,7 @@ using namespace std;
 
 Item::Item()
 {
+	_descr = "";
 	_name = "";
 	_plural_name = "";
 	_gold = 0;
@@ -34,6 +35,7 @@ Item::Item()
 
 Item::Item(const Item& i)
 {
+	_descr = i._descr;
 	_name = i._name;
 	_plural_name = i._plural_name;
 	_weight = i._weight;
@@ -96,4 +98,14 @@ void Item::weight(unsigned new_weight)
 std::string Item::luaName()
 {
 	return "";
+}
+
+std::string Item::description()
+{
+	return _descr;
+}
+
+void Item::description(std::string d)
+{
+	_descr = d;
 }

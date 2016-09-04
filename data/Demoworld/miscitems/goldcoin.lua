@@ -3,8 +3,10 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-MiscItems["goldcoin"]  = { 
+MiscItems["gold coin"]  = { 
    name                   = "gold coin",
-   plural_name            = "gold coins"
+   plural_name            = "gold coins",
+   description            = "",
+   icon                   = 535
 }
 

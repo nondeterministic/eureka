@@ -14,7 +14,8 @@ enum ACTION_TYPES
 	ACT_ON_PULLPUSH,          // Triggers when player pulls/pushes icon
 	ACT_ON_ENTER,             // Triggers when player enters on a certain icon
 	ACT_ON_REACH,             // Triggers when player reaches a certain icon
-	ACT_ON_LOOK               // Triggers when player searches icon
+	ACT_ON_LOOK,              // Triggers when player searches icon
+	ACT_ON_SEARCH
 };
 
 class Action

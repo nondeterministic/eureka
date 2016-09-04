@@ -143,16 +143,33 @@ std::map<std::string, int> Inventory::list_all()
 
 void Inventory::add(Item* item)
 {
-	try {
-		std::vector<Item*>& old_items = _items.at(item->name());
-		old_items.push_back(item);
+	// How many additional characters from the description of the item, if it has one, should we add behind the name in the inventory list?
+	const int addDescr = 9;
 
-		_items.insert(std::make_pair(item->name(), old_items));
+	try {
+		if (item->description().length() > 0) {
+			std::string descr = item->description();
+			std::vector<Item*>& old_items = _items.at(item->name() + ", " + descr.substr(0,addDescr) + "...");
+			_items.insert(std::make_pair(item->name() + ", " + descr.substr(0,addDescr) + "...", old_items));
+			old_items.push_back(item);
+		}
+		else {
+			std::vector<Item*>& old_items = _items.at(item->name());
+			_items.insert(std::make_pair(item->name(), old_items));
+			old_items.push_back(item);
+		}
 	}
 	catch (std::out_of_range& oor) {
 		std::vector<Item*> new_items;
 		new_items.push_back(item);
-		_items.insert(std::make_pair(item->name(), new_items));
+
+		if (item->description().length() > 0) {
+			std::string descr = item->description();
+			_items.insert(std::make_pair(item->name() + ", " + descr.substr(0,addDescr) + "...", new_items));
+		}
+		else {
+			_items.insert(std::make_pair(item->name(), new_items));
+		}
 	}
 }
 
@@ -160,7 +177,7 @@ void Inventory::add(Item* item)
 // Throws exception if item is not in inventory.
 // Frees memory!!
 
-void Inventory::remove(std::string item_name)
+void Inventory::remove(std::string item_name, std::string item_descr)
 {
 	try {
 		std::vector<Item*>& old_items = _items.at(item_name); // Get all items with that name
@@ -188,51 +205,23 @@ void Inventory::remove(std::string item_name)
 
 int Inventory::remove_all(std::string item_name)
 {
-  int how_many = 0;
+	int how_many = 0;
 
-  try {
-    std::vector<Item*>& old_items = _items.at(item_name);
-    how_many = old_items.size();
+	try {
+		std::vector<Item*>& old_items = _items.at(item_name);
+		how_many = old_items.size();
 
-    for (Item* i: old_items)
-    	if (i != NULL)
-    		delete(i);
+		for (Item* i: old_items)
+			if (i != NULL)
+				delete(i);
 
-    _items.erase(item_name);
-  }
-  catch (std::out_of_range& oor) {
-    std::cerr << "ERROR: inventory.cc: Failed to remove " << item_name << "\n";
-  }
+		_items.erase(item_name);
+	}
+	catch (std::out_of_range& oor) {
+		std::cerr << "ERROR: inventory.cc: Failed to remove " << item_name << "\n";
+	}
 
-  return how_many;
-}
-
-// Returns total size of items, not just how many entries there are!
-
-unsigned Inventory::number_items()
-{
-  unsigned _size = 0;
-
-  for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
-    _size += ptr->second.size();
-
-  return _size;
-}
-
-unsigned Inventory::size()
-{
-  return _items.size();
-}
-
-void Inventory::add_all(Inventory& inv2)
-{
-  for (unsigned i = 0; i < inv2.size(); i++) {
-    std::vector<Item*>* tmp_items = inv2.get(i);
-    for (unsigned j = 0; j < tmp_items->size(); j++) {
-      Item* new_item = tmp_items->at(j);
-      add(new_item);
-    }
-  }
+	return how_many;
 }
 
 void Inventory::remove_all()
@@ -250,4 +239,32 @@ void Inventory::remove_all()
 
 	if (number_items() > 0)
 		std::cerr << "WARNING: inventory.cc: Just tried to remove_all() but number_items() is " << number_items() << ".\n";
+}
+
+// Returns total size of items, not just how many entries there are!
+
+unsigned Inventory::number_items()
+{
+	unsigned _size = 0;
+
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
+		_size += ptr->second.size();
+
+	return _size;
+}
+
+unsigned Inventory::size()
+{
+	return _items.size();
+}
+
+void Inventory::add_all(Inventory& inv2)
+{
+	for (unsigned i = 0; i < inv2.size(); i++) {
+		std::vector<Item*>* tmp_items = inv2.get(i);
+		for (unsigned j = 0; j < tmp_items->size(); j++) {
+			Item* new_item = tmp_items->at(j);
+			add(new_item);
+		}
+	}
 }

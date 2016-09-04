@@ -104,7 +104,7 @@ bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj*
 		return false;
 	}
 
-	map->push_obj(obj->copy());
+	map->push_obj(*obj);
 	return true;
 }
 

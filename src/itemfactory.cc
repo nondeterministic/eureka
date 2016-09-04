@@ -31,9 +31,11 @@ ItemFactory::~ItemFactory()
 
 /**
  * Where lua_name is prefixed by weapon::lua_name, etc.
+ * obj is the MapObj, if the item is created from a MapObj, e.g., from pick up command.
+ * Most helpers ignore it, but it can be used by some MiscItems.
  */
 
-Item* ItemFactory::create(std::string lua_name)
+Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 {
 	std::vector<std::string> lname_split = Util::splitString(lua_name, "::");
 
@@ -47,7 +49,7 @@ Item* ItemFactory::create(std::string lua_name)
 		else if (lname_split[0] == "services")
 			return ServicesHelper::createFromLua(lname_split[1]);
 		else if (lname_split[0] == "miscitems")
-			return MiscHelper::createFromLua(lname_split[1]);
+			return MiscHelper::createFromLua(lname_split[1], obj);
 		else
 			throw std::runtime_error("create(): Don't know how to create item with lua_name '" + lua_name + "'.");
 	}
@@ -69,6 +71,8 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 		return EdiblesHelper::createFromLua(item_name);
 	else if (ServicesHelper::exists(item_name))
 		return ServicesHelper::createFromLua(item_name);
+	else if (MiscHelper::exists(item_name))
+		return MiscHelper::createFromLua(item_name);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?

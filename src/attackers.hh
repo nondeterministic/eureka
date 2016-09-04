@@ -24,7 +24,9 @@
 #include <vector>
 #include <algorithm>
 #include <SDL.h>
+
 #include <boost/unordered_map.hpp>
+
 #include "creature.hh"
 
 
@@ -37,6 +39,8 @@ private:
   boost::unordered_map<std::string, int> _enemies_count;
 
 public:
+  Attackers();
+  Attackers(const Attackers&);
   void remove(int);
   const std::vector<std::shared_ptr<Creature>>* get();
   Creature* get(int number);

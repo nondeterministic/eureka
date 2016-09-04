@@ -23,6 +23,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+
 #include "attackers.hh"
 #include "action.hh"
 
@@ -51,7 +52,11 @@ class MapObj
 public:
 	MapObj();
 	~MapObj();
+	MapObj(const MapObj&);
+
 	bool operator==(const MapObj&) const;
+	std::string description();
+	void set_description(std::string);
 	void set_origin(unsigned, unsigned);
 	void get_origin(unsigned&, unsigned&);
 	void set_coords(unsigned, unsigned);
@@ -74,7 +79,6 @@ public:
 	std::vector<std::shared_ptr<Action>>* actions();
 	void set_foes(Attackers);
 	Attackers get_foes();
-	MapObj copy();
 
 	MOVE_MODE move_mode;
 	PERSONALITY personality;
@@ -86,11 +90,12 @@ protected:
 	MAPOBJ_TYPES _type;
 	int _layer;
 	int _icon;
-	unsigned _x, _y;  // current pos
-	unsigned _ox, _oy; // origin
+	unsigned _x, _y;     // current pos
+	unsigned _ox, _oy;   // origin
 	std::string _init_script;
 	std::string _combat_script;
 	std::vector<std::shared_ptr<Action>> _actions;
+	std::string _descr;  // ATTENTION: Right now, this field only is used for MiscItem items!!
 
 	// If map_obj is a monster, we can add the attackers information to it, to keep track
 	// of them, say, inside a dungeon or a city.

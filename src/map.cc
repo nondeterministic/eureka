@@ -356,7 +356,10 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 	const xmlpp::Element::AttributeList& attributes = objElement->get_attributes();
 
 	// Could be empty, if object doesn't have an actions tag
-	xmlpp::Node::NodeList actions_node = (objElement)->get_children("actions");
+	xmlpp::Node::NodeList actions_node = objElement->get_children("actions");
+
+	// Could be empty, if object doesn't have a description tag
+	xmlpp::Node::NodeList description_node = objElement->get_children("description");
 
 	// Iterate through attributes of object node
 	for (auto iter = attributes.begin(); iter != attributes.end(); ++iter) {
@@ -433,6 +436,17 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 		}
 	}
 
+	// Parse description if there was one (see code at beginning of function).
+	if (description_node.size() > 0) {
+		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(description_node.front());
+		if (nodeElement) {
+			new_obj.set_description(nodeElement->get_child_text()->get_content());
+			std::cout << "DESCRIPTION READ: " << new_obj.description() << "\n";
+		}
+		else
+			std::cerr << "WARNING: map.cc: Read empty object-description (<description>) tag in map '" << _name << "'.\n";
+	}
+
 	new_obj.set_coords(x, y);
 
 	if (ox != 0 || oy != 0)
@@ -489,6 +503,8 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 			else if (curr_act_name == "ACT_ON_LOOK") {
 				std::string xs = nodeElement->get_attribute_value("x");
 				std::string ys = nodeElement->get_attribute_value("y");
+
+				std::cout << "ADDED\n";
 
 				if (xs.length() > 0 && ys.length() > 0)
 					_act = std::make_shared<ActionOnLook>(atoi(xs.c_str()), atoi(ys.c_str()), "ACT_ON_LOOK");
@@ -1026,7 +1042,7 @@ void Map::expand_map_data(int top, int bot, int right, int left)
 		row.clear();
 	}
 	catch (...) {
-		std::cerr << "BOOOOMMM!!! You better manually rescue your map data now." << std::endl;
+		std::cerr << "ERROR: map.cc: BOOOOMMM!!! You better manually rescue your map data now." << std::endl;
 	}
 
 	// Now check/adjust objects...

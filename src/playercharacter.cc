@@ -6,6 +6,10 @@
 #include "profession.hh"
 #include "race.hh"
 
+#include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
+
 PlayerCharacter::PlayerCharacter()
 {
 	_level = 1;
@@ -33,8 +37,43 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 	_iq = iq;
 	_end = end;
 	_sex = sex;
-	_condition = GOOD;
 	_level = level;
+
+	_condition = GOOD;
+	_ep = 0;
+	// TODO: active_spells?
+}
+
+PlayerCharacter::PlayerCharacter(const PlayerCharacter& p)
+{
+	_race = p._race;
+	_prof = p._prof;
+	_name = p._name;
+	_hp_max = p._hp_max;
+	_hp = p._hp;
+	_sp = p._sp;
+	_sp_max = p._sp_max;
+	_str = p._str;
+	_luck = p._luck;
+	_dxt = p._dxt;
+	_wis = p._wis;
+	_char = p._char;
+	_iq = p._iq;
+	_end = p._end;
+	_condition = p._condition;
+	_level = p._level;
+	_ep = p._ep;
+
+	_att = p._att;
+	_sex = p._sex;
+	_rh_item = p._rh_item;
+	_lh_item = p._lh_item;
+
+	BOOST_FOREACH(active_spell::value_type spell, p._active_spells) {
+		_active_spells[spell.first] = spell.second;
+	}
+
+	// std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
 }
 
 bool PlayerCharacter::is_spell_caster()

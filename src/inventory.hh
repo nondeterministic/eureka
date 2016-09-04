@@ -25,12 +25,12 @@ public:
   std::map<std::string, int> list_all();
 //  std::vector<line_tuple> to_line_tuples(std::map<std::string, int>&);
   void add(Item*);
-  void remove(std::string);
+  void remove(std::string, std::string);
   int remove_all(std::string);
+  void remove_all();
   unsigned size();
   unsigned number_items();
   void add_all(Inventory&);
-  void remove_all();
 };
 
 #endif

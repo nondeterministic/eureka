@@ -35,6 +35,7 @@ private:
 public:
   Creature();
   ~Creature();
+  Creature(const Creature&);
   int distance();
   void set_distance(int);
   void set_max_group(int);

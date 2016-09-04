@@ -53,6 +53,7 @@ public:
 		  int luck = 0, int dxt = 0, int wis = 0, int charr = 0,
 		  int iq = 0, int end = 0, bool sex = true, int level = 1,
 		  RACE = HUMAN, PROFESSION = FIGHTER);
+  PlayerCharacter(const PlayerCharacter&);
   PROFESSION profession();
   void set_profession(PROFESSION);
   int ep();

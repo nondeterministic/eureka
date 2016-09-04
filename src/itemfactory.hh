@@ -9,12 +9,13 @@
 #define ITEMFACTORY_HH_
 
 #include "item.hh"
+#include "mapobj.hh"
 
 class ItemFactory {
 public:
 	ItemFactory();
 	virtual ~ItemFactory();
-	static Item* create(std::string);
+	static Item* create(std::string, MapObj* = NULL);
 	static Item* create_plain_name(std::string);
 };
 

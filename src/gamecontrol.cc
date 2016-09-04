@@ -78,6 +78,8 @@ extern "C" {
 #include "soundsample.hh"
 #include "playlist.hh"
 #include "itemfactory.hh"
+#include "item.hh"
+#include "miscitem.hh"
 #include "util.hh"
 #include "conversation.hh"
 #include "gamestate.hh"
@@ -505,7 +507,7 @@ void GameControl::move_objects()
 	for (std::pair<int,int> coords: moved_objects_coords) {
 		for (MapObj* obj: arena->get_map()->get_objs(coords.first, coords.second)) {
 			if (obj->get_type() != MAPOBJ_ITEM) {
-				MapObj tmpObj = obj->copy();  // Make a deep copy of the object that is about to be kicked off the map
+				MapObj tmpObj = *obj;  // Make a deep copy of the object that is about to be kicked off the map
 				arena->get_map()->pop_obj(coords.first, coords.second);
 				arena->get_map()->push_obj(tmpObj);
 				break; // Assume there is at most one animate object per coordinate; so ignore other objects here
@@ -1478,6 +1480,18 @@ void GameControl::drop_items()
 		// Create corresponding icon if party is indoors
 		if (party->indoors()) {
 			MapObj moTmp;
+
+			// Some MiscItems have a MapObj associated with them, e.g., nonmagicscroll.
+			if (dynamic_cast<MiscItem*>(tmp)) {
+				MiscItem* tmp_item = dynamic_cast<MiscItem*>(tmp);
+				try {
+					moTmp = tmp_item->get_obj();
+				}
+				catch (...) {
+					; // Do nothing, this simply means, the tmp_item had no MapObj associated with it, which is OK! See MiscItem.cc for details.
+				}
+			}
+
 			moTmp.removable = true;
 			moTmp.set_coords(party->x, party->y);
 			moTmp.set_icon(tmp->icon);
@@ -1767,7 +1781,7 @@ void GameControl::talk()
 			}
 		}
 	}
-	printcon("No around to talk to");
+	printcon("No one around to talk to");
 }
 
 std::shared_ptr<Map> GameControl::get_map()
@@ -1787,6 +1801,7 @@ void GameControl::get_item()
 	int number_of_removable_items = 0;
 	for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 		MapObj map_obj = curr_obj->second;
+		std::cout << "MOOP: " << map_obj.description() << std::endl;
 		if (map_obj.removable)
 			number_of_removable_items++;
 	}
@@ -1816,7 +1831,7 @@ void GameControl::get_item()
 					// probably is a good idea to do it as it is done now.
 					Item* item = NULL;
 					try {
-						item = ItemFactory::create(the_obj.lua_name);
+						item = ItemFactory::create(the_obj.lua_name, &the_obj);
 					}
 					catch (std::exception const& e) {
 					    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
@@ -1870,7 +1885,8 @@ void GameControl::get_item()
 				// Depending on the name the MapObj has, we look up in the Lua list of items, and create one accordingly for pick up.
 				Item* item = NULL;
 				try {
-					item = ItemFactory::create(curr_obj->lua_name);
+					std::cout << "CREATING: " << curr_obj->description() << std::endl;
+					item = ItemFactory::create(curr_obj->lua_name, curr_obj);
 				}
 				catch (std::exception const& e) {
 				    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
@@ -1904,7 +1920,7 @@ void GameControl::get_item()
 					// Let's now create the n new items to be taken individually via a factory...
 					for (int i = 0; i < taking; i++) {
 						try {
-							party->inventory()->add(ItemFactory::create(curr_obj->lua_name));
+							party->inventory()->add(ItemFactory::create(curr_obj->lua_name, curr_obj));
 						}
 						catch (std::exception const& e) {
 						    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
@@ -1926,11 +1942,11 @@ void GameControl::get_item()
 					}
 					else {
 						// As we're dealing with instances rather than pointers, we first remove the object from the map...
-						if (arena->get_map()->rm_obj(curr_obj->copy()) > 0) {
+						if (arena->get_map()->rm_obj(*curr_obj) > 0) {
 							// ...then decrease the how_many counter...
 							curr_obj->how_many -= taking;
 							// ...and finally add it again
-							MapObj tmp_obj = curr_obj->copy();
+							MapObj tmp_obj = *curr_obj;
 							arena->get_map()->push_obj(tmp_obj);
 						}
 						else
@@ -1940,6 +1956,7 @@ void GameControl::get_item()
 				// Picking up exactly 1 item
 				else {
 					printcon("Taking " + item->name());
+					std::cout << "PICKING UP: " << item->description() << std::endl;
 					party->inventory()->add(item);
 
 					// Perform action events

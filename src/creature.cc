@@ -38,6 +38,15 @@ Creature::~Creature()
   }
 }
 
+Creature::Creature(const Creature& c)
+{
+	_image_surf = c._image_surf;
+	_image = c._image;
+	_distance = c._distance;
+	_max_group = c._max_group;
+	std::cout << "CREATURE DEEP COPY MOTHERFUCK!\n";
+}
+
 int Creature::distance()
 {
   return _distance;

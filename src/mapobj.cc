@@ -18,6 +18,8 @@
 // USA.
 
 #include "mapobj.hh"
+#include "attackers.hh"
+#include "action.hh"
 
 #include <string>
 #include <iostream>
@@ -25,6 +27,7 @@
 MapObj::MapObj()
 {
 	is_random_monster = false;
+	_descr = "";
 	_layer = 0;
 	_x = 0;
 	_y = 0;
@@ -44,44 +47,40 @@ MapObj::MapObj()
 	openable = false;
 }
 
-// TODO: Am not using copy constructor as it somehow breaks the game elsewhere.
-// (To see why, add a std::cout in this method somewhere when used as copy constructor.)
-//
-// Deep-copy of MapObj
-
-MapObj MapObj::copy()
+MapObj::MapObj(const MapObj& m)
 {
-	MapObj tmp;
+	is_random_monster = m.is_random_monster;
+	_layer = m._layer;
+	_x = m._x;
+	_y = m._y;
+	_ox = m._ox;
+	_oy = m._oy;
+	_icon = m._icon;
+	removable = m.removable;
+	lua_name = m.lua_name;
+	how_many = m.how_many;
+	move_mode = m.move_mode;
+	personality = m.personality;
+	_type = m._type;
+	lock_type = m.lock_type;
+	openable = m.openable;
+	_descr = m._descr;
 
-	tmp.is_random_monster = is_random_monster;
-	tmp._layer = _layer;
-	tmp._x = _x;
-	tmp._y = _y;
-	tmp._ox = _ox;
-	tmp._oy = _oy;
-	tmp._icon = _icon;
-	tmp.removable = removable;
-	tmp.lua_name = lua_name;
-	tmp.how_many = how_many;
-	tmp.move_mode = move_mode;
-	tmp.personality = personality;
-	tmp._type = _type;
-	tmp.lock_type = lock_type;
-	tmp.openable = openable;
+	for (std::shared_ptr<Action> act: m._actions) {
+		_actions.push_back(act);
+	}
 
-	for (std::shared_ptr<Action> act: _actions)
-		tmp._actions.push_back(act);
-
-	tmp._init_script = _init_script;
-	tmp._combat_script = _combat_script;
+	_init_script = m._init_script;
+	_combat_script = m._combat_script;
 
 	// TODO: This is a bit useless, I think, as Attackers itself has no deep-copy
 	// (but there are other places, where I also pass Attackers on the stack, and it seems to work)
 	// Not sure, if this will be a problem later...
-	tmp._foes = _foes;
+	_foes = m._foes;
 
-	return tmp;
+	// std::cout << "MAPOBJ DEEP-COPY!!!!!!!!!!!!!!!!!!!!\n";
 }
+
 
 bool MapObj::operator==(const MapObj& rhs) const
 {
@@ -104,7 +103,8 @@ bool MapObj::operator==(const MapObj& rhs) const
 			_combat_script == rhs._combat_script &&
 			// TODO: Leave attackers out, because otherwise I need to include it here and therefore have a new dependency in the editor!
 			// _foes.size() == rhs._foes.size() && // TODO: I believe it's ok to not directly compare all foes, but BEWARE!
-			_actions.size() == rhs._actions.size() // TODO: I believe it's ok to not directly compare all actions, but BEWARE!
+			_actions.size() == rhs._actions.size() && // TODO: I believe it's ok to not directly compare all actions, but BEWARE!
+			_descr == rhs._descr
 	;
 }
 
@@ -128,6 +128,7 @@ Attackers MapObj::get_foes()
 void MapObj::add_action(std::shared_ptr<Action> new_act)
 {
 	try {
+		// std::cout << "ADDING ACTION: " << new_act->name() << std::endl;
 		_actions.push_back(std::shared_ptr<Action>(new_act));
 	}
 	catch(const std::exception& ex) {
@@ -210,4 +211,14 @@ void MapObj::set_layer(int Slayer)
 int MapObj::get_layer(void)
 {
   return _layer;
+}
+
+std::string MapObj::description()
+{
+	return _descr;
+}
+
+void MapObj::set_description(std::string d)
+{
+	_descr = d;
 }

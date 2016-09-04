@@ -17,12 +17,14 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
+#include <iostream>
+
 #include "miscitem.hh"
 #include "item.hh"
-#include <iostream>
 
 MiscItem::MiscItem()
 {
+	_has_mapobj = false;
 }
 
 MiscItem::~MiscItem()
@@ -31,10 +33,25 @@ MiscItem::~MiscItem()
 
 MiscItem::MiscItem(const MiscItem& m): Item(m)
 {
+	_has_mapobj = m._has_mapobj;
+	_mapObj = m._mapObj;
 	std::cout << "DEEP COPY OF MISCITEM\n";
 }
 
 std::string MiscItem::luaName()
 {
 	return "miscitems::" + name();
+}
+
+MapObj MiscItem::get_obj()
+{
+	if (!_has_mapobj)
+		throw std::runtime_error("EXCEPTION: miscitem.cc: This item does not have a MapObj associated with it.");
+	return _mapObj;
+}
+
+void MiscItem::set_obj(MapObj mo)
+{
+	_has_mapobj = true;
+	_mapObj = mo;
 }

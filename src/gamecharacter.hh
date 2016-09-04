@@ -51,7 +51,7 @@ protected:
   int _iq;                      // Intelligene
   int _end;                     // Endurance
 
-  int _gold;
+  int _gold; // TODO: Do we still need this???
 
   ATTITUDE _att;                // Righteous, neutral, chaotic
   bool _sex;                    // F = Female, T = Male

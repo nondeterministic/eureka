@@ -27,6 +27,7 @@ class Item
 protected:
   std::string _name;
   std::string _plural_name;
+  std::string _descr;               // Currently only used by the derviced MiscItem
   unsigned _weight;
   int _gold;
 
@@ -49,6 +50,8 @@ public:
   void weight(unsigned);
   int gold();
   void gold(int);
+  void description(std::string);
+  std::string description();
 };
 
 #endif

@@ -665,8 +665,10 @@ int setup_dummy_game()
 	}
 
 	// Load map data
-	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
+	if (!arena->get_map()->xml_load_map_data()) {
+		std::cerr << "ERROR: eureka.cc: Could not load map data1.\n";
+		exit(EXIT_FAILURE);
+	}
 
 	// Determine initial game position
 	try {
@@ -748,7 +750,7 @@ int recreate_old_game_state()
 
 	// Load current map's data
 	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
+		std::cerr << "ERROR: eureka.cc: Could not load map data2.\n";
 
 	return 0;
 }
@@ -782,7 +784,7 @@ int create_fresh_game_state(PlayerCharacter player)
 
 	// Load map data
 	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: eureka.cc: Could not load map data.\n";
+		std::cerr << "ERROR: eureka.cc: Could not load map data3.\n";
 
 	// Determine initial game position
 	try {

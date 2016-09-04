@@ -22,11 +22,31 @@
 #include <algorithm>
 #include <vector>
 #include <map>
-#include <boost/unordered_map.hpp>
+
 #include "attackers.hh"
 #include "creature.hh"
 
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
+
 using namespace std;
+
+Attackers::Attackers()
+{
+}
+
+Attackers::Attackers(const Attackers& a)
+{
+	for (auto e : a._enemies)
+		_enemies.push_back(e);
+
+	// Copy "boost::unordered_map<std::string, int> _enemies_count":
+	BOOST_FOREACH(auto ec, a._enemies_count) {
+		_enemies_count[ec.first] = ec.second;
+    }
+
+	std::cout << "ATTACKERS DEEP COPY MOTHERFUCKER!\n";
+}
 
 // Gets n-th enemy in the vector.
 // You will not like calling this, when n > _enemies.size().
