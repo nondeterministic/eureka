@@ -1108,6 +1108,7 @@ void GameControl::use()
 
 	if (selection >= 0) {
 		std::string selected_item_name = party->inventory()->get_item(selection)->name();
+		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
 
 		if (WeaponHelper::exists(selected_item_name)) {
 			printcon("Try to (r)eady a weapon instead.");
@@ -1267,7 +1268,7 @@ void GameControl::use()
 			}
 
 			// Remove one such item from inventory
-			party->inventory()->remove(item->name());
+			party->inventory()->remove(item->name(), selected_item_descr);
 			delete item;
 		}
 		else
@@ -1322,14 +1323,14 @@ std::string GameControl::ready_item(int selected_player)
 				// TODO: Alternatively, one could create a method Inventory::handOver(std::string weapon_name),
 				// which removes the weapon from the inventory list and returns its pointer so that the
 				// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
-				party->inventory()->remove(weapon->name());
+				party->inventory()->remove(weapon->name(), weapon->description());
 			}
 			else if (ShieldHelper::exists(selected_item_name)) {
 				if (player->shield() != NULL)
 					party->inventory()->add(player->shield());
 				Shield* shield = ShieldHelper::createFromLua(selected_item_name);
 				player->set_shield(shield);
-				party->inventory()->remove(shield->name());
+				party->inventory()->remove(shield->name(), shield->description());
 			}
 			else
 				std::cerr << "WARNING: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
@@ -1451,6 +1452,7 @@ void GameControl::drop_items()
 		std::stringstream ss;
 		std::string selected_item_name = party->inventory()->get_item(selection)->name();
 		std::string selected_item_plural_name = party->inventory()->get_item(selection)->plural_name();
+		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
 		std::vector<Item*>* all_tmp_items = party->inventory()->get(selection);
 		Item* tmp = (*all_tmp_items)[0];
 		// Item* tmp = party->inventory()->get_item(selection);
@@ -1495,6 +1497,7 @@ void GameControl::drop_items()
 			moTmp.removable = true;
 			moTmp.set_coords(party->x, party->y);
 			moTmp.set_icon(tmp->icon);
+			moTmp.set_description(selected_item_descr);
 			moTmp.lua_name = tmp->luaName();  // TODO: This can be empty. A problem? Handle this case?
 			moTmp.how_many = drop_how_many;
 
@@ -1503,7 +1506,7 @@ void GameControl::drop_items()
 		}
 
 		for (int i = 0; i < max(drop_how_many, 1); i++)
-			party->inventory()->remove(tmp->name());
+			party->inventory()->remove(tmp->name(), selected_item_descr);
 
 		if (size_tmp_items == 1)
 			ss << "Dropped a" << (Util::vowel(selected_item_name[0])? "n " : " ") << selected_item_name << ".";
@@ -1905,7 +1908,8 @@ void GameControl::get_item()
 							taking = curr_obj->how_many;
 						else
 							taking = boost::lexical_cast<int>(input);
-					} catch( boost::bad_lexical_cast const& ) {
+					}
+					catch (boost::bad_lexical_cast const&) {
 						printcon("Huh? Nothing taken");
 						return;
 					}
@@ -1935,6 +1939,8 @@ void GameControl::get_item()
 									gh.handle(*curr_ev, arena->get_map());
 							}
 						}
+
+						draw_status();
 					}
 					// See if some items are leftover after taking...
 					if (curr_obj->how_many - taking == 0) {

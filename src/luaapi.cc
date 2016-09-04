@@ -432,7 +432,7 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 				// Now add items to inventory...
 				for (int i = 0; i < selling_how_many; i++) {
 					std::cout << "Removing...\n";
-					party.inventory()->remove(item->name());
+					party.inventory()->remove(item->name(), "");  // Empty item descr. should be OK as only standard items can be sold.
 					party.set_gold(party.gold() + item_price);
 				}
 				GameControl::Instance().printcon("Was a pleasure doing business with you.");

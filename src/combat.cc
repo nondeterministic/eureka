@@ -436,7 +436,7 @@ void Combat::victory()
 
 			// Remove gold, if any, from bounty and add it to party's gold account instead
 			Gold tmp_gold;
-			int new_gold = _bounty_items.remove_all(tmp_gold.name());
+			int new_gold = _bounty_items.remove_all(tmp_gold.name(), "");
 			party->set_gold(party->gold() + new_gold);
 			GameControl::Instance().draw_status();
 

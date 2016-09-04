@@ -1,6 +1,8 @@
 TODO
 =====
 
+- Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
+
 - When saving a game, first delete old save game or previously lying around map data may be outdated.
   (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
 

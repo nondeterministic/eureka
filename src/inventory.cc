@@ -79,23 +79,26 @@ Item* Inventory::get_item(int n)
 			if (i == n)
 				return ptr->second.at(0);
 		}
+		std::cerr << "ERROR: inventory.cc (1): get_item() failed.\n";
 		return NULL; // TODO: This should never happen!
 	}
-	else
+	else {
+		std::cerr << "ERROR: inventory.cc (2): get_item() failed.\n";
 		return NULL;
+	}
 }
 
-// To be used in combination with zwin.select_item().  See gamecontrol::drop_items
-// for an example.
+// To be used in combination with zwin.select_item().  See gamecontrol::drop_items for an example.
 
 std::vector<Item*>* Inventory::get(int n)
 {
-  int i = 0;
-  for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, i++) {
-    if (i == n)
-      return &(ptr->second);
-  }
-  return NULL;
+	int i = 0;
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, i++) {
+		if (i == n)
+			return &(ptr->second);
+	}
+	std::cerr << "ERROR: inventory.cc: get() failed.\n";
+	return NULL;
 }
 
 /*
@@ -121,74 +124,69 @@ std::vector<line_tuple> Inventory::to_line_tuples(std::map<std::string, int>& se
 
 std::map<std::string, int> Inventory::list_wearables()
 {
-  std::map<std::string, int> result;
+	std::map<std::string, int> result;
 
-  for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
-    result.insert(std::make_pair(ptr->first, ptr->second.size()));
-  }
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
+		Item* item = ptr->second.at(0);
+		result.insert(std::make_pair(item->name() + " " + item->description(), ptr->second.size()));
+		// result.insert(std::make_pair(ptr->first, ptr->second.size()));
+	}
 
-  return result;
+	return result;
 }
 
 std::map<std::string, int> Inventory::list_all()
 {
-  std::map<std::string, int> result;
+	std::map<std::string, int> result;
 
-  for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
-    result.insert(std::make_pair(ptr->first, ptr->second.size()));
-  }
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
+		Item* item = ptr->second.at(0);
+		result.insert(std::make_pair(item->name() + " " + item->description(), ptr->second.size()));
+		// result.insert(std::make_pair(ptr->first, ptr->second.size()));
+	}
 
-  return result;
+	return result;
 }
 
 void Inventory::add(Item* item)
 {
-	// How many additional characters from the description of the item, if it has one, should we add behind the name in the inventory list?
-	const int addDescr = 9;
+	// Don't add gold to inventory. Just add to party stats.
+	if (item->name() == "gold coin") {
+		Party& party = Party::Instance();
+		party.set_gold(party.gold() + 1);
+		return;
+	}
 
 	try {
-		if (item->description().length() > 0) {
-			std::string descr = item->description();
-			std::vector<Item*>& old_items = _items.at(item->name() + ", " + descr.substr(0,addDescr) + "...");
-			_items.insert(std::make_pair(item->name() + ", " + descr.substr(0,addDescr) + "...", old_items));
-			old_items.push_back(item);
-		}
-		else {
-			std::vector<Item*>& old_items = _items.at(item->name());
-			_items.insert(std::make_pair(item->name(), old_items));
-			old_items.push_back(item);
-		}
+		std::vector<Item*>& old_items = _items.at(item->name() + item->description());
+		_items.insert(std::make_pair(item->name() + item->description(), old_items));
+		old_items.push_back(item);
 	}
 	catch (std::out_of_range& oor) {
 		std::vector<Item*> new_items;
 		new_items.push_back(item);
-
-		if (item->description().length() > 0) {
-			std::string descr = item->description();
-			_items.insert(std::make_pair(item->name() + ", " + descr.substr(0,addDescr) + "...", new_items));
-		}
-		else {
-			_items.insert(std::make_pair(item->name(), new_items));
-		}
+		_items.insert(std::make_pair(item->name() + item->description(), new_items));
 	}
 }
 
-// Removes the entry for an item named item_name from the inventory.
+// Removes the entry for an item named item_name and item_descr from the inventory.
 // Throws exception if item is not in inventory.
 // Frees memory!!
 
 void Inventory::remove(std::string item_name, std::string item_descr)
 {
 	try {
-		std::vector<Item*>& old_items = _items.at(item_name); // Get all items with that name
-		Item* removed_item = old_items.back();                // Get ptr to exactly one of those items
+		std::vector<Item*>& old_items = _items.at(item_name + item_descr); // Get all items with that name
+		Item* removed_item = old_items.back();                             // Get ptr to exactly one of those items
 
 		// If there were more than one item, remove one
 		if (old_items.size() > 1)
 			old_items.pop_back();
 		// If there was exactly one, or none item remove that only one.
-		else
-			_items.erase(item_name);
+		else {
+			if (_items.erase(item_name + item_descr) == 0)
+				std::cerr << "ERROR: inventory.cc (1): Tried to erase '" << item_name << item_descr << "' from inventory but failed.\n";
+		}
 
 		// Free memory, if necessary
 		if (removed_item != NULL)
@@ -199,26 +197,27 @@ void Inventory::remove(std::string item_name, std::string item_descr)
 	}
 }
 
-// Removes all entries for an item named item_name from the inventory and returns that number.
+// Removes all entries for an item named item_name and item_descr from the inventory and returns that number.
 // Throws exception if items are not in inventory.
 // Frees memory!!
 
-int Inventory::remove_all(std::string item_name)
+int Inventory::remove_all(std::string item_name, std::string item_descr)
 {
 	int how_many = 0;
 
 	try {
-		std::vector<Item*>& old_items = _items.at(item_name);
+		std::vector<Item*>& old_items = _items.at(item_name + item_descr);
 		how_many = old_items.size();
 
 		for (Item* i: old_items)
 			if (i != NULL)
 				delete(i);
 
-		_items.erase(item_name);
+		if (_items.erase(item_name + item_descr) == 0)
+			std::cerr << "ERROR: inventory.cc (2): Tried to erase '" << item_name << item_descr << "' from inventory but failed.\n";
 	}
 	catch (std::out_of_range& oor) {
-		std::cerr << "ERROR: inventory.cc: Failed to remove " << item_name << "\n";
+		std::cerr << "ERROR: inventory.cc: Failed to remove '" << item_name << item_descr << "'\n";
 	}
 
 	return how_many;
@@ -226,13 +225,19 @@ int Inventory::remove_all(std::string item_name)
 
 void Inventory::remove_all()
 {
-	std::vector<std::string> all_item_names;
+	std::vector<Item*> all_items;
 
-	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
-		all_item_names.push_back(ptr->first);
+//	std::vector<std::string> all_item_names;
+//	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
+//		all_item_names.push_back(ptr->first);
 
-	for (auto const& item_name: all_item_names)
-		remove_all(item_name);
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
+		Item* item = ptr->second.at(0); // Get representative Item from the beginning of vector
+		all_items.push_back(item);
+	}
+
+	for (auto const& item: all_items)
+		remove_all(item->name(), item->description());
 
 	if (size() > 0)
 		std::cerr << "WARNING: inventory.cc: Just tried to remove_all() but size() is " << size() << ".\n";

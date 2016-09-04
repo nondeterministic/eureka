@@ -95,7 +95,7 @@ void Party::rm_jimmylock()
 	}
 
 	JimmyLock l;
-	inventory()->remove(l.name());
+	inventory()->remove(l.name(), l.description());
 	_jlocks--;
 }
 
