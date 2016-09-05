@@ -21,12 +21,14 @@
 #include "attackers.hh"
 #include "action.hh"
 
+#include <sstream>
 #include <string>
 #include <iostream>
 
 MapObj::MapObj()
 {
 	is_random_monster = false;
+	id = "";
 	_descr = "";
 	_layer = 0;
 	_x = 0;
@@ -40,9 +42,7 @@ MapObj::MapObj()
 	move_mode = STATIC;
 	personality = NEUTRAL;
 	_combat_script = "";
-
 	_type = MAPOBJ_ITEM;
-
 	lock_type = UNLOCKED;
 	openable = false;
 }
@@ -51,6 +51,7 @@ MapObj::MapObj(const MapObj& m)
 {
 	is_random_monster = m.is_random_monster;
 	_layer = m._layer;
+	id = m.id;
 	_x = m._x;
 	_y = m._y;
 	_ox = m._ox;
@@ -65,11 +66,6 @@ MapObj::MapObj(const MapObj& m)
 	lock_type = m.lock_type;
 	openable = m.openable;
 	_descr = m._descr;
-
-	for (std::shared_ptr<Action> act: m._actions) {
-		_actions.push_back(act);
-	}
-
 	_init_script = m._init_script;
 	_combat_script = m._combat_script;
 
@@ -78,9 +74,10 @@ MapObj::MapObj(const MapObj& m)
 	// Not sure, if this will be a problem later...
 	_foes = m._foes;
 
-	// std::cout << "MAPOBJ DEEP-COPY!!!!!!!!!!!!!!!!!!!!\n";
+	for (std::shared_ptr<Action> act: m._actions) {
+		_actions.push_back(act);
+	}
 }
-
 
 bool MapObj::operator==(const MapObj& rhs) const
 {
@@ -104,13 +101,28 @@ bool MapObj::operator==(const MapObj& rhs) const
 			// TODO: Leave attackers out, because otherwise I need to include it here and therefore have a new dependency in the editor!
 			// _foes.size() == rhs._foes.size() && // TODO: I believe it's ok to not directly compare all foes, but BEWARE!
 			_actions.size() == rhs._actions.size() && // TODO: I believe it's ok to not directly compare all actions, but BEWARE!
-			_descr == rhs._descr
+			_descr == rhs._descr &&
+			id == rhs.id
 	;
 }
 
 MapObj::~MapObj()
 {
 	_actions.clear();
+}
+
+std::string MapObj::toString()
+{
+	stringstream ss;
+
+	ss << "MapObj: (x, y): (" << _x << ", " << _y << "), (ox, oy): (" << _ox << ", " << _oy <<
+			", icon: " << _icon << ", how_many: << " << how_many << ", type: " << _type <<
+			", removeable: " << removable << ", lua_name: " << lua_name << ", openable: " << openable <<
+			", move_mode: " << move_mode << ", personality: " << personality << ", lock_type: " << lock_type <<
+			", is_random_monster: " << is_random_monster << ", init_script: " << _init_script << ", combat_script: " << _combat_script <<
+			", actions.size(): " << _actions.size() << ", descr: " << _descr;
+
+	return ss.str();
 }
 
 // TODO: This seems buggy, as there is no Attackers deep-copy. (Why doesn't this cause trouble?!)

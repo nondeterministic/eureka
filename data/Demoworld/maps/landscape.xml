@@ -115,5 +115,13 @@
         <target_map>hut</target_map>
       </event>
     </action>
+    <action type="ACT_ON_ENTER" x="42" y="51">
+      <event type="EVENT_PRINTCON">Entering the castle of Velnebras...</event>
+      <event type="EVENT_ENTER_MAP">
+        <x>3</x>
+        <y>23</y>
+        <target_map>velnebras</target_map>
+      </event>
+    </action>
   </actions>
 </map>

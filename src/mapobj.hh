@@ -71,15 +71,16 @@ public:
 	std::string get_init_script_path();
 	void set_combat_script_path(std::string);
 	std::string get_combat_script_path();
-	bool removable;
-	std::string id;
-	std::string lua_name;
-	int how_many;
 	void add_action(std::shared_ptr<Action>);
 	std::vector<std::shared_ptr<Action>>* actions();
 	void set_foes(Attackers);
 	Attackers get_foes();
+	std::string toString();
 
+	bool removable;
+	std::string id;
+	std::string lua_name;
+	int how_many;
 	MOVE_MODE move_mode;
 	PERSONALITY personality;
 	LOCK_TYPE lock_type;
