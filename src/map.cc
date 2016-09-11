@@ -202,8 +202,6 @@ void Map::add_action(std::shared_ptr<Action> new_act)
 		if ((*curr_act)->get_x() == new_act->get_x() && (*curr_act)->get_y() == new_act->get_y())
 			return;
 
-	std::cout << "ADDED ACTION " << new_act->name() << " on x: " << new_act->get_x() << ", y: " << new_act->get_y() << "\n";
-
 	try {
 		_actions.push_back(std::shared_ptr<Action>(new_act));
 		_modified = true;
@@ -592,7 +590,6 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 				}
 			}
 
-			std::cout << "PARSED ACTION " << _act->name() << " on x: " << _act->get_x() << ", y: " << _act->get_y() << "\n";
 			parsed_actions.push_back(_act);
 		}
 	}

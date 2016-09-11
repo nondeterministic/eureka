@@ -400,6 +400,8 @@ void GameControl::move_objects()
 		if (map_obj->move_mode == ROAM) {
 			int move = random(0,16);  // That is, a 50% chance of keeping the same position
 
+			std::cout << "MOVE: " << move << "\n";
+
 			unsigned ox, oy;
 			map_obj->get_origin(ox, oy);
 
