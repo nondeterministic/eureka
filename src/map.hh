@@ -92,7 +92,6 @@ public:
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);
   std::vector<std::shared_ptr<Action>> get_actions(unsigned, unsigned);
-  void add_action(Action*);
   void add_action(std::shared_ptr<Action>);
   void add_event_to_action(unsigned, unsigned, std::shared_ptr<GameEvent>);
   void del_action(unsigned, unsigned);

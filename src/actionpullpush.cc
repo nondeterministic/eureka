@@ -9,6 +9,11 @@ ActionPullPush::ActionPullPush(int x, int y, const char* name)
   _name = name;
 }
 
+ActionPullPush::ActionPullPush(const char* name)
+{
+  _name = name;
+}
+
 ActionPullPush::~ActionPullPush()
 {
 }

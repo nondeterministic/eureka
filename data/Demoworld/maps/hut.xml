@@ -110,7 +110,6 @@
     <object x="7" y="12" ox="0" oy="0" icon_no="172" layer="0" id="torch2" lua_name="weapons::torch" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
-    <action type="ACT_ON_PULLPUSH"/>
     <action type="ACT_ON_LOOK" x="22" y="16">
       <event type="EVENT_PRINTCON">The tombstone reads: Edward 437 - 445. It makes you feel sad.</event>
     </action>

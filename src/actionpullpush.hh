@@ -8,6 +8,7 @@ class ActionPullPush : public Action
 {
 public:
   ActionPullPush(int, int, const char*);
+  ActionPullPush(const char*);
   ~ActionPullPush();
   std::string name();
 };

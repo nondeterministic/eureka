@@ -22,8 +22,12 @@
 #include <sstream>
 #include <cmath>
 #include <memory>
+
 #include <SDL.h>
 #include <SDL_image.h>
+
+#include <boost/filesystem/path.hpp>
+
 #include "outdoorssdleditor.hh"
 #include "../outdoorsicons.hh"
 #include "../world.hh"
@@ -32,30 +36,37 @@
 
 OutdoorsSDLEditor::OutdoorsSDLEditor(std::shared_ptr<Map> map)
 {
-  _map = map;
-  _top_hidden = 0;
-  _bot_hidden = 0;
-  _left_hidden = 0;
-  _right_hidden = 0;
-  _width = 0;
-  _height = 0;
-  _corner_tile_uneven_offset = 0;
+	_map = map;
+	_top_hidden = 0;
+	_bot_hidden = 0;
+	_left_hidden = 0;
+	_right_hidden = 0;
+	_width = 0;
+	_height = 0;
+	_corner_tile_uneven_offset = 0;
 
-  // Load hex grid
-  std::string icon_path = 
-    (std::string)DATADIR + "/" + 
-    (std::string)PACKAGE + 
-    "/data/leibniz/34x34hex.png";
-  _hex_icon = IMG_Load(icon_path.c_str());
-  if (!_hex_icon)
-    std::cerr << "Couldn't load hex icon: " << IMG_GetError() << std::endl;
+	// Load hex grid
+	boost::filesystem::path icon_path = boost::filesystem::path((std::string)(DATADIR));
+	icon_path /= (std::string)PACKAGE_NAME;
+	icon_path /= "data";
+	icon_path /= "leibniz";
+	icon_path /= "34x34hex.png";
 
-  SDL_SetAlpha(_hex_icon, !SDL_SRCALPHA, 255);
+	//	std::string icon_path =
+	//			(std::string)DATADIR + "/" +
+	//			(std::string)PACKAGE +
+	//			"/data/leibniz/34x34hex.png";
+
+	_hex_icon = IMG_Load(icon_path.c_str());
+	if (!_hex_icon)
+		std::cerr << "ERROR: outdoorssdleditor.cc: Couldn't load hex icon: " << IMG_GetError() << std::endl;
+
+	SDL_SetAlpha(_hex_icon, !SDL_SRCALPHA, 255);
 }
 
 OutdoorsSDLEditor::~OutdoorsSDLEditor(void)
 {
-  SDL_Quit();
+	SDL_Quit();
 }
 
 // x and y are screen coordinates in pixels
@@ -63,12 +74,12 @@ OutdoorsSDLEditor::~OutdoorsSDLEditor(void)
 int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Surface* brush)
 {
   if (x < 0 || y < 0) {
-    std::cerr << "Warning: put_tile has wrong coords." << std::endl;
+    std::cerr << "WARNING: outdoorssdleditor.cc: put_tile has wrong coords." << std::endl;
     return -1;
   }
 
   if (brush == NULL) {
-    std::cerr << "Warning: Brush to paint tile is NULL. " << std::endl;
+    std::cerr << "WARNING: outdoorssdleditor.cc: Brush to paint tile is NULL. " << std::endl;
     return 0;
   }
   
@@ -85,8 +96,7 @@ int OutdoorsSDLEditor::put_tile_hex(int hex_x, int hex_y, SDL_Surface* brush)
 
 int OutdoorsSDLEditor::get_screen_x(int hex_x) const
 {
-  return (hex_x - corner_tile_uneven_offset()) *
-    (World::Instance().get_outdoors_tile_size() - 10);
+  return (hex_x - corner_tile_uneven_offset()) * (World::Instance().get_outdoors_tile_size() - 10);
 }
 
 // Converts a y-hex coordinate to a screen coordinate
@@ -105,7 +115,7 @@ int OutdoorsSDLEditor::get_screen_y(int hex_y) const
 SDL_Rect OutdoorsSDLEditor::get_tile_coords(int x, int y) const
 {
   if (x < 0 || y < 0)
-    std::cerr << "Warning: get_tile_coords has wrong coords." << std::endl;
+    std::cerr << "WARNING: outdoorssdleditor.cc: get_tile_coords has wrong coords." << std::endl;
 
   SDL_Rect rect;
   rect.x = x;
@@ -117,32 +127,33 @@ SDL_Rect OutdoorsSDLEditor::get_tile_coords(int x, int y) const
 
 void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
 {
-  // In which rectangular cell did the user click?  Stored in
-  // these variables.
-  unsigned x_cell = x/(tile_size()-10),
-    y_cell = y/(tile_size()-1);
-  
-  // Local wrt. the box the user clicked on
-  int local_x = x - x_cell * (tile_size()-10);
-  int local_y = y - y_cell * (tile_size()-1);
-  
-  // The hex coordinates (!= cell coordinates, which are the
-  // rectangular ones, and hex ones are rather different)
-  int hex_x = 0, hex_y = 0;
-  
-  x_cell += corner_tile_uneven_offset();
+	// In which rectangular cell did the user click?  Stored in
+	// these variables.
+	unsigned x_cell = x/(tile_size()-10),
+			y_cell = y/(tile_size()-1);
 
-  // User clicked in cell where one big hexagon dominates
-  if (x_cell%2 == 0) {
-    if (local_x >= 9) {
-      // Big hex
-      hex_x = x_cell;
-      hex_y = y_cell*2;
-    }
-    else {
+	// Local wrt. the box the user clicked on
+	int local_x = x - x_cell * (tile_size()-10);
+	int local_y = y - y_cell * (tile_size()-1);
+
+	// The hex coordinates (!= cell coordinates, which are the
+	// rectangular ones, and hex ones are rather different)
+	int hex_x = 0, hex_y = 0;
+
+	x_cell += corner_tile_uneven_offset();
+
+	// User clicked in cell where one big hexagon dominates
+	if (x_cell%2 == 0) {
+		if (local_x >= 9) {
+			// Big hex
+			hex_x = x_cell;
+			hex_y = y_cell*2;
+		}
+		else {
+
       ///////////////////////////////////////////////////////
       // This was a b*tch to get right (20 or so years after
-      // high school :-P):
+	  // high school :-P):
       // 
       // We want to determine where we clicked in a rectangle
       // like this:
@@ -171,70 +182,70 @@ void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
       // That is, given local_x, we look if local_y is below
       // or above the expected y from the equation.
       ///////////////////////////////////////////////////////
-      
-      if ((float)local_y < -1.78 * (float)local_x + 16.02) {
-	// Upper left
-	hex_x = x_cell - 1;
-	hex_y = y_cell*2 - 1;
-      }
-      // Here I used point (0,16):
-      else if ((float)local_y > 1.78 * (float)local_x + 16.02) {
-	// Lower left
-	hex_x = x_cell - 1;
-	hex_y = y_cell*2 + 1;
-      }
-      else {
-	// Big hex
-	hex_x = x_cell;
-	hex_y = y_cell*2;
-      }
-    }
-  }
-  // User clicked in cell where there are two same size hexagons
-  else {
-    if (local_x >= 9 && local_y < 16) {
-      // Upper half
-      hex_x = x_cell;
-      hex_y = y_cell*2 - 1;
-    }
-    else if (local_x >=9 && local_y >= 16) {
-      // Lower half
-      hex_x = x_cell;
-      hex_y = y_cell*2 + 1;
-    }
-    // The following calculations in the else case are analoguous to
-    // the above ones:
-    else {
-      if (local_y < 16) {
-	if ((float)local_y > 1.78 * (float)local_x) {
-	  // Small triangle
-	  hex_x = x_cell - 1;
-	  hex_y = y_cell*2;
+
+			if ((float)local_y < -1.78 * (float)local_x + 16.02) {
+				// Upper left
+				hex_x = x_cell - 1;
+				hex_y = y_cell*2 - 1;
+			}
+			// Here I used point (0,16):
+			else if ((float)local_y > 1.78 * (float)local_x + 16.02) {
+				// Lower left
+				hex_x = x_cell - 1;
+				hex_y = y_cell*2 + 1;
+			}
+			else {
+				// Big hex
+				hex_x = x_cell;
+				hex_y = y_cell*2;
+			}
+		}
 	}
+	// User clicked in cell where there are two same size hexagons
 	else {
-	  // Upper half
-	  hex_x = x_cell;
-	  hex_y = y_cell*2 - 1;
+		if (local_x >= 9 && local_y < 16) {
+			// Upper half
+			hex_x = x_cell;
+			hex_y = y_cell*2 - 1;
+		}
+		else if (local_x >=9 && local_y >= 16) {
+			// Lower half
+			hex_x = x_cell;
+			hex_y = y_cell*2 + 1;
+		}
+		// The following calculations in the else case are analoguous to
+		// the above ones:
+		else {
+			if (local_y < 16) {
+				if ((float)local_y > 1.78 * (float)local_x) {
+					// Small triangle
+					hex_x = x_cell - 1;
+					hex_y = y_cell*2;
+				}
+				else {
+					// Upper half
+					hex_x = x_cell;
+					hex_y = y_cell*2 - 1;
+				}
+			}
+			else if (local_y >= 16) {
+				if ((float)local_y > -1.78 * (float)local_x + 33) {
+					// Lower half
+					hex_x = x_cell;
+					hex_y = y_cell*2 + 1;
+				}
+				else {
+					// Small triangle
+					hex_x = x_cell - 1;
+					hex_y = y_cell*2;
+				}
+			}
+		}
 	}
-      }
-      else if (local_y >= 16) {
-	if ((float)local_y > -1.78 * (float)local_x + 33) {
-	  // Lower half
-	  hex_x = x_cell;
-	  hex_y = y_cell*2 + 1;
-	}
-	else {
-	  // Small triangle
-	  hex_x = x_cell - 1;
-	  hex_y = y_cell*2;
-	}
-      }
-    }
-  }
-  
-  // Now take into account the x-offset, too
-  map_x = hex_x + _left_hidden/(tile_size()-10) - corner_tile_uneven_offset();
-  map_y = hex_y + _top_hidden/(tile_size()-1)*2;
+
+	// Now take into account the x-offset, too
+	map_x = hex_x + _left_hidden/(tile_size()-10) - corner_tile_uneven_offset();
+	map_y = hex_y + _top_hidden/(tile_size()-1)*2 + 1;  // TODO: I INSERTED THE +1 REMOVE AGAIN!
 }
 
 void OutdoorsSDLEditor::set_grid(bool state)
@@ -243,95 +254,92 @@ void OutdoorsSDLEditor::set_grid(bool state)
  
 bool OutdoorsSDLEditor::grid_on(void) const 
 { 
-  return true;
+	return true;
 }
 
 std::shared_ptr<Map> OutdoorsSDLEditor::get_map(void) const
 {
-  return _map;
+	return _map;
 }
 
 void OutdoorsSDLEditor::adjust_offsets(int top, int bot, int left, int right)
 {
-  _top_hidden += top;
-  _bot_hidden += bot;
-  _left_hidden += left;
-  _right_hidden += right;
+	_top_hidden += top;
+	_bot_hidden += bot;
+	_left_hidden += left;
+	_right_hidden += right;
 }
 
 void OutdoorsSDLEditor::set_offsets(unsigned top,  unsigned bot, unsigned left, unsigned right)
 {
-  _top_hidden = top;
-  _bot_hidden = bot;
-  _left_hidden = left;
-  _right_hidden = right;
+	_top_hidden = top;
+	_bot_hidden = bot;
+	_left_hidden = left;
+	_right_hidden = right;
 }
 
 Offsets OutdoorsSDLEditor::move(int dir)
 {
-  switch (dir) {
-  case DIR_UP:
-    if (_top_hidden >= (tile_size()-1))
-      adjust_offsets(-(tile_size()-1), (tile_size()-1), 0, 0);
-    break;
-  case DIR_DOWN:
-    if (_bot_hidden >= (tile_size()-1))
-      adjust_offsets((tile_size()-1), -(tile_size()-1), 0, 0);
-    break;
-  case DIR_LEFT:
-    if (_left_hidden >= (tile_size()-10))
-      adjust_offsets(0, 0, -(tile_size()-10), (tile_size()-10));
-    break;
-  case DIR_RIGHT:
-    if (_right_hidden >= (tile_size()-10))
-      adjust_offsets(0, 0, (tile_size()-10), -(tile_size()-10));      
-    break;
-  }
-  
-  return offsets();
+	switch (dir) {
+	case DIR_UP:
+		if (_top_hidden >= (tile_size()-1))
+			adjust_offsets(-(tile_size()-1), (tile_size()-1), 0, 0);
+		break;
+	case DIR_DOWN:
+		if (_bot_hidden >= (tile_size()-1))
+			adjust_offsets((tile_size()-1), -(tile_size()-1), 0, 0);
+		break;
+	case DIR_LEFT:
+		if (_left_hidden >= (tile_size()-10))
+			adjust_offsets(0, 0, -(tile_size()-10), (tile_size()-10));
+		break;
+	case DIR_RIGHT:
+		if (_right_hidden >= (tile_size()-10))
+			adjust_offsets(0, 0, (tile_size()-10), -(tile_size()-10));
+		break;
+	}
+
+	return offsets();
 }
 
-Offsets OutdoorsSDLEditor::determine_offsets(unsigned screen_width, 
-					     unsigned screen_height)
+Offsets OutdoorsSDLEditor::determine_offsets(unsigned screen_width, unsigned screen_height)
 {
-  // Determining the exact width of the hex map in pixels is a bit of
-  // a bitch...
-  unsigned map_width  = (get_map()->width())*(tile_size()-10) + 9;
-  // ...height is easy though...
-  unsigned map_height = get_map()->height()*(tile_size()-1);
-  
-  // Does the map height fit into the window height?
-  if (map_height <= screen_height) {
-    _bot_hidden = 0;
-    _top_hidden = 0;
-  }
-  else {
-    if (screen_height + _top_hidden < map_height)
-      _bot_hidden = map_height - _top_hidden - screen_height;
-    else
-      _bot_hidden = 0;
-  }
-  
-  if (map_width <= screen_width) {
-    _left_hidden = 0;
-    _right_hidden = 0;
-  }
-  else {
-    if (screen_width + _left_hidden < map_width)
-      _right_hidden = map_width - _left_hidden - screen_width;
-    else
-      _right_hidden = 0;
-  }
-  
-  return offsets();
+	// Determining the exact width of the hex map in pixels is a bit of a bitch...
+	unsigned map_width  = (get_map()->width())*(tile_size()-10) + 9;
+	// ...height is easy though...
+	unsigned map_height = get_map()->height()*(tile_size()-1);
+
+	// Does the map height fit into the window height?
+	if (map_height <= screen_height) {
+		_bot_hidden = 0;
+		_top_hidden = 0;
+	}
+	else {
+		if (screen_height + _top_hidden < map_height)
+			_bot_hidden = map_height - _top_hidden - screen_height;
+		else
+			_bot_hidden = 0;
+	}
+
+	if (map_width <= screen_width) {
+		_left_hidden = 0;
+		_right_hidden = 0;
+	}
+	else {
+		if (screen_width + _left_hidden < map_width)
+			_right_hidden = map_width - _left_hidden - screen_width;
+		else
+			_right_hidden = 0;
+	}
+
+	return offsets();
 }
 
-// Returns 0 when tile hex-x-coordinate in the upper left corner is
-// even, otherwise 1.
+// Returns 0 when tile hex-x-coordinate in the upper left corner is even, otherwise 1.
 
 int OutdoorsSDLEditor::corner_tile_uneven_offset(void) const
 {
-  return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
+	return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
 }
 
 void OutdoorsSDLEditor::show_map(void)
@@ -339,46 +347,43 @@ void OutdoorsSDLEditor::show_map(void)
 	if (!_show_map && !_show_act)
 		return;
 
-	// Recall: x and y are absolute map coordinates on the hex!  x2 and
-	// y2 are the relative coordinates to draw hexes on the screen.
+	// Recall: x and y are absolute map coordinates on the hex!
+	// x2 and y2 are the relative coordinates to draw hexes on the screen.
 
 	for (unsigned x = _left_hidden/(tile_size()-10),
 			x2 = corner_tile_uneven_offset();
 			x < _map->width()-_right_hidden/(tile_size() - 10);
-			x++, x2++) {
-		for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
+			x++, x2++)
+	{
+		// TODO: The loop should look exactly as in hexarena.cc:
+		// for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
+		// However, if I don't remove the last bit from this line, then the y-count is off by one.
+		// I suspect, this is due to the fact that, unlike in the game, we don't hide the first
+		// row of the map.
+		for (unsigned y = _top_hidden/(tile_size()-1)*2 + 1,
 				y2 = (x2%2 == 0)? 0 : 1;
 				y < (_map->height()*2)-(_bot_hidden/(tile_size()-1));
-				y += 2, y2 += 2) {
-			// std::cout << "Drawing (" << x << ", " << y << ")" << std::endl;
+				y += 2, y2 += 2)
+		{
 			if (_show_map) {
 				int tileno = 0;
 				tileno = _map->get_tile(x, y);
 				int puttile_errno = 0;
 
 				if (tileno < 0)
-					std::cerr
-					<< "Invalid tile number in OutdoorsSDLEditor::show_map(): "
-					<< tileno
-					<< std::endl;
+					std::cerr << "ERROR: outdoorssdleditor.cc: Invalid tile number in OutdoorsSDLEditor::show_map(): " << tileno << std::endl;
 
-				if ((puttile_errno =
-						put_tile_hex(x2, y2,
-								OutdoorsIcons::Instance().get_sdl_icon(tileno)))
-						!= 0)
-					std::cerr << "put_tile() returned " <<  puttile_errno
-					<< " in OutdoorsSDLEditor::show_map()." << std::endl;
+				if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
+					std::cerr << "ERROR: outdoorssdleditor.cc: put_tile() returned " <<  puttile_errno << " in OutdoorsSDLEditor::show_map()." << std::endl;
 			}
 
 			if (_show_act) {
 				std::vector<std::shared_ptr<Action>> _acts = _map->get_actions(x, y);
-				if (_acts.size() == 0) {
-					// std::cout << "Putting action ("
-					//     << x << ", " << y << ")"
-					//     << " to " << "(" << x2 << ", " << y2 << ")"
-					//     << std::endl;
-					put_tile_hex(x2, y2,
-							OutdoorsIcons::Instance().get_sdl_icon(20));
+
+				if (_acts.size() > 0) {
+					// std::cout << "Actions: " << _acts.size() << "\n";
+					// std::cout << "Putting action (" << x << ", " << y << ")" << " to " << "(" << x2 << ", " << y2 << ")" << std::endl;
+					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(20));
 				}
 			}
 		}
@@ -387,14 +392,14 @@ void OutdoorsSDLEditor::show_map(void)
 
 unsigned OutdoorsSDLEditor::tile_size(void) const
 {
-  return World::Instance().get_outdoors_tile_size();
+	return World::Instance().get_outdoors_tile_size();
 }
 
 void OutdoorsSDLEditor::resize(unsigned w, unsigned h)
 {
-  _width = w;
-  _height = h;
-  _sdl_surf = SDL_SetVideoMode(_width, _height, 0, SDL_RESIZABLE);
+	_width = w;
+	_height = h;
+	_sdl_surf = SDL_SetVideoMode(_width, _height, 0, SDL_RESIZABLE);
 }
 
 void OutdoorsSDLEditor::show_grid(void)
@@ -451,36 +456,36 @@ void OutdoorsSDLEditor::open_display(Gtk::Socket* socket,
 				     unsigned width, 
 				     unsigned height)
 {
-  char* winhack = new char[32];
-  _width = width; _height = height;
+	char* winhack = new char[32];
+	_width = width; _height = height;
 
-  // Make SDL windows appear inside socket window
-  std::stringstream sdlhack;
-  sdlhack << "SDL_WINDOWID=" << socket->get_id() << std::ends;
-  sprintf(winhack,sdlhack.str().c_str());
-  SDL_putenv(winhack);
-    
-  // Init SDL window
-  if (SDL_Init(SDL_INIT_VIDEO))
-    throw std::runtime_error("Error initialising SDL.");
-  else
-    _sdl_surf = SDL_SetVideoMode(_width, _height, 0, 
-				 SDL_RESIZABLE | SDL_DOUBLEBUF);
-  
-  delete winhack;
+	// Make SDL windows appear inside socket window
+	std::stringstream sdlhack;
+	sdlhack << "SDL_WINDOWID=" << socket->get_id() << std::ends;
+	sprintf(winhack,sdlhack.str().c_str());
+	SDL_putenv(winhack);
+
+	// Init SDL window
+	if (SDL_Init(SDL_INIT_VIDEO))
+		throw std::runtime_error("ERROR: outdoorssdleditor.cc: Error initialising SDL.");
+	else
+		_sdl_surf = SDL_SetVideoMode(_width, _height, 0,
+				SDL_RESIZABLE | SDL_DOUBLEBUF);
+
+	delete winhack;
 }
 
 void OutdoorsSDLEditor::clear(void)
 {
-  SDL_FillRect(SDL_GetVideoSurface(), NULL, 0);
+	SDL_FillRect(SDL_GetVideoSurface(), NULL, 0);
 }
 
 Offsets OutdoorsSDLEditor::offsets(void)
 {
-  Offsets new_offsets;
-  new_offsets.top = _top_hidden;
-  new_offsets.bot = _bot_hidden;
-  new_offsets.left = _left_hidden;
-  new_offsets.right = _right_hidden;
-  return new_offsets;
+	Offsets new_offsets;
+	new_offsets.top = _top_hidden;
+	new_offsets.bot = _bot_hidden;
+	new_offsets.left = _left_hidden;
+	new_offsets.right = _right_hidden;
+	return new_offsets;
 }

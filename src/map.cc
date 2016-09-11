@@ -194,12 +194,6 @@ std::pair<int,int> Map::get_initial_coords()
 		return std::make_pair(initial_x, initial_y);
 }
 
-void Map::add_action(Action* new_act)
-{
-	std::shared_ptr<Action> ptr(new_act);
-	add_action(ptr);
-}
-
 void Map::add_action(std::shared_ptr<Action> new_act)
 {
 	// Only one action per icon is allowed!  Theoretically more could be done but then it's difficult in the editor
@@ -207,6 +201,8 @@ void Map::add_action(std::shared_ptr<Action> new_act)
 	for (auto curr_act = _actions.begin(); curr_act != _actions.end(); curr_act++)
 		if ((*curr_act)->get_x() == new_act->get_x() && (*curr_act)->get_y() == new_act->get_y())
 			return;
+
+	std::cout << "ADDED ACTION " << new_act->name() << " on x: " << new_act->get_x() << ", y: " << new_act->get_y() << "\n";
 
 	try {
 		_actions.push_back(std::shared_ptr<Action>(new_act));
@@ -431,9 +427,8 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 	if (actions_node.size() > 0) {
 		std::vector<std::shared_ptr<Action>> actions = parse_actions_node(actions_node.front());
 
-		for (auto action = actions.begin(); action != actions.end(); ++action) {
-			new_obj.add_action(*action);
-		}
+		for (auto action: actions)
+			new_obj.add_action(action);
 	}
 
 	// Parse description if there was one (see code at beginning of function).
@@ -441,7 +436,7 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(description_node.front());
 		if (nodeElement) {
 			new_obj.set_description(nodeElement->get_child_text()->get_content());
-			std::cout << "DESCRIPTION READ: " << new_obj.description() << "\n";
+			// std::cout << "DESCRIPTION READ: " << new_obj.description() << "\n";
 		}
 		else
 			std::cerr << "WARNING: map.cc: Read empty object-description (<description>) tag in map '" << _name << "'.\n";
@@ -486,33 +481,35 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 
 			// Determine which action was parsed, if any
 			if (curr_act_name == "ACT_ON_ENTER")
-				_act = std::make_shared<ActionOnEnter>(atoi(nodeElement->get_attribute_value("x").c_str()),
-   	   	   	   	   	                     	 	 	   atoi(nodeElement->get_attribute_value("y").c_str()),
-													   "ACT_ON_ENTER");
+				_act = std::make_shared<ActionOnEnter>(atoi(nodeElement->get_attribute_value("x").c_str()), atoi(nodeElement->get_attribute_value("y").c_str()), "ACT_ON_ENTER");
 			else if (curr_act_name == "ACT_ON_PULLPUSH") {
-				_act = std::make_shared<ActionPullPush>(atoi(nodeElement->get_attribute_value("x").c_str()),
-							                            atoi(nodeElement->get_attribute_value("y").c_str()),
-														"ACT_ON_PULLPUSH");
-			}
-			else if (curr_act_name == "ACT_ON_OPENED") {
-				_act = std::make_shared<ActionOpened>("ACT_ON_OPENED");
-			}
-			else if (curr_act_name == "ACT_ON_TAKE") {
-				_act = std::make_shared<ActionOnTake>("ACT_ON_TAKE");
-			}
-			else if (curr_act_name == "ACT_ON_LOOK") {
 				std::string xs = nodeElement->get_attribute_value("x");
 				std::string ys = nodeElement->get_attribute_value("y");
 
-				std::cout << "ADDED\n";
+				if (xs.length() > 0 && ys.length() > 0)
+					_act = std::make_shared<ActionPullPush>(atoi(xs.c_str()), atoi(ys.c_str()), "ACT_ON_PULLPUSH");
+				else
+					_act = std::make_shared<ActionPullPush>("ACT_ON_PULLPUSH");
+
+				//_act = std::make_shared<ActionPullPush>(atoi(nodeElement->get_attribute_value("x").c_str()), atoi(nodeElement->get_attribute_value("y").c_str()), "ACT_ON_PULLPUSH");
+			}
+			else if (curr_act_name == "ACT_ON_OPENED")
+				_act = std::make_shared<ActionOpened>("ACT_ON_OPENED"); // Can only be associated with an object
+			else if (curr_act_name == "ACT_ON_TAKE")
+				_act = std::make_shared<ActionOnTake>("ACT_ON_TAKE");   // Can only be associated with an object
+			else if (curr_act_name == "ACT_ON_LOOK") {
+				std::string xs = nodeElement->get_attribute_value("x");
+				std::string ys = nodeElement->get_attribute_value("y");
 
 				if (xs.length() > 0 && ys.length() > 0)
 					_act = std::make_shared<ActionOnLook>(atoi(xs.c_str()), atoi(ys.c_str()), "ACT_ON_LOOK");
 				else
 					_act = std::make_shared<ActionOnLook>("ACT_ON_LOOK");
 			}
-			else
+			else {
+				std::cerr << "WARNING: map.cc: Unrecognised element inside <actions> node.\n";
 				continue;
+			}
 
 			// Get all the event nodes for an action
 			xmlpp::Node::NodeList events = (*action)->get_children();
@@ -595,8 +592,8 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 				}
 			}
 
+			std::cout << "PARSED ACTION " << _act->name() << " on x: " << _act->get_x() << ", y: " << _act->get_y() << "\n";
 			parsed_actions.push_back(_act);
-			// add_action(_act);
 		}
 	}
 

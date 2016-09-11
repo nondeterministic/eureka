@@ -238,9 +238,13 @@ void IndoorsSDLEditor::show_map(void)
 
 			if (_show_act) {
 				std::vector<std::shared_ptr<Action>> _acts = _map->get_actions(x, y);
+
 				// TODO: Below, 150 is just some randomly chosen icon...
-				if (_acts.size() > 0)
+				if (_acts.size() > 0) {
+					// std::cout << "Actions: " << _acts.size() << "\n";
+					// std::cout << "Putting action (" << x << ", " << y << ")" << " to " << "(" << x2 << ", " << y2 << ")" << std::endl;
 					put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(150));
+				}
 			}
 		}
 	}
