@@ -400,8 +400,6 @@ void GameControl::move_objects()
 		if (map_obj->move_mode == ROAM) {
 			int move = random(0,16);  // That is, a 50% chance of keeping the same position
 
-			std::cout << "MOVE: " << move << "\n";
-
 			unsigned ox, oy;
 			map_obj->get_origin(ox, oy);
 
@@ -409,7 +407,8 @@ void GameControl::move_objects()
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
 						abs(obj_x - ox) <= 2 && abs(obj_y - oy - 1) <= 2 &&
 							walkable(obj_x, obj_y - 1) &&
-								(obj_x != party->x || obj_y - 1 != party->y)) {
+								(obj_x != party->x || obj_y - 1 != party->y))
+				{
 					map_obj->set_coords(obj_x, obj_y - 1);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				}
@@ -418,7 +417,8 @@ void GameControl::move_objects()
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
 					abs(obj_x - ox) <= 2 && abs(obj_y - oy + 1) <= 2 &&
 						walkable(obj_x, obj_y + 1) &&
-								(obj_x != party->x || obj_y + 1 != party->y)) {
+								(obj_x != party->x || obj_y + 1 != party->y))
+				{
 					map_obj->set_coords(obj_x, obj_y + 1);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				}
@@ -427,7 +427,8 @@ void GameControl::move_objects()
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
 					abs(obj_x - ox - 1) <= 2 && abs(obj_y - oy) <= 2 &&
 						walkable(obj_x - 1, obj_y) &&
-							(obj_x - 1 != party->x || obj_y != party->y)) {
+							(obj_x - 1 != party->x || obj_y != party->y))
+				{
 					map_obj->set_coords(obj_x - 1, obj_y);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				}
@@ -436,7 +437,8 @@ void GameControl::move_objects()
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
 					abs(obj_x - ox + 1) <= 2 && abs(obj_y - oy) <= 2 &&
 						walkable(obj_x + 1, obj_y) &&
-							(obj_x + 1 != party->x || obj_y != party->y)) {
+							(obj_x + 1 != party->x || obj_y != party->y))
+				{
 					map_obj->set_coords(obj_x + 1, obj_y);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				}

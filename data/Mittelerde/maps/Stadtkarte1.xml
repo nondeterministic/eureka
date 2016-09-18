@@ -52,7 +52,7 @@
     <object x="31" y="9" ox="0" oy="0" icon_no="594" layer="0" id="1" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="2" y="8" ox="0" oy="0" icon_no="33" layer="0" id="balloon" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="30" y="9" ox="0" oy="0" icon_no="593" layer="0" id="3" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="23" y="17" ox="0" oy="0" icon_no="64" layer="0" id="4monk" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/stadtkarte_monk.lua" />
+    <object x="23" y="17" ox="23" oy="17" icon_no="64" layer="0" id="4monk" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/stadtkarte_monk.lua" />
     <object x="11" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="34" y="7" ox="0" oy="0" icon_no="647" layer="0" id="5" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="22" y="3" ox="0" oy="0" icon_no="171" layer="0" id="prisondoor" lua_name="" how_many="1" removable="no" locked="normal" personality="neutral" move_mode="static" type="item">
@@ -69,7 +69,7 @@
     <object x="26" y="17" ox="0" oy="0" icon_no="137" layer="0" id="7cow" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="30" y="5" ox="0" oy="0" icon_no="642" layer="0" id="8" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="5" ox="17" oy="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
-    <object x="22" y="10" ox="22" oy="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" personality="righteous" move_mode="static" type="person" init_script="people/boy_stadtkarte.lua"/>
+    <object x="22" y="10" ox="22" oy="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" personality="righteous" move_mode="roam" type="person" init_script="people/boy_stadtkarte.lua"/>
     <object x="11" y="2" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
     <object x="23" y="3" ox="0" oy="0" icon_no="308" layer="0" id="10" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
     <object x="11" y="7" ox="0" oy="0" icon_no="93" layer="0" id="11" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
