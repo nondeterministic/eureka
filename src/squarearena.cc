@@ -1,3 +1,22 @@
+// This source file is part of eureka
+//
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include <iostream>
 #include <list>
 #include <utility>
@@ -57,12 +76,12 @@ void SquareArena::set_SDL_surface(SDL_Surface* s)
 int SquareArena::put_tile(int x, int y, SDL_Surface* brush)
 {
   if (x < 0 || y < 0) {
-    std::cerr << "WARNING: put_tile has wrong coords." << std::endl;
+    std::cerr << "WARNING: squarearena.cc: put_tile has wrong coords." << std::endl;
     return -1;
   }
 
   if (brush == NULL) {
-    std::cerr << "WARNING: Brush to paint tile is NULL. " << std::endl;
+    std::cerr << "WARNING: squarearena.cc: Brush to paint tile is NULL. " << std::endl;
     return 0;
   }
 
@@ -75,7 +94,7 @@ int SquareArena::put_tile(int x, int y, SDL_Surface* brush)
 SDL_Rect SquareArena::get_tile_coords(int x, int y) const
 {
   if (x < 0 || y < 0)
-    std::cerr << "Warning: get_tile_coords has wrong coords." << std::endl;
+    std::cerr << "WARNING: squarearena.cc: get_tile_coords has wrong coords." << std::endl;
 
   SDL_Rect rect;
   rect.x = tile_size() * x;
@@ -325,17 +344,20 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		}
 	}
 
-	// And here is a row of objects, we filled.  Problem is, that the row of icons can be longer or shorter than the row of icons as there
-	// can be 0 to n objects per icon on the map.  So with this naiv scanning of objects, there sometimes could be odd effects in the
-	// view of the player.
+	// And here is a row of objects, we filled.  Problem is, that the row of object icons can be longer or shorter than the row of map
+	// icons as there can be 0 to n objects per icon on the map.  So with this naive scanning of object icons, there sometimes could be
+	// odd effects in the view of the player.
 	if (row_objs.size() > 0) {
 		semitrans = 0;
+		int how_man_are_intransparent = 0;
 
 		for (unsigned i = 0; i < row_objs.size(); i++) {
 			IconProps* props = IndoorsIcons::Instance().get_props(row_objs[i]);
 
-			if (props && (props->_trans == IT_NOT))
-				return false;
+			if (props && (props->_trans == IT_NOT)) {
+				if (++how_man_are_intransparent == 2)
+					return false;
+			}
 			else if (props && (props->_trans == IT_SEMI)) {
 				// Decrease viewing distance by 4 on semi transparent icons, but
 				// not when standing on one (i.e., i > 0), rather only when
@@ -490,7 +512,7 @@ void SquareArena::show_map(int x_width, int y_width)
 					}
 
 					if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
-						std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+						std::cerr << "WARNING: squarearena.cc: put_tile() returned " << puttile_errno << " in show_map()." << std::endl;
 				}
 			}
 
@@ -508,7 +530,7 @@ void SquareArena::show_map(int x_width, int y_width)
 					if (in_los(x, y, party_x, party_y)) {
 						if ((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) || is_illuminated((int)x, (int)y)) {
 							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
-								std::cerr << "WARNING: put_tile() returned " << puttile_errno << " in SquareArena::show_map()." << std::endl;
+								std::cerr << "WARNING: squarearena.cc: put_tile() returned " << puttile_errno << " in show_map()." << std::endl;
 						}
 					}
 
@@ -573,37 +595,37 @@ void SquareArena::get_center_coords(int& x, int& y)
 
 std::pair<int, int> SquareArena::show_party(int x, int y)
 {
-  // Draw party in the middle on default values
-  if (x == -1 && y == -1)
-    get_center_coords(x, y);
+	// Draw party in the middle on default values
+	if (x == -1 && y == -1)
+		get_center_coords(x, y);
 
-  // TODO: else draw custom position
-  // ...
+	// TODO: else draw custom position
+	// ...
 
-  if (!_party_is_moving)
-    {
-      switch (_party_anim)
-        {
-        case 40:
-          _party_anim = 191;
-          break;
-        default:
-          _party_anim = 40;
-          break;
-        }
-    }
+	if (!_party_is_moving)
+	{
+		switch (_party_anim)
+		{
+		case 40:
+			_party_anim = 191;
+			break;
+		default:
+			_party_anim = 40;
+			break;
+		}
+	}
 
-  // 40 and 191 are the party icon
-  put_tile(x, y, IndoorsIcons::Instance().get_sdl_icon(_party_anim));
+	// 40 and 191 are the party icon
+	put_tile(x, y, IndoorsIcons::Instance().get_sdl_icon(_party_anim));
 
-  int mx, my;
-  screen_to_map(x, y, mx, my);
+	int mx, my;
+	screen_to_map(x, y, mx, my);
 
-  std::pair<int, int> new_coords;
-  new_coords.first = mx;
-  new_coords.second = my;
+	std::pair<int, int> new_coords;
+	new_coords.first = mx;
+	new_coords.second = my;
 
-  return new_coords;
+	return new_coords;
 }
 
 void SquareArena::update()
