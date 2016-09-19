@@ -1018,6 +1018,7 @@ void GameControl::open_act()
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
+			int icon = the_obj.get_icon();
 
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK || the_obj.lock_type == MAGIC_LOCK) {
@@ -1037,6 +1038,13 @@ void GameControl::open_act()
 						}
 					}
 				}
+			}
+			// We implement some default behaviour for doors here: if they're not explicityly set in their object properties as locked, magic, etc.
+			// we let the user simply open them.
+			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("door") != std::string::npos) {
+				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for doors triggered.\n";
+				(new GameEventHandler())->handle_event_delete_object(arena->get_map(), &the_obj);
+				return;
 			}
 		}
 	}
