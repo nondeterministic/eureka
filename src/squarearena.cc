@@ -21,6 +21,10 @@
 #include <list>
 #include <utility>
 #include <memory>
+#include <algorithm>
+
+#include <boost/unordered_map.hpp>
+
 #include "squarearena.hh"
 #include "world.hh"
 #include "map.hh"
@@ -30,6 +34,7 @@
 #include "soundsample.hh"
 #include "playlist.hh"
 #include "config.h"
+
 
 SquareArena::SquareArena(std::shared_ptr<Map> map)
 {
@@ -176,31 +181,16 @@ Offsets SquareArena::determine_offsets()
 			_right_hidden = 0;
 	}
 
-//	std::cout << "top_hidden: " << _top_hidden << ", "
-//			  << "bot_hidden: " << _bot_hidden << ", "
-//	          << "left_hidden: " << _left_hidden << ", "
-//	          << "right_hidden: " << _right_hidden << "\n";
-
 	return offsets();
 }
-
-// Returns 0 when tile hex-x-coordinate in the upper left corner is
-// even, otherwise 1.
-
-// int SquareArena::corner_tile_uneven_offset(void) const
-// {
-//   return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
-// }
 
 // Convert the relative screen hex coordinates to the absolute map
 // hex coordinates.
 
 void SquareArena::screen_to_map(int sx, int sy, int& mx, int& my)
 {
-  mx = _left_hidden / (tile_size()) + sx; // - corner_tile_uneven_offset();
-  my = _top_hidden / (tile_size()) + sy; // - ((sx%2 == 0)? 1 : 0);
-  // std::cerr << "screen_to_map: " << sx << ", " << sy
-  //        << " => " << mx << ", " << my << "\n";
+	mx = _left_hidden / (tile_size()) + sx; // - corner_tile_uneven_offset();
+	my = _top_hidden / (tile_size()) + sy; // - ((sx%2 == 0)? 1 : 0);
 }
 
 /// Convert absolute map coordinates to screen hex coordinates.  The
@@ -214,21 +204,16 @@ void SquareArena::screen_to_map(int sx, int sy, int& mx, int& my)
 
 void SquareArena::map_to_screen(int mx, int my, int& sx, int& sy)
 {
-  sx = -1;
-  sy = -1;
+	sx = -1;
+	sy = -1;
 
-  if (mx >= (int) (_left_hidden / (tile_size())) &&
-      mx <= (int) (get_map()->width() - _right_hidden / (tile_size())))
-    sx = mx - _left_hidden / (tile_size()); // + corner_tile_uneven_offset();
+	if (mx >= (int) (_left_hidden / (tile_size())) &&
+			mx <= (int) (get_map()->width() - _right_hidden / (tile_size())))
+		sx = mx - _left_hidden / (tile_size()); // + corner_tile_uneven_offset();
 
-  if (my >= (int) (_top_hidden / (tile_size())) &&
-      my <= (int) (get_map()->height() - _bot_hidden / (tile_size())))
-    sy = my - _top_hidden / (tile_size());
-
-  // std::cerr << "Party x,y: " << Party::Instance().x << ", "
-  //        << Party::Instance().y << "\n";
-  // std::cerr << "map_to_screen: " << mx << ", " << my
-  //        << " => " << sx << ", " << sy << "\n";
+	if (my >= (int) (_top_hidden / (tile_size())) &&
+			my <= (int) (get_map()->height() - _bot_hidden / (tile_size())))
+		sy = my - _top_hidden / (tile_size());
 }
 
 bool SquareArena::in_los(int xi, int yi, int xp, int yp)
@@ -269,11 +254,18 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		ystep = -1;
 
 	std::vector<int> row, row_objs;
+
+	// This is a temporary object where we put for each location on the map, i.e., each element in the row, ALL the icons that belong to it: map icons AND object icons.
+	// This is the only way, to get a realistic LOS result.  However, we do not use this map to draw the icons.  For this purpose we use the vectors row and row_objs
+	// as before.
+	boost::unordered_map<int, std::vector<int>> tmp_row_and_objs;
+
 	int icon_no = 0;
 
 #ifndef ADD_ICON
 #define ADD_ICON(local_x, local_y) {                    			\
 	icon_no = get_map()->get_tile(local_x, local_y);    			\
+	tmp_row_and_objs[row.size()].push_back(icon_no);                \
     row.push_back(icon_no);                             			\
   }
 #endif
@@ -289,6 +281,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
 					if (!(props->_trans == IT_FULLY)) {
+						tmp_row_and_objs[std::max((int)row.size(), 0)].push_back(the_obj.get_icon());
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
 						break;
@@ -309,6 +302,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
 					if (!(props->_trans == IT_FULLY)) {
+						tmp_row_and_objs[std::max((int)row.size(), 0)].push_back(the_obj.get_icon());
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
 						break;
@@ -328,42 +322,20 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		}
 	}
 
-	// Now do the actual check for transparency in the row of icons, we just built.
 	int semitrans = 0;
 	for (unsigned i = 1; i < row.size() - 1; i++) {
-		IconProps* props = IndoorsIcons::Instance().get_props(row[i]);
+		std::vector<int>& icons = tmp_row_and_objs[i];
 
-		if (props && (props->_trans == IT_NOT))
-			return false;
-		else if (i > 0 && props && (props->_trans == IT_SEMI)) {
-			// Decrease viewing distance by 4 on semi transparent icons, but
-			// not when standing on one (i.e., i > 0), rather only when
-			// those icons block the view, i.e., are in front of the player.
-			if (row.size() - ++semitrans > 4)
+		for (unsigned l = 0; l < icons.size(); l++) {
+			IconProps* props = IndoorsIcons::Instance().get_props(icons[l]);
+
+			if (props && (props->_trans == IT_NOT))
 				return false;
-		}
-	}
-
-	// And here is a row of objects, we filled.  Problem is, that the row of object icons can be longer or shorter than the row of map
-	// icons as there can be 0 to n objects per icon on the map.  So with this naive scanning of object icons, there sometimes could be
-	// odd effects in the view of the player.
-	if (row_objs.size() > 0) {
-		semitrans = 0;
-		int how_man_are_intransparent = 0;
-
-		for (unsigned i = 0; i < row_objs.size(); i++) {
-			IconProps* props = IndoorsIcons::Instance().get_props(row_objs[i]);
-
-			if (props && (props->_trans == IT_NOT)) {
-				if (++how_man_are_intransparent == 2)
-					return false;
-			}
-			else if (props && (props->_trans == IT_SEMI)) {
+			else if (i > 0 && props && (props->_trans == IT_SEMI)) {
 				// Decrease viewing distance by 4 on semi transparent icons, but
 				// not when standing on one (i.e., i > 0), rather only when
 				// those icons block the view, i.e., are in front of the player.
-				// TODO: This is OK for icons as in the loop above, but won't work like this for objects.  Bad?
-				if (row_objs.size() - ++semitrans > 4)
+				if (row.size() - ++semitrans > 4)
 					return false;
 			}
 		}
