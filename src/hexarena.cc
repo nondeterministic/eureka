@@ -66,7 +66,7 @@ void HexArena::set_SDL_surface(SDL_Surface* s)
 int HexArena::put_tile(int x, int y, SDL_Surface* brush)
 {
   if (x < 0 || y < 0) {
-      std::cerr << "ERROR: hexarena.cc: put_tile has wrong coords." << std::endl;
+      std::cerr << "ERROR: hexarena.cc: put_tile has wrong coords: x: " << x << ", y: " << y << std::endl;
       return -1;
   }
   
@@ -210,15 +210,15 @@ int HexArena::corner_tile_uneven_offset(void) const
   return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
 }
 
-// Convert the relative screen hex coordinates to the absolute map
-// hex coordinates.
+// Convert the relative screen hex coordinates to the absolute map hex coordinates.
 
 void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 {
-  mx = _left_hidden/(tile_size()-10) + sx; // - corner_tile_uneven_offset();
-  my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
-  // std::cerr << "screen_to_map: " << sx << ", " << sy 
-  // 	    << " => " << mx << ", " << my << "\n";
+	mx = _left_hidden/(tile_size()-10) + sx; // - corner_tile_uneven_offset();
+	// my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
+	my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
+
+	// std::cerr << "screen_to_map: " << sx << ", " << sy << " => " << mx << ", " << my << "\n";
 }
 
 /// Convert absolute map coordinates to screen hex coordinates.  The
@@ -232,20 +232,18 @@ void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 
 void HexArena::map_to_screen(int mx, int my, int& sx, int& sy)
 {
-  sx = -1; sy = -1;
+	sx = -1; sy = -1;
 
-  if (mx >= (int)(_left_hidden/(tile_size()-10)) &&
-      mx <= (int)(get_map()->width() - _right_hidden/(tile_size()-10)))
-    sx = mx - _left_hidden/(tile_size()-10); // + corner_tile_uneven_offset();
+	if (mx >= (int)(_left_hidden/(tile_size()-10)) &&
+			mx <= (int)(get_map()->width() - _right_hidden/(tile_size()-10)))
+		sx = mx - _left_hidden/(tile_size()-10); // + corner_tile_uneven_offset();
 
-  if (my >= (int)(_top_hidden/(tile_size()-1)*2) &&
-      my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
-    sy = my - _top_hidden/(tile_size()-1)*2 - ((sx%2 == 0)? 1 : 0);
+	if (my >= (int)(_top_hidden/(tile_size()-1)*2) &&
+			my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
+		sy = my - _top_hidden/(tile_size()-1)*2 - ((sx%2 == 0)? 1 : 0);
 
-  // std::cerr << "Party x,y: " << Party::Instance().x << ", "
-  // 	    << Party::Instance().y << "\n";
-  // std::cerr << "map_to_screen: " << mx << ", " << my 
-  // 	    << " => " << sx << ", " << sy << "\n";
+	// std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
+	// std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";
 }
 
 // Returns true if the hex defined by x1, y1 is adjacent to the hex
@@ -502,8 +500,10 @@ void HexArena::show_map(int x_width, int y_width)
 				std::pair<unsigned, unsigned> coords(x, y);
 				auto found_obj = _map->objs()->equal_range(coords);
 
-				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++)
-					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(((MapObj)curr_obj->second).get_icon()));
+				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+					if (put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(((MapObj)curr_obj->second).get_icon())) != 0)
+						std::cerr << "ERROR: hexarena.cc: put_tile returned error when trying to draw objects.\n";
+				}
 			}
 		}
 	}
@@ -537,6 +537,8 @@ void HexArena::get_center_coords(int& x, int& y)
 	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
+// x and y are screen coordinates, not map coordinates!
+
 std::pair<int, int> HexArena::show_party(int x, int y)
 {
 	// Draw party in the middle on default values
@@ -545,13 +547,13 @@ std::pair<int, int> HexArena::show_party(int x, int y)
 	// TODO: else draw custom position
 	// ...
 
-	put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20));
+	if (put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20)) != 0)
+		std::cerr << "ERROR: hexarena.cc: put_tile returned failure when trying to show party.\n";
 
 	int mx, my;
 	screen_to_map(x, y, mx, my);
 
-	// std::cerr << "show_party: " << x << ", " << y
-	// 	    << " => " << mx << ", " << my << "\n";
+	// std::cerr << "show_party: " << x << ", " << y << " => " << mx << ", " << my << "\n";
 
 	std::pair<int, int> new_coords;
 	new_coords.first = mx;

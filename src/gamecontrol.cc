@@ -1043,7 +1043,8 @@ void GameControl::open_act()
 			// we let the user simply open them.
 			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("door") != std::string::npos) {
 				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for doors triggered.\n";
-				(new GameEventHandler())->handle_event_delete_object(arena->get_map(), &the_obj);
+				GameEventHandler gh;
+				gh.handle_event_delete_object(arena->get_map(), &the_obj);
 				return;
 			}
 		}
@@ -2189,8 +2190,6 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		case DIR_RIGHT:
 			if (walkable(party->x + 1, party->y) || ignore_walkable) {
 				arena->moving(true);
-				// printcon("East");
-				// sample.play(WALK);
 				moved = true;
 				x_diff = 1;
 				// See comment below!
@@ -2252,11 +2251,6 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		switch (dir) {
 		case DIR_LEFT:
 			if (walkable(party->x - 1, party->y) || ignore_walkable) {
-//				if (party->x % 2 == 0)
-//					printcon("South-West");
-//				else
-//					printcon("North-West");
-//				sample.play(WALK);
 				moved = true;
 
 				x_diff = -1;
@@ -2267,11 +2261,6 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 				break;
 		case DIR_RIGHT:
 			if (walkable(party->x + 1, party->y) || ignore_walkable) {
-//				if (party->x % 2 == 0)
-//					printcon("South-East");
-//				else
-//					printcon("North-East");
-//				sample.play(WALK);
 				moved = true;
 
 				x_diff = 1;
@@ -2356,11 +2345,18 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		}
 	}
 
-	party->x += x_diff;
-	party->y += y_diff;
+	party->set_coords(party->x + x_diff, party->y + y_diff);
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-
 	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+
+	// TEMP
+//	int xt, yt, xt2, yt2;
+//	arena->map_to_screen(party->x, party->y, xt, yt);
+//	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
+//	std::cerr << "Map size: " << arena->get_map()->width() << " x " << arena->get_map()->height() << "\n";
+//	arena->screen_to_map(xt, yt, xt2, yt2);
+//	std::cerr << "screen_to_map: " << xt << ", " << yt << " => " << xt2 << ", " << yt2 << "\n";
+	// ////////////////////
 
 	return moved;
 }

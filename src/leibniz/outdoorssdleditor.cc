@@ -22,6 +22,7 @@
 #include <sstream>
 #include <cmath>
 #include <memory>
+#include <utility>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -127,17 +128,15 @@ SDL_Rect OutdoorsSDLEditor::get_tile_coords(int x, int y) const
 
 void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
 {
-	// In which rectangular cell did the user click?  Stored in
-	// these variables.
+	// In which rectangular cell did the user click?  Stored in these variables.
 	unsigned x_cell = x/(tile_size()-10),
-			y_cell = y/(tile_size()-1);
+			 y_cell = y/(tile_size()-1);
 
 	// Local wrt. the box the user clicked on
 	int local_x = x - x_cell * (tile_size()-10);
 	int local_y = y - y_cell * (tile_size()-1);
 
-	// The hex coordinates (!= cell coordinates, which are the
-	// rectangular ones, and hex ones are rather different)
+	// The hex coordinates (!= cell coordinates, which are the rectangular ones, and hex ones are rather different)
 	int hex_x = 0, hex_y = 0;
 
 	x_cell += corner_tile_uneven_offset();
@@ -149,39 +148,30 @@ void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
 			hex_x = x_cell;
 			hex_y = y_cell*2;
 		}
-		else {
-
-      ///////////////////////////////////////////////////////
-      // This was a b*tch to get right (20 or so years after
-	  // high school :-P):
-      // 
-      // We want to determine where we clicked in a rectangle
-      // like this:
-      //
-      // _______
-      // |  /  |
-      // | /   |
-      // | \   |
-      // |__\__|
-      // 
-      // Here's how I determined if the user clicked in the
-      // upper left corner:
-      //
-      // I had two points (9,0) and (0,16) of the part-hex and
-      // I first determined the slope between them (recall,
-      // the slope m = (y2 - y1)/(x2 - x1)):
-      //
-      // (0-16)/(9-0) = -1.78
-      //
-      // Then the equation for this line of the hex is, if
-      // we take point (9,0) and y - Py = m(x - Px) and
-      // resolve for y:
-      //
-      // y = -1.78x - 16.02
-      //
-      // That is, given local_x, we look if local_y is below
-      // or above the expected y from the equation.
-      ///////////////////////////////////////////////////////
+		else
+		{
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// This was a b*tch to get right (20 or so years after high school :-P):
+			//
+			// We want to determine where we clicked in a rectangle like this:
+			// _______
+			// |  /  |
+			// | /   |
+			// | \   |
+			// |__\__|
+			//
+			// Here's how I determined if the user clicked in the upper left corner:
+			//
+			// I had two points (9,0) and (0,16) of the part-hex and I first determined the slope between them (recall, the slope m = (y2 - y1)/(x2 - x1)):
+			//
+			//   (0-16)/(9-0) = -1.78
+			//
+			// Then the equation for this line of the hex is, if we take point (9,0) and y - Py = m(x - Px) and resolve for y:
+			//
+			//   y = -1.78x - 16.02
+			//
+			// That is, given local_x, we look if local_y is below or above the expected y from the equation.
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			if ((float)local_y < -1.78 * (float)local_x + 16.02) {
 				// Upper left
@@ -245,7 +235,7 @@ void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
 
 	// Now take into account the x-offset, too
 	map_x = hex_x + _left_hidden/(tile_size()-10) - corner_tile_uneven_offset();
-	map_y = hex_y + _top_hidden/(tile_size()-1)*2 + 1;  // TODO: I INSERTED THE +1 REMOVE AGAIN!
+	map_y = hex_y + _top_hidden/(tile_size()-1)*2; // corner_tile_uneven_offset();  // TODO: I INSERTED THE +1 REMOVE AGAIN!
 }
 
 void OutdoorsSDLEditor::set_grid(bool state)
@@ -361,6 +351,7 @@ void OutdoorsSDLEditor::show_map(void)
 		// I suspect, this is due to the fact that, unlike in the game, we don't hide the first
 		// row of the map.
 		for (unsigned y = _top_hidden/(tile_size()-1)*2 + 1,
+		// for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
 				y2 = (x2%2 == 0)? 0 : 1;
 				y < (_map->height()*2)-(_bot_hidden/(tile_size()-1));
 				y += 2, y2 += 2)

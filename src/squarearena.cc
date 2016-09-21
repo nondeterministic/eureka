@@ -445,7 +445,7 @@ void SquareArena::show_map(int x_width, int y_width)
 			int puttile_errno = 0;
 
 			if (tileno < 0) {
-				std::cerr << "ERROR: squarearena.cc: Invalid tile number in SquareArena::show_map()" << tileno << std::endl;
+				std::cerr << "ERROR: squarearena.cc: Invalid tile number in SquareArena::show_map(): " << tileno << ".\n";
 				exit(0);
 			}
 

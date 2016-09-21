@@ -479,7 +479,7 @@ bool EditorWin::on_tab_button_motion_pressed(GdkEventMotion* event)
     _sdleditor->pixel_to_map(event->x, event->y, map_x, map_y);
 
 	strstream ss;
-	ss << "x: " << map_x << " y: " << map_y << "\0";
+	ss << "X: " << map_x << " y: " << map_y;
 
 	coords_lbl.set_text(ss.str());
 
@@ -514,7 +514,7 @@ bool EditorWin::on_tab_button_press_event(GdkEventButton* event)
 	place_icon_on_map((int)event->x, (int)event->y);
 
 //	if (rb_draw_map.get_active())
-//		put_curr_tile_on_map((int)event->x, (int)event->y);
+//		put_curr_tile_on_map((int)event->_, (int)event->y);
 //	else if (rb_draw_obj.get_active()) {
 //		add_object((int)event->x, (int)event->y);
 //		// put_curr_tile_in_obj_register((int)event->x, (int)event->y);
