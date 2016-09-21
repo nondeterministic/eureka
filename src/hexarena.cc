@@ -507,10 +507,6 @@ void HexArena::show_map(int x_width, int y_width)
 			}
 		}
 	}
-
-	// int xp, yp;
-	// map_to_screen(Party::Instance().x, Party::Instance().y, xp, yp);
-	// in_los(xp, yp, 7, 9);
 }
 
 unsigned HexArena::tile_size(void) const

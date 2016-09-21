@@ -345,13 +345,8 @@ void OutdoorsSDLEditor::show_map(void)
 			x < _map->width()-_right_hidden/(tile_size() - 10);
 			x++, x2++)
 	{
-		// TODO: The loop should look exactly as in hexarena.cc:
-		// for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
-		// However, if I don't remove the last bit from this line, then the y-count is off by one.
-		// I suspect, this is due to the fact that, unlike in the game, we don't hide the first
-		// row of the map.
-		for (unsigned y = _top_hidden/(tile_size()-1)*2 + 1,
-		// for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
+		// The loop should look exactly as in hexarena.cc.  And does now.
+		for (unsigned y = _top_hidden/(tile_size()-1)*2 + ((x2%2 == 0)? 0 : 1),
 				y2 = (x2%2 == 0)? 0 : 1;
 				y < (_map->height()*2)-(_bot_hidden/(tile_size()-1));
 				y += 2, y2 += 2)
