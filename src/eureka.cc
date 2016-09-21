@@ -709,6 +709,7 @@ int setup_dummy_game()
 	party->set_food(300);
 	party->set_gold(25);
 	party->set_coords(x,y);
+	std::cout << "INFO: eureka.cc: Setting initial party coords to " << x << ", " << y << ".\n";
 
 	return 0;
 }
@@ -814,6 +815,13 @@ int start_game()
 	GameControl* gc  = &GameControl::Instance();
 	Party* party     = &Party::Instance();
 	Charset normalFont;
+	unsigned int initial_x    = party->x;
+	unsigned int initial_y    = party->y;
+
+	if (arena == NULL) {
+		std::cerr << "ERROR: eureka.cc: arena pointer is NULL.\n";
+		exit(0);
+	}
 
 	// Draw map
 	arena->set_SDL_surface(win->get_drawing_area_SDL_surface());
@@ -827,10 +835,38 @@ int start_game()
 	else
 		gc->set_outdoors(false);
 
-	// TODO: This is a bit odd, but set_party does more than just set the party coordinates, which are already set, obviously.  Maybe rename methods someday...
-	gc->set_party(party->x, party->y);
+	// Outdoors
+	if (gc->is_arena_outdoors()) {
+		std::cout << "INFO: eureka.cc: Setting initial party coords to " << 1 << ", " << 1 << ".\n";
+		gc->set_party(0,1);// TODO: this 1 is only needed because we have coords in the wild like 42, 71 which is shit. They should be 42,70 and 43,71, etc.
 
-	gc->set_map_name(arena->get_map()->get_name().c_str());
+		gc->set_map_name(arena->get_map()->get_name().c_str());
+		std::cout << "INFO: eureka.cc: Setting map name to " << arena->get_map()->get_name() << ".\n";
+
+		gc->show_win();
+
+		std::cout << "INFO: eureka.cc: Moving party quietly to " << initial_x << ", " << initial_y << ".\n";
+		for (unsigned x = 0; x < initial_x; x++)
+			gc->move_party_quietly(DIR_RIGHT, true);
+		for (unsigned y = 0; y < initial_y / 2; y++)
+			gc->move_party_quietly(DIR_DOWN, true);
+	}
+	// Indoors
+	else {
+		std::cout << "INFO: eureka.cc: Setting initial party coords to " << 1 << ", " << 1 << ".\n";
+		gc->set_party(1,1);// TODO: this 1 is only needed because we have coords in the wild like 42, 71 which is shit. They should be 42,70 and 43,71, etc.
+
+		gc->set_map_name(arena->get_map()->get_name().c_str());
+		std::cout << "INFO: eureka.cc: Setting map name to " << arena->get_map()->get_name() << ".\n";
+
+		gc->show_win();
+
+		for (unsigned x = 0; x < initial_x; x++)
+			gc->move_party_quietly(DIR_RIGHT, true);
+		for (unsigned y = 0; y < initial_y; y++)
+			gc->move_party_quietly(DIR_DOWN, true);
+	}
+
 	gc->show_win();
 	gc->draw_status();
 
