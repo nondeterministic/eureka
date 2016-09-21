@@ -838,7 +838,7 @@ int start_game()
 	// Outdoors
 	if (gc->is_arena_outdoors()) {
 		std::cout << "INFO: eureka.cc: Setting initial party coords to " << 1 << ", " << 1 << ".\n";
-		gc->set_party(0,1);// TODO: this 1 is only needed because we have coords in the wild like 42, 71 which is shit. They should be 42,70 and 43,71, etc.
+		gc->set_party(0,0);// TODO: this 1 is only needed because we have coords in the wild like 42, 71 which is shit. They should be 42,70 and 43,71, etc.
 
 		gc->set_map_name(arena->get_map()->get_name().c_str());
 		std::cout << "INFO: eureka.cc: Setting map name to " << arena->get_map()->get_name() << ".\n";

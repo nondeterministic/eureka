@@ -2254,6 +2254,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 				moved = true;
 
 				x_diff = -1;
+				y_diff = party->x % 2 == 0? 1 : -1;
 				if (screen_pos_party.first < screen_center_x) {
 					arena->move(DIR_LEFT);
 					arena->move(DIR_LEFT);
@@ -2264,6 +2265,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 				moved = true;
 
 				x_diff = 1;
+				y_diff = party->x % 2 == 0? 1 : -1;
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
 					arena->move(DIR_RIGHT);
@@ -2289,7 +2291,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		case DIR_RDOWN:
 			if (walkable(party->x + 1, party->y + (party->x % 2 == 0? 0 : 2))  || ignore_walkable) {
 				moved = true;
-				y_diff = party->x % 2 == 0? 0 : 2;
+				y_diff = 1;
 				x_diff = 1;
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
@@ -2302,7 +2304,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		case DIR_RUP:
 			if (walkable(party->x + 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
 				moved = true;
-				y_diff = -(party->x % 2 == 0? 2 : 0);
+				y_diff = -1;
 				x_diff = 1;
 				if (screen_pos_party.first > screen_center_x) {
 					arena->move(DIR_RIGHT);
@@ -2315,7 +2317,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		case DIR_LUP:
 			if (walkable(party->x - 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
 				moved = true;
-				y_diff = -(party->x % 2 == 0? 2 : 0);
+				y_diff = -1;
 				x_diff = -1;
 				if (screen_pos_party.first < screen_center_x) {
 					arena->move(DIR_LEFT);
@@ -2328,7 +2330,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 		case DIR_LDOWN:
 			if (walkable(party->x - 1, party->y + (party->x % 2 == 0? 0 : 2)) || ignore_walkable) {
 				moved = true;
-				y_diff = party->x % 2 == 0? 0 : 2;
+				y_diff = 1;
 				x_diff = -1;
 				if (screen_pos_party.first < screen_center_x) {
 					arena->move(DIR_LEFT);
@@ -2350,12 +2352,12 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
 	// TEMP
-//	int xt, yt, xt2, yt2;
-//	arena->map_to_screen(party->x, party->y, xt, yt);
-//	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
-//	std::cerr << "Map size: " << arena->get_map()->width() << " x " << arena->get_map()->height() << "\n";
-//	arena->screen_to_map(xt, yt, xt2, yt2);
-//	std::cerr << "screen_to_map: " << xt << ", " << yt << " => " << xt2 << ", " << yt2 << "\n";
+	int xt, yt, xt2, yt2;
+	arena->map_to_screen(party->x, party->y, xt, yt);
+	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
+	// std::cerr << "Map size: " << arena->get_map()->width() << " x " << arena->get_map()->height() << "\n";
+	arena->screen_to_map(xt, yt, xt2, yt2);
+	std::cerr << "screen_to_map: " << xt << ", " << yt << " => " << xt2 << ", " << yt2 << "\n";
 	// ////////////////////
 
 	return moved;
@@ -2363,9 +2365,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 
 void GameControl::move_party(LDIR dir)
 {
-	static SoundSample sample;  // If this isn't static, then the var
-	                            // gets discarded before the sample has
-	                            // finished playing
+	static SoundSample sample;  // If this isn't static, then the var gets discarded before the sample has finished playing
 
 	if (Party::Instance().rounds_intoxicated > 0) {
 		bool move_random = random(0,10) >= 7;

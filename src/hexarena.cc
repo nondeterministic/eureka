@@ -123,40 +123,40 @@ std::shared_ptr<Map> HexArena::get_map(void) const
 
 Offsets HexArena::move(int dir)
 {
-//     std::cout << "top_hidden: " << _top_hidden << ", "
-//   	    << "bot_hidden: " << _bot_hidden << ", "
-//   	    << "left_hidden: " << _left_hidden << ", "
-//   	    << "right_hidden: " << _right_hidden << "\n";
-  
-  switch (dir) {
-  case DIR_UP:
-    if (_top_hidden >= (tile_size()-1))
-      adjust_offsets(-(tile_size()-1), (tile_size()-1), 0, 0);
-    break;
-  case DIR_DOWN:
-    if (_bot_hidden >= (tile_size()-1))
-      adjust_offsets((tile_size()-1), -(tile_size()-1), 0, 0);
-    break;
-  case DIR_LEFT:
-    if (_left_hidden >= (tile_size()-10))
-      adjust_offsets(0, 0, -(tile_size()-10), (tile_size()-10));
-    break;
-  case DIR_RIGHT:
-    if (_right_hidden >= (tile_size()-10))
-      adjust_offsets(0, 0, (tile_size()-10), -(tile_size()-10));      
-    break;
-  // case DIR_RDOWN:
-  //   if (_right_hidden >= (tile_size()-10))
-  //     adjust_offsets((tile_size()-1), -(tile_size()-1), (tile_size()-10), -(tile_size()-10));      
-  //   break;
-  }
-  
-  //   std::cout << "top_hidden: " << _top_hidden << ", "
-  // 	    << "bot_hidden: " << _bot_hidden << ", "
-  // 	    << "left_hidden: " << _left_hidden << ", "
-  // 	    << "right_hidden: " << _right_hidden << "\n";
-  
-  return offsets();
+	     std::cout << "top_hidden: " << _top_hidden << ", "
+	   	    << "bot_hidden: " << _bot_hidden << ", "
+	   	    << "left_hidden: " << _left_hidden << ", "
+	   	    << "right_hidden: " << _right_hidden << "\n";
+
+	switch (dir) {
+	case DIR_UP:
+		if (_top_hidden >= (tile_size()-1))
+			adjust_offsets(-(tile_size()-1), (tile_size()-1), 0, 0);
+		break;
+	case DIR_DOWN:
+		if (_bot_hidden >= (tile_size()-1))
+			adjust_offsets((tile_size()-1), -(tile_size()-1), 0, 0);
+		break;
+	case DIR_LEFT:
+		if (_left_hidden >= (tile_size()-10))
+			adjust_offsets(0, 0, -(tile_size()-10), (tile_size()-10));
+		break;
+	case DIR_RIGHT:
+		if (_right_hidden >= (tile_size()-10))
+			adjust_offsets(0, 0, (tile_size()-10), -(tile_size()-10));
+		break;
+		// case DIR_RDOWN:
+			//   if (_right_hidden >= (tile_size()-10))
+		//     adjust_offsets((tile_size()-1), -(tile_size()-1), (tile_size()-10), -(tile_size()-10));
+		//   break;
+	}
+
+	   std::cout << "top_hidden: " << _top_hidden << ", "
+	 	    << "bot_hidden: " << _bot_hidden << ", "
+	 	    << "left_hidden: " << _left_hidden << ", "
+	 	    << "right_hidden: " << _right_hidden << "\n";
+
+	return offsets();
 }
 
 Offsets HexArena::determine_offsets()
@@ -240,7 +240,7 @@ void HexArena::map_to_screen(int mx, int my, int& sx, int& sy)
 
 	if (my >= (int)(_top_hidden/(tile_size()-1)*2) &&
 			my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
-		sy = my - _top_hidden/(tile_size()-1)*2 - ((sx%2 == 0)? 1 : 0);
+		sy = my - _top_hidden/(tile_size()-1)*2; // - ((sx%2 == 0)? 1 : 0);
 
 	// std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
 	// std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";

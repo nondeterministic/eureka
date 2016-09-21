@@ -26,10 +26,11 @@ void Icons::add_props(IconProps new_props)
 
 IconProps* Icons::get_props(unsigned icon_no)
 {
-  try {
-    return &_icons_props.at(icon_no);
-  }
-  catch (...) {
-    return NULL;
-  }
+	try {
+		return &_icons_props.at(icon_no);
+	}
+	catch (...) {
+		// std::cerr << "ERROR: iconsprops.cc: get_props(" << icon_no << ") yields no sensible result.\n";
+		return NULL;
+	}
 }

@@ -53,14 +53,16 @@ bool OutdoorsMap::is_outdoors() const
 
 int OutdoorsMap::get_tile(unsigned x, unsigned y)
 {
-  if (y%2 == 0)
-    y = y/2;
-  else
-    y = (y-1)/2;
-  
-  if (y < _data.size() && x < (_data[0]).size())
-    return (_data[y])[x];
-  return -1;
+	if (y%2 == 0)
+		y = y/2;
+	else
+		y = (y-1)/2;
+
+	if (x < width() && y < height())
+		return (_data[y])[x];
+
+	// std::cerr << "ERROR: outdoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds!\n.";
+	return -1;
 }
 
 int OutdoorsMap::set_tile(unsigned x, unsigned y, unsigned icon_no)
