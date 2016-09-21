@@ -117,7 +117,7 @@
         <target_map>Stadtkarte1</target_map>
       </event>
     </action>
-    <action type="ACT_ON_ENTER" x="8" y="27">
+    <action type="ACT_ON_ENTER" x="8" y="26">
       <event type="EVENT_PRINTCON">You feel glorious...</event>
       <event type="EVENT_PLAY_SOUND">hit.wav</event>
       <event type="EVENT_ENTER_MAP">
