@@ -1,4 +1,4 @@
-SUBDIRS = images maps sound weapons shields bestiary miscitems edibles
+SUBDIRS = images maps sound weapons shields bestiary miscitems edibles people
 
 gamedir = $(datadir)/eureka/data/Demoworld
 

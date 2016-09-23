@@ -123,10 +123,10 @@ std::shared_ptr<Map> HexArena::get_map(void) const
 
 Offsets HexArena::move(int dir)
 {
-	     std::cout << "top_hidden: " << _top_hidden << ", "
-	   	    << "bot_hidden: " << _bot_hidden << ", "
-	   	    << "left_hidden: " << _left_hidden << ", "
-	   	    << "right_hidden: " << _right_hidden << "\n";
+//	     std::cout << "top_hidden: " << _top_hidden << ", "
+//	   	    << "bot_hidden: " << _bot_hidden << ", "
+//	   	    << "left_hidden: " << _left_hidden << ", "
+//	   	    << "right_hidden: " << _right_hidden << "\n";
 
 	switch (dir) {
 	case DIR_UP:
@@ -151,10 +151,10 @@ Offsets HexArena::move(int dir)
 		//   break;
 	}
 
-	   std::cout << "top_hidden: " << _top_hidden << ", "
-	 	    << "bot_hidden: " << _bot_hidden << ", "
-	 	    << "left_hidden: " << _left_hidden << ", "
-	 	    << "right_hidden: " << _right_hidden << "\n";
+//	   std::cout << "top_hidden: " << _top_hidden << ", "
+//	 	    << "bot_hidden: " << _bot_hidden << ", "
+//	 	    << "left_hidden: " << _left_hidden << ", "
+//	 	    << "right_hidden: " << _right_hidden << "\n";
 
 	return offsets();
 }

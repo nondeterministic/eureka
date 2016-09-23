@@ -2352,12 +2352,12 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
 	// TEMP
-	int xt, yt, xt2, yt2;
-	arena->map_to_screen(party->x, party->y, xt, yt);
-	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
-	// std::cerr << "Map size: " << arena->get_map()->width() << " x " << arena->get_map()->height() << "\n";
-	arena->screen_to_map(xt, yt, xt2, yt2);
-	std::cerr << "screen_to_map: " << xt << ", " << yt << " => " << xt2 << ", " << yt2 << "\n";
+//	int xt, yt, xt2, yt2;
+//	arena->map_to_screen(party->x, party->y, xt, yt);
+//	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
+//	// std::cerr << "Map size: " << arena->get_map()->width() << " x " << arena->get_map()->height() << "\n";
+//	arena->screen_to_map(xt, yt, xt2, yt2);
+//	std::cerr << "screen_to_map: " << xt << ", " << yt << " => " << xt2 << ", " << yt2 << "\n";
 	// ////////////////////
 
 	return moved;

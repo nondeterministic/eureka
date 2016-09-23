@@ -22,11 +22,11 @@ leibniz_SOURCES = leibniz.hh leibniz.cc \
 		../map.cc ../map.hh \
 		obj.cc obj.hh \
 		../action.cc ../action.hh \
+		../actonlook.cc ../actonlook.hh \
 		../actiontake.cc ../actiontake.hh \
 		../actiononenter.cc ../actiononenter.hh \
 		../actionpullpush.cc ../actionpullpush.hh \
 		../actionopened.cc ../actionopened.hh \
-		../actonlook.cc ../actionlook.hh \
 		addactionwin.cc addactionwin.hh \
 		addobjectwin.cc addobjectwin.hh \
 		../mapobj.cc ../mapobj.hh \
