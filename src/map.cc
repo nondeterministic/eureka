@@ -39,6 +39,7 @@
 #include "mapobj.hh"
 #include "gameevent.hh"
 #include "eventermap.hh"
+#include "eventleavemap.hh"
 #include "eventchangeicon.hh"
 #include "eventprintcon.hh"
 #include "eventplaysound.hh"
@@ -536,6 +537,10 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						else
 							std::cerr << "ERROR: map.cc: XML load error: EVENT_ENTER_MAP malformed?" << std::endl;
 					}
+					else if (event_type_s == "EVENT_LEAVE_MAP") {
+						std::shared_ptr<EventLeaveMap> new_ev(new EventLeaveMap());
+						_act->add_event(new_ev);
+					}
 					else if (event_type_s == "EVENT_DELETE_OBJECT") {
 						std::shared_ptr<EventDeleteObject> new_ev(new EventDeleteObject());
 						_act->add_event(new_ev);
@@ -753,6 +758,9 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			ev_node->add_child("x")->add_child_text(std::to_string(event_enter_map->get_x()));
 			ev_node->add_child("y")->add_child_text(std::to_string(event_enter_map->get_y()));
 			ev_node->add_child("target_map")->add_child_text(event_enter_map->get_map_name());
+		}
+		else if (std::dynamic_pointer_cast<EventLeaveMap>(*curr_ev)) {
+			ev_node->set_attribute("type", "EVENT_LEAVE_MAP");
 		}
 		else if (std::dynamic_pointer_cast<EventChangeIcon>(*curr_ev)) {
 			std::shared_ptr<EventChangeIcon> event_change_icon = std::dynamic_pointer_cast<EventChangeIcon>(*curr_ev);

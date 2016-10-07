@@ -2482,121 +2482,20 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!
 //
-// Returns true if the player entered "Y" to the question of whether she
-// would like to leave a map.  Otherwise false is returned.
+// Returns true if the player entered "Y" to the question of whether she would like to leave a map.  Otherwise false is returned.
 
 bool GameControl::leave_map()
 {
-	std::string curr_map_name = arena->get_map()->get_name();
-	std::string old_map_name  = party->map_name();
-
 	printcon("Do you wish to leave? (y/n)");
 
 	switch (em->get_key("yn")) {
 	case 'y': {
-		// Put animate objects back to their origins, not their last x and y coordinates
-		{
-			std::vector<MapObj> tempObjs;
-			for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
-				MapObj& map_obj = map_obj_pair->second;
+		GameEventHandler gh;
+		std::shared_ptr<EventLeaveMap> leave_event(new EventLeaveMap());
 
-				if (map_obj.get_type() != MAPOBJ_ITEM) {
-					unsigned ox, oy;
-					map_obj.get_origin(ox, oy);
-					if (ox != 0 || oy != 0) {
-						map_obj.set_coords(ox, oy);
-
-						// Make guards neutral on reentry
-						if (map_obj.id.find("guard") != std::string::npos)
-							map_obj.personality = NEUTRAL;
-
-						// TODO: Should we reset the FLEEING flag as well?! I think so...
-						// Might need to store original move_mode first in mapobj.
-					}
-				}
-
-				tempObjs.push_back(map_obj);
-			}
-
-			// Now reinsert objects into hash map...
-			arena->get_map()->objs()->clear();
-			for (auto mobj: tempObjs) {
-				unsigned x, y;
-				mobj.get_coords(x, y);
-				arena->get_map()->objs()->insert(std::make_pair(std::make_pair(x, y), mobj));
-			}
-		}
-
-		// Before leaving, store map changes in GameState object
-		std::shared_ptr<Map> new_map = arena->get_map();
-		std::shared_ptr<IndoorsMap> ind_map = std::dynamic_pointer_cast<IndoorsMap>(new_map);
-		GameState::Instance().add_map(ind_map);
-
-		// ***************************** TODO *****************************
-		// I disabled the following unload call and am now not sure if there's a leak...
-		// arena->get_map()->unload_map_data();
-		// delete arena;
-		// TODO: Should be ok now as we use shared_ptr for map storing.
-		arena = NULL;
-		// ****************************************************************
-
-		// Now change maps over...
-		if (old_map_name == curr_map_name) {
-			// The above test is only ever positive, if the game was actually started inside an indoors map as opposed to the outdoors.
-			// In this case, we simply find the first best outdoors map (most games will only have one), and use it as the new map.
-			for (std::vector<std::shared_ptr<Map>>::iterator map = World::Instance().get_maps()->begin(); map != World::Instance().get_maps()->end(); map++) {
-				if (map->get()->is_outdoors()) {
-					old_map_name = map->get()->get_name();
-					party->set_map_name(old_map_name.c_str());
-					break;
-				}
-			}
-		}
-		if (World::Instance().get_map(old_map_name.c_str()).get()->is_outdoors()) {
-			set_arena(Arena::create("outdoors", old_map_name));
-			party->set_indoors(false);
-		}
-		else {
-			set_arena(Arena::create("indoors", old_map_name));
-			party->set_indoors(true);
-		}
-		if (!arena->get_map())
-			std::cerr << "WARNING: gamecontrol.cc: arena->get_map == NULL\n";
-
-		arena->get_map()->xml_load_map_data();
-
-		// Restore previously saved state to remember party position, etc. in old map.
-		std::pair<int,int> old_coords;
-		if (!party->restore_outside_coords()) {
-			try {
-				old_coords = arena->get_map()->get_initial_coords();
-				party->set_coords(old_coords);
-				party->set_indoors(false); // One can only leave indoors maps on level 0, such as flat dungeons (not deep ones!), cities, castles, etc.
-			}
-			catch (...) {
-				std::cerr << "ERROR: gamecontrol.cc: The current map should have initial coordinates defined, but doesn't. Not sure where to put party on map. Bye!\n";
-				exit(-1);
-			}
-		}
-		else {
-			old_coords.first  = party->x;
-			old_coords.second = party->y;
-		}
-
-		arena->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
-		arena->determine_offsets();
-		arena->show_map(get_viewport().first, get_viewport().second);
-
-		set_party(1, 1);
-		for (unsigned x = 1; party->get_coords().first < old_coords.first; x++)
-			move_party_quietly(DIR_RIGHT, true);
-		for (unsigned y = 1; party->get_coords().second < old_coords.second; y++)
-			move_party_quietly(DIR_DOWN, true);
-
-		arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-
-		// Stop sound
-		Playlist::Instance().clear();
+		leave_event->set_map_name(arena->get_map()->get_name().c_str());
+		leave_event->set_old_map_name(party->map_name().c_str());
+		gh.handle_event_leave_map(leave_event, arena->get_map());
 
 		return true;
 	}

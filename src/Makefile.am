@@ -59,6 +59,7 @@ eureka_SOURCES = \
 	eventdeleteobj.hh eventdeleteobj.cc \
 	eventaddobj.hh eventaddobj.cc \
 	eventermap.hh eventermap.cc \
+	eventleavemap.hh eventleavemap.cc \
 	eventplaysound.hh eventplaysound.cc \
 	eventchangeicon.hh eventchangeicon.cc \
 	eventprintcon.hh eventprintcon.cc \
