@@ -14,8 +14,8 @@ do
    -- Standard variables
 
    local name        = "walk over water"
-   local level       = 1
-   local sp          = 1
+   local level       = 3
+   local sp          = 5
    local caster      = ""
    local targets     = -1                     -- see comments inside spell.hh
 

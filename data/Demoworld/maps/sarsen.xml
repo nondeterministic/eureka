@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+  <name>sarsen</name>
+  <outdoors>false</outdoors>
+  <dungeon>false</dungeon>
+  <guarded_city>false</guarded_city>
+  <data>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 6 4 4 4 4 4 4 4 4 6 4 6 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 5 4 5 4 5 5 5 6 6 6 6 6 5 5 5 6 6 5 6 6 4 4 4 4 4</row>
+    <row>4 4 4 4 5 4 4 5 5 4 4 4 4 6 5 4 4 6 4 4 4 6 82 4 4 6 6 4 4 4</row>
+    <row>4 4 4 4 5 4 4 5 4 4 82 82 4 4 6 6 6 6 6 4 4 4 4 6 4 6 6 6 4 4</row>
+    <row>4 4 4 4 5 82 4 4 4 4 4 4 4 4 4 4 4 6 6 4 4 5 5 5 6 6 6 6 4 4</row>
+    <row>4 4 4 4 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 6 4 5 6 6 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 1034 84 84 84 84 84 84 84 84 84 84 4 6 6 4 6 6 6 4 4 6 4 4 4</row>
+    <row>4 4 4 4 4 5 1034 84 111 1018 1018 1018 84 1018 1018 120 84 4 4 4 4 4 4 5 6 6 6 5 5 4</row>
+    <row>4 4 4 4 5 1034 1034 84 111 1018 1018 1018 84 1018 1018 1018 84 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 5 4 4 168 1018 1018 1018 1018 84 1018 1018 508 84 4 4 82 4 4 4 4 4 4 4 4 5 4</row>
+    <row>4 4 4 4 5 4 4 84 1018 1018 1018 1018 1018 1018 1018 508 84 4 4 82 84 84 84 84 84 84 4 5 5 4</row>
+    <row>4 4 4 4 935 935 935 84 434 1018 1018 1018 1018 1018 1018 1018 84 4 4 4 84 489 1018 1018 1018 84 4 4 4 4</row>
+    <row>4 4 4 4 4 935 935 84 84 84 84 84 84 84 1018 84 84 4 4 4 84 489 1018 1018 1018 84 4 4 5 4</row>
+    <row>4 4 4 4 4 4 935 935 935 1060 1060 84 1018 1018 1018 1018 84 4 4 4 84 1018 1018 1018 1018 84 4 5 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 1060 1060 84 1018 1018 1018 1018 84 4 4 4 84 1018 1018 1018 1018 84 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 1060 84 1018 1018 1018 1018 84 4 82 4 168 1018 1018 1018 1018 84 4 5 4 4</row>
+    <row>4 4 4 4 4 4 4 5 4 4 4 84 1018 1018 1018 1018 84 4 4 4 84 1018 1018 1018 1018 84 4 5 4 4</row>
+    <row>4 4 4 5 4 5 4 4 4 4 4 168 1018 1018 1018 1018 84 4 4 4 84 1018 1018 1018 1018 84 4 4 4 4</row>
+    <row>4 4 4 4 5 4 5 5 4 4 4 84 1018 1018 1018 1018 84 4 4 4 84 84 84 84 84 84 5 4 4 4</row>
+    <row>4 4 4 4 5 82 4 5 4 5 4 84 84 84 84 84 84 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 5 5 4 5 4 4 4 4 4 4 4 4 4 4 5 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 5 5 4 4 5 5 82 4 4 4 6 4 4 6 4 4 4 4 4 4 5 4 4 4 4</row>
+    <row>4 4 4 4 5 4 4 4 4 5 5 4 4 4 4 6 4 4 4 4 4 1059 4 5 4 82 4 4 4 4</row>
+    <row>4 4 4 4 5 4 4 4 82 4 4 1059 4 4 6 6 6 1059 4 6 4 82 4 5 4 4 4 4 4 4</row>
+    <row>4 4 4 4 5 5 5 4 4 4 6 4 4 6 6 6 6 6 6 6 6 6 6 6 6 5 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 5 4 6 6 6 6 1059 6 6 6 6 4 4 4 4 4 4 6 6 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
+  </data>
+  <objects>
+    <object x="23" y="16" ox="0" oy="0" icon_no="647" layer="0" id="shield" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="15" ox="0" oy="0" icon_no="646" layer="0" id="armour" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="19" y="24" ox="19" oy="24" icon_no="142" layer="0" id="inge" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/sarsen_inge.lua"/>
+    <object x="23" y="14" ox="0" oy="0" icon_no="643" layer="0" id="helmet" lua_name="" how_many="1" removable="yes" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="19" ox="0" oy="0" icon_no="171" layer="0" id="doorstable" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="7" y="11" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="20" y="17" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="12" y="15" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
+    <object x="14" y="20" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
+    <object x="13" y="18" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
+    <object x="10" y="12" ox="10" oy="12" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="13" y="10" ox="13" oy="10" icon_no="52" layer="0" id="ignaz" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/sarsen_ignaz.lua"/>
+    <object x="14" y="16" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" removable="no" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
+  </objects>
+</map>

@@ -719,6 +719,8 @@ void GameControl::cast_spell(int player_no, Spell spell)
 
 	if (player->sp() < spell.sp)
 		printcon(player->name() + " does not have enough spell points.");
+	else if (player->level() < spell.level)
+		printcon("A player with level " + std::to_string(player->level()) + " cannot cast spells that require level " + std::to_string(spell.level) + ".");
 	else {
 		SpellCastHelper sch(player_no, _lua_state);
 		sch.set_spell_path(spell.full_file_path);
@@ -755,7 +757,7 @@ std::string GameControl::select_spell(int player_no)
 	std::map<std::string, std::string> spell_file_paths;
 
 	for (auto spell : *(World::Instance().get_spells())) {
-		if (player->profession() == spell.profession && player->level() <= spell.level) {
+		if (player->profession() == spell.profession && player->level() >= spell.level) {
 			spell_list.insert(std::make_pair(spell.name, 1));
 			spell_file_paths.insert(std::make_pair(spell.name, spell.full_file_path));
 		}
