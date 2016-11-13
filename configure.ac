@@ -86,6 +86,8 @@ AC_CONFIG_FILES([Makefile \
 		 data/Demoworld/miscitems/Makefile
 		 data/Demoworld/edibles/Makefile
 		 data/Demoworld/people/Makefile
+		 data/Demoworld/spells/Makefile
+		 data/Demoworld/spells/mage/Makefile
 		 data/Mittelerde/Makefile
 		 data/Mittelerde/spells/Makefile
 		 data/Mittelerde/spells/mage/Makefile

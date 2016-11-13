@@ -282,11 +282,11 @@ bool World::xml_load_world_data(const std::string filename)
                             }
                             else if (reader.get_name() == "walk") {
                                 if (reader.get_value() == "full")
-                                	new_props._walk = IW_FULL;
+                                	new_props._is_walkable = IW_FULL;
                                 else if (reader.get_value() == "slow")
-                                	new_props._walk = IW_SLOW;
+                                	new_props._is_walkable = IW_SLOW;
                                 else if (reader.get_value() == "not")
-                                	new_props._walk = IW_NOT;
+                                	new_props._is_walkable = IW_NOT;
                             }
                         } while (reader.move_to_next_attribute());
 
@@ -359,7 +359,7 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			set_icon_attributes(icon_node, IndoorsIcons::Instance().get_props(i)->_trans, IndoorsIcons::Instance().get_props(i)->_walk);
+			set_icon_attributes(icon_node, IndoorsIcons::Instance().get_props(i)->_trans, IndoorsIcons::Instance().get_props(i)->_is_walkable);
 
 			if (next_anim >= 0)
 				icon_node->set_attribute("next_anim", next_anim_str.str());
@@ -378,7 +378,7 @@ void World::xml_write_world_data(boost::filesystem::path path)
 			icon_no_str << i;
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			set_icon_attributes(icon_node, OutdoorsIcons::Instance().get_props(i)->_trans, OutdoorsIcons::Instance().get_props(i)->_walk);
+			set_icon_attributes(icon_node, OutdoorsIcons::Instance().get_props(i)->_trans, OutdoorsIcons::Instance().get_props(i)->_is_walkable);
 
 			icon_node->add_child_text(OutdoorsIcons::Instance().get_props(i)->get_name().c_str());
 		}

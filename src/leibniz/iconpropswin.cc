@@ -88,13 +88,13 @@ void IconPropsWin::on_button_ok(void)
 
   switch (walk_combo.get_active_row_number()) {
   case 0:
-	  _iconProps._walk = IW_FULL;
+	  _iconProps._is_walkable = IW_FULL;
 	  break;
   case 1:
-	  _iconProps._walk = IW_SLOW;
+	  _iconProps._is_walkable = IW_SLOW;
 	  break;
   case 2:
-	  _iconProps._walk = IW_NOT;
+	  _iconProps._is_walkable = IW_NOT;
 	  break;
   }
 
@@ -119,14 +119,14 @@ void IconPropsWin::set_walkable(ICON_WALK iw)
 {
 	std::cout << "Setting walkable to: " << iw << "\n";
 
-	_iconProps._walk = iw;
+	_iconProps._is_walkable = iw;
 	walk_combo.set_active(iw);
 	queue_draw();
 }
 
 ICON_WALK IconPropsWin::get_walkable()
 {
-	return _iconProps._walk;
+	return _iconProps._is_walkable;
 }
 
 std::string IconPropsWin::get_name(void)

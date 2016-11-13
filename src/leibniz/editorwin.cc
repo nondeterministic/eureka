@@ -823,14 +823,14 @@ bool EditorWin::on_swindow_button_press_event(GdkEventButton* event)
 
 		icon_props_win.set_icon_no(icon_no_pressed);
 		icon_props_win.set_name(curr_icon_props->get_name().c_str());
-		icon_props_win.set_walkable(curr_icon_props->_walk);
+		icon_props_win.set_walkable(curr_icon_props->_is_walkable);
 		icon_props_win.set_trans(curr_icon_props->_trans);
 
 		if (icon_props_win.run()) {
 			IconProps new_icon_props;
 			new_icon_props.set_icon(icon_props_win.get_icon_no());
 			new_icon_props.set_name(icon_props_win.get_name().c_str());
-			new_icon_props._walk  = icon_props_win.get_walkable();
+			new_icon_props._is_walkable  = icon_props_win.get_walkable();
 			new_icon_props._trans = icon_props_win.get_trans();
 
 			if (get_curr_map()->is_outdoors())

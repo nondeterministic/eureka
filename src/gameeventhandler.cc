@@ -37,6 +37,7 @@
 #include "eureka.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
+#include "playlist.hh"
 #include "config.h"
 
 extern "C"
@@ -270,6 +271,7 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 	for (unsigned y = 1; party->get_coords().second < old_coords.second; y++)
 		gc->move_party_quietly(DIR_DOWN, true);
 
+	// TODO: Not sure if this line will always work as opposed to the original, commented out line below. I think, it's equivalent.
 	gc->set_party(party->x, party->y);
 	// gc->get_arena()->map_to_screen(party->x, party->y, event->get_x(), event->get_y());
 

@@ -15,7 +15,7 @@ IconProps::IconProps()
 	_icon = 0;
 	_next_anim = -1;
 	_trans = IT_FULLY;
-	_walk = IW_FULL;
+	_is_walkable = IW_FULL;
 	_name = "nothing special";
 	_seffect = "";
 }

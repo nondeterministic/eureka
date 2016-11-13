@@ -1215,6 +1215,18 @@ int l_set_spell_duration_party(lua_State* L)
 	return 0;
 }
 
+int l_make_icon_walkable(lua_State* L)
+{
+	Party::Instance().add_icon_to_walkable(lua_tonumber(L, 1));
+	return 0;
+}
+
+int l_remove_icon_walkable(lua_State* L)
+{
+	Party::Instance().remove_icon_from_walkable(lua_tonumber(L, 1));
+	return 0;
+}
+
 int l_set_spell_duration_player(lua_State* L)
 {
 	std::string caster_name = lua_tostring(L, 1); // Name of casting player
@@ -1369,6 +1381,12 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_set_magic_light_radius);
   lua_setglobal(L, "simpl_set_magic_light_radius");
+
+  lua_pushcfunction(L, l_make_icon_walkable);
+  lua_setglobal(L, "simpl_make_icon_walkable");
+
+  lua_pushcfunction(L, l_remove_icon_walkable);
+  lua_setglobal(L, "simpl_remove_icon_walkable");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

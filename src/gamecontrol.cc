@@ -24,12 +24,14 @@
 #include <utility>
 #include <memory>
 #include <cstdlib>
+#include <algorithm>
 
 #include <boost/random.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
 
 extern "C" {
 #include <lua.h>
@@ -726,8 +728,14 @@ void GameControl::cast_spell(int player_no, Spell spell)
 			return;
 		}
 
+		// The basic spell casting pattern...
 		sch.init();
-		sch.choose();
+		try {
+			sch.choose(); // Not all spells have a choose function, e.g., light.  Heal has a choose function for selecting the party member.
+		}
+		catch(const NoChooseFunctionException& ex) {
+			std::cout << "INFO: gamecontrol.cc: Civilian use of spell without choose() function.\n";
+		}
 		sch.execute();
 	}
 }
@@ -1486,7 +1494,8 @@ void GameControl::drop_items()
 						return;
 					}
 				}
-			} catch( boost::bad_lexical_cast const& ) {
+			}
+			catch (boost::bad_lexical_cast const&) {
 				printcon("Huh? Nothing dropped.");
 				return;
 			}
@@ -1563,7 +1572,10 @@ void GameControl::create_random_monsters_in_dungeon()
 		if (map_obj->is_random_monster)
 			rand_monster_count++;
 	}
-	if (rand_monster_count >= 8)
+
+	std::cout << "RANDOM MONSTERS NOW: " << rand_monster_count << "\n";
+
+	if (rand_monster_count >= 3)
 		return;
 
 	const int min_distance_to_party = 7; // Monsters should not directly pop up next to the party
@@ -1573,12 +1585,13 @@ void GameControl::create_random_monsters_in_dungeon()
 			int monst_y = party->y + yoff;
 
 			// X% chance of a new monster each turn
-			if (random(1,100) <= 50) {
+			if (random(1,100) <= 30) {
 				if (abs(party->x - monst_x) >= min_distance_to_party || abs(party->y - monst_y) >= min_distance_to_party) {
 					if (walkable(monst_x, monst_y)) {
 						MapObj monster;
 						monster.set_origin(monst_x, monst_y);
 						monster.set_coords((unsigned)monst_x, (unsigned)monst_y);
+						monster.is_random_monster = true;
 
 						// Determine type of monster using Lua
 						LuaWrapper lua(_lua_state);
@@ -1598,7 +1611,12 @@ void GameControl::create_random_monsters_in_dungeon()
 									// Name of monster
 									if (__key == "__name") {
 										std::string __name = lua_tostring(_lua_state, -1);
+
+										// ***********************************************************************************
+										// TODO: When switching to Boost 3, use boost::filesystem::relative instead!
+										// http://www.boost.org/doc/libs/1_61_0/libs/filesystem/doc/reference.html#op-relative
 										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(__name) + ".lua");
+										// ***********************************************************************************
 
 										monster.move_mode = FOLLOWING;
 										monster.personality = HOSTILE;
@@ -2105,15 +2123,20 @@ bool GameControl::is_arena_outdoors()
   return std::dynamic_pointer_cast<HexArena>(arena) != NULL;
 }
 
-bool GameControl::walk_fullspeed(int x, int y)
+bool GameControl::walkable(int x, int y)
 {
-  if (is_arena_outdoors())
-	  return OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_FULL;
-  else
-	  return IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk == IW_FULL;
+	return check_walkable(x, y, Individual_Game_Character);
 }
 
-bool GameControl::walkable(int x, int y)
+bool GameControl::walkable_for_party(int x, int y)
+{
+	return check_walkable(x, y, Whole_Party);
+}
+
+// Internal method, that checks whether a field can be walked upon either by the party or some other, ordinary game character.
+// Call from the outside instead walkable() or walkable_for_party().
+
+bool GameControl::check_walkable(int x, int y, Walking the_walker)
 {
 	// TODO: These bounds only work indoors, as outdoors we have a jump of 2 between hex.  Do we need to check the boundaries outdoors at all?
 	if (!is_arena_outdoors()) {
@@ -2123,22 +2146,23 @@ bool GameControl::walkable(int x, int y)
 			return false;
 	}
 
-	bool is_walkable = false;
+	bool icon_is_walkable = false;
 
 	if (is_arena_outdoors())
-		is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk != IW_NOT;
+		icon_is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_is_walkable != IW_NOT;
 	else {
-		is_walkable = IndoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_walk != IW_NOT;
+		int tile = arena->get_map()->get_tile(x, y);
+		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != IW_NOT;
 
 		// But don't walk over monsters...
-		if (is_walkable) {
+		if (icon_is_walkable) {
 			auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 			if (found_obj.first != found_obj.second) {
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
 					MapObj& map_obj = curr_obj->second;
-					IconProps* props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+					IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
 
-					if (props->_walk == IW_NOT)
+					if (icon_props->_is_walkable == IW_NOT)
 						return false;
 
 					if (map_obj.get_type() == MAPOBJ_MONSTER)
@@ -2150,9 +2174,17 @@ bool GameControl::walkable(int x, int y)
 				}
 			}
 		}
+		else if (the_walker == Whole_Party) {
+			// Spells may get the party to be able to walk over water, through fire, etc.
+			vector<int> additional_walkable_icons = party->get_additional_walkable_icons();
+
+			// If the tile in question is in the list of additionally walkable icons...
+			if (std::find(additional_walkable_icons.begin(), additional_walkable_icons.end(), tile) != additional_walkable_icons.end())
+				return true;
+		}
 	}
 
-	return is_walkable;
+	return icon_is_walkable;
 }
 
 // Just moves party, doesn't do turn or play sounds.  Use move_party() for that as a wrapper around
@@ -2172,7 +2204,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	if (!is_arena_outdoors()) {
 		switch (dir) {
 		case DIR_LEFT:
-			if (walkable(party->x - 1, party->y) || ignore_walkable) {
+			if (walkable_for_party(party->x - 1, party->y) || ignore_walkable) {
 				arena->moving(true);
 				moved = true;
 				x_diff = -1;
@@ -2188,7 +2220,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_RIGHT:
-			if (walkable(party->x + 1, party->y) || ignore_walkable) {
+			if (walkable_for_party(party->x + 1, party->y) || ignore_walkable) {
 				arena->moving(true);
 				moved = true;
 				x_diff = 1;
@@ -2205,7 +2237,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_DOWN:
-			if (walkable(party->x, party->y + 1) || ignore_walkable) {
+			if (walkable_for_party(party->x, party->y + 1) || ignore_walkable) {
 				arena->moving(true);
 				moved = true;
 				y_diff = 1;
@@ -2224,7 +2256,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_UP:
-			if (walkable(party->x, party->y - 1) || ignore_walkable) {
+			if (walkable_for_party(party->x, party->y - 1) || ignore_walkable) {
 				arena->moving(true);
 				// printcon("North");
 				// sample.play(WALK);
@@ -2250,7 +2282,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	else {
 		switch (dir) {
 		case DIR_LEFT:
-			if (walkable(party->x - 1, party->y) || ignore_walkable) {
+			if (walkable_for_party(party->x - 1, party->y) || ignore_walkable) {
 				moved = true;
 
 				x_diff = -1;
@@ -2261,7 +2293,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 				}
 				break;
 		case DIR_RIGHT:
-			if (walkable(party->x + 1, party->y) || ignore_walkable) {
+			if (walkable_for_party(party->x + 1, party->y) || ignore_walkable) {
 				moved = true;
 
 				x_diff = 1;
@@ -2273,7 +2305,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_DOWN:
-			if (walkable(party->x, party->y + 2) || ignore_walkable) {
+			if (walkable_for_party(party->x, party->y + 2) || ignore_walkable) {
 				moved = true;
 				y_diff = 2;
 				if (screen_pos_party.second > screen_center_y)
@@ -2281,7 +2313,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_UP:
-			if (walkable(party->x, party->y -2) || ignore_walkable) {
+			if (walkable_for_party(party->x, party->y -2) || ignore_walkable) {
 				moved = true;
 				y_diff = -2;
 				if (screen_pos_party.second < screen_center_y)
@@ -2289,7 +2321,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_RDOWN:
-			if (walkable(party->x + 1, party->y + (party->x % 2 == 0? 0 : 2))  || ignore_walkable) {
+			if (walkable_for_party(party->x + 1, party->y + (party->x % 2 == 0? 0 : 2))  || ignore_walkable) {
 				moved = true;
 				y_diff = 1;
 				x_diff = 1;
@@ -2302,7 +2334,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_RUP:
-			if (walkable(party->x + 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
+			if (walkable_for_party(party->x + 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
 				moved = true;
 				y_diff = -1;
 				x_diff = 1;
@@ -2315,7 +2347,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_LUP:
-			if (walkable(party->x - 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
+			if (walkable_for_party(party->x - 1, party->y - (party->x % 2 == 0? 2 : 0)) || ignore_walkable) {
 				moved = true;
 				y_diff = -1;
 				x_diff = -1;
@@ -2328,7 +2360,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 			}
 			break;
 		case DIR_LDOWN:
-			if (walkable(party->x - 1, party->y + (party->x % 2 == 0? 0 : 2)) || ignore_walkable) {
+			if (walkable_for_party(party->x - 1, party->y + (party->x % 2 == 0? 0 : 2)) || ignore_walkable) {
 				moved = true;
 				y_diff = 1;
 				x_diff = -1;

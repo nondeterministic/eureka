@@ -34,6 +34,7 @@
 #include "arena.hh"
 #include "charset.hh"
 #include "actiononenter.hh"
+#include "gamecharacter.hh"
 #include "eventmanager.hh"
 #include "party.hh"
 #include "clock.hh"
@@ -48,6 +49,9 @@ typedef boost::variate_generator<RandomNumberGenerator&, NumberDistribution> Gen
 
 class GameControl
 {
+public:
+	enum Walking { Whole_Party, Individual_Game_Character };
+
 protected:
 	RandomNumberGenerator generator;
 	EventManager* em;
@@ -60,6 +64,7 @@ protected:
 	unsigned _turns;
 	Clock _clock;
 	SoundSample* _game_music;
+	bool check_walkable(int, int, Walking);
 	GameControl();
 
 public:
@@ -106,7 +111,7 @@ public:
 	void do_turn(bool = false);
 	int random(int, int);
 	void printcon(const std::string, bool = false);
-	bool walk_fullspeed(int, int);
+	bool walkable_for_party(int, int);
 	bool walkable(int, int);
 	std::shared_ptr<Map> get_map();
 	Clock* get_clock();

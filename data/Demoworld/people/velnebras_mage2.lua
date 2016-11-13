@@ -63,13 +63,15 @@ do
    function otherwise(item)
       if (item == "protect" or item == "castle" or item == "velnebras" or item == "attack") then
 	 simpl_printcon("Although we fought with all our might, we have failed to protect the castle Velnebras " ..
-			   "from the enemy hordes. The outnumbered us and came from all sides.")
+			   "from the enemy hordes. They outnumbered us and came from all sides.")
       elseif (string.find(item, "enem")) then
 		 simpl_printcon("You best try and ask the great Melnior about the enemy. But ever since he failed to protect us " ..
 				"from him, he has become somewhat recluse and hides for most of the day in his chambers " ..
 				"in the south eastern tower of the castle. For me, these days are too terrible to recall...")
       elseif (item == "melnior") then
-	 simpl_printcon("He used to be a great wizard in these lands, but ever since the attack, he is only a shadow of his former self, hides behind an energy field that no one can pass other than him. He is basically a recluse, and we worry about him.")
+	 simpl_printcon("He used to be a great wizard in these lands, but ever since the attack, he is only a shadow of his former self, " ..
+			   "hides behind an energy field that no one can pass unharmed other than him. He is basically a recluse, and we " ..
+			   "worry about him.")
       else	
 	 simpl_printcon("I cannot help you with that, perhaps ask our elder, Melnior.")
       end

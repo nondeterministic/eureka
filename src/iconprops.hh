@@ -47,9 +47,10 @@ public:
   void set_sound_effect(std::string);
   void set_light_radius(int);
   int light_radius();
+  bool is_walkable();
 
   ICON_TRANS _trans;
-  ICON_WALK _walk;
+  ICON_WALK _is_walkable;
 
   
 protected:

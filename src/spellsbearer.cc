@@ -57,3 +57,18 @@ void SpellsBearer::decrease_spells(lua_State* L, std::string player_name)
 		_active_spells[spell.first] = spell.second;
 	}
 }
+
+void SpellsBearer::add_icon_to_walkable(int icon)
+{
+	_additional_walkable_icons.push_back(icon);
+}
+
+void SpellsBearer::remove_icon_from_walkable(int icon)
+{
+	_additional_walkable_icons.erase(std::remove(_additional_walkable_icons.begin(), _additional_walkable_icons.end(), icon), _additional_walkable_icons.end());
+}
+
+std::vector<int> SpellsBearer::get_additional_walkable_icons()
+{
+	return _additional_walkable_icons;
+}
