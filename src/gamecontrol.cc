@@ -370,6 +370,7 @@ void GameControl::do_turn(bool resting)
 	if (Party::Instance().party_alive() == 0)
 		game_over();
 
+
 	draw_status();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////

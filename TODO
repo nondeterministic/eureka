@@ -1,7 +1,9 @@
 TODO
 =====
 
-- Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
+- Make game characters definable in Lua
+
+- Level up (already started in party.cc)
 
 - When saving a game, first delete old save game or previously lying around map data may be outdated.
   (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
@@ -14,19 +16,14 @@ TODO
 
 - Potions [prio med, skill med]
 
-- Add shepherd that joins party, called EMMA (prio: med, skill low)
-
 - Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
 
 - In game music (prio low, skill low)
 
-- hexarena.cc:
-// TODO: PUT THIS CHECK BACK INTO PLACE!
-//				if (tileno < 0)
-//					std::cerr << "WARNING: hexarena.cc: Invalid tile number in HexArena::show_map(): " << tileno << std::endl;
-
 IN PROGRESS
 ============
+
+- DONE? Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
 
 
 DONE

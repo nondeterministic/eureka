@@ -89,6 +89,7 @@ public:
   void add_jimmylock();
   int jimmylock_count();
   void set_magic_light_radius(int);
+  bool level_up();
 };
 
 #endif

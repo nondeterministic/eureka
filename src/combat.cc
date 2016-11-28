@@ -243,9 +243,9 @@ bool Combat::initiate()
 
 std::vector<AttackOption*> Combat::attack_options()
 {
-	std::vector<AttackOption*> options;
-	options.reserve(party->party_size());
-	options.resize(party->party_size());
+	std::vector<AttackOption*> attackOptions;
+	attackOptions.reserve(party->party_size());
+	attackOptions.resize(party->party_size());
 
 	for (int player_no = 0; player_no < party->party_size(); player_no++) {
 		PlayerCharacter* player = party->get_player(player_no);
@@ -274,10 +274,10 @@ std::vector<AttackOption*> Combat::attack_options()
 		char input = em->get_key(key_inputs.c_str());
 
 		if (input == 'a') {
-			options[player_no] = new AttackOption(player_no, _lua_state);
+			attackOptions[player_no] = new AttackOption(player_no, _lua_state);
 
 			if (foes.count()->size() == 1) {
-				options[player_no]->set_target(1);
+				attackOptions[player_no]->set_target(1);
 			}
 			else {
 				// int attacked = select_enemy(i);
@@ -291,7 +291,7 @@ std::vector<AttackOption*> Combat::attack_options()
 					j++;
 				}
 				printcon(player->name() + " will attack " + (Util::vowel(attacked_name[0]) ? "an " : "a ") + attacked_name + " in the next round.");
-				options[player_no]->set_target(attacked);
+				attackOptions[player_no]->set_target(attacked);
 			}
 		}
 		else if (input == 'c') {
@@ -299,14 +299,14 @@ std::vector<AttackOption*> Combat::attack_options()
 
 			if (spell_file_path == "") {
 				printcon("Changed our mind in the last minute, didn't we?");
-				options[player_no] = new DefendOption(player_no);
+				attackOptions[player_no] = new DefendOption(player_no);
 			}
 			else {
 				std::string defend_message = "";
 				LuaWrapper lua(_lua_state);
 				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, _lua_state);
-				SpellCastHelper* sch = new SpellCastHelper(player_no, _lua_state);
-				sch->set_spell_path(spell_file_path);
+				SpellCastHelper* spellCastHelper = new SpellCastHelper(player_no, _lua_state);
+				spellCastHelper->set_spell_path(spell_file_path);
 
 				// Convert the this-pointer to string and push it to Lua-land
 				// along with i, such that Lua knows which monster is referred
@@ -325,34 +325,34 @@ std::vector<AttackOption*> Combat::attack_options()
 
 				try
 				{
-					sch->init();
+					spellCastHelper->init();
 
-					if (sch->choose() >= 0) {
+					if (spellCastHelper->choose() >= 0) {
 						printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
-						options[player_no] = sch;
+						attackOptions[player_no] = spellCastHelper;
 					}
 					else {
 						printcon("Changed our mind in the last minute, didn't we?");
-						options[player_no] = new DefendOption(player_no);
-						delete sch;
+						attackOptions[player_no] = new DefendOption(player_no);
+						delete spellCastHelper;
 					}
 				}
 				// This exception is thrown, e.g., when a light spell is chosen, where no target or party member needs to be selected.
 				catch (NoChooseFunctionException &ex) {
-					printcon(player->name() + " will ccast '" + tmp_spell.name + "' in the next round.");
-					options[player_no] = sch;
+					printcon(player->name() + " will cast '" + tmp_spell.name + "' in the next round.");
+					attackOptions[player_no] = spellCastHelper;
 				}
 				// This will be thrown, e.g., when the caster does not have enough spell points
 				catch (SpellNotEnabledException &ex) {
 					DefendOption* tmp_defend_option = new DefendOption(player_no);
-					printcon(player->name() + " will instead defend in the next round.");
-					options[player_no] = tmp_defend_option;
+					printcon("Not enough magic points. " + player->name() + " will instead defend in the next round.");
+					attackOptions[player_no] = tmp_defend_option;
 				}
 			}
 		}
 		else if (input == 'd') {
 			printcon(player->name() + " will defend in the next round.");
-			options[player_no] = new DefendOption(player_no);
+			attackOptions[player_no] = new DefendOption(player_no);
 		}
 		else { // (R)eady item
 			std::string new_weapon = GameControl::Instance().ready_item(player_no);
@@ -364,12 +364,12 @@ std::vector<AttackOption*> Combat::attack_options()
 			else
 				printcon(player->name() + " will defend in the next round.");
 
-			options[player_no] = new DefendOption(player_no);
+			attackOptions[player_no] = new DefendOption(player_no);
 		}
 		ZtatsWin::Instance().unhighlight_lines(player_no * 2, player_no * 2 + 2);
 	}
 
-	return options;
+	return attackOptions;
 }
 
 int Combat::fight(std::vector<AttackOption*> attack_commands)
@@ -545,30 +545,29 @@ int Combat::foes_fight()
 	return 0;
 }
 
-// Returns which monster is going to be attacked in the next round by
-// player player_no.
+// Returns which monster is going to be attacked in the next round by player player_no.
 //
 // TODO: Make this as nice as select_player in ztats window!
 
 int Combat::select_enemy()
 {
-  std::stringstream options;
-  int i = 0;
+	std::stringstream options;
+	int i = 0;
 
-  for (auto foe : *(foes.count())) {
-    options << ++i;
-    std::stringstream ss;
-    ss << i << ") " << foe.second << " ";
-    if (foe.second > 1)
-      ss << foes.get_plural_name(foe.first);
-    else
-      ss << foe.first;
-    ss << " (" << foes.get_distance(foe.first) << "')";
-    printcon(ss.str());
-  }
+	for (auto foe : *(foes.count())) {
+		options << ++i;
+		std::stringstream ss;
+		ss << i << ") " << foe.second << " ";
+		if (foe.second > 1)
+			ss << foes.get_plural_name(foe.first);
+		else
+			ss << foe.first;
+		ss << " (" << foes.get_distance(foe.first) << "')";
+		printcon(ss.str());
+	}
 
-  char pressed = em->get_key(options.str().c_str());
-  return atoi(&pressed);
+	char pressed = em->get_key(options.str().c_str());
+	return atoi(&pressed);
 }
 
 // Makes the n-th foe in vector foes try to leave combat without a fight.

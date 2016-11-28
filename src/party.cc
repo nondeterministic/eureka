@@ -370,3 +370,18 @@ int Party::light_radius()
 
 	return radius;
 }
+
+// Levels party members up. Returns true, if someone in the party was leveled up, usually called after victory()
+
+bool Party::level_up()
+{
+	bool leveled_up = false;
+
+	for (PlayerCharacter &player: _players) {
+		if (player.level() >= 0) {
+			leveled_up = true;
+		}
+	}
+
+	return leveled_up;
+}

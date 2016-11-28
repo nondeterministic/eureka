@@ -47,7 +47,7 @@ do
       if (choose == nil) then
 	 return false
       else
-	 return false
+	 return true
       end
    end   
 
