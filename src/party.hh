@@ -30,6 +30,7 @@
 #include "weapon.hh"
 #include "inventory.hh"
 #include "spellsbearer.hh"
+#include "ztatswincontentprovider.hh"
 
 class Party : public SpellsBearer
 {
@@ -61,8 +62,8 @@ public:
   void add_player(PlayerCharacter);
   PlayerCharacter* get_player(int);
   PlayerCharacter* get_player(std::string);
-  std::vector<PlayerCharacter>::iterator party_begin();
-  std::vector<PlayerCharacter>::iterator party_end();
+  std::vector<PlayerCharacter>::iterator begin();
+  std::vector<PlayerCharacter>::iterator end();
   int party_size();
   unsigned party_alive();
   void set_guard(int);
@@ -90,6 +91,7 @@ public:
   int jimmylock_count();
   void set_magic_light_radius(int);
   bool level_up();
+  std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
 };
 
 #endif

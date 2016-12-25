@@ -59,59 +59,59 @@ void Type::col_printch(SDL_Surface* surf, int c, int x, int y, SDL_Color bgcol, 
 
 void Type::printch(SDL_Surface* surf, int c, int x, int y, SDL_Color* bgcol, SDL_Color* fgcol)
 {
-  if (!surf)
-    return;
+	if (!surf)
+		return;
 
-  // Define default colours for printing.
-  SDL_Color std_bgcol, std_fgcol;
-  
-  if (bgcol == NULL) {
-    std_bgcol.r = 0; std_bgcol.g = 0; std_bgcol.b = 0;
-    bgcol = &std_bgcol;
-  }
+	// Define default colours for printing.
+	SDL_Color std_bgcol, std_fgcol;
 
-  if (fgcol == NULL) {
-    std_fgcol.r = 253; std_fgcol.g = 253; std_fgcol.b = 253;
-    fgcol = &std_fgcol;
-  }
+	if (bgcol == NULL) {
+		std_bgcol.r = 0; std_bgcol.g = 0; std_bgcol.b = 0;
+		bgcol = &std_bgcol;
+	}
 
-  Uint32 amask;
+	if (fgcol == NULL) {
+		std_fgcol.r = 253; std_fgcol.g = 253; std_fgcol.b = 253;
+		fgcol = &std_fgcol;
+	}
+
+	Uint32 amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  amask = 0x000000ff;
+	amask = 0x000000ff;
 #else
-  amask = 0xff000000;
+	amask = 0xff000000;
 #endif
 
-  int ascii = c;
-  SDL_Surface* charSurf = _map_chars[ascii];
+	int ascii = c;
+	SDL_Surface* charSurf = _map_chars[ascii];
 
-  if (charSurf != NULL) {
-    if (x == -1 && y == -1) {
-      // Set background colour of printch.
-      SDL_FillRect(surf, NULL, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
-      SDL_BlitSurface(charSurf, NULL, surf, NULL);
-    }
-    else {
-      SDL_Rect dstRect;
-      dstRect.x = x;
-      dstRect.y = y;
-      dstRect.w = _w;
-      dstRect.h = _h;
+	if (charSurf != NULL) {
+		if (x == -1 && y == -1) {
+			// Set background colour of printch.
+			SDL_FillRect(surf, NULL, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
+			SDL_BlitSurface(charSurf, NULL, surf, NULL);
+		}
+		else {
+			SDL_Rect dstRect;
+			dstRect.x = x;
+			dstRect.y = y;
+			dstRect.w = _w;
+			dstRect.h = _h;
 
-      // Set background colour of printch.
-      SDL_FillRect(surf, &dstRect, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
-      SDL_BlitSurface(charSurf, NULL, surf, &dstRect);
-    }
+			// Set background colour of printch.
+			SDL_FillRect(surf, &dstRect, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
+			SDL_BlitSurface(charSurf, NULL, surf, &dstRect);
+		}
 
-    // Set foreground colour, if non-standard one is required.
-    if (fgcol->r != 253 || fgcol->g != 253 || fgcol->b != 253) {
-      SDL_Color old_fgcol;
-      old_fgcol.r = 252; old_fgcol.g = 252; old_fgcol.b = 252;
-      SDLTricks::Instance().replace_col(surf, old_fgcol, *fgcol, NULL);
-    }
-  }
-  else
-    std::cerr << "WARNING: type.cc: charSurf == NULL for ASCII code: " << c << std::endl;
+		// Set foreground colour, if non-standard one is required.
+		if (fgcol->r != 253 || fgcol->g != 253 || fgcol->b != 253) {
+			SDL_Color old_fgcol;
+			old_fgcol.r = 252; old_fgcol.g = 252; old_fgcol.b = 252;
+			SDLTricks::Instance().replace_col(surf, old_fgcol, *fgcol, NULL);
+		}
+	}
+	else
+		std::cerr << "WARNING: type.cc: charSurf == NULL for ASCII-code: " << c << "." << std::endl;
 }
 
 int Type::char_width()

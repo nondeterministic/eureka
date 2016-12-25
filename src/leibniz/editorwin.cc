@@ -724,31 +724,49 @@ void EditorWin::rm_obj(int x, int y)
 
 void EditorWin::add_object(int x, int y)
 {
-  AddObjectWin obj_win(_selected_icon_pb, context()->get_icon_brush_no());
+	AddObjectWin obj_win(_selected_icon_pb, context()->get_icon_brush_no());
 
-  if (obj_win.run()) {
-    MapObj newObj;
-    int map_x = 0;
-    int map_y = 0;
-    _sdleditor->pixel_to_map(x, y, map_x, map_y);
+	if (obj_win.run()) {
+		MapObj newObj;
+		int map_x = 0;
+		int map_y = 0;
+		_sdleditor->pixel_to_map(x, y, map_x, map_y);
 
-    newObj.set_type(obj_win.get_object_type());
-    newObj.set_coords(map_x, map_y);
-    newObj.set_icon(obj_win.get_icon_no());
-    newObj.removable = obj_win.removable;
-    newObj.id = obj_win.id;
+		newObj.set_type(obj_win.get_object_type());
+		newObj.set_coords(map_x, map_y);
+		newObj.set_icon(obj_win.get_icon_no());
+		newObj.removable = obj_win.removable;
+		newObj.id = obj_win.id;
 
-    // TODO: Just some dummy action added to object, so user can later type in the real one(s)
-    if (obj_win.has_action()) {
-    	std::shared_ptr<Action> ptr(new ActionPullPush(map_x, map_y, "ACT_ON_PULL_PUSH"));
-    	newObj.add_action(ptr);
-    }
+		// Auto-roam if type is person, animal or monster
+		switch (newObj.get_type()) {
+		unsigned x, y;
+		newObj.get_coords(x, y);
+		case MAPOBJ_ANIMAL:
+		case MAPOBJ_PERSON:
+			newObj.move_mode = ROAM;
+			newObj.set_origin(x,y);
+			break;
+		case MAPOBJ_MONSTER:
+			newObj.move_mode = FOLLOWING;
+			newObj.set_origin(x,y);
+			newObj.personality = HOSTILE;
+			break;
+		default: // MAPOBJ_ITEM:
+			break;
+		}
 
-    get_curr_map()->push_obj(newObj);
+		// TODO: Just some dummy action added to object, so user can later type in the real one(s)
+		if (obj_win.has_action()) {
+			std::shared_ptr<Action> ptr(new ActionPullPush(map_x, map_y, "ACT_ON_PULL_PUSH"));
+			newObj.add_action(ptr);
+		}
 
-    ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
-    this->queue_draw();
-  }
+		get_curr_map()->push_obj(newObj);
+
+		ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
+		this->queue_draw();
+	}
 }
 
 // User clicked in icon bar

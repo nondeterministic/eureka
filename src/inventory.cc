@@ -21,6 +21,7 @@
 #include "item.hh"
 #include "playercharacter.hh"
 #include "party.hh"
+#include "ztatswincontentprovider.hh"
 
 #include <vector>
 #include <iostream>
@@ -146,6 +147,26 @@ std::map<std::string, int> Inventory::list_all()
 	}
 
 	return result;
+}
+
+std::shared_ptr<ZtatsWinContentProvider> Inventory::create_content_provider(InventoryType inventory_type)
+{
+	std::shared_ptr<ZtatsWinContentProvider> content_provider(new ZtatsWinContentProvider);
+	std::vector<StringAlignmentTuple> lines;
+	int item_nr = 1;
+
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
+		const Item* item = ptr->second.at(0);
+		ostringstream string_to_be_added;
+
+		string_to_be_added << item_nr << ") " << item->name();
+
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), CENTERALIGN));
+
+		content_provider->add_content_page(lines);
+	}
+
+	return content_provider;
 }
 
 void Inventory::add(Item* item)

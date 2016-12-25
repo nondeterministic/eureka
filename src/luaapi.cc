@@ -279,7 +279,7 @@ int l_ztatswin_shopinteraction(lua_State* L)
 {
 	int left_border = 9;
 	ZtatsWin& zwin = ZtatsWin::Instance();
-	std::vector<line_tuple> lines;
+	std::vector<StringAlignmentTuple> lines;
 
 	lua_pushnil(L);
 
@@ -311,7 +311,7 @@ int l_ztatswin_shopinteraction(lua_State* L)
     	for (int i = str_len; i < left_border; i++)
     		ss << " ";
     	ss << name;
-    	lines.push_back(line_tuple(ss.str(), LEFTALIGN));
+    	lines.push_back(StringAlignmentTuple(ss.str(), LEFTALIGN));
 
     	lua_pop(L, 1);
 	}
@@ -357,7 +357,7 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 	}
 
 	std::map<std::string, int> tmp = party.inventory()->list_wearables();
-	std::vector<line_tuple> tmp2 = Util::to_line_tuples(tmp);
+	std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
 	zwin.set_lines(tmp2);
 	zwin.clear();
 

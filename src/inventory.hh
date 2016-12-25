@@ -21,12 +21,19 @@
 #define INVENTORY_HH
 
 #include "item.hh"
+#include "ztatswincontentprovider.hh"
 #include "eureka.hh"
 
 #include <list>
 #include <memory>
 #include <vector>
 #include <map>
+
+enum class InventoryType
+{
+	Wearables,
+	Anything
+};
 
 class Inventory
 {
@@ -51,6 +58,7 @@ public:
 	unsigned size();
 	unsigned number_items();
 	void add_all(Inventory&);
+	std::shared_ptr<ZtatsWinContentProvider> create_content_provider(InventoryType);
 };
 
 #endif

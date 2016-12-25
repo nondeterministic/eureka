@@ -21,6 +21,7 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include <vector>
 
 #include <libxml++/libxml++.h>
 
@@ -37,6 +38,7 @@ extern "C"
 #include "jimmylock.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
+#include "ztatswincontentprovider.hh"
 
 void Party::set_coords(int x, int y)
 {
@@ -172,7 +174,7 @@ void Party::add_player(PlayerCharacter player)
 PlayerCharacter* Party::get_player(int number)
 {
   int i = 0;
-  for (auto player = Party::Instance().party_begin(); player != Party::Instance().party_end(); player++, i++)
+  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++)
     if (i == number)
       return &(*player);
   return NULL;
@@ -218,7 +220,7 @@ void Party::unset_guard()
 
 PlayerCharacter* Party::get_player(std::string name)
 {
-  for (auto player = Party::Instance().party_begin(); player != Party::Instance().party_end(); player++)
+  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
     if (player->name() == name)
       return &(*player);
   return NULL;
@@ -228,7 +230,7 @@ PlayerCharacter* Party::get_player(std::string name)
 unsigned Party::party_alive()
 {
   unsigned i = 0;
-  for (auto player = Party::Instance().party_begin(); player != Party::Instance().party_end(); player++)
+  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
     if (player->hp() > 0)
       i++;
   return i;
@@ -309,12 +311,12 @@ std::string Party::to_xml()
 	return xml_doc.write_to_string_formatted().c_str();
 }
 
-std::vector<PlayerCharacter>::iterator Party::party_begin()
+std::vector<PlayerCharacter>::iterator Party::begin()
 {
   return _players.begin();
 }
 
-std::vector<PlayerCharacter>::iterator Party::party_end()
+std::vector<PlayerCharacter>::iterator Party::end()
 {
   return _players.end();
 }
@@ -384,4 +386,169 @@ bool Party::level_up()
 	}
 
 	return leveled_up;
+}
+
+std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
+{
+	std::shared_ptr<ZtatsWinContentProvider> content_provider(new ZtatsWinContentProvider);
+
+	for (auto player: _players) {
+		std::vector<StringAlignmentTuple> lines;
+		int second_col = 29;
+
+		ostringstream string_to_be_added;
+
+		// Name
+		// lines.push_back(boost::tuple<player->name(), CENTERALIGN>);
+		lines.push_back(StringAlignmentTuple(player.name(), CENTERALIGN));
+
+		// Race, Profession
+		switch (player.race()) {
+		case HUMAN:
+			string_to_be_added << "Human ";
+			break;
+		case ELF:
+			string_to_be_added << "Elf ";
+			break;
+		case HOBBIT:
+			string_to_be_added << "Hobbit ";
+			break;
+		case HALF_ELF:
+			string_to_be_added << "Half-Elf ";
+			break;
+		case DWARF:
+			string_to_be_added << "Dwarf ";
+			break;
+		}
+		switch (player.profession()) {
+		case FIGHTER:
+			string_to_be_added << "Fighter";
+			break;
+		case PALADIN:
+			string_to_be_added << "Paladin";
+			break;
+		case THIEF:
+			string_to_be_added << "Thief";
+			break;
+		case BARD:
+			string_to_be_added << "Bard";
+			break;
+		case MAGE:
+			string_to_be_added << "Mage";
+			break;
+		case CLERIC:
+			string_to_be_added << "Cleric";
+			break;
+		case DRUID:
+			string_to_be_added << "Druid";
+			break;
+		case NECROMANCER:
+			string_to_be_added << "Necromancer";
+			break;
+		case ARCHMAGE:
+			string_to_be_added << "Archmage";
+			break;
+		case GEOMANCER:
+			string_to_be_added << "Geomancer";
+			break;
+		case SHEPHERD:
+			string_to_be_added << "Shepherd";
+			break;
+		case TINKER:
+			string_to_be_added << "Tinker";
+			break;
+		}
+		string_to_be_added << " (";
+		if (player.sex())
+			string_to_be_added << (char)16;
+		else
+			string_to_be_added << (char)17;
+		string_to_be_added << ")";
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), CENTERALIGN));
+		lines.push_back(StringAlignmentTuple(" ", LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "   Condition: ";
+		switch (player.condition()) {
+		case POISONED:
+			string_to_be_added << "Poisoned";
+			break;
+		case DEAD:
+			string_to_be_added << "Dead";
+			break;
+		default:
+			string_to_be_added << "Good";
+			break;
+		}
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << " Strength: " << player.str();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "       Level: " << player.level();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << "Dexterity: " << player.dxt();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "  Experience: " << player.ep();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << "  Stamina: " << player.end();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "  Hit Points: " << player.hp() << "/" << player.hpm();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << "     Luck: " << player.luck();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "Spell Points: " << player.sp() << "/" << player.spm();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << "   Wisdom: " << player.wis();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << "Armour class: ";
+		string_to_be_added << player.armour_class();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << " Charisma: " << player.charr();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		for (int i = string_to_be_added.str().length(); i < second_col; i++)
+			string_to_be_added << " ";
+		string_to_be_added << "Intellig.: " << player.iq();
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+		string_to_be_added.str(""); string_to_be_added.clear();
+		string_to_be_added << " Hands: ";
+		if (player.weapon() != NULL && player.weapon()->hands() > 1)
+			string_to_be_added << player.weapon()->name();
+		else if (player.shield() != NULL)
+			string_to_be_added << player.shield()->name() << " (l), ";
+		else
+			string_to_be_added << "empty (l), ";
+		if (player.weapon() != NULL && player.weapon()->hands() == 1)
+			string_to_be_added << player.weapon()->name() << " (r)";
+		else
+			string_to_be_added << "empty (r)";
+
+		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+		lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
+		lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
+		lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
+
+		lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
+
+		content_provider->add_content_page(lines);
+	}
+
+	return content_provider;
 }

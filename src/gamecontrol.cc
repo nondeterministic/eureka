@@ -75,6 +75,7 @@ extern "C" {
 #include "miniwin.hh"
 #include "tinywin.hh"
 #include "ztatswin.hh"
+#include "ztatswincontentprovider.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "soundsample.hh"
@@ -560,31 +561,31 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				switch (event.key.keysym.sym) {
 				case SDLK_LEFT:
 				case SDLK_KP4:
-					move_party(DIR_LEFT);
+					keypress_move_party(DIR_LEFT);
 					break;
 				case SDLK_RIGHT:
 				case SDLK_KP6:
-					move_party(DIR_RIGHT);
+					keypress_move_party(DIR_RIGHT);
 					break;
 				case SDLK_DOWN:
 				case SDLK_KP2:
-					move_party(DIR_DOWN);
+					keypress_move_party(DIR_DOWN);
 					break;
 				case SDLK_UP:
 				case SDLK_KP8:
-					move_party(DIR_UP);
+					keypress_move_party(DIR_UP);
 					break;
 				case SDLK_KP7:
-					move_party(DIR_LUP);
+					keypress_move_party(DIR_LUP);
 					break;
 				case SDLK_KP1:
-					move_party(DIR_LDOWN);
+					keypress_move_party(DIR_LDOWN);
 					break;
 				case SDLK_KP3:
-					move_party(DIR_RDOWN);
+					keypress_move_party(DIR_RDOWN);
 					break;
 				case SDLK_KP9:
-					move_party(DIR_RUP);
+					keypress_move_party(DIR_RUP);
 					break;
 				case SDLK_SPACE:
 					printcon("Pass");
@@ -611,7 +612,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				}
 				case SDLK_a:
-					attack();
+					keypress_attack();
 					break;
 				case SDLK_c: {
 						printcon("Cast spell - select player");
@@ -642,50 +643,52 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					}
 					break;
 				case SDLK_d:
-					drop_items();
+					keypress_drop_items();
 					break;
 				case SDLK_g:
-					get_item();
+					keypress_get_item();
 					break;
 				case SDLK_h:
-					// Rest party
-					hole_up();
+					keypress_hole_up();
 					break;
 				case SDLK_i:
-					inventory();
+					keypress_inventory();
 					break;
 				case SDLK_l:
-					look();
+					keypress_look();
+					break;
+				case SDLK_m:
+					keypress_mix_reagents();
 					break;
 				case SDLK_o:
-					open_act();
+					keypress_open_act();
 					break;
 				case SDLK_p:
-					pull_push();
+					keypress_pull_push();
 					break;
 				case SDLK_q:
-					quit();
+					keypress_quit();
 					break;
 				case SDLK_r:
 					printcon("Ready item - select player");
 					ready_item(zwin.select_player());
 					break;
 				case SDLK_t:
-					talk();
+					keypress_talk();
 					break;
 				case SDLK_EQUALS:
 					printcon("Toggling sound");
 					_game_music->toggle();
 					break;
 				case SDLK_u:
-					use();
+					keypress_use();
 					break;
 				case SDLK_y: // yield / unready item
 					printcon("Yield (let go of) item - select player");
 					yield_item(zwin.select_player());
 					break;
 				case SDLK_z:
-					ztats();
+					keypress_ztats();
 					break;
 				default:
 					printf("key_handler::default: %d (hex: %x)\n", event.key.keysym.sym, event.key.keysym.sym);
@@ -778,7 +781,7 @@ std::string GameControl::select_spell(int player_no)
 	mwin.println(1, "(Press space to cast selected spell, q to exit)");
 
 	std::map<std::string, int> items = spell_list;
-	std::vector<line_tuple>  items_l = Util::to_line_tuples(items);
+	std::vector<StringAlignmentTuple>  items_l = Util::to_StringAlignmentTuples(items);
 	zwin.set_lines(items_l);
 	zwin.clear();
 	int selection = zwin.select_item();
@@ -796,7 +799,7 @@ std::string GameControl::select_spell(int player_no)
 	return "";
 }
 
-void GameControl::quit()
+void GameControl::keypress_quit()
 {
 	EventManager& em = EventManager::Instance();
 
@@ -820,48 +823,70 @@ void GameControl::quit()
 		exit(EXIT_SUCCESS);
 }
 
-void GameControl::ztats()
+void GameControl::keypress_mix_reagents()
 {
-  MiniWin& mwin = MiniWin::Instance();
-  ZtatsWin& zwin = ZtatsWin::Instance();
+	MiniWin& mwin = MiniWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
 
-  printcon("Ztats - select player");
+	printcon("Mix reagents for magic potion - select player");
 
-  int selected_player = zwin.select_player();
-  if (selected_player != -1) {
-    mwin.save_surf();
-    mwin.clear();
-    mwin.println(0, "Ztats", CENTERALIGN);
-    mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
+	int selected_player = zwin.select_player();
+	if (selected_player != -1) {
+		mwin.save_surf();
+		mwin.clear();
+		mwin.println(0, "Mix for magic potion", CENTERALIGN);
+		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-    zwin.ztats_player(selected_player);
+		zwin.ztats_player(selected_player);
 
-    mwin.display_last();
-  }
+		mwin.display_last();
+	}
 }
 
-void GameControl::inventory()
+void GameControl::keypress_ztats()
 {
-  MiniWin& mwin = MiniWin::Instance();
-  ZtatsWin& zwin = ZtatsWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
+	printcon("Ztats - select player");
 
-  printcon("Inventory");
+	int selected_player = zwin.select_player();
+	if (selected_player != -1) {
+		MiniWin& mwin = MiniWin::Instance();
 
-  mwin.save_surf();
-  mwin.clear();
-  mwin.println(0, "Inventory", CENTERALIGN);
-  std::stringstream ss;
-  ss << "Weight: " << party->inventory()->weight() << (party->inventory()->weight() == 1? " stone" : " stones");
-  ss << "   Max. capacity: " << party->max_carrying_capacity() << " stones";
-  mwin.println(1, ss.str());
+		mwin.save_surf();
+		mwin.clear();
+		mwin.println(0, "Ztats", CENTERALIGN);
+		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-  std::map<std::string, int> tmp = party->inventory()->list_wearables();
-  std::vector<line_tuple> tmp2 = Util::to_line_tuples(tmp);
-  zwin.set_lines(tmp2);
-  zwin.clear();
-  zwin.scroll();
+		std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = party->create_party_content_provider();
+		zwin.register_content_provider(ztatswin_contentprovider.get());
+		zwin.execute(ExecutionMode::DisplayOnly, selected_player);
 
-  mwin.display_last();
+		mwin.display_last();
+	}
+}
+
+void GameControl::keypress_inventory()
+{
+	MiniWin& mwin = MiniWin::Instance();
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	printcon("Inventory");
+
+	mwin.save_surf();
+	mwin.clear();
+	mwin.println(0, "Inventory", CENTERALIGN);
+	std::stringstream ss;
+	ss << "Weight: " << party->inventory()->weight() << (party->inventory()->weight() == 1? " stone" : " stones");
+	ss << "   Max. capacity: " << party->max_carrying_capacity() << " stones";
+	mwin.println(1, ss.str());
+
+	std::map<std::string, int> tmp = party->inventory()->list_wearables();
+	std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
+	zwin.set_lines(tmp2);
+	zwin.clear();
+	zwin.scroll();
+
+	mwin.display_last();
 }
 
 // Let go of item and put it back to inventory.
@@ -879,18 +904,18 @@ std::string GameControl::yield_item(int selected_player)
 		mwin.println(0, "Yield (let go of) item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-		std::vector<line_tuple> disp_items;
+		std::vector<StringAlignmentTuple> disp_items;
 		Alignment al = Alignment::LEFTALIGN;
 		if (player->weapon())
-			disp_items.push_back(line_tuple("Weapon: " +  player->weapon()->name(), al));
+			disp_items.push_back(StringAlignmentTuple("Weapon: " +  player->weapon()->name(), al));
 		else
-			disp_items.push_back(line_tuple("Weapon: <none>", al));
-		disp_items.push_back(line_tuple("Armour: <none>", al)); // TODO
+			disp_items.push_back(StringAlignmentTuple("Weapon: <none>", al));
+		disp_items.push_back(StringAlignmentTuple("Armour: <none>", al)); // TODO
 		if (player->shield())
-			disp_items.push_back(line_tuple("Shield: " + player->shield()->name(), al));
+			disp_items.push_back(StringAlignmentTuple("Shield: " + player->shield()->name(), al));
 		else
-			disp_items.push_back(line_tuple("Shield: <none>", al));
-		disp_items.push_back(line_tuple("Other:  <none>", al)); // TODO: Rings, torch, etc.
+			disp_items.push_back(StringAlignmentTuple("Shield: <none>", al));
+		disp_items.push_back(StringAlignmentTuple("Other:  <none>", al)); // TODO: Rings, torch, etc.
 		zwin.set_lines(disp_items);
 		zwin.clear();
 
@@ -935,7 +960,7 @@ std::string GameControl::yield_item(int selected_player)
 
 // Rest party
 
-void GameControl::hole_up()
+void GameControl::keypress_hole_up()
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1016,7 +1041,7 @@ void GameControl::hole_up()
 	mwin.display_last();
 }
 
-void GameControl::open_act()
+void GameControl::keypress_open_act()
 {
 	printcon("Open - in which direction?");
 	std::pair<int,int> coords = select_coords();
@@ -1114,7 +1139,7 @@ void GameControl::unlock_item()
 	}
 }
 
-void GameControl::use()
+void GameControl::keypress_use()
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1125,7 +1150,7 @@ void GameControl::use()
 	mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
 	std::map<std::string, int> tmp = party->inventory()->list_all();
-	std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
+	std::vector<StringAlignmentTuple>   tmp2 = Util::to_StringAlignmentTuples(tmp);
 	zwin.set_lines(tmp2);
 	zwin.clear();
 	int selection = zwin.select_item();
@@ -1326,7 +1351,7 @@ std::string GameControl::ready_item(int selected_player)
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
 		std::map<std::string, int> tmp = party->inventory()->list_wearables();
-		std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
+		std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
 		zwin.set_lines(tmp2);
 		zwin.clear();
 		int selection = zwin.select_item();
@@ -1454,7 +1479,7 @@ std::pair<int, int> GameControl::select_coords()
   }
 }
 
-void GameControl::drop_items()
+void GameControl::keypress_drop_items()
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1467,7 +1492,7 @@ void GameControl::drop_items()
 	mwin.println(1, "(Press space to drop selected item, q to exit)");
 
 	std::map<std::string, int> items = party->inventory()->list_all();
-	std::vector<line_tuple> items_l  = Util::to_line_tuples(items);
+	std::vector<StringAlignmentTuple> items_l  = Util::to_StringAlignmentTuples(items);
 	zwin.set_lines(items_l);
 	zwin.clear();
 	int selection = zwin.select_item();
@@ -1703,7 +1728,7 @@ void GameControl::get_attacked()
 // If the user pressed (a)...
 // This attack is only called executed when INDOORS, cf. first if statement!
 
-void GameControl::attack()
+void GameControl::keypress_attack()
 {
 	if (!party->indoors()) {
 		printcon("Attack - no one is around.");
@@ -1724,7 +1749,7 @@ void GameControl::attack()
 			MapObj& the_obj = curr_obj->second;
 
 			// Indoor monsters either have a combat_script OR a init_script attribute but *NEVER* both!
-			// Init script usually means the player can talk to them...
+			// Init script usually means the player can keypress_talk to them...
 			if (the_obj.get_type() == MAPOBJ_PERSON) {
 				// We initiate fresh combat
 				if (the_obj.get_init_script_path().length() > 0) {
@@ -1782,7 +1807,7 @@ void GameControl::attack()
 	printcon("No one there to attack. Try taking a deep breath instead.");
 }
 
-void GameControl::talk()
+void GameControl::keypress_talk()
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1818,7 +1843,7 @@ void GameControl::talk()
 			}
 		}
 	}
-	printcon("No one around to talk to");
+	printcon("No one around to keypress_talk to");
 }
 
 std::shared_ptr<Map> GameControl::get_map()
@@ -1826,7 +1851,7 @@ std::shared_ptr<Map> GameControl::get_map()
 	return arena->get_map();
 }
 
-void GameControl::get_item()
+void GameControl::keypress_get_item()
 {
 	printcon("Get - from which direction?");
 	std::pair<int, int> coords = select_coords();
@@ -1899,7 +1924,7 @@ void GameControl::get_item()
 				mwin.println(0, "Get item", CENTERALIGN);
 				mwin.println(1, "(Press space to get selected item, q to exit)");
 
-				std::vector<line_tuple> items_l = Util::to_line_tuples(items);
+				std::vector<StringAlignmentTuple> items_l = Util::to_StringAlignmentTuples(items);
 				zwin.set_lines(items_l);
 				zwin.clear();
 				int selection = zwin.select_item();
@@ -2022,7 +2047,7 @@ void GameControl::get_item()
 		printcon("Nothing to get here");
 }
 
-void GameControl::look()
+void GameControl::keypress_look()
 {
 	GameEventHandler gh;
 	printcon("Look - which direction?");
@@ -2386,7 +2411,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 
-	// TEMP
+// TEMP
 //	int xt, yt, xt2, yt2;
 //	arena->map_to_screen(party->x, party->y, xt, yt);
 //	std::cerr << "map_to_screen: " << party->x << ", " << party->y << " => " << xt << ", " << yt << "\n";
@@ -2398,7 +2423,7 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 	return moved;
 }
 
-void GameControl::move_party(LDIR dir)
+void GameControl::keypress_move_party(LDIR dir)
 {
 	static SoundSample sample;  // If this isn't static, then the var gets discarded before the sample has finished playing
 
@@ -2468,7 +2493,7 @@ std::pair<int, int> GameControl::get_viewport()
 	return std::make_pair(x,x);
 }
 
-void GameControl::pull_push()
+void GameControl::keypress_pull_push()
 {
 	printcon("Pull/push - which direction?");
 	std::pair<int, int> coords = select_coords();

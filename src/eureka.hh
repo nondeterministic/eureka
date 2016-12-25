@@ -28,7 +28,7 @@ enum Alignment
   RIGHTALIGN
 };
 
-typedef boost::tuple<std::string, Alignment> line_tuple;
+typedef boost::tuple<std::string, Alignment> StringAlignmentTuple;
 
 enum Emphasis
 {

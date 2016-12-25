@@ -401,7 +401,7 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 
 	// The party's moves...
 	int i = 0;
-	for (auto player = party->party_begin(); player != party->party_end(); i++, player++) {
+	for (auto player = party->begin(); player != party->end(); i++, player++) {
 		if (player->condition() == DEAD)
 			continue;
 		attacks[i]->execute(this);
@@ -428,7 +428,7 @@ void Combat::victory()
 			mwin.println(1, "(Press space to select an item, q when done)", CENTERALIGN);
 
 			std::map<std::string, int> tmp = _bounty_items.list_all();
-			std::vector<line_tuple>   tmp2 = Util::to_line_tuples(tmp);
+			std::vector<StringAlignmentTuple>   tmp2 = Util::to_StringAlignmentTuples(tmp);
 			zwin.set_lines(tmp2);
 			zwin.clear();
 			// TODO: It seems, we are ignoring the selection and simply add ALL of the bounty to the inventory. CHECK!
@@ -845,7 +845,7 @@ std::string Combat::noticed_monsters()
 	}
 	// When not resting, we can try whole party...
 	else {
-		for (auto curr_player = party->party_begin(); curr_player != party->party_end(); curr_player++) {
+		for (auto curr_player = party->begin(); curr_player != party->end(); curr_player++) {
 			if (curr_player->condition() == DEAD)
 				continue;
 

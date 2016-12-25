@@ -39,6 +39,7 @@ eureka_SOURCES = \
 	sdltricks.hh sdltricks.cc \
 	sdlwindowregion.hh \
 	ztatswin.hh ztatswin.cc \
+	ztatswincontentprovider.hh ztatswincontentprovider.cc \
 	tinywin.hh tinywin.cc \
 	miniwin.hh miniwin.cc \
 	console.hh console.cc \

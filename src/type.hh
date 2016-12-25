@@ -41,7 +41,7 @@ public:
 
 protected:
   SDL_Surface* _ptr_charset_surf;
-  SDL_Surface* _ptr_charset_surf_sel;
+  // SDL_Surface* _ptr_charset_surf_sel;
   map<int, SDL_Surface*> _map_chars;
   int _w;
   int _h;

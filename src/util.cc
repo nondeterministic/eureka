@@ -42,9 +42,9 @@ std::vector<std::string>& Util::Private::splitString2(std::string s, std::string
 	return result;
 }
 
-std::vector<line_tuple> Util::to_line_tuples(std::map<std::string, int>& selection)
+std::vector<StringAlignmentTuple> Util::to_StringAlignmentTuples(std::map<std::string, int>& selection)
 {
-  std::vector<line_tuple> result;
+  std::vector<StringAlignmentTuple> result;
   std::stringstream ss;
   int i = 1;
 
@@ -54,7 +54,7 @@ std::vector<line_tuple> Util::to_line_tuples(std::map<std::string, int>& selecti
     if (ptr->second > 1)
       ss << " (" << ptr->second << ")";
 
-    result.push_back(line_tuple(ss.str(), LEFTALIGN));
+    result.push_back(StringAlignmentTuple(ss.str(), LEFTALIGN));
     ss.str(""); ss.clear();
   }
 

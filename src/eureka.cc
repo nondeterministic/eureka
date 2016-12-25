@@ -880,7 +880,7 @@ int start_game()
 	Console::Instance().
 			print(&normalFont,
 					"Remember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
-					"(d)rop item, (e)nter, (i)nventory, (l)ook, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
+					"(d)rop item, (e)nter, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
 					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
 					false);
 
