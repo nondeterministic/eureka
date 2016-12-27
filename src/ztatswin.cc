@@ -23,6 +23,7 @@ using namespace std;
 ZtatsWin::ZtatsWin()
 {
 	_content_provider = NULL;
+	_content_selection_provider = NULL;
 
 	standard_bgcolour.r = 0;
 	standard_bgcolour.g = 0;
@@ -46,11 +47,6 @@ ZtatsWin& ZtatsWin::Instance()
 {
   static ZtatsWin inst;
   return inst;
-}
-
-void ZtatsWin::register_content_provider(ZtatsWinContentProvider* content_provider)
-{
-	_content_provider = content_provider;
 }
 
 // Highlights lines from to to in the ztats window.  Players in the
@@ -314,19 +310,13 @@ ZtatsWinContentProvider* ZtatsWin::content_provider()
 	return _content_provider;
 }
 
-void ZtatsWin::execute(ExecutionMode execution_mode, unsigned start_page)
+void ZtatsWin::execute(ZtatsWinContentProvider* content_provider, unsigned start_page)
 {
-	ZtatsWin& zwin = ZtatsWin::Instance();
-	zwin.set_lines(content_provider()->get_pages()[start_page]);
+	_content_provider = content_provider;
 
 	try {
-		switch (execution_mode) {
-		case ExecutionMode::DisplayOnly:
-			zwin.scroll(start_page);
-			break;
-		case ExecutionMode::SelectLine:
-			break;
-		}
+		scroll(start_page);
+		_content_provider = NULL;
 	}
 	catch (...) {
 
@@ -338,6 +328,14 @@ void ZtatsWin::print_single_page(unsigned page, unsigned offet_from_top)
 	clear(); // Clear before printing or we get letter-salad...
 	for (unsigned curr_line = offet_from_top; curr_line < content_provider()->get_pages()[page].size(); curr_line++)
 		println_noblit(curr_line - offet_from_top, content_provider()->get_pages()[page][curr_line].get<0>(), content_provider()->get_pages()[page][curr_line].get<1>());
+	blit();
+}
+
+void ZtatsWin::print_selection_page(unsigned offet_from_top)
+{
+	clear(); // Clear before printing or we get letter-salad...
+	for (unsigned curr_line = offet_from_top; curr_line < _content_selection_provider->get_page().size(); curr_line++)
+		println_noblit(curr_line - offet_from_top, _content_selection_provider->get_page()[curr_line].first.get<0>(), _content_selection_provider->get_page()[curr_line].first.get<1>());
 	blit();
 }
 
@@ -398,61 +396,6 @@ void ZtatsWin::scroll(unsigned start_page)
 		}
 	}
 }
-
-//void ZtatsWin::scroll(int player)
-//{
-//  SDL_Event event;
-//  unsigned offset = 0;
-//
-//  for (int i = offset; i < (int)lines.size(); i++)
-//    println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-//
-//  while (1) {
-//    if (SDL_WaitEvent(&event)) {
-//      if (event.type == SDL_KEYDOWN) {
-//        if (event.key.keysym.sym == SDLK_LEFT && player >= 0) {
-//          if (player > 0) {
-//            player--;
-//            build_ztats_player(player);
-//            scroll(player);
-//            return;
-//          }
-//        }
-//        else if (event.key.keysym.sym == SDLK_RIGHT && player >= 0) {
-//          if (player < Party::Instance().party_size() - 1) {
-//            player++;
-//            build_ztats_player(player);
-//            scroll(player);
-//            return;
-//          }
-//        }
-//        else if (event.key.keysym.sym == SDLK_UP) {
-//          if (offset > 0) {
-//            offset--;
-//            clear();
-//            for (int i = offset; i < (int)lines.size(); i++)
-//              println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-//          }
-//        }
-//        else if (event.key.keysym.sym == SDLK_DOWN) {
-//          if (offset < lines.size() - 1) {
-//            offset++;
-//            clear();
-//            for (int i = offset; i < (int)lines.size(); i++)
-//              println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-//          }
-//        }
-//        else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
-//          offset = 0;
-//
-//          ZtatsWin::Instance().update_player_list();
-//          SDLWindow::Instance().blit_interior();
-//          return;
-//        }
-//      }
-//    }
-//  }
-//}
 
 void ZtatsWin::ztats_player(int p)
 {

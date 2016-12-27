@@ -20,14 +20,15 @@
 #ifndef GAMECHAR_HH
 #define GAMECHAR_HH
 
-using namespace std;
-
 #include <string>
+
 #include "item.hh"
 #include "weapon.hh"
 #include "shield.hh"
 #include "race.hh"
 #include "spellsbearer.hh"
+
+using namespace std;
 
 enum ATTITUDE {
   RIGHT, NEUTR, CHAOS

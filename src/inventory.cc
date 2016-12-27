@@ -149,22 +149,60 @@ std::map<std::string, int> Inventory::list_all()
 	return result;
 }
 
-std::shared_ptr<ZtatsWinContentProvider> Inventory::create_content_provider(InventoryType inventory_type)
+std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> Inventory::create_content_selection_provider(InventoryType inventory_type)
 {
-	std::shared_ptr<ZtatsWinContentProvider> content_provider(new ZtatsWinContentProvider);
-	std::vector<StringAlignmentTuple> lines;
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_selection_provider(new ZtatsWinContentSelectionProvider<Item*>());
+	std::vector<pair<StringAlignmentTuple, Item*>> content_page;
 	int item_nr = 1;
 
 	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
-		const Item* item = ptr->second.at(0);
-		ostringstream string_to_be_added;
+		Item* item = ptr->second.at(0);
+		unsigned how_many_items = ptr->second.size();
+		ostringstream item_content_stringstr;
 
-		string_to_be_added << item_nr << ") " << item->name();
+		item_content_stringstr << item_nr << ") " << item->name() << " ";
+		if (item->description().size() > 0)
+			item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
+		if (how_many_items > 1)
+			item_content_stringstr << "(" << how_many_items << "x)";
 
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), CENTERALIGN));
-
-		content_provider->add_content_page(lines);
+		content_page.push_back(pair<StringAlignmentTuple, Item*>(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN), item));
 	}
+
+	if (content_page.size() > 0) {
+		content_selection_provider->create_content_page(content_page);
+		std::cout << "CREATED CONTENT_SELECTION_PROVIDER: " << content_selection_provider->get_page().size() << "\n";
+	}
+	else
+		std::cout << "INFO: inventory.cc: Created an empty ZtatsWinContentSelectionProvider object. Unless your inventory is actually empty, this is a (non-critical) bug.\n";
+
+	return content_selection_provider;
+}
+
+std::shared_ptr<ZtatsWinContentProvider> Inventory::create_content_provider(InventoryType inventory_type)
+{
+	std::shared_ptr<ZtatsWinContentProvider> content_provider(new ZtatsWinContentProvider());
+	std::vector<StringAlignmentTuple> content_page;
+	int item_nr = 1;
+
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
+		Item* item = ptr->second.at(0);
+		unsigned how_many_items = ptr->second.size();
+		ostringstream item_content_stringstr;
+
+		item_content_stringstr << item_nr << ") " << item->name() << " ";
+		if (item->description().size() > 0)
+			item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
+		if (how_many_items > 1)
+			item_content_stringstr << "(" << how_many_items << "x)";
+
+		content_page.push_back(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN));
+	}
+
+	if (content_page.size() > 0)
+		content_provider->add_content_page(content_page);
+	else
+		std::cout << "INFO: inventory.cc: Created an empty ZtatsWinContentProvider object. Unless your inventory is actually empty, this is a (non-critical) bug.\n";
 
 	return content_provider;
 }

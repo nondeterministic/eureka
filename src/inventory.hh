@@ -59,6 +59,7 @@ public:
 	unsigned number_items();
 	void add_all(Inventory&);
 	std::shared_ptr<ZtatsWinContentProvider> create_content_provider(InventoryType);
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> create_content_selection_provider(InventoryType);
 };
 
 #endif

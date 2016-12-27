@@ -74,8 +74,8 @@ extern "C" {
 #include "world.hh"
 #include "miniwin.hh"
 #include "tinywin.hh"
-#include "ztatswin.hh"
 #include "ztatswincontentprovider.hh"
+#include "ztatswin.hh"
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "soundsample.hh"
@@ -858,8 +858,7 @@ void GameControl::keypress_ztats()
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
 		std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = party->create_party_content_provider();
-		zwin.register_content_provider(ztatswin_contentprovider.get());
-		zwin.execute(ExecutionMode::DisplayOnly, selected_player);
+		zwin.execute(ztatswin_contentprovider.get(), selected_player);
 
 		mwin.display_last();
 	}
@@ -880,11 +879,8 @@ void GameControl::keypress_inventory()
 	ss << "   Max. capacity: " << party->max_carrying_capacity() << " stones";
 	mwin.println(1, ss.str());
 
-	std::map<std::string, int> tmp = party->inventory()->list_wearables();
-	std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
-	zwin.set_lines(tmp2);
-	zwin.clear();
-	zwin.scroll();
+	std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = party->inventory()->create_content_provider(InventoryType::Anything);
+	zwin.execute(ztatswin_contentprovider.get());
 
 	mwin.display_last();
 }
@@ -1491,6 +1487,15 @@ void GameControl::keypress_drop_items()
 	mwin.println(0, "Drop item", CENTERALIGN);
 	mwin.println(1, "(Press space to drop selected item, q to exit)");
 
+	shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	zwin.execute(zwin_content_selection_provider.get());
+
+
+
+
+
+
+/*
 	std::map<std::string, int> items = party->inventory()->list_all();
 	std::vector<StringAlignmentTuple> items_l  = Util::to_StringAlignmentTuples(items);
 	zwin.set_lines(items_l);
@@ -1564,9 +1569,99 @@ void GameControl::keypress_drop_items()
 			ss << "Dropped " << drop_how_many << " " << selected_item_plural_name << ".";
 		printcon(ss.str());
 	}
+*/
 
 	mwin.display_last();
 }
+
+//void GameControl::keypress_drop_items()
+//{
+//	MiniWin& mwin = MiniWin::Instance();
+//	ZtatsWin& zwin = ZtatsWin::Instance();
+//
+//	printcon("Drop item - select which one");
+//
+//	mwin.save_surf();
+//	mwin.clear();
+//	mwin.println(0, "Drop item", CENTERALIGN);
+//	mwin.println(1, "(Press space to drop selected item, q to exit)");
+//
+//	std::map<std::string, int> items = party->inventory()->list_all();
+//	std::vector<StringAlignmentTuple> items_l  = Util::to_StringAlignmentTuples(items);
+//	zwin.set_lines(items_l);
+//	zwin.clear();
+//	int selection = zwin.select_item();
+//
+//	if (selection >= 0) {
+//		std::stringstream ss;
+//		std::string selected_item_name = party->inventory()->get_item(selection)->name();
+//		std::string selected_item_plural_name = party->inventory()->get_item(selection)->plural_name();
+//		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
+//		std::vector<Item*>* all_tmp_items = party->inventory()->get(selection);
+//		Item* tmp = (*all_tmp_items)[0];
+//		// Item* tmp = party->inventory()->get_item(selection);
+//		int size_tmp_items = all_tmp_items->size();
+//		int drop_how_many = 0;
+//
+//		// Determine how many items shall be dropped, in case the inventory has more than 1
+//		if (size_tmp_items > 1) {
+//			printcon("How many? (1-" + boost::lexical_cast<std::string>(size_tmp_items) + ")");
+//			std::string reply = Console::Instance().gets();
+//			try {
+//				if (reply.length() == 0)
+//					drop_how_many = size_tmp_items;
+//				else {
+//					drop_how_many = boost::lexical_cast<int>(reply);
+//					if (!(drop_how_many >= 1 && drop_how_many <= size_tmp_items)) {
+//						printcon("Huh? Nothing dropped.");
+//						return;
+//					}
+//				}
+//			}
+//			catch (boost::bad_lexical_cast const&) {
+//				printcon("Huh? Nothing dropped.");
+//				return;
+//			}
+//		}
+//
+//		// Create corresponding icon if party is indoors
+//		if (party->indoors()) {
+//			MapObj moTmp;
+//
+//			// Some MiscItems have a MapObj associated with them, e.g., nonmagicscroll.
+//			if (dynamic_cast<MiscItem*>(tmp)) {
+//				MiscItem* tmp_item = dynamic_cast<MiscItem*>(tmp);
+//				try {
+//					moTmp = tmp_item->get_obj();
+//				}
+//				catch (...) {
+//					; // Do nothing, this simply means, the tmp_item had no MapObj associated with it, which is OK! See MiscItem.cc for details.
+//				}
+//			}
+//
+//			moTmp.removable = true;
+//			moTmp.set_coords(party->x, party->y);
+//			moTmp.set_icon(tmp->icon);
+//			moTmp.set_description(selected_item_descr);
+//			moTmp.lua_name = tmp->luaName();  // TODO: This can be empty. A problem? Handle this case?
+//			moTmp.how_many = drop_how_many;
+//
+//			// Add dropped item to current map
+//			arena->get_map()->push_obj(moTmp);
+//		}
+//
+//		for (int i = 0; i < max(drop_how_many, 1); i++)
+//			party->inventory()->remove(tmp->name(), selected_item_descr);
+//
+//		if (size_tmp_items == 1)
+//			ss << "Dropped a" << (Util::vowel(selected_item_name[0])? "n " : " ") << selected_item_name << ".";
+//		else
+//			ss << "Dropped " << drop_how_many << " " << selected_item_plural_name << ".";
+//		printcon(ss.str());
+//	}
+//
+//	mwin.display_last();
+//}
 
 // Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.
 
