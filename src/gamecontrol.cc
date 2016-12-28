@@ -1487,51 +1487,32 @@ void GameControl::keypress_drop_items()
 	mwin.println(0, "Drop item", CENTERALIGN);
 	mwin.println(1, "(Press space to drop selected item, q to exit)");
 
-	shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
-	zwin.execute(zwin_content_selection_provider.get());
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	std::vector<Item*> selected_items = zwin.execute(zwin_content_selection_provider.get(), SelectionMode::SingleItem);
 
+	// User can either select exactly one item, or will have aborted the dialogue.
+	if (selected_items.size() == 1) {
+		Item* selected_item = selected_items[0];
+		std::cout << "SELECTED " << selected_item->name() << "\n";
+		unsigned selected_item_size = party->inventory()->how_many_of(selected_item->name(), selected_item->description());
 
-
-
-
-
-/*
-	std::map<std::string, int> items = party->inventory()->list_all();
-	std::vector<StringAlignmentTuple> items_l  = Util::to_StringAlignmentTuples(items);
-	zwin.set_lines(items_l);
-	zwin.clear();
-	int selection = zwin.select_item();
-
-	if (selection >= 0) {
-		std::stringstream ss;
-		std::string selected_item_name = party->inventory()->get_item(selection)->name();
-		std::string selected_item_plural_name = party->inventory()->get_item(selection)->plural_name();
-		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
-		std::vector<Item*>* all_tmp_items = party->inventory()->get(selection);
-		Item* tmp = (*all_tmp_items)[0];
-		// Item* tmp = party->inventory()->get_item(selection);
-		int size_tmp_items = all_tmp_items->size();
-		int drop_how_many = 0;
-
-		// Determine how many items shall be dropped, in case the inventory has more than 1
-		if (size_tmp_items > 1) {
-			printcon("How many? (1-" + boost::lexical_cast<std::string>(size_tmp_items) + ")");
-			std::string reply = Console::Instance().gets();
-			try {
-				if (reply.length() == 0)
-					drop_how_many = size_tmp_items;
-				else {
-					drop_how_many = boost::lexical_cast<int>(reply);
-					if (!(drop_how_many >= 1 && drop_how_many <= size_tmp_items)) {
-						printcon("Huh? Nothing dropped.");
-						return;
-					}
+		unsigned drop_how_many = 0;
+		printcon("How many? (1-" + std::to_string(selected_item_size) + ")");
+		std::string reply = Console::Instance().gets();
+		try {
+			if (reply.length() == 0)
+				drop_how_many = selected_item_size;
+			else {
+				drop_how_many = std::stoi(reply);
+				if (!(drop_how_many >= 1 && drop_how_many <= selected_item_size)) {
+					printcon("Huh? Nothing dropped.");
+					return;
 				}
 			}
-			catch (boost::bad_lexical_cast const&) {
-				printcon("Huh? Nothing dropped.");
-				return;
-			}
+		}
+		catch (boost::bad_lexical_cast const&) {
+			printcon("Huh? Nothing dropped.");
+			return;
 		}
 
 		// Create corresponding icon if party is indoors
@@ -1539,8 +1520,8 @@ void GameControl::keypress_drop_items()
 			MapObj moTmp;
 
 			// Some MiscItems have a MapObj associated with them, e.g., nonmagicscroll.
-			if (dynamic_cast<MiscItem*>(tmp)) {
-				MiscItem* tmp_item = dynamic_cast<MiscItem*>(tmp);
+			if (dynamic_cast<MiscItem*>(selected_item)) {
+				MiscItem* tmp_item = dynamic_cast<MiscItem*>(selected_item);
 				try {
 					moTmp = tmp_item->get_obj();
 				}
@@ -1551,25 +1532,25 @@ void GameControl::keypress_drop_items()
 
 			moTmp.removable = true;
 			moTmp.set_coords(party->x, party->y);
-			moTmp.set_icon(tmp->icon);
-			moTmp.set_description(selected_item_descr);
-			moTmp.lua_name = tmp->luaName();  // TODO: This can be empty. A problem? Handle this case?
+			moTmp.set_icon(selected_item->icon);
+			moTmp.set_description(selected_item->description());
+			moTmp.lua_name = selected_item->luaName();  // TODO: This can be empty. A problem? Handle this case?
 			moTmp.how_many = drop_how_many;
 
 			// Add dropped item to current map
 			arena->get_map()->push_obj(moTmp);
 		}
 
-		for (int i = 0; i < max(drop_how_many, 1); i++)
-			party->inventory()->remove(tmp->name(), selected_item_descr);
+		for (int i = 0; i < max((int)drop_how_many, 1); i++)
+			party->inventory()->remove(selected_item->name(), selected_item->description());
 
-		if (size_tmp_items == 1)
-			ss << "Dropped a" << (Util::vowel(selected_item_name[0])? "n " : " ") << selected_item_name << ".";
+		std::stringstream ss;
+		if (drop_how_many == 1)
+			ss << "Dropped a" << (Util::vowel(selected_item->name()[0])? "n " : " ") << selected_item->name() << ".";
 		else
-			ss << "Dropped " << drop_how_many << " " << selected_item_plural_name << ".";
+			ss << "Dropped " << drop_how_many << " " << selected_item->plural_name() << ".";
 		printcon(ss.str());
 	}
-*/
 
 	mwin.display_last();
 }

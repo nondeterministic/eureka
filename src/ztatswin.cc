@@ -240,60 +240,57 @@ int ZtatsWin::select_item()
 	unsigned offset = 0;
 	const int dheight = 16;  // Ztats display is 16 lines tall
 
-	for (int i = offset; i < (int)lines.size(); i++)
-		println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
-	blit();
-
+	print_selection_page();
 	highlight_lines(line, line + 1);
 
-	while (1)
-	{
-		if (SDL_WaitEvent(&event))
-		{
-			if (event.type == SDL_KEYDOWN)
+	auto page = _content_selection_provider->get_page();
+
+	while (SDL_WaitEvent(&event)) {
+		if (event.type == SDL_KEYDOWN) {
+			if (event.key.keysym.sym == SDLK_DOWN && offset + line + 1 < page.size())  // +1 because we just pressed down again!
 			{
-				if (event.key.keysym.sym == SDLK_DOWN
-						&& offset + line + 1 < lines.size())  // +1 because we just pressed down again!
-				{
-					if (line == dheight - 1 && offset < lines.size() - 1) {
-						offset++;
-						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-						highlight_lines(line, line + 1);
-					}
-					else if (line < dheight - 1 && line < (int)lines.size() - 1) {
-						line++;
-						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-						highlight_lines(line, line + 1);
-					}
+				if (line == dheight - 1 && offset < page.size() - 1) {
+					offset++;
+					clear();
+					for (int i = offset; i < (int)page.size(); i++)
+						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+					blit();
+					highlight_lines(line, line + 1);
 				}
-				else if (event.key.keysym.sym == SDLK_UP) {
-					if (line > 0) {
-						line--;
-						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-						highlight_lines(line, line + 1);
-					}
-					else if (line == 0 && offset > 0) {
-						offset--;
-						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println(i - offset, lines[i].get<0>(), lines[i].get<1>());
-						highlight_lines(line, line + 1);
-					}
+				else if (line < dheight - 1 && line < (int)page.size() - 1) {
+					line++;
+					clear();
+					for (int i = offset; i < (int)page.size(); i++)
+						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+					blit();
+					highlight_lines(line, line + 1);
 				}
-				else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
-					ZtatsWin::Instance().update_player_list();
-					return -1;
+			}
+			else if (event.key.keysym.sym == SDLK_UP) {
+				if (line > 0) {
+					line--;
+					clear();
+					for (int i = offset; i < (int)page.size(); i++)
+						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+					blit();
+					highlight_lines(line, line + 1);
 				}
-				else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
-					ZtatsWin::Instance().update_player_list();
-					return line + offset;
+				else if (line == 0 && offset > 0) {
+					offset--;
+					clear();
+					for (int i = offset; i < (int)page.size(); i++)
+						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+					blit();
+					highlight_lines(line, line + 1);
 				}
+			}
+			else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
+				ZtatsWin::Instance().update_player_list();
+				return -1;
+			}
+			else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
+				ZtatsWin::Instance().update_player_list();
+				return line + offset;
 			}
 		}
 	}

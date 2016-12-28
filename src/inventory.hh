@@ -38,7 +38,7 @@ enum class InventoryType
 class Inventory
 {
 private:
-	// First argument contains item name + description in one string without space in between.
+	/// First argument contains item name + description in one string without space in between.
 	std::map<std::string, std::vector<Item*>> _items;
 
 public:
@@ -46,7 +46,8 @@ public:
 	~Inventory();
 	int weight();
 	Item* get_item(int);
-	int how_many_at(int);
+	unsigned how_many_at(unsigned);
+	unsigned how_many_of(std::string item_name, std::string item_description);
 	std::vector<Item*>* get(int);
 	std::map<std::string, int> list_wearables();
 	std::map<std::string, int> list_all();

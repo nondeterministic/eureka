@@ -12,6 +12,11 @@
 #include "item.hh"
 #include "ztatswincontentprovider.hh"
 
+enum class SelectionMode {
+	MultipleItems,
+	SingleItem
+};
+
 class ZtatsWin : public SDLWindowRegion
 {
 protected:
@@ -42,44 +47,23 @@ public:
 	std::vector<int> select_items();
 	void execute(ZtatsWinContentProvider*, unsigned = 0);
 
-	template <class T>
-	T execute(ZtatsWinContentSelectionProvider<T>* content_selection_provider)
+	// Note, there is some unsafe casting going on in this function, however, since it's local to this function, it should be safe.
+	template <class T> std::vector<T> execute(ZtatsWinContentSelectionProvider<T>* content_selection_provider, SelectionMode selection_mode)
 	{
+		std::vector<T> selected_items;
+		// Forward casting into a void-pointer.
 		_content_selection_provider = (ZtatsWinContentSelectionProvider<void*>*) content_selection_provider;
 
-		Item* selected_item = NULL;
+		if (selection_mode == SelectionMode::SingleItem) {
+			int selected_item_no = select_item();
 
-		SDL_Event event;
-		unsigned topmost_line_number = 0;
-
-		print_selection_page();
-
-		while (SDL_WaitEvent(&event)) {
-			if (event.type == SDL_KEYDOWN) {
-				if (event.key.keysym.sym == SDLK_UP) {
-					if (topmost_line_number > 0) {
-						topmost_line_number--;
-						print_selection_page(topmost_line_number);
-					}
-				}
-				else if (event.key.keysym.sym == SDLK_DOWN) {
-					if (topmost_line_number < _content_selection_provider->get_page().size() - 1) {
-						topmost_line_number++;
-						print_selection_page(topmost_line_number);
-					}
-				}
-				else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
-					topmost_line_number = 0;
-
-					ZtatsWin::Instance().update_player_list();
-					SDLWindow::Instance().blit_interior();
-					return NULL;
-				}
-			}
+			if (selected_item_no >= 0)
+				// Backward casting from void-pointer to T.
+				selected_items.push_back((T)(_content_selection_provider->get_page()[selected_item_no].second));
 		}
 
 		_content_selection_provider = NULL;
-		return NULL;
+		return selected_items;
 	}
 
 	// TODO: Should be protected. Move to protected, when rest of refactoring is done/attacked.

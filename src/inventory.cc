@@ -59,16 +59,26 @@ int Inventory::weight()
 // Returns 0 if n points to non-existent slot in the inventory, otherwise the size
 // of that slot.
 
-int Inventory::how_many_at(int n)
+unsigned Inventory::how_many_at(unsigned n)
 {
-	if (n < (int)_items.size()) {
-		int i = 0;
+	if (n < _items.size()) {
+		unsigned i = 0;
 		for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, i++) {
 			if (i == n)
 				return ptr->second.size();
 		}
 	}
 
+	return 0;
+}
+
+unsigned Inventory::how_many_of(std::string item_name, std::string item_description)
+{
+	for (const std::pair<std::string, std::vector<Item*>>& item: _items)
+		if (item.first == item_name + item_description) // See description of _items in header file for why this makes sense!
+			return item.second.size();
+
+	std::cout << "INFO: inventory.cc: how_man_of(" << item_name << ", " << item_description << ") returned 0.\n";
 	return 0;
 }
 
