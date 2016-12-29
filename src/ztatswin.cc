@@ -23,7 +23,6 @@ using namespace std;
 ZtatsWin::ZtatsWin()
 {
 	_content_provider = NULL;
-	_content_selection_provider = NULL;
 
 	standard_bgcolour.r = 0;
 	standard_bgcolour.g = 0;
@@ -240,10 +239,15 @@ int ZtatsWin::select_item()
 	unsigned offset = 0;
 	const int dheight = 16;  // Ztats display is 16 lines tall
 
-	print_selection_page();
-	highlight_lines(line, line + 1);
+	if (content_provider()->get_pages().size() != 1) {
+		std::cerr << "WARNING: ztatswin.cc: ZtatsWinContentSelection provider holds " << content_provider()->get_pages().size() << " page(s), but should hold exactly one.\n";
+		return -1;
+	}
 
-	auto page = _content_selection_provider->get_page();
+	vector<StringAlignmentTuple> page = content_provider()->get_pages()[0];
+
+	print_single_page();
+	highlight_lines(line, line + 1);
 
 	while (SDL_WaitEvent(&event)) {
 		if (event.type == SDL_KEYDOWN) {
@@ -253,7 +257,7 @@ int ZtatsWin::select_item()
 					offset++;
 					clear();
 					for (int i = offset; i < (int)page.size(); i++)
-						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+						println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 					blit();
 					highlight_lines(line, line + 1);
 				}
@@ -261,7 +265,7 @@ int ZtatsWin::select_item()
 					line++;
 					clear();
 					for (int i = offset; i < (int)page.size(); i++)
-						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+						println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 					blit();
 					highlight_lines(line, line + 1);
 				}
@@ -271,7 +275,7 @@ int ZtatsWin::select_item()
 					line--;
 					clear();
 					for (int i = offset; i < (int)page.size(); i++)
-						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+						println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 					blit();
 					highlight_lines(line, line + 1);
 				}
@@ -279,7 +283,7 @@ int ZtatsWin::select_item()
 					offset--;
 					clear();
 					for (int i = offset; i < (int)page.size(); i++)
-						println_noblit(i - offset, page[i].first.get<0>(), page[i].first.get<1>());
+						println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 					blit();
 					highlight_lines(line, line + 1);
 				}
@@ -303,7 +307,7 @@ int ZtatsWin::select_item()
 ZtatsWinContentProvider* ZtatsWin::content_provider()
 {
 	if (_content_provider == NULL)
-		throw std::runtime_error("ZtatsWin's content provider is NULL.");
+		throw std::runtime_error("EXCEPTION: ztatswin.cc: ZtatsWin's content provider is NULL.");
 	return _content_provider;
 }
 
@@ -322,17 +326,14 @@ void ZtatsWin::execute(ZtatsWinContentProvider* content_provider, unsigned start
 
 void ZtatsWin::print_single_page(unsigned page, unsigned offet_from_top)
 {
+	if (page > content_provider()->get_pages().size() - 1) {
+		std::cerr << "ERROR: ztatswin.cc: Cannot access page " << page << " of content provider, when there are only " << content_provider()->get_pages().size() << " available.\n";
+		return;
+	}
+
 	clear(); // Clear before printing or we get letter-salad...
 	for (unsigned curr_line = offet_from_top; curr_line < content_provider()->get_pages()[page].size(); curr_line++)
 		println_noblit(curr_line - offet_from_top, content_provider()->get_pages()[page][curr_line].get<0>(), content_provider()->get_pages()[page][curr_line].get<1>());
-	blit();
-}
-
-void ZtatsWin::print_selection_page(unsigned offet_from_top)
-{
-	clear(); // Clear before printing or we get letter-salad...
-	for (unsigned curr_line = offet_from_top; curr_line < _content_selection_provider->get_page().size(); curr_line++)
-		println_noblit(curr_line - offet_from_top, _content_selection_provider->get_page()[curr_line].first.get<0>(), _content_selection_provider->get_page()[curr_line].first.get<1>());
 	blit();
 }
 

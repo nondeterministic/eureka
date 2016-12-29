@@ -179,10 +179,8 @@ std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> Inventory::create_conte
 		content_page.push_back(pair<StringAlignmentTuple, Item*>(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN), item));
 	}
 
-	if (content_page.size() > 0) {
+	if (content_page.size() > 0)
 		content_selection_provider->create_content_page(content_page);
-		std::cout << "CREATED CONTENT_SELECTION_PROVIDER: " << content_selection_provider->get_page().size() << "\n";
-	}
 	else
 		std::cout << "INFO: inventory.cc: Created an empty ZtatsWinContentSelectionProvider object. Unless your inventory is actually empty, this is a (non-critical) bug.\n";
 

@@ -22,7 +22,6 @@ class ZtatsWin : public SDLWindowRegion
 protected:
 	SDL_Color highlight_colour, standard_bgcolour;
 	ZtatsWinContentProvider* _content_provider;
-	ZtatsWinContentSelectionProvider<void*>* _content_selection_provider;
 
 	std::vector<StringAlignmentTuple> lines; // TODO: Remove me when refactoring is done!
 
@@ -31,7 +30,6 @@ protected:
 	void swap_colours(int, int, SDL_Color, SDL_Color);
 	ZtatsWinContentProvider* content_provider();
 	void print_single_page(unsigned = 0, unsigned = 0);
-	void print_selection_page(unsigned = 0);
 
 public:
 	static ZtatsWin& Instance();
@@ -47,22 +45,25 @@ public:
 	std::vector<int> select_items();
 	void execute(ZtatsWinContentProvider*, unsigned = 0);
 
-	// Note, there is some unsafe casting going on in this function, however, since it's local to this function, it should be safe.
-	template <class T> std::vector<T> execute(ZtatsWinContentSelectionProvider<T>* content_selection_provider, SelectionMode selection_mode)
+	template <class T>
+	std::vector<T> execute(ZtatsWinContentSelectionProvider<T>* content_selection_provider, SelectionMode selection_mode)
 	{
 		std::vector<T> selected_items;
-		// Forward casting into a void-pointer.
-		_content_selection_provider = (ZtatsWinContentSelectionProvider<void*>*) content_selection_provider;
+		_content_provider = new ZtatsWinContentProvider();
+		_content_provider->add_content_page(content_selection_provider->get_page_strings_only());
 
 		if (selection_mode == SelectionMode::SingleItem) {
 			int selected_item_no = select_item();
 
 			if (selected_item_no >= 0)
-				// Backward casting from void-pointer to T.
-				selected_items.push_back((T)(_content_selection_provider->get_page()[selected_item_no].second));
+				selected_items.push_back((T)(content_selection_provider->get_page()[selected_item_no].second));
+		}
+		else if (selection_mode == SelectionMode::MultipleItems) {
+			; // TODO
 		}
 
-		_content_selection_provider = NULL;
+		delete _content_provider;
+		_content_provider = NULL;
 		return selected_items;
 	}
 

@@ -866,6 +866,11 @@ void GameControl::keypress_ztats()
 
 void GameControl::keypress_inventory()
 {
+	if (party->inventory()->size() == 0) {
+		printcon("Inventory is empty. You are presently not carrying any special items.");
+		return;
+	}
+
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
@@ -1477,6 +1482,11 @@ std::pair<int, int> GameControl::select_coords()
 
 void GameControl::keypress_drop_items()
 {
+	if (party->inventory()->size() == 0) {
+		printcon("Inventory is empty. You are presently not carrying any special items.");
+		return;
+	}
+
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
@@ -1493,26 +1503,27 @@ void GameControl::keypress_drop_items()
 	// User can either select exactly one item, or will have aborted the dialogue.
 	if (selected_items.size() == 1) {
 		Item* selected_item = selected_items[0];
-		std::cout << "SELECTED " << selected_item->name() << "\n";
 		unsigned selected_item_size = party->inventory()->how_many_of(selected_item->name(), selected_item->description());
+		unsigned drop_how_many = 1;
 
-		unsigned drop_how_many = 0;
-		printcon("How many? (1-" + std::to_string(selected_item_size) + ")");
-		std::string reply = Console::Instance().gets();
-		try {
-			if (reply.length() == 0)
-				drop_how_many = selected_item_size;
-			else {
-				drop_how_many = std::stoi(reply);
-				if (!(drop_how_many >= 1 && drop_how_many <= selected_item_size)) {
-					printcon("Huh? Nothing dropped.");
-					return;
+		if (selected_item_size > 1) {
+			printcon("How many? (1-" + std::to_string(selected_item_size) + ")");
+			std::string reply = Console::Instance().gets();
+			try {
+				if (reply.length() == 0)
+					drop_how_many = selected_item_size;
+				else {
+					drop_how_many = std::stoi(reply);
+					if (!(drop_how_many >= 1 && drop_how_many <= selected_item_size)) {
+						printcon("Huh? Nothing dropped.");
+						return;
+					}
 				}
 			}
-		}
-		catch (boost::bad_lexical_cast const&) {
-			printcon("Huh? Nothing dropped.");
-			return;
+			catch (boost::bad_lexical_cast const&) {
+				printcon("Huh? Nothing dropped.");
+				return;
+			}
 		}
 
 		// Create corresponding icon if party is indoors

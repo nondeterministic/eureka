@@ -81,12 +81,27 @@ public:
 		// Unlike normal ContentProvider, the selection one only supports exactly ONE page of content along with linked objects!
 		if (_basic_content_provider.get_pages().size() == 1) {
 			if (_basic_content_provider.get_pages()[0].size() != _linked_objects.size())
-				cerr << "ERROR: ztatswincontentprovider.cc: Internal error: linked objects must be equally many as item strings.\n";
+				cerr << "ERROR: ztatswincontentprovider.cc: Internal error: linked objects must be equally many as item strings (2).\n";
 			else {
 				for (unsigned i = 0; i < _basic_content_provider.get_pages()[0].size(); i++) {
 					StringAlignmentTuple item_string = _basic_content_provider.get_pages()[0][i];
 					tmp_content_page.push_back(pair<StringAlignmentTuple, T>(item_string, _linked_objects[i]));
 				}
+			}
+		}
+
+		return tmp_content_page;
+	}
+
+	vector<StringAlignmentTuple> get_page_strings_only()
+	{
+		vector<StringAlignmentTuple> tmp_content_page;
+
+		// Unlike normal ContentProvider, the selection one only supports exactly ONE page of content along with linked objects!
+		if (_basic_content_provider.get_pages().size() == 1) {
+			for (unsigned i = 0; i < _basic_content_provider.get_pages()[0].size(); i++) {
+				StringAlignmentTuple item_string = _basic_content_provider.get_pages()[0][i];
+				tmp_content_page.push_back(item_string);
 			}
 		}
 
