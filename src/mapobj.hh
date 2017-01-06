@@ -61,12 +61,15 @@ public:
 	void get_origin(unsigned&, unsigned&);
 	void set_coords(unsigned, unsigned);
 	void get_coords(unsigned&, unsigned&);
+	std::pair<unsigned, unsigned> get_coords();
 	void set_icon(unsigned);
 	unsigned get_icon();
 	void set_layer(int);
 	int get_layer();
+	bool is_removeable();
 	void set_type(MAPOBJ_TYPES);
 	MAPOBJ_TYPES get_type();
+	bool is_animate();
 	void set_init_script_path(std::string);
 	std::string get_init_script_path();
 	void set_combat_script_path(std::string);
@@ -75,10 +78,11 @@ public:
 	std::vector<std::shared_ptr<Action>>* actions();
 	void set_foes(Attackers);
 	Attackers get_foes();
-	std::string toString();
+	std::string to_string();
 
-	bool removable;
+	/// Can be used by the game designer to specify a specific item to be dropped or picked up with push/pop methods defined in map.cc.  Can be empty.
 	std::string id;
+	/// If it's empty, it means, the player will never pick up this item, add it to the inventory, etc.  Also, if it's empty, the MapObj is automatically non-removable!
 	std::string lua_name;
 	int how_many;
 	MOVE_MODE move_mode;
@@ -96,6 +100,8 @@ protected:
 	std::string _init_script;
 	std::string _combat_script;
 	std::vector<std::shared_ptr<Action>> _actions;
+	/// Can be left empty.  Will further specify an item, e.g., to differentiate different types of scrolls.
+	/// Otherwise all scrolls are lumped together as one in the inventory.
 	std::string _descr;  // ATTENTION: Right now, this field only is used for MiscItem items!!
 
 	// If map_obj is a monster, we can add the attackers information to it, to keep track

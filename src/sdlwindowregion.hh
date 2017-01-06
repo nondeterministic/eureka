@@ -25,7 +25,7 @@
 
 #include <string>
 
-#include "eureka.hh"
+#include "util.hh"
 #include "charset.hh"
 #include "sdlwindow.hh"
 
@@ -128,7 +128,7 @@ public:
 		font.printch(get_surface(), c, x_pos + _x_frame_offset, y_pos + _y_frame_offset);
 	}
 
-	void print_noblit(int x_pos, int y_pos, const std::string s, Alignment align = LEFTALIGN)
+	void print_noblit(int x_pos, int y_pos, const std::string s, Alignment align = Alignment::LEFTALIGN)
 	{
 		for (unsigned i = 0, j = 0; i < s.length(); i++, j++) {
 			if (align == LEFTALIGN)
@@ -140,19 +140,19 @@ public:
 		}
 	}
 
-	void println_noblit(int line, const std::string s, Alignment align = LEFTALIGN)
+	void println_noblit(int line, const std::string s, Alignment align = Alignment::LEFTALIGN)
 	{
 		if (line < get_surface()->h / font.char_height())
 			print_noblit(0, line * font.char_height() + _inter_line_padding * line, s, align);
 	}
 
-	void print(int x_pos, int y_pos, const std::string s, Alignment align = LEFTALIGN)
+	void print(int x_pos, int y_pos, const std::string s, Alignment align = Alignment::LEFTALIGN)
 	{
 		print_noblit(x_pos, y_pos, s, align);
 		blit();
 	}
 
-	void println(int line, const std::string s, Alignment align = LEFTALIGN)
+	void println(int line, const std::string s, Alignment align = Alignment::LEFTALIGN)
 	{
 		println_noblit(line, s, align);
 		blit();

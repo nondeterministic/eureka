@@ -19,7 +19,7 @@
  * ********************************************************************* */
 
 #include "sdlwindow.hh"
-#include "eureka.hh"
+#include "util.hh"
 #include "config.h"
 
 // Testing only

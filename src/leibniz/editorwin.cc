@@ -326,8 +326,7 @@ void EditorWin::on_menu_map_close(void)
       _sdleditor = NULL;
       std::cout << "Deleted sdleditor" << std::endl;
 
-      // If the map has never been saved before, remove it for
-      // good
+      // If the map has never been saved before, remove it for good
       if (!tmp_map->exists_on_disk())
         World::Instance().delete_map(tmp_map);
     }
@@ -337,8 +336,7 @@ void EditorWin::on_menu_map_close(void)
     else
       nb_main.prev_page();
 
-    // Now remove vbox from current page.  Note that this may cause
-    // an automatic switch if tmp_vbox is the current one.
+    // Now remove vbox from current page.  Note that this may cause an automatic switch if tmp_vbox is the current one.
     nb_main.remove(*tmp_vbox);
     std::cout << "Removed page containing vbox" << std::endl;
 
@@ -693,7 +691,7 @@ void EditorWin::rm_obj(int x, int y)
   int map_y = 0;
   _sdleditor->pixel_to_map(x, y, map_x, map_y);
 
-  get_curr_map()->pop_obj(map_x, map_y);
+//  get_curr_map()->pop_obj(map_x, map_y);
 
   ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
   // This could be much more efficient if I would only draw the
@@ -735,7 +733,6 @@ void EditorWin::add_object(int x, int y)
 		newObj.set_type(obj_win.get_object_type());
 		newObj.set_coords(map_x, map_y);
 		newObj.set_icon(obj_win.get_icon_no());
-		newObj.removable = obj_win.removable;
 		newObj.id = obj_win.id;
 
 		// Auto-roam if type is person, animal or monster

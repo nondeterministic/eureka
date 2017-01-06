@@ -55,6 +55,7 @@
 #include "eventchangeicon.hh"
 #include "eventplaysound.hh"
 #include "world.hh"
+#include "ztatswincontentprovider.hh"
 
 extern "C" {
 #include <lua.h>
@@ -267,19 +268,20 @@ int l_choose_monster(lua_State* L)
 
 /**
  * When called, on the Lua stack has to be a table of either weapons or edibles, etc.
- * This table will then be inserted into the ztats window display,
- * and the user can select an item for purchase.
+ * This table will then be inserted into the ztats window display, and the user can select an item for purchase.
  *
- * Returns the name of the selected item, which can be turned
- * into an actual item using, e.g., the methods in ItemFactory.
+ * Returns the name of the selected item, which can be turned into an actual item using, e.g., the methods in ItemFactory.
  * If no item was selected, "" is returned.
  */
 
 int l_ztatswin_shopinteraction(lua_State* L)
 {
-	int left_border = 9;
 	ZtatsWin& zwin = ZtatsWin::Instance();
-	std::vector<StringAlignmentTuple> lines;
+	int left_border = 9;
+
+	 // A formatted item name with its price in gold, and a plain and simple item name for easy identification without much string decomposition non-sense...
+	std::vector<std::pair<StringAlignmentTuple, std::string>> content_page;
+	ZtatsWinContentSelectionProvider<std::string> content_selection_provider; // Will return plain item name
 
 	lua_pushnil(L);
 
@@ -311,26 +313,20 @@ int l_ztatswin_shopinteraction(lua_State* L)
     	for (int i = str_len; i < left_border; i++)
     		ss << " ";
     	ss << name;
-    	lines.push_back(StringAlignmentTuple(ss.str(), LEFTALIGN));
 
+		content_page.push_back(std::pair<StringAlignmentTuple, std::string>(StringAlignmentTuple(ss.str(), Alignment::LEFTALIGN), name));
     	lua_pop(L, 1);
 	}
 
 	lua_pop(L, 1);
 
-	zwin.set_lines(lines);
-    zwin.clear();
+	content_selection_provider.create_content_page(content_page);
+	std::vector<std::string> selected_items_names = zwin.execute(&content_selection_provider, SelectionMode::SingleItem);
 
-    // Now determine name of selected item
-    int selected = zwin.select_item();
-
-	// Return item name or "" if none was selected
-    if (selected >= 0) {
-    	std::string item_name = lines[selected].get<0>().substr(left_border);
-    	lua_pushstring(L, item_name.c_str());
-    }
-    else
-    	lua_pushstring(L, "");
+	if (selected_items_names.size() > 0)
+    	lua_pushstring(L, selected_items_names[0].c_str());
+	else
+		lua_pushstring(L, "");
 
     return 1;
 }
@@ -345,7 +341,6 @@ int l_ztatswin_shopinteraction(lua_State* L)
 
 int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 {
-	int left_border = 3;
 	int price_reduction = (lua_tonumber(L, 1));
 
 	Party& party = Party::Instance();
@@ -356,94 +351,72 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 		return 0;
 	}
 
-	std::map<std::string, int> tmp = party.inventory()->list_wearables();
-	std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
-	zwin.set_lines(tmp2);
-	zwin.clear();
-
-    // Now determine name of selected item
-    int selected = zwin.select_item();
-
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_selection_provider = party.inventory()->create_content_selection_provider(InventoryType::Wearables);
+	std::vector<Item*> selected_items = zwin.execute(content_selection_provider.get(), SelectionMode::SingleItem);
 	// Return item name or "" if none was selected
-    if (selected >= 0) {
-    	std::string sel_name = tmp2[selected].get<0>().substr(left_border);
-    	std::string item_name = sel_name;
-    	int how_many = 1;
+    if (selected_items.size() > 0) {
+    	Item* selected_item = selected_items[0];
+		unsigned selling_how_many = 1;
 
-    	// If there are more than 1 in the inventory, we need to do a bit of extra work...
-    	// We know that, because the inventory is then as follows
-    	// "1) arrow (22)"
-    	// "2) sword (4)"
-    	// "3) axe"
-    	// "4) sling"
+		stringstream ss;
+		ss << "How many (0 - " << party.inventory()->how_many_of(selected_item->name(), selected_item->description()) << ")?";
+		GameControl::Instance().printcon(ss.str() + " ");
 
-    	if (sel_name.find("(") != string::npos) {
-    		item_name = sel_name.substr(0, sel_name.find("(") - 1);
-    		how_many = std::stoi(sel_name.substr(sel_name.find("(") + 1 , sel_name.length() - sel_name.find("(") - 2));
-    	}
+		try {
+			std::string input;
+			input = Console::Instance().gets();
+			selling_how_many = std::stoi(input);
+			GameControl::Instance().printcon(input + " ");
+		}
+		catch (const std::invalid_argument& e) {
+			// User didn't enter a valid number
+			GameControl::Instance().printcon("Huh? I guess, some other time then.");
+			return 0;
+		}
 
-		int selling_how_many = 1; // How many are actually sold of the #how_many
-    	if (how_many > 1) {
-    		stringstream ss;
-    		ss << "How many (0 - " << how_many << ")?";
-    		GameControl::Instance().printcon(ss.str() + " ");
-
-    		try {
-    	   		std::string input;
-    	   		input = Console::Instance().gets();
-    			selling_how_many = std::stoi(input);
-        		GameControl::Instance().printcon(input + " ");
-    		}
-    		catch (const std::invalid_argument& e) {
-    			// User didn't enter a valid number
-    			GameControl::Instance().printcon("Huh? I guess, some other time then.");
-    			return 0;
-    		}
-
-    		if (selling_how_many > how_many) {
-    			GameControl::Instance().printcon("Sadly, you don't have that many.");
-    			return 0;
-    		}
-    		else if (selling_how_many == 0) {
-    			GameControl::Instance().printcon("Changed your mind then, eh?");
-    			return 0;
-    		}
-    	}
+		if (selling_how_many > party.inventory()->how_many_of(selected_item->name(), selected_item->description())) {
+			GameControl::Instance().printcon("Sadly, you don't have that many.");
+			return 0;
+		}
+		else if (selling_how_many == 0) {
+			GameControl::Instance().printcon("Changed your mind then, eh?");
+			return 0;
+		}
 
     	// Simple test to see, if the item can be sold at all.
     	// Not nice to allocate and deallocate for that purpose, but not so bad either...
-    	Item* item = NULL;
+    	Item* tmp_item = NULL;
     	try {
-    		ItemFactory::create_plain_name(item_name);
+    		ItemFactory::create_plain_name(selected_item->name());
     	}
 		catch (std::exception const& e) {
 		    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
 		    return 0;
 		}
 
-    	if (item != NULL) {
+    	if (tmp_item != NULL) {
     		// Buying price is item price - price_reduction %
-    		int item_price = item->gold() - (int)((float)item->gold() / 100.0 * (float)price_reduction);
+    		int item_price = tmp_item->gold() - (int)((float)tmp_item->gold() / 100.0 * (float)price_reduction);
 
 			GameControl::Instance().printcon("I can offer you " + std::to_string(item_price) + " per piece. Agree (y/n)?");
 			char agree = EventManager::Instance().get_key("yn");
 
 			if (agree == 'y') {
 				// Now add items to inventory...
-				for (int i = 0; i < selling_how_many; i++) {
-					std::cout << "Removing...\n";
-					party.inventory()->remove(item->name(), "");  // Empty item descr. should be OK as only standard items can be sold.
+				for (unsigned i = 0; i < selling_how_many; i++) {
+					party.inventory()->remove(tmp_item->name(), "");  // Empty item descr. should be OK as only standard items can be sold.
 					party.set_gold(party.gold() + item_price);
 				}
-				GameControl::Instance().printcon("Was a pleasure doing business with you.");
+				GameControl::Instance().printcon("'t was a pleasure doing business with you.");
 			}
-			else {
+			else
 				GameControl::Instance().printcon("Too bad. That's all I can offer you.");
-			}
 
-    		delete item;
+    		delete tmp_item;
         	GameControl::Instance().draw_status(false);
     	}
+    	else
+    		std::cerr << "WARNING: Selling of item " << selected_item->name() << " failed. (This could be an error, but not necessarily so.)\n";
     }
 
     return 0;
@@ -458,8 +431,6 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 
 int l_additemtoinv(lua_State* L)
 {
-	int left_border = 9;
-
 	std::string item_name = (std::string)(lua_tostring(L, 1));
 	Item* item = NULL;
 	try {

@@ -17,14 +17,14 @@ AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no)
   action_lbl("Action:"),
   object_lbl("Select type of object:"),
   icon_lbl("undef icon no."),
-  cb_removable("removable?"),
+  // cb_removable("removable?"),
   rb_type_frame("Object type"),
   rb_type_item("Item"),
   rb_type_person("Person"),
   rb_type_monster("Monster"),
   rb_type_animal("Animal")
 {
-	removable = false;
+	// removable = false;
 	_object_no = 0;
 	_has_action = false;
 	_action_no = 0;
@@ -97,7 +97,7 @@ AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no)
 	actions_combo.append("None");
 	actions_combo.append("Action");
 
-	vbox.add(cb_removable);
+	// vbox.add(cb_removable);
 
 	align.add(vbox);
 
@@ -137,7 +137,7 @@ void AddObjectWin::on_button_ok(void)
 	// _object_no = objects_combo.get_active_row_number();
 	_has_action = actions_combo.get_active_row_number() > 0;
 	id = id_entry.get_text();
-	removable = cb_removable.get_active();
+	// removable = cb_removable.get_active();
 
 	hide();
 }

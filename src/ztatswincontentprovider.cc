@@ -18,8 +18,7 @@
 // USA.
 
 #include "ztatswincontentprovider.hh"
-#include "ztatswin.hh"
-#include "eureka.hh"
+#include "util.hh"
 
 #include <iostream>
 #include <vector>

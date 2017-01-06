@@ -20,7 +20,7 @@
 #ifndef ZTATSWINCP_HH
 #define ZTATSWINCP_HH
 
-#include "eureka.hh"
+#include "util.hh"
 
 #include <vector>
 #include <string>

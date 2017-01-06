@@ -66,42 +66,42 @@
     <row>84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 0</row>
   </data>
   <objects>
-    <object x="11" y="31" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="37" ox="0" oy="0" icon_no="642" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="34" ox="0" oy="0" icon_no="593" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="43" ox="0" oy="0" icon_no="318" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="11" y="33" ox="0" oy="0" icon_no="623" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="34" ox="0" oy="0" icon_no="647" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="14" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="37" ox="0" oy="0" icon_no="568" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="36" ox="0" oy="0" icon_no="566" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="26" y="43" ox="0" oy="0" icon_no="255" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="monster"/>
-    <object x="22" y="47" ox="0" oy="0" icon_no="93" layer="0" id="lever" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="35" ox="0" oy="0" icon_no="593" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="32" ox="0" oy="0" icon_no="598" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="26" y="49" ox="0" oy="0" icon_no="596" layer="0" id="mace" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="36" y="45" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="25" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="39" ox="0" oy="0" icon_no="594" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="38" ox="0" oy="0" icon_no="596" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="21" y="43" ox="0" oy="0" icon_no="130" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="11" y="39" ox="0" oy="0" icon_no="646" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="21" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="32" y="43" ox="0" oy="0" icon_no="296" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="37" y="43" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="38" ox="0" oy="0" icon_no="644" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="29" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="35" ox="0" oy="0" icon_no="641" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="33" ox="0" oy="0" icon_no="596" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="33" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="36" ox="0" oy="0" icon_no="643" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="19" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="23" y="53" ox="0" oy="0" icon_no="83" layer="0" id="halfdeadbody" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="10" y="39" ox="0" oy="0" icon_no="645" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="43" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="22" y="50" ox="0" oy="0" icon_no="393" layer="0" id="torturer" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="10" y="45" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="26" y="51" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="31" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="37" ox="0" oy="0" icon_no="642" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="34" ox="0" oy="0" icon_no="593" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="43" ox="0" oy="0" icon_no="318" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="11" y="33" ox="0" oy="0" icon_no="623" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="34" ox="0" oy="0" icon_no="647" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="14" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="37" ox="0" oy="0" icon_no="568" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="36" ox="0" oy="0" icon_no="566" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="26" y="43" ox="0" oy="0" icon_no="255" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="monster"/>
+    <object x="22" y="47" ox="0" oy="0" icon_no="93" layer="0" id="lever" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="35" ox="0" oy="0" icon_no="593" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="32" ox="0" oy="0" icon_no="598" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="26" y="49" ox="0" oy="0" icon_no="596" layer="0" id="mace" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="36" y="45" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="25" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="39" ox="0" oy="0" icon_no="594" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="38" ox="0" oy="0" icon_no="596" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="43" ox="0" oy="0" icon_no="130" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="11" y="39" ox="0" oy="0" icon_no="646" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="32" y="43" ox="0" oy="0" icon_no="296" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="37" y="43" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="38" ox="0" oy="0" icon_no="644" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="29" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="35" ox="0" oy="0" icon_no="641" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="33" ox="0" oy="0" icon_no="596" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="33" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="36" ox="0" oy="0" icon_no="643" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="19" y="44" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="53" ox="0" oy="0" icon_no="83" layer="0" id="halfdeadbody" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="10" y="39" ox="0" oy="0" icon_no="645" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="43" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="22" y="50" ox="0" oy="0" icon_no="393" layer="0" id="torturer" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="10" y="45" ox="0" oy="0" icon_no="125" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person"/>
+    <object x="26" y="51" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="8" y="46">

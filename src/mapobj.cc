@@ -36,7 +36,6 @@ MapObj::MapObj()
 	_ox = 0;
 	_oy = 0;
 	_icon = 0;
-	removable = false;
 	lua_name = "";
 	how_many = 1;
 	move_mode = STATIC;
@@ -57,7 +56,6 @@ MapObj::MapObj(const MapObj& m)
 	_ox = m._ox;
 	_oy = m._oy;
 	_icon = m._icon;
-	removable = m.removable;
 	lua_name = m.lua_name;
 	how_many = m.how_many;
 	move_mode = m.move_mode;
@@ -89,7 +87,6 @@ bool MapObj::operator==(const MapObj& rhs) const
 			_icon == rhs._icon &&
 			how_many == rhs.how_many &&
 			_type == rhs._type &&
-			removable == rhs.removable &&
 			lua_name == rhs.lua_name &&
 			openable == rhs.openable &&
 			move_mode == rhs.move_mode &&
@@ -111,13 +108,13 @@ MapObj::~MapObj()
 	_actions.clear();
 }
 
-std::string MapObj::toString()
+std::string MapObj::to_string()
 {
 	stringstream ss;
 
 	ss << "MapObj: (x, y): (" << _x << ", " << _y << "), (ox, oy): (" << _ox << ", " << _oy <<
 			", icon: " << _icon << ", how_many: << " << how_many << ", type: " << _type <<
-			", removeable: " << removable << ", lua_name: " << lua_name << ", openable: " << openable <<
+			", lua_name: " << lua_name << ", openable: " << openable <<
 			", move_mode: " << move_mode << ", personality: " << personality << ", lock_type: " << lock_type <<
 			", is_random_monster: " << is_random_monster << ", init_script: " << _init_script << ", combat_script: " << _combat_script <<
 			", actions.size(): " << _actions.size() << ", descr: " << _descr;
@@ -158,6 +155,11 @@ void MapObj::set_type(MAPOBJ_TYPES mt)
   _type = mt;
 }
 
+bool MapObj::is_animate()
+{
+	return _type == MAPOBJ_ANIMAL || _type == MAPOBJ_MONSTER || _type == MAPOBJ_PERSON;
+}
+
 MAPOBJ_TYPES MapObj::get_type()
 {
   return _type;
@@ -192,6 +194,11 @@ void MapObj::get_coords(unsigned& x, unsigned& y)
 {
   x = _x;
   y = _y;
+}
+
+std::pair<unsigned, unsigned> MapObj::get_coords()
+{
+	return std::pair<unsigned,unsigned>(_x, _y);
 }
 
 void MapObj::set_origin(unsigned x, unsigned y)
@@ -233,4 +240,9 @@ std::string MapObj::description()
 void MapObj::set_description(std::string d)
 {
 	_descr = d;
+}
+
+bool MapObj::is_removeable()
+{
+	return lua_name.size() > 0;
 }

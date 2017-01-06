@@ -23,6 +23,7 @@
 #include "boost/unordered_map.hpp"
 #include "boost/filesystem.hpp"
 #include "boost/filesystem/path.hpp"
+
 #include <string>
 #include <vector>
 #include <utility>
@@ -30,6 +31,7 @@
 // See comments in world.hh for the weird 'undef None'
 #undef None
 #include <libxml++/libxml++.h>
+
 #include "mapobj.hh"
 #include "action.hh"
 #include "gameevent.hh"
@@ -85,10 +87,13 @@ public:
   virtual void expand_map(int, int, int, int) = 0;
   void expand_map_data(int, int, int, int);
   void push_obj(MapObj);
-  void pop_obj(int, int);
+  void pop_obj(MapObj*);
+  void pop_obj_animate(unsigned, unsigned);
+  /// Can only be called if there is EXACTLY one item in location under scrutiny!
+  void pop_obj(unsigned, unsigned);
   int rm_obj(std::string);
   int rm_obj(MapObj);
-  void push_icon(int, int, unsigned);
+  // void push_icon(int, int, unsigned);
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);
   std::vector<std::shared_ptr<Action>> get_actions(unsigned, unsigned);
@@ -96,6 +101,7 @@ public:
   void add_event_to_action(unsigned, unsigned, std::shared_ptr<GameEvent>);
   void del_action(unsigned, unsigned);
   boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* objs();
+  unsigned how_many_mapobj_at(unsigned, unsigned);
 
   bool guarded_city;
   bool is_dungeon;

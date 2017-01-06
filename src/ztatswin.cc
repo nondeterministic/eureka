@@ -140,37 +140,128 @@ int ZtatsWin::select_player()
 
 // Helps select multiple items, see Combat::victory for an example.
 
+//std::vector<int> ZtatsWin::select_items()
+//{
+//	std::vector<int> result;
+//	int line = 0;
+//	SDL_Event event;
+//	unsigned offset = 0;
+//	const int dheight = 16;  // Ztats display is 16 lines tall
+//
+//	vector<StringAlignmentTuple> page = content_provider()->get_pages()[0];
+//	print_single_page();
+//
+//	for (int i = offset; i < (int)lines.size(); i++)
+//		println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//	blit();
+//
+//	highlight_lines(line, line + 1);
+//
+//	while (1) {
+//		if (SDL_WaitEvent(&event)) {
+//			if (event.type == SDL_KEYDOWN) {
+//				if (event.key.keysym.sym == SDLK_DOWN) {
+//					if (line == dheight - 1 && offset < lines.size() - 1) {
+//						offset++;
+//						clear();
+//						for (int i = offset; i < (int)lines.size(); i++)
+//							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//						blit();
+//						highlight_lines(line, line + 1);
+//					}
+//					else if (line < dheight - 1 && line < (int)lines.size() - 1) {
+//						line++;
+//						clear();
+//						for (int i = offset; i < (int)lines.size(); i++)
+//							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//						blit();
+//						highlight_lines(line, line + 1);
+//					}
+//				}
+//				else if (event.key.keysym.sym == SDLK_UP) {
+//					if (line > 0) {
+//						line--;
+//						clear();
+//						for (int i = offset; i < (int)lines.size(); i++)
+//							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//						blit();
+//						highlight_lines(line, line + 1);
+//					}
+//					else if (line == 0 && offset > 0) {
+//						line--;
+//						offset--;
+//						clear();
+//						for (int i = offset; i < (int)lines.size(); i++)
+//							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//						blit();
+//						highlight_lines(line, line + 1);
+//					}
+//				}
+//				else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
+//					ZtatsWin::Instance().update_player_list();
+//					return result;
+//				}
+//				else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
+//					if (std::find(result.begin(), result.end(), line + offset) == result.end()) {
+//						result.push_back(line + offset);
+//
+//						StringAlignmentTuple tuple     = lines[line + offset];
+//						std::string linestr  = tuple.get<0>();
+//						lines[line + offset] = StringAlignmentTuple("*" + linestr.substr(linestr.find_first_of(")")),  // String
+//								tuple.get<1>());                                   // Alginment
+//					}
+//					else {
+//						result.erase(std::find(result.begin(), result.end(), line + offset));
+//
+//						StringAlignmentTuple tuple     = lines[line + offset];
+//						std::string linestr  = tuple.get<0>();
+//						lines[line + offset] = StringAlignmentTuple(boost::lexical_cast<string>(line + offset + 1) + linestr.substr(linestr.find_first_of(")")),
+//								tuple.get<1>());
+//					}
+//
+//					for (int i = offset; i < (int)lines.size(); i++)
+//						println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+//					blit();
+//
+//					highlight_lines(line, line + 1);
+//				}
+//			}
+//		}
+//	}
+//
+//	return result;
+//}
+
 std::vector<int> ZtatsWin::select_items()
 {
 	std::vector<int> result;
-	int line = 0;
+	unsigned line = 0;
 	SDL_Event event;
 	unsigned offset = 0;
 	const int dheight = 16;  // Ztats display is 16 lines tall
 
-	for (int i = offset; i < (int)lines.size(); i++)
-		println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
-	blit();
+	vector<StringAlignmentTuple> page = content_provider()->get_pages()[0];
 
+	print_single_page();
 	highlight_lines(line, line + 1);
 
 	while (1) {
 		if (SDL_WaitEvent(&event)) {
 			if (event.type == SDL_KEYDOWN) {
 				if (event.key.keysym.sym == SDLK_DOWN) {
-					if (line == dheight - 1 && offset < lines.size() - 1) {
+					if (line == dheight - 1 && offset < page.size() - 1) {
 						offset++;
 						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+						for (unsigned i = offset; i < page.size(); i++)
+							println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 						blit();
 						highlight_lines(line, line + 1);
 					}
-					else if (line < dheight - 1 && line < (int)lines.size() - 1) {
+					else if (line < dheight - 1 && line < page.size() - 1) {
 						line++;
 						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+						for (unsigned i = offset; i < page.size(); i++)
+							println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 						blit();
 						highlight_lines(line, line + 1);
 					}
@@ -179,8 +270,8 @@ std::vector<int> ZtatsWin::select_items()
 					if (line > 0) {
 						line--;
 						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+						for (unsigned i = offset; i < page.size(); i++)
+							println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 						blit();
 						highlight_lines(line, line + 1);
 					}
@@ -188,8 +279,8 @@ std::vector<int> ZtatsWin::select_items()
 						line--;
 						offset--;
 						clear();
-						for (int i = offset; i < (int)lines.size(); i++)
-							println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+						for (int i = offset; i < page.size(); i++)
+							println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 						blit();
 						highlight_lines(line, line + 1);
 					}
@@ -202,22 +293,22 @@ std::vector<int> ZtatsWin::select_items()
 					if (std::find(result.begin(), result.end(), line + offset) == result.end()) {
 						result.push_back(line + offset);
 
-						StringAlignmentTuple tuple     = lines[line + offset];
+						StringAlignmentTuple tuple     = page[line + offset];
 						std::string linestr  = tuple.get<0>();
-						lines[line + offset] = StringAlignmentTuple("*" + linestr.substr(linestr.find_first_of(")")),  // String
-								tuple.get<1>());                                   // Alginment
+						page[line + offset] = StringAlignmentTuple("*" + linestr.substr(linestr.find_first_of(")")),  // String
+																   tuple.get<1>());                                   // Alginment
 					}
 					else {
 						result.erase(std::find(result.begin(), result.end(), line + offset));
 
-						StringAlignmentTuple tuple     = lines[line + offset];
+						StringAlignmentTuple tuple     = page[line + offset];
 						std::string linestr  = tuple.get<0>();
-						lines[line + offset] = StringAlignmentTuple(boost::lexical_cast<string>(line + offset + 1) + linestr.substr(linestr.find_first_of(")")),
+						page[line + offset] = StringAlignmentTuple(boost::lexical_cast<string>(line + offset + 1) + linestr.substr(linestr.find_first_of(")")),
 								tuple.get<1>());
 					}
 
-					for (int i = offset; i < (int)lines.size(); i++)
-						println_noblit(i - offset, lines[i].get<0>(), lines[i].get<1>());
+					for (unsigned i = offset; i < page.size(); i++)
+						println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 					blit();
 
 					highlight_lines(line, line + 1);
@@ -395,6 +486,7 @@ void ZtatsWin::scroll(unsigned start_page)
 	}
 }
 
+/*
 void ZtatsWin::ztats_player(int p)
 {
   build_ztats_player(p);
@@ -570,6 +662,7 @@ void ZtatsWin::build_ztats_player(int p, int lines_hidden)
 
   lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
 }
+*/
 
 void ZtatsWin::update_player_list()
 {

@@ -1,10 +1,7 @@
 #ifndef __SIMPLICISSIMUS_HH
 #define __SIMPLICISSIMUS_HH
 
-#include "weapon.hh"
-#include "shield.hh"
 #include "profession.hh"
-#include "soundsample.hh"
 #include "config.h"
 
 #include <string>
@@ -21,14 +18,9 @@ extern boost::filesystem::path conf_data_path;
 extern boost::filesystem::path conf_world_path;
 extern boost::filesystem::path conf_savegame_path;
 
-enum Alignment
-{
-  LEFTALIGN,
-  CENTERALIGN,
-  RIGHTALIGN
-};
-
-typedef boost::tuple<std::string, Alignment> StringAlignmentTuple;
+#define CROSSHAIR_ICON_INDOORS    16
+#define CROSSHAIR_ICON_OUTDOORS   41
+#define CROSSHAIR_ICON_LUA_NAME    "temporary_icon_crosshair"
 
 enum Emphasis
 {

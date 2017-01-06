@@ -103,11 +103,12 @@ public:
 	void keypress_mix_reagents();
 
 	std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
+	/// Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.
 	void make_guards(PERSONALITY);
 	void get_attacked();
 	void set_game_music(SoundSample*);
-	std::string ready_item(int);
-	std::string yield_item(int);
+	std::string keypress_ready_item(unsigned);
+	void keypress_yield_item(int);
 	std::pair<int, int> select_coords();
 	void set_map_name(const char*);
 	void start_turns();
@@ -120,7 +121,7 @@ public:
 	std::shared_ptr<Map> get_map();
 	Clock* get_clock();
 	std::pair<int,int> get_viewport();
-	std::string select_spell(int);
+	std::string select_spell(unsigned);
 	void cast_spell(int, Spell);
 	void create_random_monsters_in_dungeon();
 };

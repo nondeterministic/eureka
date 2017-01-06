@@ -70,6 +70,7 @@ extern "C" {
 #include "actionpullpush.hh"
 #include "eventermap.hh"
 #include "mapobj.hh"
+#include "maphelper.hh"
 #include "hexarena.hh"
 #include "world.hh"
 #include "miniwin.hh"
@@ -410,8 +411,8 @@ void GameControl::move_objects()
 			if (move <= 2) {
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
 						abs(obj_x - ox) <= 2 && abs(obj_y - oy - 1) <= 2 &&
-							walkable(obj_x, obj_y - 1) &&
-								(obj_x != party->x || obj_y - 1 != party->y))
+						walkable(obj_x, obj_y - 1) &&
+						(obj_x != party->x || obj_y - 1 != party->y))
 				{
 					map_obj->set_coords(obj_x, obj_y - 1);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
@@ -419,9 +420,9 @@ void GameControl::move_objects()
 			}
 			else if (move <= 4) {
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
-					abs(obj_x - ox) <= 2 && abs(obj_y - oy + 1) <= 2 &&
+						abs(obj_x - ox) <= 2 && abs(obj_y - oy + 1) <= 2 &&
 						walkable(obj_x, obj_y + 1) &&
-								(obj_x != party->x || obj_y + 1 != party->y))
+						(obj_x != party->x || obj_y + 1 != party->y))
 				{
 					map_obj->set_coords(obj_x, obj_y + 1);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
@@ -429,9 +430,9 @@ void GameControl::move_objects()
 			}
 			else if (move <= 6) {
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
-					abs(obj_x - ox - 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						abs(obj_x - ox - 1) <= 2 && abs(obj_y - oy) <= 2 &&
 						walkable(obj_x - 1, obj_y) &&
-							(obj_x - 1 != party->x || obj_y != party->y))
+						(obj_x - 1 != party->x || obj_y != party->y))
 				{
 					map_obj->set_coords(obj_x - 1, obj_y);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
@@ -439,9 +440,9 @@ void GameControl::move_objects()
 			}
 			else if (move <= 8) {
 				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
-					abs(obj_x - ox + 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						abs(obj_x - ox + 1) <= 2 && abs(obj_y - oy) <= 2 &&
 						walkable(obj_x + 1, obj_y) &&
-							(obj_x + 1 != party->x || obj_y != party->y))
+						(obj_x + 1 != party->x || obj_y != party->y))
 				{
 					map_obj->set_coords(obj_x + 1, obj_y);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
@@ -450,8 +451,8 @@ void GameControl::move_objects()
 		}
 
 		// FOLLOW
-		if (map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 8 && abs((int)obj_y - party->y) < 8 ||
-					map_obj->move_mode == FOLLOWING)
+		if ((map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 8 && abs((int)obj_y - party->y) < 8) ||
+				map_obj->move_mode == FOLLOWING)
 		{
 			// Only follow each round with certain probability or the following leaves the player no space to breathe
 			if (random(0,100) < 60)
@@ -469,11 +470,159 @@ void GameControl::move_objects()
 			{
 				// We need to check again for walkability, as other objects may have moved to this position in the same round...
 				if (// walkable(new_coords.first, new_coords.second) &&
-					std::find(moved_objects_coords.begin(),
-							  moved_objects_coords.end(),
-							  std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
+						std::find(moved_objects_coords.begin(),
+								moved_objects_coords.end(),
+								std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
 				{
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+					map_obj->set_coords(new_coords.first, new_coords.second);
+				}
+			}
+		}
+
+		// FLEE
+		// TODO: Also, like in the FOLLOW-case, add condition to only flee n fields max. distance? Otherwise they all flee to the edge of town...
+		if (map_obj->move_mode == FLEE) {
+			// Only flee each round with 70% probability or the fleeing leaves the player no chance to ever catch up
+			if (random(0,100) < 40)
+				break;
+
+			unsigned obj_x, obj_y;
+			map_obj->get_coords(obj_x, obj_y);
+
+			// Get list of furthest away fields from party (as the person flees...)
+			int longest_dist = abs(party->x - (int)obj_x) + abs(party->y - (int)obj_y);
+			int best_x = 0, best_y = 0;
+			for (int x = -1; x < 2; x++) {
+				for (int y = -1; y < 2; y++) {
+					if ((int)obj_x + x > 0 && (int)obj_x + x < (int)arena->get_map()->width() - 3 &&
+							(int)obj_y + y > 0 && (int)obj_y + y < (int)arena->get_map()->height() - 3 &&
+							walkable((int)obj_x + x, (int)obj_y + y))
+					{
+						int new_dist = abs(party->x - (int)obj_x - x) + abs(party->y - (int)obj_y - y);
+						if (new_dist >= longest_dist) {
+							longest_dist = new_dist;
+							best_x = x; best_y = y;
+						}
+					}
+				}
+			}
+
+			moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+			map_obj->set_coords((int)obj_x + best_x, (int)obj_y + best_y);
+		}
+	}
+
+	for (std::pair<int,int> coords: moved_objects_coords) {
+		for (MapObj* obj: arena->get_map()->get_objs(coords.first, coords.second)) {
+			if (obj->is_animate()) {
+				MapObj tmpObj = *obj;  // Make a deep copy of the object that is about to be kicked off the map
+				arena->get_map()->pop_obj_animate(coords.first, coords.second);
+				arena->get_map()->push_obj(tmpObj);
+				break; // Assume there is at most one animate object per coordinate; so ignore other objects here
+			}
+		}
+	}
+}
+
+
+/*
+void GameControl::move_objects()
+{
+	if (is_arena_outdoors())
+		return;
+
+	std::vector<MapObj> moved_objects_copies;
+
+	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+		MapObj* map_obj = &(map_obj_pair->second);
+		unsigned obj_x, obj_y;
+
+		std::cout << map_obj->is_animate()? "ANIMATE\n" : "NOT-ANIMATE\n");
+
+		map_obj->get_coords(obj_x, obj_y);
+
+		// ROAM around
+		if (map_obj->move_mode == ROAM) {
+			// int move = random(0,16);  // That is, a 50% chance of keeping the same position
+			int move = random(0,8);  // That is, a 50% chance of keeping the same position
+
+			unsigned ox, oy;
+			map_obj->get_origin(ox, oy);
+
+			if (move <= 2) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+						abs(obj_x - ox) <= 2 && abs(obj_y - oy - 1) <= 2 &&
+							walkable(obj_x, obj_y - 1) &&
+								(obj_x != party->x || obj_y - 1 != party->y))
+				{
+					moved_objects_copies.push_back(*map_obj);
+					map_obj->set_coords(obj_x, obj_y - 1);
+					// moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 4) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox) <= 2 && abs(obj_y - oy + 1) <= 2 &&
+						walkable(obj_x, obj_y + 1) &&
+								(obj_x != party->x || obj_y + 1 != party->y))
+				{
+					moved_objects_copies.push_back(*map_obj);
+					map_obj->set_coords(obj_x, obj_y + 1);
+					// moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 6) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox - 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						walkable(obj_x - 1, obj_y) &&
+							(obj_x - 1 != party->x || obj_y != party->y))
+				{
+					moved_objects_copies.push_back(*map_obj);
+					map_obj->set_coords(obj_x - 1, obj_y);
+					// moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+			else if (move <= 8) {
+				if (obj_x > 0 && obj_x < get_map()->width() - 1 && obj_y > 0 && obj_y < get_map()->height() - 1 &&
+					abs(obj_x - ox + 1) <= 2 && abs(obj_y - oy) <= 2 &&
+						walkable(obj_x + 1, obj_y) &&
+							(obj_x + 1 != party->x || obj_y != party->y))
+				{
+					moved_objects_copies.push_back(*map_obj);
+					map_obj->set_coords(obj_x + 1, obj_y);
+					// moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
+		}
+
+		// FOLLOW
+		if ((map_obj->personality == HOSTILE && abs((int)obj_x - party->x) < 8 && abs((int)obj_y - party->y) < 8) ||
+					map_obj->move_mode == FOLLOWING)
+		{
+			// Only follow each round with certain probability or the following leaves the player no space to breathe
+			if (random(0,100) < 60)
+				break;
+
+			PathFinding pf(arena->get_map().get());
+
+			unsigned obj_x, obj_y;
+			map_obj->get_coords(obj_x, obj_y);
+
+			std::pair<unsigned,unsigned> new_coords = pf.follow_party(obj_x, obj_y, party->x, party->y);
+
+			if ((obj_x != new_coords.first || obj_y != new_coords.second) &&                       // If coordinates changed...
+					((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
+			{
+				// We need to check again for walkability, as other objects may have moved to this position in the same round...
+//				if (// walkable(new_coords.first, new_coords.second) &&
+//					std::find(moved_objects_coords.begin(),
+//							  moved_objects_coords.end(),
+//							  std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
+
+//				if (moved_objects_copies.)
+				{
+					moved_objects_copies.push_back(*map_obj);
 					map_obj->set_coords(new_coords.first, new_coords.second);
 				}
 			}
@@ -507,22 +656,23 @@ void GameControl::move_objects()
 				}
 			}
 
-			moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+			moved_objects_copies.push_back(*map_obj);
 			map_obj->set_coords((int)obj_x + best_x, (int)obj_y + best_y);
 		}
 	}
 
-	for (std::pair<int,int> coords: moved_objects_coords) {
-		for (MapObj* obj: arena->get_map()->get_objs(coords.first, coords.second)) {
-			if (obj->get_type() != MAPOBJ_ITEM) {
+	for (MapObj& moved_obj: moved_objects_copies) {
+		for (MapObj* obj: arena->get_map()->get_objs(moved_obj.get_coords())) {
+			if (obj->is_animate()) {
 				MapObj tmpObj = *obj;  // Make a deep copy of the object that is about to be kicked off the map
-				arena->get_map()->pop_obj(coords.first, coords.second);
+				arena->get_map()->pop_obj_animate(moved_obj.get_coords().first, moved_obj.get_coords().second);
 				arena->get_map()->push_obj(tmpObj);
 				break; // Assume there is at most one animate object per coordinate; so ignore other objects here
 			}
 		}
 	}
 }
+*/
 
 int GameControl::tick_event_handler()
 {
@@ -671,7 +821,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_r:
 					printcon("Ready item - select player");
-					ready_item(zwin.select_player());
+					keypress_ready_item(zwin.select_player());
 					break;
 				case SDLK_t:
 					keypress_talk();
@@ -685,7 +835,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_y: // yield / unready item
 					printcon("Yield (let go of) item - select player");
-					yield_item(zwin.select_player());
+					keypress_yield_item(zwin.select_player());
 					break;
 				case SDLK_z:
 					keypress_ztats();
@@ -748,29 +898,21 @@ void GameControl::cast_spell(int player_no, Spell spell)
 
 // Returns the full file path of the chosen spell, otherwise "" if no spell was selected.
 //
-// PRECONDITION: Assumes that player_no refers to a magic user!  Otherwise the list will be empty!
+// PRECONDITION: Assumes that player_no refers to a magic user!  Otherwise the string will be empty!
 //               So check the magic use before calling this!
 
-std::string GameControl::select_spell(int player_no)
+std::string GameControl::select_spell(unsigned player_no)
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	PlayerCharacter* player = Party::Instance().get_player(player_no);
 
-	std::map<std::string, int> spell_list;
-	std::map<std::string, std::string> spell_file_paths;
-
-	for (auto spell : *(World::Instance().get_spells())) {
-		if (player->profession() == spell.profession && player->level() >= spell.level) {
-			spell_list.insert(std::make_pair(spell.name, 1));
-			spell_file_paths.insert(std::make_pair(spell.name, spell.full_file_path));
-		}
-	}
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> content_selection_provider = player->create_spells_content_selection_provider();
 
 	// This should never happen!  See precondition comment on top of function!
 	// (But just in case... The program won't crash at least.  It will just think
 	// that the player cancelled the spell selection - which is odd behaviour.)
-	if (spell_list.size() == 0)
+	if (content_selection_provider->get_page().size() == 0)
 		return "";
 
 	printcon("Cast - select a spell");
@@ -780,23 +922,11 @@ std::string GameControl::select_spell(int player_no)
 	mwin.println(0, "Cast spell", CENTERALIGN);
 	mwin.println(1, "(Press space to cast selected spell, q to exit)");
 
-	std::map<std::string, int> items = spell_list;
-	std::vector<StringAlignmentTuple>  items_l = Util::to_StringAlignmentTuples(items);
-	zwin.set_lines(items_l);
-	zwin.clear();
-	int selection = zwin.select_item();
+	std::vector<Spell> chosen_spells = zwin.execute(content_selection_provider.get(), SelectionMode::SingleItem);
 
-	if (selection >= 0) {
-		for (int i = 0; i < items_l.size(); i++) {
-			if (selection == i) {
-				std::string clean_spell_name = Util::extract_name_from_ztats_list(items_l[i].get_head());
-				return spell_file_paths.at(clean_spell_name);
-			}
-		}
-	}
-
-	// No spell was chosen...
-	return "";
+	if (chosen_spells.size() == 0)
+		return "";
+	return chosen_spells[0].full_file_path;
 }
 
 void GameControl::keypress_quit()
@@ -837,7 +967,7 @@ void GameControl::keypress_mix_reagents()
 		mwin.println(0, "Mix for magic potion", CENTERALIGN);
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-		zwin.ztats_player(selected_player);
+		// zwin.ztats_player(selected_player);
 
 		mwin.display_last();
 	}
@@ -892,7 +1022,7 @@ void GameControl::keypress_inventory()
 
 // Let go of item and put it back to inventory.
 
-std::string GameControl::yield_item(int selected_player)
+void GameControl::keypress_yield_item(int selected_player)
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -905,58 +1035,55 @@ std::string GameControl::yield_item(int selected_player)
 		mwin.println(0, "Yield (let go of) item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-		std::vector<StringAlignmentTuple> disp_items;
-		Alignment al = Alignment::LEFTALIGN;
+		// Create ContentSelectionProvider...
+		ZtatsWinContentSelectionProvider<Item*> ztatswincontentselectionprovider;
+		std::vector<pair<StringAlignmentTuple, Item*>> content_page;
+		const Alignment AL = Alignment::LEFTALIGN;
+
 		if (player->weapon())
-			disp_items.push_back(StringAlignmentTuple("Weapon: " +  player->weapon()->name(), al));
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Weapon: " +  player->weapon()->name(), AL), player->weapon()));
 		else
-			disp_items.push_back(StringAlignmentTuple("Weapon: <none>", al));
-		disp_items.push_back(StringAlignmentTuple("Armour: <none>", al)); // TODO
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Weapon: <none>", AL), NULL));
+
+		content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Armour: <none>", AL), NULL)); // TODO
+
 		if (player->shield())
-			disp_items.push_back(StringAlignmentTuple("Shield: " + player->shield()->name(), al));
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Shield: " + player->shield()->name(), AL), player->shield()));
 		else
-			disp_items.push_back(StringAlignmentTuple("Shield: <none>", al));
-		disp_items.push_back(StringAlignmentTuple("Other:  <none>", al)); // TODO: Rings, torch, etc.
-		zwin.set_lines(disp_items);
-		zwin.clear();
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Shield: <none>", AL), NULL));
 
-		std::string selected_item_name = "";
-		int selection = zwin.select_item();
-		switch (selection) {
-		case -1:
-			break;
-		case 0:
-			if (player->weapon()) {
+		content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Other:  <none>", AL), NULL)); // TODO: Rings, torches, etc.
+
+		// Now execute selection provider...
+		ztatswincontentselectionprovider.create_content_page(content_page);
+		std::vector<Item*> selected_items = zwin.execute(&ztatswincontentselectionprovider, SelectionMode::SingleItem);
+
+		if (selected_items.size() == 0 || selected_items[0] == NULL) {
+			printcon("Never mind...");
+			return;
+		}
+
+		Item* selected_item = selected_items[0];
+
+		if (dynamic_cast<Weapon*>(selected_item)) {
+			if (player->weapon())
 				party->inventory()->add(player->weapon());
-				selected_item_name = player->weapon()->name();
-			}
 			player->set_weapon(NULL);
-			break;
-		case 1:
-			break;
-		case 2:
-			if (player->shield()) {
+		}
+		else if (dynamic_cast<Shield*>(selected_item)) {
+			if (player->shield())
 				party->inventory()->add(player->shield());
-				selected_item_name = player->shield()->name();
-			}
 			player->set_shield(NULL);
-			break;
-		case 3:
-			break;
-		default:
-			;
 		}
 
-		if (selected_item_name.length() > 0) {
-			// After yielding an item, the AC may have changed, for example.
-			zwin.update_player_list();
-			printcon("Yielded " + selected_item_name);
-			return "";
-		}
+		// After yielding an item, the AC may have changed, for example.
+		zwin.update_player_list();
+		printcon("Yielded " + selected_item->name());
+		return;
 	}
 
 	printcon("Never mind...");
-	return "";
+	return;
 }
 
 // Rest party
@@ -1150,30 +1277,24 @@ void GameControl::keypress_use()
 	mwin.println(0, "Use item", CENTERALIGN);
 	mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-	std::map<std::string, int> tmp = party->inventory()->list_all();
-	std::vector<StringAlignmentTuple>   tmp2 = Util::to_StringAlignmentTuples(tmp);
-	zwin.set_lines(tmp2);
-	zwin.clear();
-	int selection = zwin.select_item();
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	std::vector<Item*> selected_items = zwin.execute(zwin_content_selection_provider.get(), SelectionMode::SingleItem);
 
-	if (selection >= 0) {
-		std::string selected_item_name = party->inventory()->get_item(selection)->name();
-		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
+	// User can either select exactly one item, or will have aborted the dialogue.
+	if (selected_items.size() == 1) {
+		Item* selected_item = selected_items[0];
 
-		if (WeaponHelper::exists(selected_item_name)) {
+		if (WeaponHelper::exists(selected_item->name()))
 			printcon("Try to (r)eady a weapon instead.");
-		}
-		else if (ShieldHelper::exists(selected_item_name)) {
+		else if (ShieldHelper::exists(selected_item->name()))
 			printcon("Try to (r)eady a shield instead.");
-		}
-		else if (selected_item_name == "jimmy lock") {
+		else if (selected_item->name() == "jimmy lock")
 			unlock_item();
-		}
-		else if (EdiblesHelper::exists(selected_item_name)) {
+		else if (EdiblesHelper::exists(selected_item->name())) {
 			// Create a temporary item
 			Edible* item = NULL;
 			try {
-				item = (Edible*)ItemFactory::create_plain_name(selected_item_name);
+				item = (Edible*)ItemFactory::create_plain_name(selected_item->name());
 			}
 			catch (std::exception const& e) {
 			    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
@@ -1318,7 +1439,7 @@ void GameControl::keypress_use()
 			}
 
 			// Remove one such item from inventory
-			party->inventory()->remove(item->name(), selected_item_descr);
+			party->inventory()->remove(item->name(), selected_item->description());
 			delete item;
 		}
 		else
@@ -1340,7 +1461,7 @@ void GameControl::game_over()
 	exit(0);
 }
 
-std::string GameControl::ready_item(int selected_player)
+std::string GameControl::keypress_ready_item(unsigned selected_player)
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1351,21 +1472,18 @@ std::string GameControl::ready_item(int selected_player)
 		mwin.println(0, "Ready item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-		std::map<std::string, int> tmp = party->inventory()->list_wearables();
-		std::vector<StringAlignmentTuple> tmp2 = Util::to_StringAlignmentTuples(tmp);
-		zwin.set_lines(tmp2);
-		zwin.clear();
-		int selection = zwin.select_item();
+		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+		std::vector<Item*> selected_items = zwin.execute(content_provider_selection.get(), SelectionMode::SingleItem);
 
-		if (selection >= 0) {
+		if (selected_items.size() > 0) {
 			PlayerCharacter* player = party->get_player(selected_player);
-			std::string selected_item_name = party->inventory()->get_item(selection)->name();
+			Item* selected_item = selected_items[0];
 
-			if (WeaponHelper::exists(selected_item_name)) {
+			if (WeaponHelper::exists(selected_item->name())) {
 				if (player->weapon() != NULL)
 					party->inventory()->add(player->weapon());
 				// This first creates a new weapon by reserving memory for it
-				Weapon* weapon = WeaponHelper::createFromLua(selected_item_name);
+				Weapon* weapon = WeaponHelper::createFromLua(selected_item->name());
 				player->set_weapon(weapon);
 				// ...and now we are freeing memory for a weapon with the same name in the inventory.
 				// A tad bit complicated, perhaps, but not overly difficult to understand.
@@ -1375,10 +1493,10 @@ std::string GameControl::ready_item(int selected_player)
 				// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
 				party->inventory()->remove(weapon->name(), weapon->description());
 			}
-			else if (ShieldHelper::exists(selected_item_name)) {
+			else if (ShieldHelper::exists(selected_item->name())) {
 				if (player->shield() != NULL)
 					party->inventory()->add(player->shield());
-				Shield* shield = ShieldHelper::createFromLua(selected_item_name);
+				Shield* shield = ShieldHelper::createFromLua(selected_item->name());
 				player->set_shield(shield);
 				party->inventory()->remove(shield->name(), shield->description());
 			}
@@ -1387,10 +1505,10 @@ std::string GameControl::ready_item(int selected_player)
 
 			// After readying an item, the AC may have changed, for example.
 			zwin.update_player_list();
-			printcon("Readying " + selected_item_name);
+			printcon("Readying " + selected_item->name());
 			mwin.display_last();
 
-			return selected_item_name;
+			return selected_item->name();
 		}
 	}
 
@@ -1406,7 +1524,7 @@ std::pair<int, int> GameControl::select_coords()
 {
   bool _ind = party->indoors();
   EventManager& em = EventManager::Instance();
-  int CROSSHAIR = _ind? 16 : 41; // icon no of cross hair
+  const int CROSSHAIR_ICON = _ind? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS;
 
   std::list<SDLKey> cursor_keys =
     { SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE };
@@ -1420,7 +1538,13 @@ std::pair<int, int> GameControl::select_coords()
   cy = py;
 
   int old_x = cx, old_y = cy;
-  arena->get_map()->push_icon(cx, cy, CROSSHAIR);
+
+  MapObj crosshair_tmp_obj;
+  crosshair_tmp_obj.set_coords(cx,cy);
+  crosshair_tmp_obj.lua_name = CROSSHAIR_ICON_LUA_NAME;
+  crosshair_tmp_obj.set_icon(CROSSHAIR_ICON);
+
+  arena->get_map()->push_obj(crosshair_tmp_obj);
   
   while (1) {
     switch (em.get_generic_key(cursor_keys)) {
@@ -1445,12 +1569,14 @@ std::pair<int, int> GameControl::select_coords()
         cy += 2;
       break;
     case SDLK_RETURN:
-      arena->get_map()->pop_obj(old_x, old_y);
-      return std::make_pair(cx, cy);
+    	arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
+    	return std::make_pair(cx, cy);
     case SDLK_ESCAPE:
     case SDLK_q:
-      arena->get_map()->pop_obj(old_x, old_y);
-      return std::make_pair(-1, -1);
+    	arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
+    	return std::make_pair(-1, -1);
     default:
       std::cout << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
     }
@@ -1474,8 +1600,10 @@ std::pair<int, int> GameControl::select_coords()
       }
     }
 
-    arena->get_map()->pop_obj(old_x, old_y);
-    arena->get_map()->push_icon(cx, cy, CROSSHAIR);
+    arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    // arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
+    crosshair_tmp_obj.set_coords(cx, cy);
+    arena->get_map()->push_obj(crosshair_tmp_obj);
     old_x = cx; old_y = cy;
   }
 }
@@ -1520,7 +1648,7 @@ void GameControl::keypress_drop_items()
 					}
 				}
 			}
-			catch (boost::bad_lexical_cast const&) {
+			catch (...) {
 				printcon("Huh? Nothing dropped.");
 				return;
 			}
@@ -1534,26 +1662,28 @@ void GameControl::keypress_drop_items()
 			if (dynamic_cast<MiscItem*>(selected_item)) {
 				MiscItem* tmp_item = dynamic_cast<MiscItem*>(selected_item);
 				try {
-					moTmp = tmp_item->get_obj();
+					if (tmp_item != NULL)
+						moTmp = tmp_item->get_obj();
+					else
+						std::cerr << "ERROR: gamecontrol.cc: Drop item dynamic cast failed.\n";
 				}
 				catch (...) {
 					; // Do nothing, this simply means, the tmp_item had no MapObj associated with it, which is OK! See MiscItem.cc for details.
 				}
 			}
 
-			moTmp.removable = true;
 			moTmp.set_coords(party->x, party->y);
 			moTmp.set_icon(selected_item->icon);
 			moTmp.set_description(selected_item->description());
 			moTmp.lua_name = selected_item->luaName();  // TODO: This can be empty. A problem? Handle this case?
+			if (selected_item->luaName().length() == 0)
+				std::cerr << "WARNING: gamecontrol.cc: About to drop an item that has no Lua name.\n";
 			moTmp.how_many = drop_how_many;
+			std::cout << "CREATING A MAPOBJ with lua_name: " << moTmp.lua_name << ", how many: " << moTmp.how_many << "\n";
 
 			// Add dropped item to current map
 			arena->get_map()->push_obj(moTmp);
 		}
-
-		for (int i = 0; i < max((int)drop_how_many, 1); i++)
-			party->inventory()->remove(selected_item->name(), selected_item->description());
 
 		std::stringstream ss;
 		if (drop_how_many == 1)
@@ -1561,101 +1691,15 @@ void GameControl::keypress_drop_items()
 		else
 			ss << "Dropped " << drop_how_many << " " << selected_item->plural_name() << ".";
 		printcon(ss.str());
+
+		for (int i = 0; i < max((int)drop_how_many, 1); i++)
+			party->inventory()->remove(selected_item->name(), selected_item->description());
 	}
 
 	mwin.display_last();
 }
 
-//void GameControl::keypress_drop_items()
-//{
-//	MiniWin& mwin = MiniWin::Instance();
-//	ZtatsWin& zwin = ZtatsWin::Instance();
-//
-//	printcon("Drop item - select which one");
-//
-//	mwin.save_surf();
-//	mwin.clear();
-//	mwin.println(0, "Drop item", CENTERALIGN);
-//	mwin.println(1, "(Press space to drop selected item, q to exit)");
-//
-//	std::map<std::string, int> items = party->inventory()->list_all();
-//	std::vector<StringAlignmentTuple> items_l  = Util::to_StringAlignmentTuples(items);
-//	zwin.set_lines(items_l);
-//	zwin.clear();
-//	int selection = zwin.select_item();
-//
-//	if (selection >= 0) {
-//		std::stringstream ss;
-//		std::string selected_item_name = party->inventory()->get_item(selection)->name();
-//		std::string selected_item_plural_name = party->inventory()->get_item(selection)->plural_name();
-//		std::string selected_item_descr = party->inventory()->get_item(selection)->description();
-//		std::vector<Item*>* all_tmp_items = party->inventory()->get(selection);
-//		Item* tmp = (*all_tmp_items)[0];
-//		// Item* tmp = party->inventory()->get_item(selection);
-//		int size_tmp_items = all_tmp_items->size();
-//		int drop_how_many = 0;
-//
-//		// Determine how many items shall be dropped, in case the inventory has more than 1
-//		if (size_tmp_items > 1) {
-//			printcon("How many? (1-" + boost::lexical_cast<std::string>(size_tmp_items) + ")");
-//			std::string reply = Console::Instance().gets();
-//			try {
-//				if (reply.length() == 0)
-//					drop_how_many = size_tmp_items;
-//				else {
-//					drop_how_many = boost::lexical_cast<int>(reply);
-//					if (!(drop_how_many >= 1 && drop_how_many <= size_tmp_items)) {
-//						printcon("Huh? Nothing dropped.");
-//						return;
-//					}
-//				}
-//			}
-//			catch (boost::bad_lexical_cast const&) {
-//				printcon("Huh? Nothing dropped.");
-//				return;
-//			}
-//		}
-//
-//		// Create corresponding icon if party is indoors
-//		if (party->indoors()) {
-//			MapObj moTmp;
-//
-//			// Some MiscItems have a MapObj associated with them, e.g., nonmagicscroll.
-//			if (dynamic_cast<MiscItem*>(tmp)) {
-//				MiscItem* tmp_item = dynamic_cast<MiscItem*>(tmp);
-//				try {
-//					moTmp = tmp_item->get_obj();
-//				}
-//				catch (...) {
-//					; // Do nothing, this simply means, the tmp_item had no MapObj associated with it, which is OK! See MiscItem.cc for details.
-//				}
-//			}
-//
-//			moTmp.removable = true;
-//			moTmp.set_coords(party->x, party->y);
-//			moTmp.set_icon(tmp->icon);
-//			moTmp.set_description(selected_item_descr);
-//			moTmp.lua_name = tmp->luaName();  // TODO: This can be empty. A problem? Handle this case?
-//			moTmp.how_many = drop_how_many;
-//
-//			// Add dropped item to current map
-//			arena->get_map()->push_obj(moTmp);
-//		}
-//
-//		for (int i = 0; i < max(drop_how_many, 1); i++)
-//			party->inventory()->remove(tmp->name(), selected_item_descr);
-//
-//		if (size_tmp_items == 1)
-//			ss << "Dropped a" << (Util::vowel(selected_item_name[0])? "n " : " ") << selected_item_name << ".";
-//		else
-//			ss << "Dropped " << drop_how_many << " " << selected_item_plural_name << ".";
-//		printcon(ss.str());
-//	}
-//
-//	mwin.display_last();
-//}
-
-// Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.
+/// Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.
 
 void GameControl::make_guards(PERSONALITY pers)
 {
@@ -1940,6 +1984,159 @@ std::shared_ptr<Map> GameControl::get_map()
 
 void GameControl::keypress_get_item()
 {
+	MapHelper map_helper(arena->get_map().get()); // Not sure, if MapHelper should also take a shared_ptr, so that references are kept alive?!
+	printcon("Get - from which direction?");
+	std::pair<int, int> coords = select_coords();
+
+	// Determine what lies at the given coordinates on the map...
+	std::shared_ptr<ZtatsWinContentSelectionProvider<MapObj>> ztatswin_content_selection_provider =
+			map_helper.create_ztatswin_content_selection_provider_for_coords(coords.first, coords.second, ItemPickup::RemovableOnly);
+
+	MapObj picked_up_mapobj;
+
+	// If there's only exactly one mapobj, pick it up.
+	if (ztatswin_content_selection_provider->get_page().size() == 1) {
+		picked_up_mapobj = ztatswin_content_selection_provider->get_page()[0].second;
+	}
+	else if (ztatswin_content_selection_provider->get_page().size() == 0) {
+		printcon("Nothing to get here.");
+		return;
+	}
+	else {
+		printcon("Select item from the list");
+
+		MiniWin& mwin = MiniWin::Instance();
+		ZtatsWin& zwin = ZtatsWin::Instance();
+
+		mwin.save_surf();
+		mwin.clear();
+		mwin.println(0, "Get item", CENTERALIGN);
+		mwin.println(1, "(Press space to get selected item, q to exit)");
+
+		std::vector<MapObj> selected_mapobjs = zwin.execute(ztatswin_content_selection_provider.get(), SelectionMode::SingleItem);
+
+		if (selected_mapobjs.size() > 0) {
+			picked_up_mapobj = selected_mapobjs[0];
+			std::cout << "CHOSEN TO PICK UP: " << picked_up_mapobj.lua_name << "\n";
+		}
+		else {
+			printcon("Huh? Nothing taken.");
+			return;
+		}
+
+		mwin.display_last();
+	}
+
+	// Not sure, if at this point, this check is still necessary?!
+	if (!picked_up_mapobj.is_removeable()) {
+		printcon("Nice try.");
+		return;
+	}
+
+	// After selection of mapobj(s) was done, now add to inventory and remove from map...
+	if (picked_up_mapobj.lua_name.length() > 0) {
+		// Depending on the name the MapObj has, we look up in the Lua list of items, and create one accordingly for pick up.
+		Item* picked_up_item = NULL;
+		GameEventHandler gh;
+
+		try {
+			std::cout << "CREATING MapObj with lua_name: " << picked_up_mapobj.lua_name << std::endl;
+			picked_up_item = ItemFactory::create(picked_up_mapobj.lua_name, &picked_up_mapobj);
+		}
+		catch (std::exception const& e) {
+			std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+			std::cerr << "ERROR: gamecontrol.cc: Aborting get_item() due to earlier errors.\n";
+			return;
+		}
+
+		// Picking up more than 1 of the same item
+		if (picked_up_mapobj.how_many > 1) {
+			int taking = 0;
+
+			try {
+				printcon("How many? (1-" + boost::lexical_cast<std::string>(picked_up_mapobj.how_many) + ")");
+				std::string input = Console::Instance().gets();
+				if (input.length() == 0) // Simply pressing return means user wants to take all available items
+					taking = picked_up_mapobj.how_many;
+				else
+					taking = boost::lexical_cast<int>(input);
+			}
+			catch (boost::bad_lexical_cast const&) {
+				printcon("Huh? Nothing taken.");
+				return;
+			}
+
+			if (taking > 0 && taking <= picked_up_mapobj.how_many)
+				printcon("Taking " + boost::lexical_cast<std::string>(taking) + " " + picked_up_item->plural_name());
+			else {
+				printcon("Huh? Nothing taken.");
+				return;
+			}
+
+			// Let's now create the n new items to be taken individually via a factory...
+			for (int i = 0; i < taking; i++) {
+				try {
+					party->inventory()->add(ItemFactory::create(picked_up_mapobj.lua_name, &picked_up_mapobj));
+				}
+				catch (std::exception const& e) {
+					std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
+					std::cerr << "ERROR: gamecontrol.cc: Aborting adding item to inventory due to earlier errors.\n";
+					continue;
+				}
+
+				// Perform action events
+				for (auto action = picked_up_mapobj.actions()->begin(); action != picked_up_mapobj.actions()->end(); action++) {
+					if ((*action)->name() == "ACT_ON_TAKE") {
+						for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+							gh.handle(*curr_ev, arena->get_map());
+					}
+				}
+
+				draw_status();
+			}
+			// See if some items are leftover after taking...
+			if (picked_up_mapobj.how_many - taking == 0)
+				arena->get_map()->pop_obj(&picked_up_mapobj);
+				//				arena->get_map()->pop_obj(coords.first, coords.second, picked_up_mapobj.lua_name);
+			else {
+				// As we're dealing with instances rather than pointers, we first remove the object from the map...
+				if (arena->get_map()->rm_obj(picked_up_mapobj) > 0) {
+					// ...then decrease the how_many counter...
+					picked_up_mapobj.how_many -= taking;
+					// ...and finally add it again
+					arena->get_map()->push_obj(picked_up_mapobj);
+				}
+				else
+					std::cerr << "ERROR: gamecontrol.cc: Could not remove selected item from map.\n";
+			}
+		}
+		// Picking up exactly 1 item
+		else {
+			printcon("Taking " + picked_up_item->name());
+			std::cout << "PICKING UP: " << picked_up_item->name() << std::endl;
+			party->inventory()->add(picked_up_item);
+
+			// Perform action events
+			for (auto action = picked_up_mapobj.actions()->begin(); action != picked_up_mapobj.actions()->end(); action++) {
+				if ((*action)->name() == "ACT_ON_TAKE") {
+					for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
+						gh.handle(*curr_ev, arena->get_map());
+				}
+			}
+
+			arena->get_map()->pop_obj(&picked_up_mapobj);
+			// arena->get_map()->pop_obj(coords.first, coords.second, picked_up_item->luaName());
+		}
+	}
+	else {
+		printcon("Sorry taking of this item not yet implemented (no lua_name). "
+				 "Buy the author a beer or two and he might implement it for you.");
+	}
+}
+
+/*
+void GameControl::keypress_get_item()
+{
 	printcon("Get - from which direction?");
 	std::pair<int, int> coords = select_coords();
 
@@ -2133,6 +2330,8 @@ void GameControl::keypress_get_item()
 	else
 		printcon("Nothing to get here");
 }
+
+*/
 
 void GameControl::keypress_look()
 {

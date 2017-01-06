@@ -6,6 +6,15 @@
 #include <map>
 #include "eureka.hh"
 
+enum Alignment
+{
+  LEFTALIGN,
+  CENTERALIGN,
+  RIGHTALIGN
+};
+
+typedef boost::tuple<std::string, Alignment> StringAlignmentTuple;
+
 namespace Util
 {
   bool vowel(const char);

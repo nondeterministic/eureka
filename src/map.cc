@@ -229,12 +229,54 @@ void Map::del_action(unsigned x, unsigned y)
 	}
 }
 
-void Map::pop_obj(int x, int y)
+void Map::pop_obj(MapObj* map_obj)
 {
+	if (map_obj->lua_name.length() == 0 && map_obj->id.length() == 0) {
+		std::cerr << "ERROR: map.cc: Cannot pop MapObj without Lua-name and ID in pop_ob(MapObj*). "
+				  << "Perhaps use pop(x,y) instead, but then make sure, there is EXACTLY one MapObj on the coordinates x, y!\n";
+		return;
+	}
+
+	unsigned x, y;
+	map_obj->get_coords(x, y);
+
+	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
+		boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
+			found_objs = _map_objects.equal_range(std::pair<unsigned, unsigned>(x,y));
+
+	for (auto ptr = found_objs.first; ptr != found_objs.second; ptr++) {
+		MapObj& curr_obj = ptr->second;
+//		if (ptr->lua_name == map_obj->lua_name &&
+//				curr_obj->id == map_obj->id &&
+//				curr_obj->description() == map_obj->description())
+		if (curr_obj == *map_obj)
+		{
+			_map_objects.erase(ptr);
+			_modified = true;
+			return;
+		}
+	}
+
+	std::cout << "INFO: map.cc: Tried to pop MapObj, but nothing was popped / no items found in location.\n";
+}
+
+/// See comment inside map.hh!
+
+void Map::pop_obj(unsigned x, unsigned y)
+{
+	unsigned how_many_objs = how_many_mapobj_at(x,y);
+	if (how_many_objs > 1) {
+		std::cerr << "ERROR: map.cc: Cannot use pop(x,y), if there are more than one MapObj in said location. "
+				  << "Use pop(x,y,lua_name) instead!\n";
+		return;
+	}
+	else if (how_many_objs == 0)
+		return;
+
 	std::pair<unsigned, unsigned> coords(x, y);
 	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
-	boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
-	found_objs = _map_objects.equal_range(coords);
+	 	 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
+			found_objs = _map_objects.equal_range(coords);
 
 	for (auto curr_obj = found_objs.first, next_obj = found_objs.first;
 			curr_obj != found_objs.second;
@@ -244,9 +286,47 @@ void Map::pop_obj(int x, int y)
 		if (++next_obj == found_objs.second) {
 			_map_objects.erase(curr_obj);
 			_modified = true;
-			break;
+			return;
 		}
 	}
+
+	std::cerr << "WARNING: map.cc: pop_obj(x,y) failed for some reason.\n";
+}
+
+/// As there can be at most one animate object (animal, monster, person) in one location at a time, this will pop at most one object
+/// at the given map coordinates.
+
+void Map::pop_obj_animate(unsigned x, unsigned y)
+{
+	std::pair<unsigned, unsigned> coords(x, y);
+	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
+	 	 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
+			found_objs = _map_objects.equal_range(coords);
+
+	for (auto curr_obj = found_objs.first, next_obj = found_objs.first;
+			curr_obj != found_objs.second;
+			curr_obj++)
+	{
+		// Delete only last element
+		if (++next_obj == found_objs.second && curr_obj->second.is_animate()) {
+			_map_objects.erase(curr_obj);
+			_modified = true;
+			return;
+		}
+	}
+
+	std::cerr << "WARNING: map.cc: pop_obj_animate(x,y) failed. No animate object on location?\n";
+}
+
+unsigned Map::how_many_mapobj_at(unsigned x, unsigned y)
+{
+	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
+	 	 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
+			found_objs = _map_objects.equal_range(std::pair<unsigned,unsigned>(x,y));
+
+	unsigned i = 0;
+	for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++, i++);
+	return i;
 }
 
 // Returns the number of deleted MapObj.
@@ -314,6 +394,7 @@ void Map::push_obj(MapObj obj)
 // icon, etc.  It still uses, internally, however, an underspecified
 // MapObj.  That's OK for now...
 
+/*
 void Map::push_icon(int x, int y, unsigned icon)
 {
 	MapObj new_obj;
@@ -329,6 +410,7 @@ void Map::push_icon(int x, int y, unsigned icon)
 	_map_objects.insert(std::make_pair(coords, new_obj));
 	_modified = true;
 }
+*/
 
 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* Map::objs(void)
 {
@@ -378,8 +460,6 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 			new_obj.set_combat_script_path(attribute->get_value().c_str());
 		else if (a_name == "id")
 			new_obj.id = attribute->get_value().c_str();
-		else if (a_name == "removable")
-			new_obj.removable = attribute->get_value().uppercase() == "YES";
 		else if (a_name == "random_monster")
 			new_obj.is_random_monster = attribute->get_value().uppercase() == "YES";
 		else if (a_name == "locked") {
@@ -827,7 +907,6 @@ bool Map::write_obj_xml_node(MapObj mapObj, xmlpp::Element* object_node)
 	object_node->set_attribute("id", mapObj.id);
 	object_node->set_attribute("lua_name", mapObj.lua_name);
 	object_node->set_attribute("how_many", boost::lexical_cast<std::string>(mapObj.how_many));
-	object_node->set_attribute("removable", (mapObj.removable? "yes" : "no"));
 	object_node->set_attribute("random_monster", (mapObj.is_random_monster? "yes" : "no"));
 
 	if (mapObj.openable) {

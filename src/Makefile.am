@@ -31,6 +31,7 @@ eureka_SOURCES = \
 	inventory.hh inventory.cc \
 	party.hh party.cc \
 	map.hh map.cc \
+	maphelper.hh maphelper.cc \
 	spell.hh spell.cc \
 	spellcasthelper.hh spellcasthelper.cc \
 	mischelper.hh mischelper.cc \

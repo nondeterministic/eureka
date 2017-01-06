@@ -1,10 +1,34 @@
+// This source file is part of eureka
+//
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "gamecontrol.hh"  // TODO: This could be removed, only use it for random number generator.
 #include "playercharacter.hh"
 #include "profession.hh"
 #include "race.hh"
+#include "spell.hh"
+#include "ztatswincontentprovider.hh"
+#include "util.hh"
+#include "world.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
@@ -136,6 +160,31 @@ void PlayerCharacter::set_level(const int l)
 int PlayerCharacter::level()
 {
 	return _level;
+}
+
+std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> PlayerCharacter::create_spells_content_selection_provider()
+{
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> content_selection_provider(new ZtatsWinContentSelectionProvider<Spell>());
+	std::vector<std::pair<StringAlignmentTuple, Spell>> content_page;
+
+	if (is_spell_caster()) {
+
+		std::map<std::string, int> spell_list;
+		std::map<std::string, std::string> spell_file_paths;
+
+		for (auto spell : *(World::Instance().get_spells()))
+			if (profession() == spell.profession && level() >= spell.level)
+				content_page.push_back(std::pair<StringAlignmentTuple, Spell>(StringAlignmentTuple(spell.name, Alignment::LEFTALIGN), spell));
+
+		content_selection_provider->create_content_page(content_page);
+
+		if (content_page.size() > 0)
+			content_selection_provider->create_content_page(content_page);
+		else
+			std::cout << "INFO: playercharacter.cc: Created an empty ZtatsWinContentSelectionProvider object.\n";
+	}
+
+	return content_selection_provider;
 }
 
 // Returns the level a character can be in potentially; that is, if the player then goes through the

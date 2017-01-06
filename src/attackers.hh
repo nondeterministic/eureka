@@ -26,6 +26,8 @@
 #include <SDL.h>
 
 #include <boost/unordered_map.hpp>
+#include <memory>
+#include <vector>
 
 #include "creature.hh"
 

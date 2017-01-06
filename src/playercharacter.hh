@@ -23,8 +23,11 @@
 #include "race.hh"
 #include "profession.hh"
 #include "gamecharacter.hh"
+#include "spell.hh"
+#include "ztatswincontentprovider.hh"
 
 #include <string>
+#include <memory>
 
 #include <boost/unordered_map.hpp>
 
@@ -62,6 +65,7 @@ public:
   void set_level(const int);
   int potential_level();
   bool is_spell_caster();
+  std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> create_spells_content_selection_provider();
 };
 
 #endif

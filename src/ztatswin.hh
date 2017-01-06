@@ -20,16 +20,13 @@ enum class SelectionMode {
 class ZtatsWin : public SDLWindowRegion
 {
 protected:
-	SDL_Color highlight_colour, standard_bgcolour;
-	ZtatsWinContentProvider* _content_provider;
-
-	std::vector<StringAlignmentTuple> lines; // TODO: Remove me when refactoring is done!
-
 	ZtatsWin();
-	void build_ztats_player(int, int = 0);
 	void swap_colours(int, int, SDL_Color, SDL_Color);
 	ZtatsWinContentProvider* content_provider();
 	void print_single_page(unsigned = 0, unsigned = 0);
+
+	SDL_Color highlight_colour, standard_bgcolour;
+	ZtatsWinContentProvider* _content_provider;
 
 public:
 	static ZtatsWin& Instance();
@@ -38,9 +35,7 @@ public:
 	void highlight_lines(int, int);
 	void unhighlight_lines(int, int);
 	void unhighlight_all();
-	void ztats_player(int);
 	int select_player();
-	void set_lines(std::vector<StringAlignmentTuple>);
 	int select_item();
 	std::vector<int> select_items();
 	void execute(ZtatsWinContentProvider*, unsigned = 0);
@@ -59,6 +54,7 @@ public:
 				selected_items.push_back((T)(content_selection_provider->get_page()[selected_item_no].second));
 		}
 		else if (selection_mode == SelectionMode::MultipleItems) {
+			std::cerr << "ERROR: ztatswin.hh: MULTIPLE SELECTION NOT YET IMPLEMETED! DO IT!\n";
 			; // TODO
 		}
 

@@ -355,7 +355,7 @@ std::vector<AttackOption*> Combat::attack_options()
 			attackOptions[player_no] = new DefendOption(player_no);
 		}
 		else { // (R)eady item
-			std::string new_weapon = GameControl::Instance().ready_item(player_no);
+			std::string new_weapon = GameControl::Instance().keypress_ready_item(player_no);
 
 			if (new_weapon != "") {
 				ss << player->name() + " will ready a" << (Util::vowel(new_weapon[0])? "an " : "a ") << new_weapon << " in the next round.";
@@ -427,35 +427,48 @@ void Combat::victory()
 			mwin.println(0, "Pick up items", CENTERALIGN);
 			mwin.println(1, "(Press space to select an item, q when done)", CENTERALIGN);
 
-			std::map<std::string, int> tmp = _bounty_items.list_all();
-			std::vector<StringAlignmentTuple>   tmp2 = Util::to_StringAlignmentTuples(tmp);
-			zwin.set_lines(tmp2);
-			zwin.clear();
-			// TODO: It seems, we are ignoring the selection and simply add ALL of the bounty to the inventory. CHECK!
-			zwin.select_items();
+			std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_selection_provider = _bounty_items.create_content_selection_provider(InventoryType::Anything);
+			std::vector<Item*> selected_items = zwin.execute(content_selection_provider.get(), SelectionMode::MultipleItems);
+			std::vector<Item*> not_selected_items;
 
-			// Remove gold, if any, from bounty and add it to party's gold account instead
-			Gold tmp_gold;
-			int new_gold = _bounty_items.remove_all(tmp_gold.name(), "");
-			party->set_gold(party->gold() + new_gold);
+			for (auto item: selected_items)
+				party->inventory()->add(item);
+
 			GameControl::Instance().draw_status();
-
-			party->inventory()->add_all(_bounty_items);
 			mwin.display_last();
+
+			// Finally, delete those items from bounty, which have NOT been picked up, otherwise, they will linger around in the heap somewhere...
+			// This is somewhat tricky, as we first must build the difference btw. bounty and the inventory and then delete the memory of said difference.
+			std::vector<Item*> tmp_bounty_items = _bounty_items.raw_items();
+
+			std::sort(tmp_bounty_items.begin(), tmp_bounty_items.end());
+			std::sort(selected_items.begin(), selected_items.end());
+
+			// This will append to difference those elements found in tmp_bounty_items that are not found in selected_items::
+			std::vector<Item*> difference;
+			std::set_difference(
+			    tmp_bounty_items.begin(), tmp_bounty_items.end(),
+			    selected_items.begin(), selected_items.end(),
+			    std::back_inserter(difference)
+			);
+
+			// Now delete the set difference, i.e., the left-behind items from combat...  The ones taken must not be deleted, as they are now in the inventory.
+			for (unsigned i = 0; i < difference.size(); i++) {
+				Item* to_delete_item = difference[i];
+				std::cout << "INFO: combat.cc: Deleting left-behind item " << to_delete_item->name() << ".\n";
+				delete to_delete_item;
+			}
+
 			break;
 		}
 		case 'n':
 			// Delete memory for items from bounty
-			for (int i = 0; i <_bounty_items.size(); i++)
+			for (unsigned i = 0; i <_bounty_items.size(); i++)
 				delete _bounty_items.get_item(i);
 
 			return;
 		}
 	}
-	// No need to clean bounty items as they are destroyed when combat is over!
-	// TODO: Really?  I can't see the code anymore, where this happens...  BUG?!
-	// It seems that in the 'y' case above, the items are added to inventory, so mustn't be deleted.
-	// In the 'n' case, however, we must free the memory and then, indeed, the deletion of the combat object, will delete the then empty inventory object.
 }
 
 // Foes fight now against the party...

@@ -340,3 +340,16 @@ void Inventory::add_all(Inventory& inv2)
 		}
 	}
 }
+
+/// Returns a vector of all items in the inventory, even duplicates.  That is, if there are 500 gold coins, there will be 500 Item-pointers in it, pointing
+/// to each address in memory of each gold coin, etc.  You get the picture.
+
+std::vector<Item*> Inventory::raw_items()
+{
+	std::vector<Item*> result;
+
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++)
+		result.insert(result.end(), ptr->second.begin(), ptr->second.end());
+
+	return result;
+}

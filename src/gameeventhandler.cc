@@ -83,8 +83,6 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 	return false;
 }
 
-// Deletes one (not all!) object from map; see pop_obj() for details.
-
 bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapObj* obj)
 {
 	if (obj == NULL) {
@@ -92,14 +90,16 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 		return false;
 	}
 
-	unsigned x, y;
-	obj->get_coords(x, y);
-	map->pop_obj((int)x, (int)y);
+	if (obj->lua_name.size() == 0) {
+		unsigned x, y;
+		obj->get_coords(x, y);
+		map->pop_obj(x, y);
+	}
+	else
+		map->pop_obj(obj);
 
 	return true;
 }
-
-// Deletes one (not all!) object from map; see pop_obj() for details.
 
 bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj* obj)
 {
@@ -218,7 +218,6 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 	// ****************************************************************
 
 	// Now change maps over...
-	std::cout << "LEAVE HANDLING: old_map_name: " << event->get_old_map_name() << ", map_name: " << event->get_map_name() << "\n";
 	if (event->get_old_map_name() == event->get_map_name()) {
 		// The above test is only ever positive, if the game was actually started inside an indoors map as opposed to the outdoors.
 		// In this case, we simply find the first best outdoors map (most games will only have one), and use it as the new map.

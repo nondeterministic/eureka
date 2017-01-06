@@ -21,7 +21,7 @@ public:
   MAPOBJ_TYPES get_object_type();
   bool has_action();
   int get_icon_no();
-  bool removable;
+  // bool removable;
   std::string id;
 
 protected:
@@ -35,7 +35,7 @@ protected:
   Gtk::ComboBoxText objects_combo;
   Gtk::ComboBoxText actions_combo;
   Gtk::Entry id_entry;
-  Gtk::CheckButton cb_removable;
+  // Gtk::CheckButton cb_removable;
 
   Gtk::Frame rb_type_frame;
   Gtk::RadioButton rb_type_item, rb_type_person, rb_type_monster, rb_type_animal;

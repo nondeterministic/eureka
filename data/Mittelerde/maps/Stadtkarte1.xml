@@ -47,15 +47,15 @@
     <row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 6 0 0 0 6 0 0 0 0</row>
   </data>
   <objects>
-    <object x="5" y="7" ox="0" oy="0" icon_no="571" layer="0" id="axe_of_doom" lua_name="weapons::axe" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="5" y="4" ox="0" oy="0" icon_no="33" layer="0" id="" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="31" y="9" ox="0" oy="0" icon_no="594" layer="0" id="1" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="2" y="8" ox="0" oy="0" icon_no="33" layer="0" id="balloon" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="30" y="9" ox="0" oy="0" icon_no="593" layer="0" id="3" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="23" y="17" ox="23" oy="17" icon_no="64" layer="0" id="4monk" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="roam" type="person" init_script="people/stadtkarte_monk.lua" />
-    <object x="11" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="34" y="7" ox="0" oy="0" icon_no="647" layer="0" id="5" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="22" y="3" ox="0" oy="0" icon_no="171" layer="0" id="prisondoor" lua_name="" how_many="1" removable="no" locked="normal" personality="neutral" move_mode="static" type="item">
+    <object x="5" y="7" ox="0" oy="0" icon_no="571" layer="0" id="axe_of_doom" lua_name="weapons::axe" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="5" y="4" ox="0" oy="0" icon_no="33" layer="0" id="" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="31" y="9" ox="0" oy="0" icon_no="594" layer="0" id="1" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="2" y="8" ox="0" oy="0" icon_no="33" layer="0" id="balloon" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="30" y="9" ox="0" oy="0" icon_no="593" layer="0" id="3" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="17" ox="23" oy="17" icon_no="64" layer="0" id="4monk" lua_name="" how_many="1"   personality="neutral" move_mode="roam" type="person" init_script="people/stadtkarte_monk.lua" />
+    <object x="11" y="9" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="34" y="7" ox="0" oy="0" icon_no="647" layer="0" id="5" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="22" y="3" ox="0" oy="0" icon_no="171" layer="0" id="prisondoor" lua_name="" how_many="1"   locked="normal" personality="neutral" move_mode="static" type="item">
       <actions>
         <action type="ACT_ON_OPENED">
           <event type="EVENT_PRINTCON">The door makes a creaky noise and opens...</event>
@@ -63,26 +63,26 @@
         </action>
       </actions>
     </object>
-    <object x="31" y="5" ox="0" oy="0" icon_no="646" layer="0" id="6" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="4" y="28" ox="0" oy="0" icon_no="87" layer="0" id="chest" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="20" y="16" ox="0" oy="0" icon_no="21" layer="0" id="9_horse" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
-    <object x="26" y="17" ox="0" oy="0" icon_no="137" layer="0" id="7cow" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
-    <object x="30" y="5" ox="0" oy="0" icon_no="642" layer="0" id="8" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="17" y="5" ox="17" oy="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
-    <object x="22" y="10" ox="22" oy="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1" removable="no" personality="righteous" move_mode="roam" type="person" init_script="people/boy_stadtkarte.lua"/>
-    <object x="11" y="2" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="23" y="3" ox="0" oy="0" icon_no="308" layer="0" id="10" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="7" ox="0" oy="0" icon_no="93" layer="0" id="11" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="26" y="19" ox="0" oy="0" icon_no="137" layer="0" id="2cow" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="animal"/>
-    <object x="15" y="12" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1" removable="yes" personality="neutral" move_mode="static" type="item"/>
-    <object x="31" y="7" ox="31" oy="7" icon_no="58" layer="0" id="12" lua_name="" how_many="1" removable="no" personality="righteous" move_mode="static" type="person" init_script="people/blacksmith.lua"/>
-    <object x="7" y="4" ox="7" oy="4" icon_no="126" layer="0" id="guard1" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
-    <object x="23" y="9" ox="0" oy="0" icon_no="137" layer="0" id="13" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="11" y="4" ox="0" oy="0" icon_no="93" layer="0" id="14" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="24" y="16" ox="0" oy="0" icon_no="121" layer="0" id="campfire" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="6" y="28" ox="0" oy="0" icon_no="121" layer="0" id="campfire" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="7" y="7" ox="7" oy="7" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
-    <object x="7" y="27" ox="0" oy="0" icon_no="56" layer="0" id="food_merchant" lua_name="" how_many="1" removable="no" personality="neutral" move_mode="static" type="person" init_script="people/foodmerchant.lua"/>
+    <object x="31" y="5" ox="0" oy="0" icon_no="646" layer="0" id="6" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="4" y="28" ox="0" oy="0" icon_no="87" layer="0" id="chest" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="20" y="16" ox="0" oy="0" icon_no="21" layer="0" id="9_horse" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="animal"/>
+    <object x="26" y="17" ox="0" oy="0" icon_no="137" layer="0" id="7cow" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="animal"/>
+    <object x="30" y="5" ox="0" oy="0" icon_no="642" layer="0" id="8" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="17" y="5" ox="17" oy="5" icon_no="125" layer="0" id="jail_guard" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
+    <object x="22" y="10" ox="22" oy="10" icon_no="136" layer="0" id="boy" lua_name="" how_many="1"   personality="righteous" move_mode="roam" type="person" init_script="people/boy_stadtkarte.lua"/>
+    <object x="11" y="2" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="3" ox="0" oy="0" icon_no="308" layer="0" id="10" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="7" ox="0" oy="0" icon_no="93" layer="0" id="11" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="26" y="19" ox="0" oy="0" icon_no="137" layer="0" id="2cow" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="animal"/>
+    <object x="15" y="12" ox="0" oy="0" icon_no="147" layer="0" id="torch" lua_name="weapons::torch" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="31" y="7" ox="31" oy="7" icon_no="58" layer="0" id="12" lua_name="" how_many="1"   personality="righteous" move_mode="static" type="person" init_script="people/blacksmith.lua"/>
+    <object x="7" y="4" ox="7" oy="4" icon_no="126" layer="0" id="guard1" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
+    <object x="23" y="9" ox="0" oy="0" icon_no="137" layer="0" id="13" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="4" ox="0" oy="0" icon_no="93" layer="0" id="14" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="24" y="16" ox="0" oy="0" icon_no="121" layer="0" id="campfire" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="6" y="28" ox="0" oy="0" icon_no="121" layer="0" id="campfire" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="item"/>
+    <object x="7" y="7" ox="7" oy="7" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person" init_script="people/guard.lua"/>
+    <object x="7" y="27" ox="0" oy="0" icon_no="56" layer="0" id="food_merchant" lua_name="" how_many="1"   personality="neutral" move_mode="static" type="person" init_script="people/foodmerchant.lua"/>
   </objects>
   <actions>
     <action type="ACT_ON_OPENED">
