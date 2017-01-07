@@ -1522,90 +1522,90 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 
 std::pair<int, int> GameControl::select_coords()
 {
-  bool _ind = party->indoors();
-  EventManager& em = EventManager::Instance();
-  const int CROSSHAIR_ICON = _ind? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS;
+	EventManager& em = EventManager::Instance();
+	const int CROSSHAIR_ICON = (party->indoors()? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS);
 
-  std::list<SDLKey> cursor_keys =
-    { SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE };
+	std::list<SDLKey> cursor_keys =
+		{ SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE };
 
-  static int cx, cy;  // Cursor
-  int px, py;         // Party
+	static int cx, cy;  // Cursor
+	int px, py;         // Party
 
-  arena->map_to_screen(party->x, party->y, px, py);
-  arena->screen_to_map(px, py, px, py);
-  cx = px;
-  cy = py;
+	arena->map_to_screen(party->x, party->y, px, py);
+	arena->screen_to_map(px, py, px, py);
+	cx = px;
+	cy = py;
 
-  int old_x = cx, old_y = cy;
+	int old_x = cx, old_y = cy;
 
-  MapObj crosshair_tmp_obj;
-  crosshair_tmp_obj.set_coords(cx,cy);
-  crosshair_tmp_obj.lua_name = CROSSHAIR_ICON_LUA_NAME;
-  crosshair_tmp_obj.set_icon(CROSSHAIR_ICON);
+	MapObj crosshair_tmp_obj;
+	crosshair_tmp_obj.set_coords(cx,cy);
+	crosshair_tmp_obj.lua_name = CROSSHAIR_ICON_LUA_NAME;
+	crosshair_tmp_obj.set_icon(CROSSHAIR_ICON);
 
-  arena->get_map()->push_obj(crosshair_tmp_obj);
-  
-  while (1) {
-    switch (em.get_generic_key(cursor_keys)) {
-    case SDLK_LEFT:
-      if (arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
-        cx--;
-      break;
-    case SDLK_RIGHT:
-      if (arena->adjacent(cx + 1, cy, px, py) && cx + 1 <= (int)arena->get_map()->width() - 4)
-        cx++;
-      break;
-    case SDLK_UP:
-      if (_ind && arena->adjacent(cx, cy - 1, px, py) && cy - 1 > 0)
-        cy--;
-      else if (!_ind && arena->adjacent(cx, cy - 2, px, py) && cy - 2 > 0)
-        cy -= 2;
-      break;
-    case SDLK_DOWN:
-      if (_ind && arena->adjacent(cx, cy + 1, px, py) && cy + 1 <= (int)arena->get_map()->height() - 4)
-        cy++;
-      else if (!_ind && arena->adjacent(cx, cy + 2, px, py) && cy + 2 <= (int)arena->get_map()->height() - 4)
-        cy += 2;
-      break;
-    case SDLK_RETURN:
-    	arena->get_map()->rm_obj(&crosshair_tmp_obj);
-    	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
-    	return std::make_pair(cx, cy);
-    case SDLK_ESCAPE:
-    case SDLK_q:
-    	arena->get_map()->rm_obj(&crosshair_tmp_obj);
-    	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
-    	return std::make_pair(-1, -1);
-    default:
-      std::cout << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
-    }
+	arena->get_map()->push_obj(crosshair_tmp_obj);
 
-    if (! _ind) {
-      if ( (cx % 2) == 0 && (cy % 2)  != 0 ) {
-        if (arena->adjacent(cx, cy - 1, px, py))
-          cy--;
-        else {
-          cx = old_x;
-          cy = old_y;
-        }
-      }
-      else if ( (cx % 2) != 0 && (cy % 2)  == 0 ) {
-        if (arena->adjacent(cx, cy + 1, px, py))
-          cy++;
-        else {
-          cx = old_x;
-          cy = old_y;
-        }
-      }
-    }
+	while (1) {
+		switch (em.get_generic_key(cursor_keys)) {
+		case SDLK_LEFT:
+			if (arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
+				cx--;
+			break;
+		case SDLK_RIGHT:
+			if (arena->adjacent(cx + 1, cy, px, py) && cx + 1 <= (int)arena->get_map()->width() - 4)
+				cx++;
+			break;
+		case SDLK_UP:
+			if (party->indoors() && arena->adjacent(cx, cy - 1, px, py) && cy - 1 > 0)
+				cy--;
+			else if (!party->indoors() && arena->adjacent(cx, cy - 2, px, py) && cy - 2 > 0)
+				cy -= 2;
+			break;
+		case SDLK_DOWN:
+			if (party->indoors() && arena->adjacent(cx, cy + 1, px, py) &&
+					cy + 1 <= (int)arena->get_map()->height() - 4)
+				cy++;
+			else if (! party->indoors() && arena->adjacent(cx, cy + 2, px, py) &&
+					cy + 2 <= (int)arena->max_y_coordinate() - 2)
+				cy += 2;
+			else
+				std::cout << "Moo: " << cy << ", height: " << arena->get_map()->height() << "\n";
+			break;
+		case SDLK_RETURN:
+			arena->get_map()->rm_obj(&crosshair_tmp_obj);
+			return std::make_pair(cx, cy);
+		case SDLK_ESCAPE:
+		case SDLK_q:
+			arena->get_map()->rm_obj(&crosshair_tmp_obj);
+			return std::make_pair(-1, -1);
+		default:
+			std::cout << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
+		}
 
-    arena->get_map()->rm_obj(&crosshair_tmp_obj);
-    // arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
-    crosshair_tmp_obj.set_coords(cx, cy);
-    arena->get_map()->push_obj(crosshair_tmp_obj);
-    old_x = cx; old_y = cy;
-  }
+		if (! party->indoors()) {
+			if ( (cx % 2) == 0 && (cy % 2)  != 0 ) {
+				if (arena->adjacent(cx, cy - 1, px, py))
+					cy--;
+				else {
+					cx = old_x;
+					cy = old_y;
+				}
+			}
+			else if ( (cx % 2) != 0 && (cy % 2)  == 0 ) {
+				if (arena->adjacent(cx, cy + 1, px, py))
+					cy++;
+				else {
+					cx = old_x;
+					cy = old_y;
+				}
+			}
+		}
+
+		arena->get_map()->rm_obj(&crosshair_tmp_obj);
+		crosshair_tmp_obj.set_coords(cx, cy);
+		arena->get_map()->push_obj(crosshair_tmp_obj);
+		old_x = cx; old_y = cy;
+	}
 }
 
 void GameControl::keypress_drop_items()

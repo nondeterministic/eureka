@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void HexArena::set_SDL_surface(SDL_Surface* s)
     std::cerr << "ERROR: hexarena.cc: hexarena.cc::_sdl_surf == null\n";
 }
 
-// x and y are screen coordinates in pixels
+/// x and y are screen coordinates in pixels
 
 int HexArena::put_tile(int x, int y, SDL_Surface* brush)
 {
@@ -84,14 +84,14 @@ int HexArena::put_tile_hex(int hex_x, int hex_y, SDL_Surface* brush)
   return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
 }
 
-// Converts a x-hex coordinate to a screen coordinate
+/// Converts a x-hex coordinate to a screen coordinate
 
 int HexArena::get_screen_x(int hex_x) const
 {
   return (hex_x - corner_tile_uneven_offset()) * (tile_size() - 10);
 }
 
-// Converts a y-hex coordinate to a screen coordinate
+/// Converts a y-hex coordinate to a screen coordinate
 
 int HexArena::get_screen_y(int hex_y) const
 {
@@ -101,7 +101,7 @@ int HexArena::get_screen_y(int hex_y) const
     return tile_size()/2 - 1 + hex_y/2 * (tile_size() - 1);
 }
 
-// Gets the absolute coordinates in pixels for a tile on (x, y)
+/// Gets the absolute coordinates in pixels for a tile on (x, y)
 
 SDL_Rect HexArena::get_tile_coords(int x, int y) const
 {
@@ -202,15 +202,14 @@ Offsets HexArena::determine_offsets()
 	return offsets();
 }
 
-// Returns 0 when tile hex-x-coordinate in the upper left corner is
-// even, otherwise 1.
+/// Returns 0 when tile hex-x-coordinate in the upper left corner is even, otherwise 1.
 
 int HexArena::corner_tile_uneven_offset(void) const
 {
   return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
 }
 
-// Convert the relative screen hex coordinates to the absolute map hex coordinates.
+/// Convert the relative screen hex coordinates to the absolute map hex coordinates.
 
 void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 {
@@ -218,7 +217,7 @@ void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 	// my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 	my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 
-	// std::cerr << "screen_to_map: " << sx << ", " << sy << " => " << mx << ", " << my << "\n";
+	std::cerr << "screen_to_map: " << sx << ", " << sy << " => " << mx << ", " << my << "\n";
 }
 
 /// Convert absolute map coordinates to screen hex coordinates.  The
@@ -242,33 +241,20 @@ void HexArena::map_to_screen(int mx, int my, int& sx, int& sy)
 			my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
 		sy = my - _top_hidden/(tile_size()-1)*2; // - ((sx%2 == 0)? 1 : 0);
 
-	// std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
-	// std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";
+	std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
+	std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";
 }
 
-// Returns true if the hex defined by x1, y1 is adjacent to the hex
-// defined by x2, y2; false otherwise.
+/// Returns true if the hex defined by x1, y1 is adjacent to the hex defined by x2, y2; false otherwise.
 
 bool HexArena::adjacent(int x1, int y1, int x2, int y2)
 {
   if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
     return false;
-
-  /*
-  std::cout << "adj x1: " << x1 << ", y1: " << y1 << ", x2: " << x2 << ", y2: " << y2;
-  if ( (x1 == x2 && abs(y1 - y2) <= 2) ||
-       (abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1) )
-	  std::cout << " adj" << "\n";
-  else
-	  std::cout << " !adj" << "\n";
-  */
-
-  return ( (x1 == x2 && abs(y1 - y2) <= 2) ||
-	   (abs(x1 - x2) <= 1 && abs(y1 - y2) <= 2) );
+  return ( abs(x1 - x2) <= 1 && abs(y1 - y2) <= 2 );
 }
 
-// Conditional compare, i.e., the enum "sign" is used to determine
-// which type of compare we're dealing with here.
+/// Conditional compare, i.e., the enum "sign" is used to determine which type of compare we're dealing with here.
 
 bool HexArena::cond_cmp(int x, int y, int sign)
 {
@@ -288,9 +274,9 @@ bool HexArena::cond_cmp(int x, int y, int sign)
   }
 }
 
-// Returns true if icon at (xi, yi) is in the LOS of icon at (xp, yp)
-// (the latter usually being the party's position, and the former some
-// icon on the map).  Otherwise, it returns false.
+/// Returns true if icon at (xi, yi) is in the LOS of icon at (xp, yp)
+/// (the latter usually being the party's position, and the former some
+/// icon on the map).  Otherwise, it returns false.
 
 bool HexArena::in_los(int xi, int yi, int xp, int yp)
 {
@@ -435,6 +421,16 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
 	return true;
 }
 
+unsigned HexArena::max_y_coordinate()
+{
+	return _map->height() * 2;
+}
+
+unsigned HexArena::max_x_coordinate()
+{
+	return _map->width();
+}
+
 /**
  * x_width and y_width define how large the viewing rectangle should be. Default is 0 for both which means
  * as large as the window allows.  Other values, such as 4 or 6, etc. are there to reflect an increasingly
@@ -524,7 +520,7 @@ Offsets HexArena::offsets(void)
   return new_offsets;
 }
 
-// Returns relative coordinates on the hex arena.
+/// Returns relative coordinates on the hex arena.
 
 void HexArena::get_center_coords(int& x, int& y)
 {
@@ -533,7 +529,7 @@ void HexArena::get_center_coords(int& x, int& y)
 	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
-// x and y are screen coordinates, not map coordinates!
+/// x and y are screen coordinates, not map coordinates!
 
 std::pair<int, int> HexArena::show_party(int x, int y)
 {
@@ -558,8 +554,7 @@ std::pair<int, int> HexArena::show_party(int x, int y)
 	return new_coords;
 }
 
-// Some extra blitting is required if a hex arena is used to fill
-// the arena.
+/// Some extra blitting is required if a hex arena is used to fill the arena.
 
 void HexArena::update()
 {

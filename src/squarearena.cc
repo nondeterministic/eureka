@@ -615,3 +615,13 @@ bool SquareArena::adjacent(int x1, int y1, int x2, int y2)
 {
   return abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1;
 }
+
+unsigned SquareArena::max_y_coordinate()
+{
+	return _map->height();
+}
+
+unsigned SquareArena::max_x_coordinate()
+{
+	return _map->width();
+}

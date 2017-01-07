@@ -32,6 +32,8 @@ public:
   void update();
   unsigned tile_size() const;
   bool adjacent(int, int, int, int);
+  unsigned max_y_coordinate();
+  unsigned max_x_coordinate();
 
 protected:
   Offsets offsets();

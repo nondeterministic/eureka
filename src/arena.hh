@@ -103,6 +103,8 @@ public:
   virtual void screen_to_map(int, int, int&, int&) = 0;
   virtual void map_to_screen(int, int, int&, int&) = 0;
   virtual bool adjacent(int, int, int, int) = 0;
+  virtual unsigned max_y_coordinate() = 0;
+  virtual unsigned max_x_coordinate() = 0;
 
 protected:
   SDL_Surface* _sdl_surf;
