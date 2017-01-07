@@ -96,7 +96,7 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 		map->pop_obj(x, y);
 	}
 	else
-		map->pop_obj(obj);
+		map->rm_obj(obj);
 
 	return true;
 }

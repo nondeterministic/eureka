@@ -87,12 +87,12 @@ public:
   virtual void expand_map(int, int, int, int) = 0;
   void expand_map_data(int, int, int, int);
   void push_obj(MapObj);
-  void pop_obj(MapObj*);
+  void rm_obj(MapObj*);
   void pop_obj_animate(unsigned, unsigned);
   /// Can only be called if there is EXACTLY one item in location under scrutiny!
   void pop_obj(unsigned, unsigned);
-  int rm_obj(std::string);
-  int rm_obj(MapObj);
+  int rm_obj_by_id(std::string);
+  // int rm_obj(MapObj);
   // void push_icon(int, int, unsigned);
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);

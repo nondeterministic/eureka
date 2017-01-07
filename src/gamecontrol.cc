@@ -1569,12 +1569,12 @@ std::pair<int, int> GameControl::select_coords()
         cy += 2;
       break;
     case SDLK_RETURN:
-    	arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    	arena->get_map()->rm_obj(&crosshair_tmp_obj);
     	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
     	return std::make_pair(cx, cy);
     case SDLK_ESCAPE:
     case SDLK_q:
-    	arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    	arena->get_map()->rm_obj(&crosshair_tmp_obj);
     	// arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
     	return std::make_pair(-1, -1);
     default:
@@ -1600,7 +1600,7 @@ std::pair<int, int> GameControl::select_coords()
       }
     }
 
-    arena->get_map()->pop_obj(&crosshair_tmp_obj);
+    arena->get_map()->rm_obj(&crosshair_tmp_obj);
     // arena->get_map()->pop_obj(old_x, old_y, CROSSHAIR_ICON_LUA_NAME);
     crosshair_tmp_obj.set_coords(cx, cy);
     arena->get_map()->push_obj(crosshair_tmp_obj);
@@ -1820,7 +1820,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
 						if (combat.initiate())
-							get_map()->rm_obj(map_obj->id);
+							get_map()->rm_obj_by_id(map_obj->id);
 						return;
 					}
 					else
@@ -1832,7 +1832,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.set_foes(map_obj->get_foes());
 						if (combat.initiate()) {
-							get_map()->rm_obj(map_obj->id);
+							get_map()->rm_obj_by_id(map_obj->id);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1842,7 +1842,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
 						if (combat.initiate()) {
-							get_map()->rm_obj(map_obj->id);
+							get_map()->rm_obj_by_id(map_obj->id);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1892,7 +1892,7 @@ void GameControl::keypress_attack()
 					make_guards(HOSTILE);
 
 					if (combat.initiate())
-						get_map()->rm_obj(the_obj.id);
+						get_map()->rm_obj_by_id(the_obj.id);
 					return;
 				}
 				else {
@@ -1906,7 +1906,7 @@ void GameControl::keypress_attack()
 					Combat combat;
 					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
 					if (combat.initiate()) {
-						get_map()->rm_obj(the_obj.id);
+						get_map()->rm_obj_by_id(the_obj.id);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());
@@ -1917,7 +1917,7 @@ void GameControl::keypress_attack()
 					Combat combat;
 					combat.set_foes(the_obj.get_foes());
 					if (combat.initiate()) {
-						get_map()->rm_obj(the_obj.id);
+						get_map()->rm_obj_by_id(the_obj.id);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());
@@ -2096,18 +2096,14 @@ void GameControl::keypress_get_item()
 			}
 			// See if some items are leftover after taking...
 			if (picked_up_mapobj.how_many - taking == 0)
-				arena->get_map()->pop_obj(&picked_up_mapobj);
+				arena->get_map()->rm_obj(&picked_up_mapobj);
 				//				arena->get_map()->pop_obj(coords.first, coords.second, picked_up_mapobj.lua_name);
 			else {
-				// As we're dealing with instances rather than pointers, we first remove the object from the map...
-				if (arena->get_map()->rm_obj(picked_up_mapobj) > 0) {
-					// ...then decrease the how_many counter...
-					picked_up_mapobj.how_many -= taking;
-					// ...and finally add it again
-					arena->get_map()->push_obj(picked_up_mapobj);
-				}
-				else
-					std::cerr << "ERROR: gamecontrol.cc: Could not remove selected item from map.\n";
+				arena->get_map()->rm_obj(&picked_up_mapobj);
+				// ...then decrease the how_many counter...
+				picked_up_mapobj.how_many -= taking;
+				// ...and finally add it again with decreased how_many_counter
+				arena->get_map()->push_obj(picked_up_mapobj);
 			}
 		}
 		// Picking up exactly 1 item
@@ -2124,8 +2120,7 @@ void GameControl::keypress_get_item()
 				}
 			}
 
-			arena->get_map()->pop_obj(&picked_up_mapobj);
-			// arena->get_map()->pop_obj(coords.first, coords.second, picked_up_item->luaName());
+			arena->get_map()->rm_obj(&picked_up_mapobj);
 		}
 	}
 	else {

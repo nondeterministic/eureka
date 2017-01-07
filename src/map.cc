@@ -229,7 +229,18 @@ void Map::del_action(unsigned x, unsigned y)
 	}
 }
 
-void Map::pop_obj(MapObj* map_obj)
+unsigned Map::how_many_mapobj_at(unsigned x, unsigned y)
+{
+	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
+	 	 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
+			found_objs = _map_objects.equal_range(std::pair<unsigned,unsigned>(x,y));
+
+	unsigned i = 0;
+	for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++, i++);
+	return i;
+}
+
+void Map::rm_obj(MapObj* map_obj)
 {
 	if (map_obj->lua_name.length() == 0 && map_obj->id.length() == 0) {
 		std::cerr << "ERROR: map.cc: Cannot pop MapObj without Lua-name and ID in pop_ob(MapObj*). "
@@ -318,20 +329,9 @@ void Map::pop_obj_animate(unsigned x, unsigned y)
 	std::cerr << "WARNING: map.cc: pop_obj_animate(x,y) failed. No animate object on location?\n";
 }
 
-unsigned Map::how_many_mapobj_at(unsigned x, unsigned y)
-{
-	std::pair<boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator,
-	 	 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>::iterator>
-			found_objs = _map_objects.equal_range(std::pair<unsigned,unsigned>(x,y));
-
-	unsigned i = 0;
-	for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++, i++);
-	return i;
-}
-
 // Returns the number of deleted MapObj.
 
-int Map::rm_obj(std::string pop_id)
+int Map::rm_obj_by_id(std::string pop_id)
 {
 	int deleted = 0;
 	bool done = false;
@@ -354,31 +354,6 @@ int Map::rm_obj(std::string pop_id)
 	return deleted;
 }
 
-// Returns the number of deleted MapObj.
-
-int Map::rm_obj(MapObj delmo)
-{
-	int deleted = 0;
-	bool done = false;
-
-	while (!done) {
-		done = true;
-
-		for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
-			MapObj& mo = (curr_obj->second);
-			if (mo == delmo) {
-				_map_objects.erase(curr_obj);
-				deleted++;
-				_modified = true;
-				done = false;
-				break;
-			}
-		}
-	}
-
-	return deleted;
-}
-
 void Map::push_obj(MapObj obj)
 {
 	std::pair<unsigned, unsigned> coords;
@@ -389,28 +364,30 @@ void Map::push_obj(MapObj obj)
 	_modified = true;
 }
 
-// Used to be called push_obj, but a MapObj is more than just an icon
-// and coordinates.  So it became push_icon, e.g., to push crosshair
-// icon, etc.  It still uses, internally, however, an underspecified
-// MapObj.  That's OK for now...
-
-/*
-void Map::push_icon(int x, int y, unsigned icon)
-{
-	MapObj new_obj;
-	std::pair<unsigned, unsigned> coords;
-
-	coords.first = x;
-	coords.second = y;
-
-	new_obj.set_coords((unsigned)x, (unsigned)y);
-	new_obj.set_icon(icon);
-	new_obj.set_layer(_map_objects.count(coords));
-
-	_map_objects.insert(std::make_pair(coords, new_obj));
-	_modified = true;
-}
-*/
+//// Returns the number of deleted MapObj.
+//
+//int Map::rm_obj(MapObj delmo)
+//{
+//	int deleted = 0;
+//	bool done = false;
+//
+//	while (!done) {
+//		done = true;
+//
+//		for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
+//			MapObj& mo = (curr_obj->second);
+//			if (mo == delmo) {
+//				_map_objects.erase(curr_obj);
+//				deleted++;
+//				_modified = true;
+//				done = false;
+//				break;
+//			}
+//		}
+//	}
+//
+//	return deleted;
+//}
 
 boost::unordered_multimap<std::pair<unsigned, unsigned>, MapObj>* Map::objs(void)
 {
