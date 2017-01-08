@@ -1,6 +1,9 @@
 TODO
 =====
 
+- Problem is: coord selection and other keyboard input sometimes seems sluggish.  It's not cause the game is slow, but because
+  we only redraw when TICK event occurs.  Perhaps, update effects of keyboard input immediately?
+
 - Make game characters definable in Lua
 
 - Level up (already started in party.cc)

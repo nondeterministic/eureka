@@ -468,7 +468,7 @@ void EditorWin::determine_map_offsets(void)
   context()->set_yoffset(new_offsets.top/ts);
 }
 
-// User has button pressed AND moves the mouse in editor window
+/// User has button pressed AND moves the mouse in editor window
 
 bool EditorWin::on_tab_button_motion_pressed(GdkEventMotion* event)
 {
@@ -503,7 +503,7 @@ void EditorWin::place_icon_on_map(int x, int y)
 		del_action(x, y);
 }
 
-// User clicked in editor window
+/// User clicked in editor window
 
 bool EditorWin::on_tab_button_press_event(GdkEventButton* event)
 {
@@ -563,7 +563,7 @@ void EditorWin::fill_with_curr_tile(int x, int y)
     ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
 }
 
-// Fills position map_x, map_y on the map, which currently has tile old_brush on it, with new_brush.
+/// Fills position map_x, map_y on the map, which currently has tile old_brush on it, with new_brush.
 
 void EditorWin::fill(std::shared_ptr<Map> map, unsigned new_brush, unsigned old_brush, unsigned map_x, unsigned map_y)
 {
@@ -588,7 +588,7 @@ void EditorWin::fill(std::shared_ptr<Map> map, unsigned new_brush, unsigned old_
 	}
 }
 
-// x and y are the current screen coordinates where the user clicked
+/// x and y are the current screen coordinates where the user clicked
 
 void EditorWin::put_curr_tile_on_map(int x, int y)
 {
@@ -818,17 +818,15 @@ bool EditorWin::on_swindow_button_press_event(GdkEventButton* event)
 			_outdoors_icon_pic.get_pixbuf() :
 			_indoors_icon_pic.get_pixbuf());
 	// Glib::RefPtr<Gdk::Pixbuf> chosen_icon_pb =
-	_selected_icon_pb = Gdk::Pixbuf::create_subpixbuf(icon_pixbuf,
-			icon_x,
-			icon_y,
-			icon_size,
-			icon_size);
+	_selected_icon_pb = Gdk::Pixbuf::create_subpixbuf(icon_pixbuf, icon_x, icon_y, icon_size, icon_size);
 
 	// Select current icon brush
 	if (event->button == 1)
 		context()->set_icon_brush_no(icon_no_pressed);
 	// Edit icon properties
 	else if (event->button == 3) {
+		context()->set_icon_brush_no(icon_no_pressed);
+
 		IconPropsWin icon_props_win(_selected_icon_pb);
 		IconProps* curr_icon_props;
 
@@ -841,6 +839,7 @@ bool EditorWin::on_swindow_button_press_event(GdkEventButton* event)
 		icon_props_win.set_name(curr_icon_props->get_name().c_str());
 		icon_props_win.set_walkable(curr_icon_props->_is_walkable);
 		icon_props_win.set_trans(curr_icon_props->_trans);
+		icon_props_win.set_default_lua_name(curr_icon_props->default_lua_name());
 
 		if (icon_props_win.run()) {
 			IconProps new_icon_props;
@@ -848,6 +847,7 @@ bool EditorWin::on_swindow_button_press_event(GdkEventButton* event)
 			new_icon_props.set_name(icon_props_win.get_name().c_str());
 			new_icon_props._is_walkable  = icon_props_win.get_walkable();
 			new_icon_props._trans = icon_props_win.get_trans();
+			new_icon_props.default_lua_name() = icon_props_win.get_default_lua_name();
 
 			if (get_curr_map()->is_outdoors())
 				OutdoorsIcons::Instance().add_props(new_icon_props);

@@ -11,11 +11,13 @@
 #include <iostream>
 #include "iconpropswin.hh"
 #include "../iconprops.hh" 
+#include "../indoorsicons.hh"
 
-IconPropsWin::IconPropsWin(Glib::RefPtr<Gdk::Pixbuf>& icon) : name_lbl("Name:"), icon_lbl("undef icon no.")
+IconPropsWin::IconPropsWin(Glib::RefPtr<Gdk::Pixbuf> icon) : name_lbl("Name:"), icon_lbl("undef icon no."), default_lua_name_lbl("default_lua_name:")
 {
   _name = "undef";
   _icon_no = 0;
+  _default_lua_name = "";
 
   set_title("Edit icon properties");
   show_all_children();
@@ -32,6 +34,11 @@ IconPropsWin::IconPropsWin(Glib::RefPtr<Gdk::Pixbuf>& icon) : name_lbl("Name:"),
   hbox_name.add(name_lbl);
   hbox_name.pack_start(name_entry, Gtk::PACK_SHRINK);
   vbox.add(hbox_name);
+
+  hbox_default_lua_name.set_spacing(10);
+  hbox_default_lua_name.add(default_lua_name_lbl);
+  hbox_default_lua_name.pack_start(default_lua_name_entry, Gtk::PACK_SHRINK);
+  vbox.add(hbox_default_lua_name);
 
   walk_combo.append("full speed");
   walk_combo.append("slow");
@@ -73,6 +80,7 @@ void IconPropsWin::on_button_cancel(void)
 void IconPropsWin::on_button_ok(void)
 {
   _name = name_entry.get_text();
+  _default_lua_name = default_lua_name_entry.get_text();
 
   switch (trans_combo.get_active_row_number()) {
   case 0:
@@ -99,6 +107,17 @@ void IconPropsWin::on_button_ok(void)
   }
 
   hide();
+}
+
+std::string IconPropsWin::get_default_lua_name()
+{
+	return _default_lua_name;
+}
+
+void IconPropsWin::set_default_lua_name(std::string newName)
+{
+	_default_lua_name = newName;
+	default_lua_name_entry.set_text(_default_lua_name);
 }
 
 void IconPropsWin::set_trans(ICON_TRANS it)
