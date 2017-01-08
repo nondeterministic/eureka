@@ -52,6 +52,7 @@
 #include "actionpullpush.hh"
 #include "actionopened.hh"
 #include "actonlook.hh"
+#include "indoorsicons.hh"
 
 Map::Map()
 {
@@ -478,6 +479,10 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 		else if (a_name == "how_many")
 			new_obj.how_many = atoi(attribute->get_value().c_str());
 	}
+
+	// If no explicit lua_name was set, see if there is a default_lua_name in the world file and set it, if there is.
+	if (new_obj.lua_name.length() == 0 && IndoorsIcons::Instance().get_props(new_obj.get_icon())->default_lua_name().length() > 0)
+		new_obj.lua_name = IndoorsIcons::Instance().get_props(new_obj.get_icon())->default_lua_name();
 
 	// Parse actions, if there are any associated to the object
 	if (actions_node.size() > 0) {

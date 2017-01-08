@@ -217,7 +217,7 @@ void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 	// my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 	my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 
-	std::cerr << "screen_to_map: " << sx << ", " << sy << " => " << mx << ", " << my << "\n";
+	// std::cerr << "screen_to_map: " << sx << ", " << sy << " => " << mx << ", " << my << "\n";
 }
 
 /// Convert absolute map coordinates to screen hex coordinates.  The
@@ -241,8 +241,8 @@ void HexArena::map_to_screen(int mx, int my, int& sx, int& sy)
 			my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
 		sy = my - _top_hidden/(tile_size()-1)*2; // - ((sx%2 == 0)? 1 : 0);
 
-	std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
-	std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";
+	// std::cerr << "Party x,y: " << Party::Instance().x << ", " << Party::Instance().y << "\n";
+	// std::cerr << "map_to_screen: " << mx << ", " << my << " => " << sx << ", " << sy << "\n";
 }
 
 /// Returns true if the hex defined by x1, y1 is adjacent to the hex defined by x2, y2; false otherwise.

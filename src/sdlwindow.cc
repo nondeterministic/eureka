@@ -239,8 +239,7 @@ SDL_Surface* SDLWindow::get_tiny_win_SDL_surface()
 	return _tiny_win;
 }
 
-// If icon_size != 0, then the value is used as an offset to make a
-// hex arena fill the screen properly.
+/// If icon_size != 0, then the value is used as an offset to make a hex arena fill the screen properly.
 
 int SDLWindow::blit_interior()
 {

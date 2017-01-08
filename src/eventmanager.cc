@@ -125,26 +125,26 @@ char EventManager::get_key(const char* valid_inputs)
 	}
 }
 
-// A more generic version of the above.  Handy for checking cursor keys, etc.
-// If keys is empty, any pressed key is returned!
+/// A more generic version of the above.  Handy for checking cursor keys, etc.
+/// If keys is empty, any pressed key is returned!
 
 SDLKey EventManager::get_generic_key(std::list<SDLKey> keys)
 {
 	SDL_Event ev;
+	Charset normal_font;
 
-	while (1) {
-		while (SDL_WaitEvent(&ev)) {
-			if (ev.type == SDL_USEREVENT) {
-				if (ev.user.code == TICK) {
-					Charset normal_font;
-					Console::Instance().animate_cursor(&normal_font); // This animates the cursor during keyboard input
-					GameControl::Instance().show_win(); // TODO: This animates the map, but make sure that a map is visible first!!
-				}
-			}
-			else if (ev.type == SDL_KEYDOWN) {
-				if (std::find(keys.begin(), keys.end(), ev.key.keysym.sym) != keys.end() || keys.size() == 0)
-					return ev.key.keysym.sym;
+	while (SDL_WaitEvent(&ev)) {
+		if (ev.type == SDL_USEREVENT) {
+			if (ev.user.code == TICK) {
+				Console::Instance().animate_cursor(&normal_font); // This animates the cursor during keyboard input
+				GameControl::Instance().show_win();               // This animates the map, but make sure that a map is visible first!!
 			}
 		}
+		else if (ev.type == SDL_KEYDOWN) {
+			if (std::find(keys.begin(), keys.end(), ev.key.keysym.sym) != keys.end() || keys.size() == 0)
+				return ev.key.keysym.sym;
+		}
 	}
+
+	throw "EXCEPTION: eventmanager.cc: get_generic_key did not return any key!\n";
 }

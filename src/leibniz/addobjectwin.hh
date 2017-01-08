@@ -21,6 +21,7 @@ public:
   MAPOBJ_TYPES get_object_type();
   bool has_action();
   int get_icon_no();
+  std::string default_lua_name;
   // bool removable;
   std::string id;
 
@@ -29,12 +30,13 @@ protected:
   Gtk::Button* bok;
   Gtk::Button* bcancel;
   Gtk::Alignment align;
-  Gtk::HBox hbox, hbox_id, hbox_actions;
+  Gtk::HBox hbox, hbox_id, hbox_actions, hbox_lua_name;
   Gtk::VBox vbox, rb_type_vbox;
-  Gtk::Label id_lbl, object_lbl, icon_lbl, action_lbl;
+  Gtk::Label id_lbl, object_lbl, icon_lbl, action_lbl, lua_name_lbl;
   Gtk::ComboBoxText objects_combo;
   Gtk::ComboBoxText actions_combo;
   Gtk::Entry id_entry;
+  Gtk::Entry lua_name_entry;
   // Gtk::CheckButton cb_removable;
 
   Gtk::Frame rb_type_frame;

@@ -48,6 +48,8 @@ public:
   void set_light_radius(int);
   int light_radius();
   bool is_walkable();
+  std::string default_lua_name();
+  void set_default_lua_name(std::string);
 
   ICON_TRANS _trans;
   ICON_WALK _is_walkable;
@@ -56,6 +58,7 @@ public:
 protected:
   unsigned _icon;
   std::string _name;
+  std::string _default_lua_name;
   int _flags;
   int _next_anim;
   int _radius;

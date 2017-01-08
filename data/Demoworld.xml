@@ -120,7 +120,7 @@
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="not">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
-      <icon no="111" trans="full" walk="slow" next_anim="121">a fireplace</icon>
+      <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.wav">a fireplace</icon>
       <icon no="112" trans="full" walk="slow">fire</icon>
       <icon no="113" trans="full" walk="full">nothing special</icon>
       <icon no="114" trans="full" walk="full">nothing special</icon>
@@ -130,8 +130,8 @@
       <icon no="118" trans="full" walk="full">nothing special</icon>
       <icon no="119" trans="full" walk="full">nothing special</icon>
       <icon no="120" trans="full" walk="slow">a bed</icon>
-      <icon no="121" trans="full" walk="slow" next_anim="122">a fireplace</icon>
-      <icon no="122" trans="full" walk="slow" next_anim="111">a fireplace</icon>
+      <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.wav">a fireplace</icon>
+      <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.wav">a fireplace</icon>
       <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.wav">a torch</icon>
       <icon no="124" trans="full" walk="full">nothing special</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">a guard</icon>
@@ -156,8 +156,8 @@
       <icon no="144" trans="full" walk="full">nothing special</icon>
       <icon no="145" trans="full" walk="full">nothing special</icon>
       <icon no="146" trans="full" walk="full">nothing special</icon>
-      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav">a wall-mounted torch</icon>
-      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav">a wall-mounted torch</icon>
+      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav" default_lua_name="weapons::torch">a wall-mounted torch</icon>
+      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav" default_lua_name="weapons::torch">a wall-mounted torch</icon>
       <icon no="149" trans="full" walk="full">nothing special</icon>
       <icon no="150" trans="full" walk="not">a bench</icon>
       <icon no="151" trans="full" walk="not">a bench</icon>
@@ -544,7 +544,7 @@
       <icon no="532" trans="full" walk="full">nothing special</icon>
       <icon no="533" trans="full" walk="not" next_anim="534">a magically locked chest</icon>
       <icon no="534" trans="full" walk="not" next_anim="514">a magically locked chest</icon>
-      <icon no="535" trans="full" walk="full">gold coins</icon>
+      <icon no="535" trans="full" walk="full" default_lua_name="miscitems::gold coin">gold coins</icon>
       <icon no="536" trans="full" walk="full">a door sign</icon>
       <icon no="537" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">a door sign</icon>
       <icon no="538" trans="full" walk="full">a door sign</icon>
@@ -580,7 +580,7 @@
       <icon no="568" trans="full" walk="full">a crossbow</icon>
       <icon no="569" trans="full" walk="full">a wand</icon>
       <icon no="570" trans="full" walk="full">a glasswand</icon>
-      <icon no="571" trans="full" walk="full">an axe</icon>
+      <icon no="571" trans="full" walk="full" default_lua_name="weapons::axe">an axe</icon>
       <icon no="572" trans="full" walk="full">a green potion</icon>
       <icon no="573" trans="full" walk="full">a cobweb</icon>
       <icon no="574" trans="full" walk="full">nothing special</icon>
@@ -592,7 +592,7 @@
       <icon no="580" trans="full" walk="full">nothing special</icon>
       <icon no="581" trans="full" walk="full">nothing special</icon>
       <icon no="582" trans="full" walk="full">nothing special</icon>
-      <icon no="583" trans="full" walk="full">a scroll</icon>
+      <icon no="583" trans="full" walk="full" default_lua_name="miscitems::ordinary scroll">a scroll</icon>
       <icon no="584" trans="full" walk="full">nothing special</icon>
       <icon no="585" trans="full" walk="full">nothing special</icon>
       <icon no="586" trans="full" walk="full">nothing special</icon>
@@ -602,7 +602,7 @@
       <icon no="590" trans="full" walk="not" next_anim="2" sound_effect="shallow_water.wav">water</icon>
       <icon no="591" trans="full" walk="full">a dagger</icon>
       <icon no="592" trans="full" walk="full">a mace</icon>
-      <icon no="593" trans="full" walk="full">a sword</icon>
+      <icon no="593" trans="full" walk="full" default_lua_name="weapons::sword">a sword</icon>
       <icon no="594" trans="full" walk="full">a double-sided axe</icon>
       <icon no="595" trans="full" walk="full">a broadsword</icon>
       <icon no="596" trans="full" walk="full">a morning star</icon>
@@ -632,7 +632,7 @@
       <icon no="620" trans="full" walk="full">a magic sword</icon>
       <icon no="621" trans="full" walk="full">a magic sword</icon>
       <icon no="622" trans="full" walk="full">a horned helmet</icon>
-      <icon no="623" trans="full" walk="full">a small shield</icon>
+      <icon no="623" trans="full" walk="full" default_lua_name="shields::small shield">a small shield</icon>
       <icon no="624" trans="full" walk="full">nothing special</icon>
       <icon no="625" trans="not" walk="not">a stone wall</icon>
       <icon no="626" trans="not" walk="not">a stone wall</icon>

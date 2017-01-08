@@ -280,6 +280,9 @@ bool World::xml_load_world_data(const std::string filename)
                                 else if (reader.get_value() == "not")
                                 	new_props._trans = IT_NOT;
                             }
+                            else if (reader.get_name().uppercase() == "DEFAULT_LUA_NAME") {
+                            	new_props.set_default_lua_name(reader.get_value());
+                            }
                             else if (reader.get_name() == "walk") {
                                 if (reader.get_value() == "full")
                                 	new_props._is_walkable = IW_FULL;
@@ -366,6 +369,9 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 			if (sound_effect.size() > 0)
 				icon_node->set_attribute("sound_effect", sound_effect);
+
+			if (IndoorsIcons::Instance().get_props(i)->default_lua_name().length() > 0)
+				icon_node->set_attribute("default_lua_name", IndoorsIcons::Instance().get_props(i)->default_lua_name());
 
 			icon_node->add_child_text(IndoorsIcons::Instance().get_props(i)->get_name().c_str());
 		}

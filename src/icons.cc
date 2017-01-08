@@ -30,7 +30,7 @@ IconProps* Icons::get_props(unsigned icon_no)
 		return &_icons_props.at(icon_no);
 	}
 	catch (...) {
-		// std::cerr << "ERROR: iconsprops.cc: get_props(" << icon_no << ") yields no sensible result.\n";
+		std::cerr << "WARNING: iconsprops.cc: get_props(" << icon_no << ") yields no sensible result.\n";
 		return NULL;
 	}
 }

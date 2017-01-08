@@ -123,7 +123,7 @@ int GameControl::set_party(int x, int y)
 	return 0;
 }
 
-// Returns 0 on success, a negative value if no map can be drawn for whatever reason
+/// Returns 0 on success, a negative value if no map can be drawn for whatever reason
 
 int GameControl::show_win()
 {
@@ -134,7 +134,7 @@ int GameControl::show_win()
 		SDLWindow::Instance().blit_interior();
 		return 0;
 	}
-	std::cerr << "WARNING: gamecontrol.cc: show_win() failed.\n";
+	std::cerr << "ERROR: gamecontrol.cc: show_win() failed. Arena or map is null.\n";
 	return -1;
 }
 
@@ -865,7 +865,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	return 0;
 }
 
-// "Civilian" use of magic during non-combat...
+/// "Civilian" use of magic during non-combat...
 
 void GameControl::cast_spell(int player_no, Spell spell)
 {
@@ -896,10 +896,10 @@ void GameControl::cast_spell(int player_no, Spell spell)
 	}
 }
 
-// Returns the full file path of the chosen spell, otherwise "" if no spell was selected.
-//
-// PRECONDITION: Assumes that player_no refers to a magic user!  Otherwise the string will be empty!
-//               So check the magic use before calling this!
+/// Returns the full file path of the chosen spell, otherwise "" if no spell was selected.
+///
+/// PRECONDITION: Assumes that player_no refers to a magic user!  Otherwise the string will be empty!
+///               So check the magic use before calling this!
 
 std::string GameControl::select_spell(unsigned player_no)
 {
@@ -1020,7 +1020,7 @@ void GameControl::keypress_inventory()
 	mwin.display_last();
 }
 
-// Let go of item and put it back to inventory.
+/// Let go of item and put it back to inventory.
 
 void GameControl::keypress_yield_item(int selected_player)
 {
@@ -1086,7 +1086,7 @@ void GameControl::keypress_yield_item(int selected_player)
 	return;
 }
 
-// Rest party
+/// Rest party
 
 void GameControl::keypress_hole_up()
 {
@@ -1517,8 +1517,8 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 	return "";
 }
 
-// Displays a movable cursor and returns coordinates of map where the user places it and presses return.
-// Returns std::pair(-1,-1) if users cancelled selection.
+/// Displays a movable cursor and returns coordinates of map where the user places it and presses return.
+/// Returns std::pair(-1,-1) if users cancelled selection.
 
 std::pair<int, int> GameControl::select_coords()
 {
@@ -1568,8 +1568,6 @@ std::pair<int, int> GameControl::select_coords()
 			else if (! party->indoors() && arena->adjacent(cx, cy + 2, px, py) &&
 					cy + 2 <= (int)arena->max_y_coordinate() - 2)
 				cy += 2;
-			else
-				std::cout << "Moo: " << cy << ", height: " << arena->get_map()->height() << "\n";
 			break;
 		case SDLK_RETURN:
 			arena->get_map()->rm_obj(&crosshair_tmp_obj);
@@ -1712,11 +1710,11 @@ void GameControl::make_guards(PERSONALITY pers)
 	}
 }
 
-// Random monsters in dungeons work differently to outdoors: they don't simply appear, but are placed as objects
-// randomly near the party on the map and stay there, are saved as objects, etc.
-//
-// (I could have added this to indoorsmap.cc but then leibniz has yet another few nasty dependencies and I would
-//  have to do a few type casts here that wouldn't be so nice. So we simply create the monsters directly here.)
+/// Random monsters in dungeons work differently to outdoors: they don't simply appear, but are placed as objects
+/// randomly near the party on the map and stay there, are saved as objects, etc.
+///
+/// (I could have added this to indoorsmap.cc but then leibniz has yet another few nasty dependencies and I would
+///  have to do a few type casts here that wouldn't be so nice. So we simply create the monsters directly here.)
 
 void GameControl::create_random_monsters_in_dungeon()
 {

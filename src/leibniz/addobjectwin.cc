@@ -10,10 +10,12 @@
 #include <sstream>
 
 #include "../mapobj.hh"
+#include "../indoorsicons.hh"
 #include "addobjectwin.hh"
 
 AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no) 
 : id_lbl("ID:"),
+  lua_name_lbl("default_lua_name:"),
   action_lbl("Action:"),
   object_lbl("Select type of object:"),
   icon_lbl("undef icon no."),
@@ -48,6 +50,14 @@ AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no)
 	hbox_id.add(id_lbl);
 	hbox_id.pack_start(id_entry, Gtk::PACK_SHRINK);
 	vbox.add(hbox_id);
+
+	if (IndoorsIcons::Instance().get_props(_icon_no)->default_lua_name().length() > 0)
+		lua_name_entry.set_text(IndoorsIcons::Instance().get_props(_icon_no)->default_lua_name());
+
+	hbox_lua_name.set_spacing(10);
+	hbox_lua_name.add(lua_name_lbl);
+	hbox_lua_name.pack_start(lua_name_entry, Gtk::PACK_SHRINK);
+	vbox.add(hbox_lua_name);
 
 	//  hbox.set_spacing(10);
 	//  hbox.add(object_lbl);
@@ -137,6 +147,7 @@ void AddObjectWin::on_button_ok(void)
 	// _object_no = objects_combo.get_active_row_number();
 	_has_action = actions_combo.get_active_row_number() > 0;
 	id = id_entry.get_text();
+	default_lua_name = lua_name_entry.get_text();
 	// removable = cb_removable.get_active();
 
 	hide();

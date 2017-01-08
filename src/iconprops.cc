@@ -18,6 +18,7 @@ IconProps::IconProps()
 	_is_walkable = IW_FULL;
 	_name = "nothing special";
 	_seffect = "";
+	_default_lua_name = "";
 }
 
 IconProps::~IconProps()
@@ -72,4 +73,14 @@ std::string IconProps::sound_effect()
 void IconProps::set_sound_effect(std::string se)
 {
     _seffect = se;
+}
+
+std::string IconProps::default_lua_name()
+{
+	return _default_lua_name;
+}
+
+void IconProps::set_default_lua_name(std::string newName)
+{
+	_default_lua_name = newName;
 }

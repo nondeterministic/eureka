@@ -734,6 +734,7 @@ void EditorWin::add_object(int x, int y)
 		newObj.set_coords(map_x, map_y);
 		newObj.set_icon(obj_win.get_icon_no());
 		newObj.id = obj_win.id;
+		newObj.lua_name = obj_win.default_lua_name;
 
 		// Auto-roam if type is person, animal or monster
 		switch (newObj.get_type()) {
