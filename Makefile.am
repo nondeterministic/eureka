@@ -19,4 +19,4 @@ ACLOCAL_AMFLAGS = -I m4
 @MAINT@	@-rm -f `find . -name Makefile.in`
 @MAINT@	@-rm -f configure aclocal.m4 config.h.in stamp-h.in depcomp ylwrap
 @MAINT@	@-rm -f config.guess config.sub config.cache config.log config.status
-@MAINT@	@-rm -f mkinstalldirs missing install-sh ltmain.sh
+@MAINT@	@-rm -f mkinstalldirs missing install-sh ltmain.sh html

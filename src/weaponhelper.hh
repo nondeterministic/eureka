@@ -9,6 +9,10 @@
 #define WEAPONHELPER_HH_
 
 #include "weapon.hh"
+
+#include <lua.h>
+#include <lualib.h>
+
 #include <string>
 
 class WeaponHelper
@@ -16,8 +20,8 @@ class WeaponHelper
 public:
 	WeaponHelper();
 	virtual ~WeaponHelper();
-	static Weapon* createFromLua(std::string);
-	static bool exists(std::string);
+	static Weapon* createFromLua(std::string, lua_State*);
+	static bool existsInLua(std::string, lua_State*);
 };
 
 #endif /* WEAPONHELPER_HH_ */

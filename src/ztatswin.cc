@@ -48,11 +48,11 @@ ZtatsWin& ZtatsWin::Instance()
   return inst;
 }
 
-// Highlights lines from to to in the ztats window.  Players in the
-// standard view, e.g., occupy two lines each.
-//
-// This function will be used to let players move the cursor up and
-// down, selecting stuff from the ztats window.
+/// Highlights lines from to to in the ztats window.  Players in the
+/// standard view, e.g., occupy two lines each.
+///
+/// This function will be used to let players move the cursor up and
+/// down, selecting stuff from the ztats window.
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
@@ -320,8 +320,8 @@ std::vector<int> ZtatsWin::select_items()
 	return result;
 }
 
-// Select single item.
-// Returns -1 if no item was selected, otherwise the nth line that was selected.
+/// Select single item.
+/// Returns -1 if no item was selected, otherwise the nth line that was selected.
 
 int ZtatsWin::select_item()
 {
@@ -485,184 +485,6 @@ void ZtatsWin::scroll(unsigned start_page)
 		}
 	}
 }
-
-/*
-void ZtatsWin::ztats_player(int p)
-{
-  build_ztats_player(p);
-  scroll(p);
-}
-
-void ZtatsWin::set_lines(std::vector<StringAlignmentTuple> new_lines)
-{
-  // lines.clear();
-  lines = new_lines;
-}
-
-void ZtatsWin::build_ztats_player(int p, int lines_hidden)
-{
-  // Clear the vector first.
-  lines.clear();
-
-  PlayerCharacter* player = Party::Instance().get_player(p);
-  int second_col = 29;
-
-  if (player == NULL)
-    return;
-
-  clear();
-  ostringstream temps;
-
-  // Name
-  // lines.push_back(boost::tuple<player->name(), CENTERALIGN>);
-  lines.push_back(StringAlignmentTuple(player->name(), CENTERALIGN));
-
-  // Race, Profession
-  switch (player->race()) {
-  case HUMAN:
-    temps << "Human ";
-    break;
-  case ELF:
-    temps << "Elf ";
-    break;
-  case HOBBIT:
-    temps << "Hobbit ";
-    break;
-  case HALF_ELF:
-    temps << "Half-Elf ";
-    break;
-  case DWARF:
-    temps << "Dwarf ";
-    break;
-  }
-  switch (player->profession()) {
-  case FIGHTER:
-    temps << "Fighter";
-    break;
-  case PALADIN:
-    temps << "Paladin";
-    break;
-  case THIEF:
-    temps << "Thief";
-    break;
-  case BARD:
-    temps << "Bard";
-    break;
-  case MAGE:
-    temps << "Mage";
-    break;
-  case CLERIC:
-    temps << "Cleric";
-    break;
-  case DRUID:
-    temps << "Druid";
-    break;
-  case NECROMANCER:
-    temps << "Necromancer";
-    break;
-  case ARCHMAGE:
-    temps << "Archmage";
-    break;
-  case GEOMANCER:
-    temps << "Geomancer";
-    break;
-  case SHEPHERD:
-    temps << "Shepherd";
-    break;
-  case TINKER:
-    temps << "Tinker";
-    break;
-  }
-  temps << " (";
-  if (player->sex())
-    temps << (char)16;
-  else
-    temps << (char)17;
-  temps << ")";
-  lines.push_back(StringAlignmentTuple(temps.str(), CENTERALIGN));
-  lines.push_back(StringAlignmentTuple(" ", LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "   Condition: ";
-  switch (player->condition()) {
-  case POISONED:
-    temps << "Poisoned";
-    break;
-  case DEAD:
-    temps << "Dead";
-    break;
-  default:
-    temps << "Good";
-    break;
-  }
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << " Strength: " << player->str();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "       Level: " << player->level();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << "Dexterity: " << player->dxt();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "  Experience: " << player->ep();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << "  Stamina: " << player->end();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "  Hit Points: " << player->hp() << "/" << player->hpm();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << "     Luck: " << player->luck();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "Spell Points: " << player->sp() << "/" << player->spm();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << "   Wisdom: " << player->wis();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << "Armour class: ";
-  temps << player->armour_class();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << " Charisma: " << player->charr();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  for (int i = temps.str().length(); i < second_col; i++)
-    temps << " ";
-  temps << "Intellig.: " << player->iq();
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-
-  temps.str(""); temps.clear();
-  temps << " Hands: ";
-  if (player->weapon() != NULL && player->weapon()->hands() > 1)
-    temps << player->weapon()->name();
-  else if (player->shield() != NULL)
-    temps << player->shield()->name() << " (l), ";
-  else
-    temps << "empty (l), ";
-  if (player->weapon() != NULL && player->weapon()->hands() == 1)
-    temps << player->weapon()->name() << " (r)";
-  else
-    temps << "empty (r)";
-
-  lines.push_back(StringAlignmentTuple(temps.str(), LEFTALIGN));
-  lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
-  lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
-  lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
-
-  lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
-}
-*/
 
 void ZtatsWin::update_player_list()
 {

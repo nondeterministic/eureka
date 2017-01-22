@@ -10,6 +10,9 @@
 
 #include <string>
 
+#include <lua.h>
+#include <lualib.h>
+
 #include "playercharacter.hh"
 #include "service.hh"
 
@@ -18,8 +21,8 @@ class ServicesHelper
 public:
   ServicesHelper();
   virtual ~ServicesHelper();
-  static Service* createFromLua(std::string);
-  static bool exists(std::string);
+  static Service* createFromLua(std::string, lua_State*);
+  static bool existsInLua(std::string, lua_State*);
   static void apply(Service*, int);
 };
 

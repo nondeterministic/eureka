@@ -20,12 +20,14 @@
 #include "mischelper.hh"
 #include "miscitem.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"        // to define _lua_state
 #include "party.hh"
 #include "gamecontrol.hh"
 
 #include <string>
 #include <iostream>
+
+#include <lua.h>
+#include <lualib.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -41,10 +43,10 @@ MiscHelper::~MiscHelper()
 
 // See ShieldHelper.
 
-MiscItem* MiscHelper::createFromLua(std::string array_name, MapObj* mo)
+MiscItem* MiscHelper::createFromLua(std::string array_name, lua_State* lua_state, MapObj* mo)
 {
 	std::string globArrayName = "MiscItems";
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	MiscItem *w = new MiscItem();
 
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
@@ -67,8 +69,8 @@ MiscItem* MiscHelper::createFromLua(std::string array_name, MapObj* mo)
 
 // Returns true if the Lua array has an entry named item_name, false otherwise.
 
-bool MiscHelper::exists(std::string item_name)
+bool MiscHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	return lua.hasEntry("Misc", item_name);
 }

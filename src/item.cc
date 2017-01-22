@@ -25,6 +25,7 @@ using namespace std;
 
 Item::Item()
 {
+	_type = ItemType::Other;
 	_descr = "";
 	_name = "";
 	_plural_name = "";
@@ -35,6 +36,7 @@ Item::Item()
 
 Item::Item(const Item& i)
 {
+	_type = i._type;
 	_descr = i._descr;
 	_name = i._name;
 	_plural_name = i._plural_name;
@@ -45,12 +47,23 @@ Item::Item(const Item& i)
 
 Item& Item::operator=(const Item& i)
 {
+	_type = i._type;
 	_name = i._name;
 	_plural_name = i._plural_name;
 	_weight = i._weight;
 	icon = i.icon;
 	_gold = i._gold;
 	return *this;
+}
+
+ItemType Item::get_item_type()
+{
+	return _type;
+}
+
+void Item::set_item_type(ItemType type)
+{
+	_type = type;
 }
 
 int Item::gold()

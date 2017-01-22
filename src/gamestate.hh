@@ -28,6 +28,9 @@
 #include <memory>
 #include <string>
 
+#include <lua.h>
+#include <lualib.h>
+
 #include <boost/filesystem.hpp>
 
 class GameState
@@ -49,7 +52,7 @@ public:
 	static GameState& Instance();
 	virtual ~GameState();
 	bool save();
-	bool load();
+	bool load(lua_State*);
 	bool apply();
 	bool reset();
 	void add_map(std::shared_ptr<IndoorsMap>);

@@ -958,6 +958,14 @@ void GameControl::keypress_mix_reagents()
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> ztatswin_contentprovider =
+			party->inventory()->create_content_selection_provider(InventoryType::MagicHerbs);
+
+	if (ztatswin_contentprovider->get_page().size() == 0) {
+		printcon("You have no reagents to mix.");
+		return;
+	}
+
 	printcon("Mix reagents for magic potion - select player");
 
 	int selected_player = zwin.select_player();
@@ -967,7 +975,9 @@ void GameControl::keypress_mix_reagents()
 		mwin.println(0, "Mix for magic potion", CENTERALIGN);
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-		// zwin.ztats_player(selected_player);
+		for (Item* item: zwin.execute(ztatswin_contentprovider.get(), SelectionMode::MultipleItems)) {
+			printcon("Selected: " + item->name());
+		}
 
 		mwin.display_last();
 	}
@@ -1055,7 +1065,7 @@ void GameControl::keypress_yield_item(int selected_player)
 		content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Other:  <none>", AL), NULL)); // TODO: Rings, torches, etc.
 
 		// Now execute selection provider...
-		ztatswincontentselectionprovider.create_content_page(content_page);
+		ztatswincontentselectionprovider.add_content_page(content_page);
 		std::vector<Item*> selected_items = zwin.execute(&ztatswincontentselectionprovider, SelectionMode::SingleItem);
 
 		if (selected_items.size() == 0 || selected_items[0] == NULL) {
@@ -1284,13 +1294,13 @@ void GameControl::keypress_use()
 	if (selected_items.size() == 1) {
 		Item* selected_item = selected_items[0];
 
-		if (WeaponHelper::exists(selected_item->name()))
+		if (WeaponHelper::existsInLua(selected_item->name(), _lua_state))
 			printcon("Try to (r)eady a weapon instead.");
-		else if (ShieldHelper::exists(selected_item->name()))
+		else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state))
 			printcon("Try to (r)eady a shield instead.");
 		else if (selected_item->name() == "jimmy lock")
 			unlock_item();
-		else if (EdiblesHelper::exists(selected_item->name())) {
+		else if (EdiblesHelper::existsInLua(selected_item->name(), _lua_state)) {
 			// Create a temporary item
 			Edible* item = NULL;
 			try {
@@ -1479,11 +1489,11 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 			PlayerCharacter* player = party->get_player(selected_player);
 			Item* selected_item = selected_items[0];
 
-			if (WeaponHelper::exists(selected_item->name())) {
+			if (WeaponHelper::existsInLua(selected_item->name(), _lua_state)) {
 				if (player->weapon() != NULL)
 					party->inventory()->add(player->weapon());
 				// This first creates a new weapon by reserving memory for it
-				Weapon* weapon = WeaponHelper::createFromLua(selected_item->name());
+				Weapon* weapon = WeaponHelper::createFromLua(selected_item->name(), _lua_state);
 				player->set_weapon(weapon);
 				// ...and now we are freeing memory for a weapon with the same name in the inventory.
 				// A tad bit complicated, perhaps, but not overly difficult to understand.
@@ -1493,10 +1503,10 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 				// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
 				party->inventory()->remove(weapon->name(), weapon->description());
 			}
-			else if (ShieldHelper::exists(selected_item->name())) {
+			else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state)) {
 				if (player->shield() != NULL)
 					party->inventory()->add(player->shield());
-				Shield* shield = ShieldHelper::createFromLua(selected_item->name());
+				Shield* shield = ShieldHelper::createFromLua(selected_item->name(), _lua_state);
 				player->set_shield(shield);
 				party->inventory()->remove(shield->name(), shield->description());
 			}
@@ -2126,205 +2136,6 @@ void GameControl::keypress_get_item()
 				 "Buy the author a beer or two and he might implement it for you.");
 	}
 }
-
-/*
-void GameControl::keypress_get_item()
-{
-	printcon("Get - from which direction?");
-	std::pair<int, int> coords = select_coords();
-
-	// Range of available MapObjects. These are not the actual items!
-	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
-
-	// Determine if there's *anything* that can be gotten at all...
-	int number_of_removable_items = 0;
-	for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
-		MapObj map_obj = curr_obj->second;
-		std::cout << "MOOP: " << map_obj.description() << std::endl;
-		if (map_obj.removable)
-			number_of_removable_items++;
-	}
-
-	if (avail_objects.first != avail_objects.second) {
-		//		int size = 0; // Determine actual number of MapObjects, e.g., a chest and 100 coins equals 2, not 101.
-		//		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++, size++);
-
-		MapObj* curr_obj = 0;
-		std::vector<MapObj> map_objs; // Convenience only: For storing and quicker looking up the various map objects in a given location.
-
-		// TODO: If there are multiple items, check which one needs to be picked up (or all)
-		if (number_of_removable_items > 0) {
-			std::map<std::string, int> items;
-			for (auto obj_itr = avail_objects.first; obj_itr != avail_objects.second; obj_itr++) {
-				MapObj the_obj = obj_itr->second;
-
-				// Only offer removable items to be picked up. Non-removables also may not
-				// have a lua_name, and we don't want to be checking for that all the time
-				// either...
-				if (the_obj.removable) {
-					map_objs.push_back(the_obj);
-					// We generate an item according to its lua name in order to get the properties
-					// for the list of items to get.  Not sure if this is necessary or if one should
-					// simply dissect the lua name.  But this way, we keep the mapping bewteen icons
-					// and the actual item inside the respective factory functions, centrally. So it
-					// probably is a good idea to do it as it is done now.
-					Item* item = NULL;
-					try {
-						item = ItemFactory::create(the_obj.lua_name, &the_obj);
-					}
-					catch (std::exception const& e) {
-					    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
-					    std::cerr << "ERROR: gamecontrol.cc: Aborting get_item() due to earlier errors.\n";
-					    return;
-					}
-
-					if (the_obj.how_many > 1)
-						items.insert(std::pair<std::string, int>(item->plural_name(), the_obj.how_many));
-					else
-						items.insert(std::pair<std::string, int>(item->name(), 1));
-					delete item;
-				}
-			}
-
-			// If there are multiple items in a location, but only one of them is removable, skip selection dialog.
-			if (map_objs.size() == 1) {
-				curr_obj = &(map_objs[0]);
-			}
-			else {
-				printcon("Select item from the list");
-
-				MiniWin& mwin = MiniWin::Instance();
-				ZtatsWin& zwin = ZtatsWin::Instance();
-
-				mwin.save_surf();
-				mwin.clear();
-				mwin.println(0, "Get item", CENTERALIGN);
-				mwin.println(1, "(Press space to get selected item, q to exit)");
-
-				std::vector<StringAlignmentTuple> items_l = Util::to_StringAlignmentTuples(items);
-				zwin.set_lines(items_l);
-				zwin.clear();
-				int selection = zwin.select_item();
-
-				mwin.display_last();
-
-				if (selection >= 0)
-					curr_obj = &(map_objs[selection]);
-				else
-					return;
-			}
-		}
-		else
-			curr_obj = &(avail_objects.first->second);
-
-		GameEventHandler gh;
-
-		if (curr_obj->removable) {
-			if (curr_obj->lua_name.length() > 0) {
-				// Depending on the name the MapObj has, we look up in the Lua list of items, and create one accordingly for pick up.
-				Item* item = NULL;
-				try {
-					std::cout << "CREATING: " << curr_obj->description() << std::endl;
-					item = ItemFactory::create(curr_obj->lua_name, curr_obj);
-				}
-				catch (std::exception const& e) {
-				    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
-				    std::cerr << "ERROR: gamecontrol.cc: Aborting get_item() due to earlier errors.\n";
-				    return;
-				}
-
-				// Picking up more than 1 of the same item
-				if (curr_obj->how_many > 1) {
-					printcon("How many? (1-" + boost::lexical_cast<std::string>(curr_obj->how_many) + ")");
-					int taking = 0;
-
-					try {
-						std::string input = Console::Instance().gets();
-						if (input.length() == 0) // Simply pressing return means user wants to take all available items
-							taking = curr_obj->how_many;
-						else
-							taking = boost::lexical_cast<int>(input);
-					}
-					catch (boost::bad_lexical_cast const&) {
-						printcon("Huh? Nothing taken");
-						return;
-					}
-
-					if (taking > 0 && taking <= curr_obj->how_many)
-						printcon("Taking " + boost::lexical_cast<std::string>(taking) + " " + item->plural_name());
-					else {
-						printcon("Huh? Nothing taken");
-						return;
-					}
-
-					// Let's now create the n new items to be taken individually via a factory...
-					for (int i = 0; i < taking; i++) {
-						try {
-							party->inventory()->add(ItemFactory::create(curr_obj->lua_name, curr_obj));
-						}
-						catch (std::exception const& e) {
-						    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
-						    std::cerr << "ERROR: gamecontrol.cc: Aborting adding item to inventory due to earlier errors.\n";
-						    continue;
-						}
-
-						// Perform action events
-						for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
-							if ((*action)->name() == "ACT_ON_TAKE") {
-								for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-									gh.handle(*curr_ev, arena->get_map());
-							}
-						}
-
-						draw_status();
-					}
-					// See if some items are leftover after taking...
-					if (curr_obj->how_many - taking == 0) {
-						arena->get_map()->pop_obj(coords.first, coords.second);
-					}
-					else {
-						// As we're dealing with instances rather than pointers, we first remove the object from the map...
-						if (arena->get_map()->rm_obj(*curr_obj) > 0) {
-							// ...then decrease the how_many counter...
-							curr_obj->how_many -= taking;
-							// ...and finally add it again
-							MapObj tmp_obj = *curr_obj;
-							arena->get_map()->push_obj(tmp_obj);
-						}
-						else
-							std::cerr << "ERROR: gamecontrol.cc: Could not remove selected item from map.\n";
-					}
-				}
-				// Picking up exactly 1 item
-				else {
-					printcon("Taking " + item->name());
-					std::cout << "PICKING UP: " << item->description() << std::endl;
-					party->inventory()->add(item);
-
-					// Perform action events
-					for (auto action = curr_obj->actions()->begin(); action != curr_obj->actions()->end(); action++) {
-						if ((*action)->name() == "ACT_ON_TAKE") {
-							for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-								gh.handle(*curr_ev, arena->get_map());
-						}
-					}
-
-					arena->get_map()->pop_obj(coords.first, coords.second);
-				}
-			}
-			else {
-				printcon("Sorry taking of this item not yet implemented (no lua_name). "
-						 "Buy the author a beer or two and he might implement it for you.");
-			}
-		}
-		else
-			printcon("Nice try");
-	}
-	else
-		printcon("Nothing to get here");
-}
-
-*/
 
 void GameControl::keypress_look()
 {

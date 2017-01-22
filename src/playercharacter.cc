@@ -176,10 +176,10 @@ std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> PlayerCharacter::create
 			if (profession() == spell.profession && level() >= spell.level)
 				content_page.push_back(std::pair<StringAlignmentTuple, Spell>(StringAlignmentTuple(spell.name, Alignment::LEFTALIGN), spell));
 
-		content_selection_provider->create_content_page(content_page);
+		content_selection_provider->add_content_page(content_page);
 
 		if (content_page.size() > 0)
-			content_selection_provider->create_content_page(content_page);
+			content_selection_provider->add_content_page(content_page);
 		else
 			std::cout << "INFO: playercharacter.cc: Created an empty ZtatsWinContentSelectionProvider object.\n";
 	}

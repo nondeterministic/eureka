@@ -8,9 +8,12 @@
 #include "edibleshelper.hh"
 #include "edible.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"        // to define _lua_state
 
 #include <string>
+#include <iostream>
+
+#include <lua.h>
+#include <lualib.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -24,12 +27,12 @@ EdiblesHelper::~EdiblesHelper()
 	// TODO Auto-generated destructor stub
 }
 
-// See ShieldHelper.
+/// See ShieldHelper.
 
-Edible* EdiblesHelper::createFromLua(std::string array_name)
+Edible* EdiblesHelper::createFromLua(std::string array_name, lua_State* lua_state)
 {
 	std::string globArrayName = "Edibles";
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	Edible *w = new Edible();
 
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
@@ -49,10 +52,10 @@ Edible* EdiblesHelper::createFromLua(std::string array_name)
 	return w;
 }
 
-// Returns true if the Lua array has an entry named item_name, false otherwise.
+/// Returns true if the Lua array has an entry named item_name, false otherwise.
 
-bool EdiblesHelper::exists(std::string item_name)
+bool EdiblesHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	return lua.hasEntry("Edibles", item_name);
 }

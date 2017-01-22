@@ -5,11 +5,14 @@
  *      Author: baueran
  */
 
-#include <memory>
 #include "weaponhelper.hh"
 #include "weapon.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"        // to define _lua_state
+
+#include <lua.h>
+#include <lualib.h>
+
+#include <memory>
 
 WeaponHelper::WeaponHelper()
 {
@@ -21,13 +24,13 @@ WeaponHelper::~WeaponHelper()
 	// TODO Auto-generated destructor stub
 }
 
-// Create a weapon from the name inside Lua's Weapons array.
-// For example, if Weapons has an entry "axe", then a new
-// axe weapon will be created and a pointer to it returned.
+/// Create a weapon from the name inside Lua's Weapons array.
+/// For example, if Weapons has an entry "axe", then a new
+/// axe weapon will be created and a pointer to it returned.
 
-Weapon* WeaponHelper::createFromLua(std::string array_name)
+Weapon* WeaponHelper::createFromLua(std::string array_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	Weapon *w = new Weapon();
 
 	try {
@@ -50,11 +53,10 @@ Weapon* WeaponHelper::createFromLua(std::string array_name)
 	return w;
 }
 
-// Returns true if the Lua array has an entry named item_name,
-// false otherwise.
+/// Returns true if the Lua array has an entry named item_name, false otherwise.
 
-bool WeaponHelper::exists(std::string item_name)
+bool WeaponHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	return lua.hasEntry("Weapons", item_name);
 }

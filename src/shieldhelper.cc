@@ -8,7 +8,9 @@
 #include "shieldhelper.hh"
 #include "shield.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"        // to define _lua_state
+
+#include <lua.h>
+#include <lualib.h>
 
 ShieldHelper::ShieldHelper()
 {
@@ -22,10 +24,10 @@ ShieldHelper::~ShieldHelper()
 
 // See ShieldHelper.
 
-Shield* ShieldHelper::createFromLua(std::string array_name)
+Shield* ShieldHelper::createFromLua(std::string array_name, lua_State* lua_state)
 {
 	std::string globArrayName = "Shields";
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	Shield *w = new Shield();
 
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
@@ -40,8 +42,8 @@ Shield* ShieldHelper::createFromLua(std::string array_name)
 // Returns true if the Lua array has an entry named item_name,
 // false otherwise.
 
-bool ShieldHelper::exists(std::string item_name)
+bool ShieldHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	return lua.hasEntry("Shields", item_name);
 }

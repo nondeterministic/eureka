@@ -8,12 +8,14 @@
 #include "serviceshelper.hh"
 #include "service.hh"
 #include "luawrapper.hh"
-#include "luaapi.hh"        // to define _lua_state
 #include "party.hh"
 #include "gamecontrol.hh"
 
 #include <string>
 #include <iostream>
+
+#include <lua.h>
+#include <lualib.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -29,10 +31,10 @@ ServicesHelper::~ServicesHelper()
 
 // See ShieldHelper.
 
-Service* ServicesHelper::createFromLua(std::string array_name)
+Service* ServicesHelper::createFromLua(std::string array_name, lua_State* lua_state)
 {
 	std::string globArrayName = "Services";
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	Service *w = new Service();
 
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
@@ -73,8 +75,8 @@ void ServicesHelper::apply(Service* s, int party_member)
 
 // Returns true if the Lua array has an entry named item_name, false otherwise.
 
-bool ServicesHelper::exists(std::string item_name)
+bool ServicesHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(lua_state);
 	return lua.hasEntry("Services", item_name);
 }

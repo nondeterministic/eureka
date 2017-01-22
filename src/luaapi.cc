@@ -320,7 +320,7 @@ int l_ztatswin_shopinteraction(lua_State* L)
 
 	lua_pop(L, 1);
 
-	content_selection_provider.create_content_page(content_page);
+	content_selection_provider.add_content_page(content_page);
 	std::vector<std::string> selected_items_names = zwin.execute(&content_selection_provider, SelectionMode::SingleItem);
 
 	if (selected_items_names.size() > 0)
@@ -473,11 +473,32 @@ int l_buyitem(lua_State* L)
 	    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
 	}
 
+	int how_many = 0;
+	GameControl::Instance().printcon("How many?");
+	try {
+		std::string input = Console::Instance().gets();
+		how_many = std::stoi(input);
+		GameControl::Instance().printcon(input + " ");
+	}
+	catch (const std::invalid_argument& e) {
+		// User didn't enter a valid number
+		GameControl::Instance().printcon("Huh? I guess, some other time then.");
+		if (item != NULL) {
+			delete item;
+			item = NULL;
+		}
+    	lua_pushnumber(L, -3);
+	}
+
 	if (item != NULL) {
 		if (true) { // TODO: Replace and check weight restrictions...
-			if (Party::Instance().gold() >= item->gold()) {  // Check if sufficient gold
-				Party::Instance().set_gold(Party::Instance().gold() - item->gold());
+			if (Party::Instance().gold() >= item->gold() * how_many) {  // Check if sufficient gold
+				Party::Instance().set_gold(Party::Instance().gold() - item->gold() * how_many);
+				// Add the bought item, which we also checked to see if the chosen name was correct, etc.
 				Party::Instance().inventory()->add(item);
+				// Now create and add the rest of the bought items...
+				for (int i = 0; i < how_many - 1; i++)
+					Party::Instance().inventory()->add(ItemFactory::create_plain_name(item_name));
 				GameControl::Instance().draw_status(false);
 		    	lua_pushnumber(L, 0);
 			}
@@ -498,8 +519,8 @@ int l_buyitem(lua_State* L)
 	return 1;
 }
 
-// Level up all players that can be leveled up according to their respective EPs.
-// Return the number of players leveled-up, 0 if none was leveled up, a positive integer otherwise.
+/// Level up all players that can be leveled up according to their respective EPs.
+/// Return the number of players leveled-up, 0 if none was leveled up, a positive integer otherwise.
 
 int l_level_up(lua_State* L)
 {
@@ -886,8 +907,8 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_pop(L,1);
 
 	LuaWrapper lua(L);
-    player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon")));
-    player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield")));
+    player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), L));
+    player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield"), L));
 
     return player;
 }

@@ -728,7 +728,7 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 		monster->set_str(lua.call_fn<double>("get_strength"));
 		monster->set_luck(lua.call_fn<double>("get_luck"));
 		monster->set_gold(lua.call_fn<double>("get_gold"));
-		Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"));
+		Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
 		monster->set_weapon(wep);
 
 		// Add monster to rooster of attackers
@@ -824,7 +824,7 @@ bool Combat::create_random_monsters()
 			monster->set_str(lua.call_fn<double>("get_strength"));
 			monster->set_luck(lua.call_fn<double>("get_luck"));
 			monster->set_gold(lua.call_fn<double>("get_gold"));
-			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"));
+			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
 			monster->set_weapon(wep);
 
 			// Add monster to rooster of attackers

@@ -19,6 +19,9 @@
 
 #include "inventory.hh"
 #include "item.hh"
+#include "weapon.hh"
+#include "shield.hh"
+#include "edible.hh"
 #include "playercharacter.hh"
 #include "party.hh"
 #include "ztatswincontentprovider.hh"
@@ -37,7 +40,7 @@ Inventory::~Inventory()
 	// std::cout << "~Inventory()\n";
 }
 
-// Return weight in stones.  Weight in weapon/shield files is given in kg!!
+/// Return weight in stones.  Weight in weapon/shield files is given in kg!!
 
 int Inventory::weight()
 {
@@ -51,13 +54,13 @@ int Inventory::weight()
 	return (int)(_w/6.35);
 }
 
-// Return how many items are in position n in the inventory.
-//
-// For example, inventory contains 5 bows and 3 arrows.  So _items.size() is only 2,
-// whereas the first entry's size is 5 and the second entry's is 3.
-//
-// Returns 0 if n points to non-existent slot in the inventory, otherwise the size
-// of that slot.
+/// Return how many items are in position n in the inventory.
+///
+/// For example, inventory contains 5 bows and 3 arrows.  So _items.size() is only 2,
+/// whereas the first entry's size is 5 and the second entry's is 3.
+///
+/// Returns 0 if n points to non-existent slot in the inventory, otherwise the size
+/// of that slot.
 
 unsigned Inventory::how_many_at(unsigned n)
 {
@@ -99,7 +102,7 @@ Item* Inventory::get_item(int n)
 	}
 }
 
-// To be used in combination with zwin.select_item().  See gamecontrol::drop_items for an example.
+/// To be used in combination with zwin.select_item().  See gamecontrol::drop_items for an example.
 
 std::vector<Item*>* Inventory::get(int n)
 {
@@ -112,27 +115,6 @@ std::vector<Item*>* Inventory::get(int n)
 	return NULL;
 }
 
-/*
-std::vector<line_tuple> Inventory::to_line_tuples(std::map<std::string, int>& selection)
-{
-  std::vector<line_tuple> result;
-  std::stringstream ss;
-  int i = 1;
-
-  for (auto ptr = selection.begin(); ptr != selection.end(); ptr++, i++) {
-    ss << i << ") ";
-    ss << ptr->first;
-    if (ptr->second > 1)
-      ss << " (" << ptr->second << ")";
-
-    result.push_back(line_tuple(ss.str(), LEFTALIGN));
-    ss.str(""); ss.clear();
-  }
-
-  return result;
-}
-*/
-
 std::map<std::string, int> Inventory::list_wearables()
 {
 	std::map<std::string, int> result;
@@ -140,7 +122,6 @@ std::map<std::string, int> Inventory::list_wearables()
 	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
 		Item* item = ptr->second.at(0);
 		result.insert(std::make_pair(item->name() + " " + item->description(), ptr->second.size()));
-		// result.insert(std::make_pair(ptr->first, ptr->second.size()));
 	}
 
 	return result;
@@ -153,34 +134,51 @@ std::map<std::string, int> Inventory::list_all()
 	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
 		Item* item = ptr->second.at(0);
 		result.insert(std::make_pair(item->name() + " " + item->description(), ptr->second.size()));
-		// result.insert(std::make_pair(ptr->first, ptr->second.size()));
 	}
 
 	return result;
 }
 
-std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> Inventory::create_content_selection_provider(InventoryType inventory_type)
+std::vector<pair<StringAlignmentTuple, Item*>> Inventory::create_content_page(InventoryType inventory_type)
 {
-	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_selection_provider(new ZtatsWinContentSelectionProvider<Item*>());
-	std::vector<pair<StringAlignmentTuple, Item*>> content_page;
+	std::vector<std::pair<StringAlignmentTuple, Item*>> content_page;
 	int item_nr = 1;
 
 	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
 		Item* item = ptr->second.at(0);
-		unsigned how_many_items = ptr->second.size();
-		ostringstream item_content_stringstr;
+		bool add_item = inventory_type == InventoryType::Anything;
 
-		item_content_stringstr << item_nr << ") " << item->name() << " ";
-		if (item->description().size() > 0)
-			item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
-		if (how_many_items > 1)
-			item_content_stringstr << "(" << how_many_items << "x)";
+		if (!add_item) {
+			if (inventory_type == InventoryType::Wearables && (dynamic_cast<Weapon*>(item) || dynamic_cast<Shield*>(item)))
+				add_item = true;
+			else if (inventory_type == InventoryType::MagicHerbs && dynamic_cast<Edible*>(item) && ((Edible*)item)->is_magic_herb)
+				add_item = true;
+		}
 
-		content_page.push_back(pair<StringAlignmentTuple, Item*>(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN), item));
+		if (add_item) {
+			unsigned how_many_items = ptr->second.size();
+			ostringstream item_content_stringstr;
+
+			item_content_stringstr << item_nr << ") " << item->name() << " ";
+			if (item->description().size() > 0)
+				item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
+			if (how_many_items > 1)
+				item_content_stringstr << "(" << how_many_items << "x)";
+
+			content_page.push_back(std::pair<StringAlignmentTuple, Item*>(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN), item));
+		}
 	}
 
+	return content_page;
+}
+
+std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> Inventory::create_content_selection_provider(InventoryType inventory_type)
+{
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_selection_provider(new ZtatsWinContentSelectionProvider<Item*>());
+	std::vector<std::pair<StringAlignmentTuple, Item*>> content_page = create_content_page(inventory_type);
+
 	if (content_page.size() > 0)
-		content_selection_provider->create_content_page(content_page);
+		content_selection_provider->add_content_page(content_page);
 	else
 		std::cout << "INFO: inventory.cc: Created an empty ZtatsWinContentSelectionProvider object. Unless your inventory is actually empty, this is a (non-critical) bug.\n";
 
@@ -190,22 +188,12 @@ std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> Inventory::create_conte
 std::shared_ptr<ZtatsWinContentProvider> Inventory::create_content_provider(InventoryType inventory_type)
 {
 	std::shared_ptr<ZtatsWinContentProvider> content_provider(new ZtatsWinContentProvider());
+	std::vector<std::pair<StringAlignmentTuple, Item*>> tmp_content_page = create_content_page(inventory_type);
+
+	// It is, admittedly, a bit stupid to first create a content_page WITH items, and then to strip them out again.
+	// But since this is not time-critical, and avoids duplication of code, it's not so terrible either.
 	std::vector<StringAlignmentTuple> content_page;
-	int item_nr = 1;
-
-	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
-		Item* item = ptr->second.at(0);
-		unsigned how_many_items = ptr->second.size();
-		ostringstream item_content_stringstr;
-
-		item_content_stringstr << item_nr << ") " << item->name() << " ";
-		if (item->description().size() > 0)
-			item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
-		if (how_many_items > 1)
-			item_content_stringstr << "(" << how_many_items << "x)";
-
-		content_page.push_back(StringAlignmentTuple(item_content_stringstr.str(), LEFTALIGN));
-	}
+	std::for_each(tmp_content_page.begin(), tmp_content_page.end(), [&](std::pair<StringAlignmentTuple,Item*>& i) { content_page.push_back(i.first); });
 
 	if (content_page.size() > 0)
 		content_provider->add_content_page(content_page);
@@ -217,7 +205,7 @@ std::shared_ptr<ZtatsWinContentProvider> Inventory::create_content_provider(Inve
 
 void Inventory::add(Item* item)
 {
-	// Don't add gold to inventory. Just add to party stats.
+	// Don't add gold to inventory. Just add to party stats!
 	if (item->name() == "gold coin") {
 		Party& party = Party::Instance();
 		party.set_gold(party.gold() + 1);
@@ -226,8 +214,8 @@ void Inventory::add(Item* item)
 
 	try {
 		std::vector<Item*>& old_items = _items.at(item->name() + item->description());
-		_items.insert(std::make_pair(item->name() + item->description(), old_items));
 		old_items.push_back(item);
+		_items.insert(std::make_pair(item->name() + item->description(), old_items));
 	}
 	catch (std::out_of_range& oor) {
 		std::vector<Item*> new_items;
@@ -236,9 +224,9 @@ void Inventory::add(Item* item)
 	}
 }
 
-// Removes the entry for an item named item_name and item_descr from the inventory.
-// Throws exception if item is not in inventory.
-// Frees memory!!
+/// Removes the entry for an item named item_name and item_descr from the inventory.
+/// Throws exception if item is not in inventory.
+/// Frees memory!!
 
 void Inventory::remove(std::string item_name, std::string item_descr)
 {
@@ -264,9 +252,9 @@ void Inventory::remove(std::string item_name, std::string item_descr)
 	}
 }
 
-// Removes all entries for an item named item_name and item_descr from the inventory and returns that number.
-// Throws exception if items are not in inventory.
-// Frees memory!!
+/// Removes all entries for an item named item_name and item_descr from the inventory and returns that number.
+/// Throws exception if items are not in inventory.
+/// Frees memory!!
 
 int Inventory::remove_all(std::string item_name, std::string item_descr)
 {

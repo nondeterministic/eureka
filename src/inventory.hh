@@ -32,6 +32,7 @@
 enum class InventoryType
 {
 	Wearables,
+	MagicHerbs,
 	Anything
 };
 
@@ -40,6 +41,8 @@ class Inventory
 private:
 	/// First argument contains item name + description in one string without space in between.
 	std::map<std::string, std::vector<Item*>> _items;
+
+	std::vector<std::pair<StringAlignmentTuple, Item*>> create_content_page(InventoryType);
 
 public:
 	Inventory();

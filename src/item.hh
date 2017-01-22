@@ -22,6 +22,14 @@
 
 #include <string>
 
+enum class ItemType
+{
+	MagicHerb,
+	AttackOrDefenseTool,
+	Edible,
+	Other
+};
+
 class Item
 {
 protected:
@@ -30,14 +38,14 @@ protected:
   std::string _descr;               // Currently only used by the derviced MiscItem
   unsigned _weight;
   int _gold;
+  ItemType _type;
 
 public:
   Item();
   Item(const Item&);
   virtual ~Item() {};
 
-  bool removable;
-  int  icon;
+  int icon;
 
   virtual std::string luaName();
 
@@ -52,6 +60,8 @@ public:
   void gold(int);
   void description(std::string);
   std::string description();
+  ItemType get_item_type();
+  void set_item_type(ItemType);
 };
 
 #endif

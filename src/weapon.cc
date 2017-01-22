@@ -25,24 +25,24 @@ using namespace std;
 
 Weapon::Weapon()
 {
-  _destroy_after = 0;
-  _light_radius = 0;
-  _range = 10;
-  _hands = 1;
-  _dmg_bonus = 0;
-  icon = 0;
+	_destroy_after = 0;
+	_light_radius = 0;
+	_range = 10;
+	_hands = 1;
+	_dmg_bonus = 0;
+	icon = 0;
 }
 
 Weapon::Weapon(const Weapon& w): Item(w)
 {
-  _range = w._range;
-  _hands = w._hands;
-  _dmg_min = w._dmg_min;
-  _dmg_max = w._dmg_max;
-  _dmg_bonus = w._dmg_bonus;
-  icon = w.icon;
-  _light_radius = w._light_radius;
-  _destroy_after = w._destroy_after;
+	_range = w._range;
+	_hands = w._hands;
+	_dmg_min = w._dmg_min;
+	_dmg_max = w._dmg_max;
+	_dmg_bonus = w._dmg_bonus;
+	icon = w.icon;
+	_light_radius = w._light_radius;
+	_destroy_after = w._destroy_after;
 }
 
 // Weapon& Weapon::operator=(const Weapon& w)

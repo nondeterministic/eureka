@@ -462,20 +462,22 @@ void World::load_world_elements(lua_State* L)
 	}
 
 	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
+	if (_spells.size() == 0) {
+		cout << "INFO: world.cc: Loading spells...\n";
+		try {
+			boost::filesystem::path targetDir(conf_world_path / "spells");
+			boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
-	try {
-		boost::filesystem::path targetDir(conf_world_path / "spells");
-		boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
-
-		BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
-			if (is_regular_file(i)) {
-				Spell spell = Spell::spell_from_file_path(i.string(), L);
-				_spells.push_back(spell);
+			BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
+				if (is_regular_file(i)) {
+					Spell spell = Spell::spell_from_file_path(i.string(), L);
+					_spells.push_back(spell);
+				}
 			}
 		}
-	}
-	catch (...) {
-		cerr << "WARNING: world.cc: Reading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
+		catch (...) {
+			cerr << "WARNING: world.cc: Loading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
+		}
 	}
 }
 

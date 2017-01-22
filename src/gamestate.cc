@@ -32,6 +32,9 @@
 #include <fstream>
 #include <memory>
 
+#include <lua.h>
+#include <lualib.h>
+
 #include <boost/filesystem.hpp>
 
 GameState::GameState()
@@ -151,7 +154,7 @@ bool GameState::save()
 
 // TODO: This was simply copied from eureka.cc. FIX!
 
-bool GameState::load()
+bool GameState::load(lua_State* lua_state)
 {
 	// Check if there's a saved game to return to and load it, if there is.
 	if (boost::filesystem::exists(conf_savegame_path)) {
@@ -190,11 +193,11 @@ bool GameState::load()
 								// TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
 								if (is_weapon) {
 									for (int i = 0; i < how_many; i++)
-										_inventory.add(WeaponHelper::createFromLua(short_name));
+										_inventory.add(WeaponHelper::createFromLua(short_name, lua_state));
 								}
 								else {
 									for (int i = 0; i < how_many; i++)
-										_inventory.add(ShieldHelper::createFromLua(short_name));
+										_inventory.add(ShieldHelper::createFromLua(short_name, lua_state));
 								}
 							}
 						}
@@ -252,12 +255,12 @@ bool GameState::load()
 									else if (reader.get_name() == "weapon") {
 										std::string weap_name = reader.read_string();
 										std::string short_name = weap_name.substr(weap_name.find("::") + 2);
-										player.set_weapon(WeaponHelper::createFromLua(short_name));
+										player.set_weapon(WeaponHelper::createFromLua(short_name, lua_state));
 									}
 									else if (reader.get_name() == "shield") {
 										std::string shield_name = reader.read_string();
 										std::string short_name = shield_name.substr(shield_name.find("::") + 2);
-										player.set_shield(ShieldHelper::createFromLua(short_name));
+										player.set_shield(ShieldHelper::createFromLua(short_name, lua_state));
 									}
 								}
 							} // player-while-end

@@ -25,13 +25,16 @@
 #include "miscitem.hh"
 #include "mapobj.hh"
 
+#include <lua.h>
+#include <lualib.h>
+
 class MiscHelper
 {
 public:
   MiscHelper();
   virtual ~MiscHelper();
-  static MiscItem* createFromLua(std::string, MapObj* = NULL);
-  static bool exists(std::string);
+  static MiscItem* createFromLua(std::string, lua_State*, MapObj* = NULL);
+  static bool existsInLua(std::string, lua_State*);
   //  static void apply(MiscItem*, int);
 };
 

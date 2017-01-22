@@ -56,7 +56,7 @@ public:
 	{
 	}
 
-	void create_content_page(vector<pair<StringAlignmentTuple, T>> page)
+	void add_content_page(vector<pair<StringAlignmentTuple, T>> page)
 	{
 		vector<StringAlignmentTuple> tmp_page_string_items;
 		clear(); // Should not be necessary, but this way, we can overwrite existing content pages by letting the user call the function multiple times.
