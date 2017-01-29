@@ -18,7 +18,6 @@ do
    local sp          = 2
    local caster      = ""
    local targets     = -1                     -- see comments inside spell.hh
-   local castable    = true                   -- some spells are hidden from the player, i.e., cannot be casted at will
 
    -- ---------------------------------------------------------------------------------
    -- Standard functions
