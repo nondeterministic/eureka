@@ -5,8 +5,8 @@
  *      Author: baueran
  */
 
-#include "edibleshelper.hh"
-#include "edible.hh"
+#include "potionshelper.hh"
+#include "potion.hh"
 #include "luawrapper.hh"
 
 #include <string>
