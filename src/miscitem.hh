@@ -33,7 +33,7 @@ private:
 
 public:
 	MiscItem();
-	~MiscItem();
+	virtual ~MiscItem();
 	MiscItem(const MiscItem&);
 
 	MapObj get_obj();

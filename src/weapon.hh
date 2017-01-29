@@ -38,7 +38,7 @@ public:
   Weapon();
   Weapon(const Weapon&);
   // Weapon& operator=(const Weapon&);
-  ~Weapon();
+  virtual ~Weapon();
 
   int hands();
   void hands(int);

@@ -28,7 +28,7 @@ class Edible : public Item
 {
 public:
   Edible();
-  ~Edible();
+  virtual ~Edible();
   Edible(const Edible&);
 
   int      food_up;

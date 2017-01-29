@@ -17,25 +17,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#ifndef SHIELD_HH
-#define SHIELD_HH
+#ifndef POTION_HH
+#define POTION_HH
 
-#include "item.hh"
+#include "edible.hh"
 #include <string>
 
-class Shield : public Item
+class Potion : public Edible
 {
-protected:
-  int _protection;
-
 public:
-  Shield();
-  virtual ~Shield();
-  Shield(const Shield&);
+	Potion();
+	virtual ~Potion();
+	Potion(const Potion&);
 
-  std::string luaName();
-  int protection();
-  void protection(int);
+	std::string luaName();
+
+	std::string name_of_potion_drinker;
 };
 
 #endif

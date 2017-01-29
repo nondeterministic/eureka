@@ -7,7 +7,6 @@ Potions["heal"]  = {
    name                   = "healing potion",
    plural_name            = "healing potion",
    description            = "",
-   icon                   = 583,
    
    food_up                = 0,
    healing_power          = "some",
@@ -16,9 +15,12 @@ Potions["heal"]  = {
    magic_herb             = false,
    intoxicating_effect    = "none",
 
+   gold                   = 1,
+   weight                 = 0,
+   icon                   = 988,
+
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
    
-   weight                 = 1,
    name_of_potion_drinker = "",
    effect = function()
       simpl_play_sound(get_sound_path())

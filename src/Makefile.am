@@ -84,6 +84,7 @@ eureka_SOURCES = \
 	jimmylock.hh jimmylock.cc \
 	gold.hh gold.cc \
 	edible.hh edible.cc \
+	potion.hh potion.cc \
 	service.hh service.cc \
 	miscitem.hh miscitem.cc \
 	shield.hh shield.cc \
@@ -93,6 +94,7 @@ eureka_SOURCES = \
 	shieldhelper.hh shieldhelper.cc \
 	edibleshelper.hh edibleshelper.cc \
 	serviceshelper.hh serviceshelper.cc \
+	potionshelper.hh potionshelper.cc \
 	attackers.hh attackers.cc \
 	conversation.hh conversation.cc \
 	pathfinding.hh pathfinding.cc \

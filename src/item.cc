@@ -43,6 +43,7 @@ Item::Item(const Item& i)
 	_weight = i._weight;
 	icon = i.icon;
 	_gold = i._gold;
+	std::cout << "DEEP COPY I OF ITEM\n";
 }
 
 Item& Item::operator=(const Item& i)
@@ -53,6 +54,7 @@ Item& Item::operator=(const Item& i)
 	_weight = i._weight;
 	icon = i.icon;
 	_gold = i._gold;
+	std::cout << "DEEP COPY II OF ITEM\n";
 	return *this;
 }
 

@@ -1,6 +1,6 @@
+// This source file is part of eureka
 //
-//
-// Copyright (c) 2005  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +17,27 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#ifndef SHIELD_HH
-#define SHIELD_HH
+#ifndef __MAPHELPER_HH
+#define __MAPHELPER_HH
 
-#include "item.hh"
-#include <string>
+#include "ztatswincontentprovider.hh"
+#include "map.hh"
 
-class Shield : public Item
+#include <memory>
+
+enum class ItemPickup {
+	AllItems,
+	RemovableOnly
+};
+
+class MapHelper
 {
 protected:
-  int _protection;
+	Map* _map;
 
 public:
-  Shield();
-  virtual ~Shield();
-  Shield(const Shield&);
-
-  std::string luaName();
-  int protection();
-  void protection(int);
+	MapHelper(Map*);
+	std::shared_ptr<ZtatsWinContentSelectionProvider<MapObj>> create_ztatswin_content_selection_provider_for_coords(unsigned x, unsigned y, ItemPickup pickup_mode);
 };
 
 #endif
