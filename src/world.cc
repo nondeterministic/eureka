@@ -437,7 +437,7 @@ void World::load_world_elements(lua_State* L)
 
 	// First load those which are defined in terms of Lua tables and therefore defs.lua files inside their corresponding subdirectories inside data/
 
-	std::string elems[] = { "weapons", "shields", "bestiary", "edibles", "services", "miscitems" };
+	std::string elems[] = { "weapons", "shields", "bestiary", "edibles", "services", "miscitems", "potions" };
 	int number_of_elems = sizeof(elems) / sizeof(std::string);
 
 	for (int i = 0; i < number_of_elems; i++) {

@@ -19,6 +19,7 @@ do
    local caster      = ""
    local targets     = -1                     -- see comments inside spell.hh
    local combat_ptr  = ""
+   local castable    = true                   -- some spells are hidden from the player, i.e., cannot be casted at will
    
    -- ---------------------------------------------------------------------------------
    -- Standard functions
