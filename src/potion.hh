@@ -20,17 +20,24 @@
 #ifndef POTION_HH
 #define POTION_HH
 
-#include "edible.hh"
 #include <string>
+#include <vector>
+
+#include "edible.hh"
 
 class Potion : public Edible
 {
+protected:
+	std::vector<std::string> _ingredient_names;
+
 public:
 	Potion();
 	virtual ~Potion();
 	Potion(const Potion&);
 
 	std::string luaName();
+	void set_ingredient_names(std::vector<std::string>);
+	const std::vector<std::string>* get_ingredient_names();
 
 	std::string name_of_potion_drinker;
 };

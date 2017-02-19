@@ -59,9 +59,7 @@ public:
   static World& Instance (void);
 
   std::string get_name(void);
-  // This is the string to the world/ directory, not to the actual
-  // world.  This would have to be appended to this e.g. via
-  // get_name().
+  // This is the string to the world/ directory, not to the actual world.  This would have to be appended to this e.g. via get_name().
   boost::filesystem::path get_path(void);
   void set_name(const char*);
   void set_world_path(boost::filesystem::path);
@@ -74,11 +72,10 @@ public:
   unsigned get_indoors_tile_size() const;
   unsigned get_outdoors_tile_size() const;
   void set_indoors_tile_size(unsigned);
-  // Returns false if file was not found, or something else went
-  // wrong.
+  // Returns false if file was not found, or something else went wrong.
   bool xml_load_world_data(const std::string);
-  // bool xml_load_world_elements(const char*);
-  void load_world_elements(lua_State* L);
+  void load_lua_arrays(lua_State*);
+  void load_lua_spells(lua_State*);
   void xml_write_world_data();
   void xml_write_world_data(boost::filesystem::path);
   std::vector<Creature>* get_creatures();

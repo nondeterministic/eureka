@@ -7,6 +7,7 @@
 
 #include "itemfactory.hh"
 #include "item.hh"
+#include "potionshelper.hh"
 #include "edibleshelper.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
@@ -46,7 +47,7 @@ Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 
 	lua_State* lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
-	World::Instance().load_world_elements(lua_state);
+	World::Instance().load_lua_arrays(lua_state);
 
 	if (lname_split.size() > 0) {
 		if (lname_split[0] == "weapons")
@@ -55,6 +56,8 @@ Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 			return ShieldHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "edibles")
 			return EdiblesHelper::createFromLua(lname_split[1], lua_state);
+		else if (lname_split[0] == "potions")
+			return PotionsHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "services")
 			return ServicesHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "miscitems")
@@ -78,7 +81,7 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 {
 	lua_State* lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
-	World::Instance().load_world_elements(lua_state);
+	World::Instance().load_lua_arrays(lua_state);
 
 	if (WeaponHelper::existsInLua(item_name, lua_state))
 		return WeaponHelper::createFromLua(item_name, lua_state);
@@ -88,12 +91,14 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 		return EdiblesHelper::createFromLua(item_name, lua_state);
 	else if (ServicesHelper::existsInLua(item_name, lua_state))
 		return ServicesHelper::createFromLua(item_name, lua_state);
+	else if (PotionsHelper::existsInLua(item_name, lua_state))
+		return PotionsHelper::createFromLua(item_name, lua_state);
 	else if (MiscHelper::existsInLua(item_name, lua_state))
 		return MiscHelper::createFromLua(item_name, lua_state);
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?
-		std::cout << "Don't know what to create in create_plain_name(): " << item_name << "." << std::endl;
+		std::cerr << "ERROR: itemfactory.cc: Don't know what to create in create_plain_name(): " << item_name << "." << std::endl;
 		return NULL;
 	}
 

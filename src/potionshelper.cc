@@ -32,23 +32,25 @@ Potion* PotionsHelper::createFromLua(std::string array_name, lua_State* lua_stat
 {
 	std::string globArrayName = "Potions";
 	LuaWrapper lua(lua_state);
-	Potion *w = new Potion();
+	Potion *potion = new Potion();
 
-	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
-	w->plural_name(lua.get_item_prop<std::string>(globArrayName, array_name, "plural_name"));
+	potion->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
+	potion->plural_name(lua.get_item_prop<std::string>(globArrayName, array_name, "plural_name"));
 
-	w->food_up = (int)(lua.get_item_prop<double>(globArrayName, array_name, "food_up"));
-	w->healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "healing_power")));
-	w->poison_healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poison_healing_power")));
-	w->poisonous = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poisonous")));
-	w->is_magic_herb = lua.get_item_prop<bool>(globArrayName, array_name, "magic_herb");
-	w->intoxicating = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "intoxicating_effect")));
+	potion->food_up = (int)(lua.get_item_prop<double>(globArrayName, array_name, "food_up"));
+	potion->healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "healing_power")));
+	potion->poison_healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poison_healing_power")));
+	potion->poisonous = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "poisonous")));
+	potion->is_magic_herb = lua.get_item_prop<bool>(globArrayName, array_name, "magic_herb");
+	potion->intoxicating = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(globArrayName, array_name, "intoxicating_effect")));
 
-	w->weight((int)(lua.get_item_prop<double>(globArrayName, array_name, "weight")));
-	w->icon = (int)(lua.get_item_prop<double>(globArrayName, array_name, "icon"));
-	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
+	potion->weight((int)(lua.get_item_prop<double>(globArrayName, array_name, "weight")));
+	potion->icon = (int)(lua.get_item_prop<double>(globArrayName, array_name, "icon"));
+	potion->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
 
-	return w;
+	potion->set_ingredient_names(lua.get_strings_from_subtable(globArrayName, array_name, "ingredients"));
+
+	return potion;
 }
 
 /// Returns true if the Lua array has an entry named item_name, false otherwise.

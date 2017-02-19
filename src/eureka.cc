@@ -43,6 +43,10 @@
 #include "gamestate.hh"
 #include "eureka.hh"
 
+// TODO: Both are for testing. REMOVE!
+#include "potion.hh"
+#include "potionshelper.hh"
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -450,7 +454,8 @@ int init_game_env(int res_w, int res_h)
 	}
 
 	// Load Lua scripts, basically.
-	World::Instance().load_world_elements(_lua_state);
+	World::Instance().load_lua_arrays(_lua_state);
+	World::Instance().load_lua_spells(_lua_state);
 
 	return 0;
 }

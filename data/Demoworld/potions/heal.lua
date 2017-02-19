@@ -19,9 +19,12 @@ Potions["heal"]  = {
    weight                 = 0,
    icon                   = 988,
 
+   ingredients            = { Edibles.nightshade.name, Edibles.garlic.name, Edibles.sulphur.name },
+
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
    
    name_of_potion_drinker = "",
+   mixed_from             = { Edibles.nightshade, Edibles.sulphur, Edibles.garlic },
    effect = function()
       simpl_play_sound(get_sound_path())
       simpl_add_hp(targets, simpl_rand(1, 5))

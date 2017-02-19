@@ -21,6 +21,7 @@
 #include "edible.hh"
 
 #include <iostream>
+#include <stdexcept>
 
 Potion::Potion() : Edible()
 {
@@ -39,4 +40,17 @@ Potion::Potion(const Potion& s) : Edible(s)
 std::string Potion::luaName()
 {
 	return "potions::" + name();
+}
+
+void Potion::set_ingredient_names(std::vector<std::string> i)
+{
+	if (_ingredient_names.size() != 0)
+		throw std::logic_error("Cannot add ingredients to a potion object that already has ingredients added to it.");
+
+	_ingredient_names = i;
+}
+
+const std::vector<std::string>* Potion::get_ingredient_names()
+{
+	return &_ingredient_names;
 }

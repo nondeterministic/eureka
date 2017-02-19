@@ -23,7 +23,7 @@ public:
   void add_props(IconProps);
   // Get properties object for an icon, NULL if none was specified or
   // the icon does not exist.
-  IconProps* get_props(unsigned);
+  IconProps* get_props(int);
 
 protected:
   std::vector<IconProps> _icons_props;

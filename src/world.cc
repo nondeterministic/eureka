@@ -428,10 +428,10 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, ICON_TRANS tr, ICON_W
 }
 
 /**
- * Loads all the world elements.
+ * Initialises all of the Lua item arrays.
  */
 
-void World::load_world_elements(lua_State* L)
+void World::load_lua_arrays(lua_State* L)
 {
 	LuaWrapper lua(L);
 
@@ -460,7 +460,14 @@ void World::load_world_elements(lua_State* L)
 			}
 		}
 	}
+}
 
+/**
+ * Load all spells defined in Lua and store them inside the _spells container.
+ */
+
+void World::load_lua_spells(lua_State* L)
+{
 	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
 	if (_spells.size() == 0) {
 		cout << "INFO: world.cc: Loading spells...\n";

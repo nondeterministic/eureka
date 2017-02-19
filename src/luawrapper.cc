@@ -123,10 +123,40 @@ bool LuaWrapper::get_item_prop(std::string item_array, std::string item_id, std:
     return result;
 }
 
-// Checks if Lua table array_name has an entry with member name.
-// E.g. if array_name is "Shields" and name is "small shield", then it will return true.
-// It will return false if name is "small shields", because "small shields" is merely the
-// index name within the table.
+/// Right now, really only called by Poitions, which uses it to obtain a list of ingredient strings.
+
+std::vector<std::string> LuaWrapper::get_strings_from_subtable(std::string item_array, std::string item_id, std::string prop)
+{
+	std::vector<std::string> ingredients;
+
+	// After this, the result lies on top of the lua stack, see get_item_prop_getter
+	get_item_prop_getter(item_array, item_id, prop);
+
+    lua_pushnil(l); // Push nil, so lua_next removes it from stack and puts (k, v) on stack
+	while (lua_next(l, -2) != 0) {
+		// std::string key = lua_tostring(l, -2);
+		//
+		// It is super weird, that the above call fails.  I found this phenomenon described here:
+		// http://stackoverflow.com/questions/22052579/how-to-validate-lua-table-keys-from-c
+		// It is, because there isn't a string key, and this confuses the call to lua_next.
+		//
+		// If the table is like { "a", "b" } instead of { "key1" = "a", "key2" = "b" }, then
+		// Lua automatically assigns a numeric key to "a", "b".  So, lua_tostring(l, -2)
+		// returns a number for key 1, "1", and then the next call to lua_next crashes.
+		std::string val = lua_tostring(l, -1);
+		ingredients.push_back(val);
+
+		lua_pop(l, 1); // Remove value, keep key for next iteration.
+	}
+    lua_pop(l, 1); // Pop table
+
+    return ingredients;
+}
+
+/// Checks if Lua table array_name has an entry with member name.
+/// E.g. if array_name is "Shields" and name is "small shield", then it will return true.
+/// It will return false if name is "small shields", because "small shields" is merely the
+/// index name within the table.
 
 bool LuaWrapper::hasEntry(std::string array_name, std::string name)
 {

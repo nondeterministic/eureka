@@ -4,6 +4,9 @@
 #include <string>
 #include <list>
 #include <algorithm>
+#include <vector>
+#include <string>
+
 extern "C"
 {
 #include <lua.h>
@@ -42,6 +45,7 @@ public:
 	void push_fn_arg(LuaT arg);
 	template <class T> T call_fn(std::string fn_name, unsigned ret_vals = 1, bool handle_return = true);
 	template <class T> T get_item_prop(std::string item_array, std::string item_id, std::string prop);
+	std::vector<std::string> get_strings_from_subtable(std::string item_array, std::string item_id, std::string prop);
 	void call_void_fn(std::string fn_name);
 	void call_fn_leave_ret_alone(std::string fn_name, int ret_vals = 1);
 };
