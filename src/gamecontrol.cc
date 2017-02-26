@@ -985,21 +985,27 @@ void GameControl::keypress_mix_reagents()
 		}
 
 		std::vector<std::string> ingredient_names;
-		std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state);
+		std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state); // Don't forget to delete those temporary potions later!
 
 		for (Item* item: ingredients)
 			ingredient_names.push_back(item->name());
 
+		bool success = false;
 		for (Potion* potion: all_potions) {
 			if (potion->consists_of(ingredient_names)) {
-				std::cout << "Mixing: " << potion->name() << "\n";
-			}
-		}
-		std::cout << "Finished mixing.\n";
+				party->inventory()->add(potion);  // Adding potion to party inventory.
+				printcon("Successfully mixed one " + potion->name() + ".");
+				success = true;
 
-		for (Potion* potion: all_potions)
-			if (potion != NULL)
-				delete potion;
+				// TODO: Remove ingredients from inventory...
+				// ...
+			}
+			else
+				delete potion; // Deleting temp. potion.
+		}
+
+		if (!success)
+			printcon("Unfortunately, this combination of ingredients yielded nothing.");
 
 		mwin.display_last();
 	}
