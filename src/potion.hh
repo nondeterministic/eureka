@@ -31,15 +31,16 @@ protected:
 	std::vector<std::string> _ingredient_names;
 
 public:
+	std::string name_of_potion_drinker;
+
 	Potion();
 	virtual ~Potion();
 	Potion(const Potion&);
 
-	std::string luaName();
-	void set_ingredient_names(std::vector<std::string>);
+	std::string get_lua_name();
+	void        set_ingredient_names(std::vector<std::string>);
 	const std::vector<std::string>* get_ingredient_names();
-
-	std::string name_of_potion_drinker;
+	bool consists_of(std::vector<std::string> ingredient_names);
 };
 
 #endif

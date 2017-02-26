@@ -45,7 +45,7 @@ Edible::Edible(const Edible& s): Item(s)
 	intoxicating = s.intoxicating;
 }
 
-std::string Edible::luaName()
+std::string Edible::get_lua_name()
 {
 	return "edibles::" + name();
 }

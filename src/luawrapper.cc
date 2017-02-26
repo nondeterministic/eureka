@@ -59,6 +59,11 @@ void LuaWrapper::push_fn_arg(LuaT arg)
 	args.push_front(arg);
 }
 
+/**
+ * Let's assume, you'd like to get from Lua-land the following: item_array[item_id].prop,
+ * e.g., Weapons[axe].weight.  After calling the property, prop, is on top of the Lua stack.
+ */
+
 void LuaWrapper::get_item_prop_getter(std::string item_array, std::string item_id, std::string prop)
 {
 	// Let's assume we want to get Weapons[axe].name...
@@ -123,7 +128,7 @@ bool LuaWrapper::get_item_prop(std::string item_array, std::string item_id, std:
     return result;
 }
 
-/// Right now, really only called by Poitions, which uses it to obtain a list of ingredient strings.
+/// Right now, really only called by Potion, which uses it to obtain a list of ingredient strings.
 
 std::vector<std::string> LuaWrapper::get_strings_from_subtable(std::string item_array, std::string item_id, std::string prop)
 {
@@ -148,10 +153,33 @@ std::vector<std::string> LuaWrapper::get_strings_from_subtable(std::string item_
 
 		lua_pop(l, 1); // Remove value, keep key for next iteration.
 	}
-    lua_pop(l, 1); // Pop table
+    lua_pop(l, 2); // Pop table
 
     return ingredients;
 }
+
+/**
+ * Let's say, you have in Lua an array Edibles = { sausage, beer, ... }, where sausage, beer, etc.
+ * are further defined as all the items inside the data/ directory.  Then calling this function
+ * will return a vector containing the strings "sausage", "beer", etc.
+ */
+
+std::vector<std::string> LuaWrapper::get_itemids_from_itemarray(std::string item_array)
+{
+	std::vector<std::string> itemids;
+
+	lua_getglobal(l, item_array.c_str()); // Push, say, "Weapons" on stack.
+	lua_pushnil(l);
+	while (lua_next(l, -2) != 0) {
+		std::string key = lua_tostring(l, -2); // Get key, ignore value at -1.
+		itemids.push_back(key);
+		lua_pop(l, 1);  // Pop value, keep key palceholder for next iteration.
+	}
+    lua_pop(l, 1); // Pop entire table. TODO: Above always pops 2 at the end.  I am not sure what is correct. Check!
+
+	return itemids;
+}
+
 
 /// Checks if Lua table array_name has an entry with member name.
 /// E.g. if array_name is "Shields" and name is "small shield", then it will return true.
@@ -182,7 +210,7 @@ bool LuaWrapper::hasEntry(std::string array_name, std::string name)
 template <class T>
 T LuaWrapper::call_fn(std::string fn_name, unsigned ret_vals, bool handle_return)
 {
-	std::cerr << "Error: Check luawrapper.hh\n";
+	std::cerr << "ERROR: luawrapper.cc: Check luawrapper.hh!\n";
 	exit(EXIT_FAILURE);
 	return NULL;
 }

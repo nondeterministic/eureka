@@ -35,9 +35,10 @@ Potion::~Potion()
 Potion::Potion(const Potion& s) : Edible(s)
 {
 	name_of_potion_drinker = s.name_of_potion_drinker;
+	_ingredient_names.insert(_ingredient_names.end(), s._ingredient_names.begin(), s._ingredient_names.end());
 }
 
-std::string Potion::luaName()
+std::string Potion::get_lua_name()
 {
 	return "potions::" + name();
 }
@@ -48,9 +49,16 @@ void Potion::set_ingredient_names(std::vector<std::string> i)
 		throw std::logic_error("Cannot add ingredients to a potion object that already has ingredients added to it.");
 
 	_ingredient_names = i;
+	std::sort(_ingredient_names.begin(), _ingredient_names.end()); // We sort now, so we can compare later. See below.
 }
 
 const std::vector<std::string>* Potion::get_ingredient_names()
 {
 	return &_ingredient_names;
+}
+
+bool Potion::consists_of(std::vector<std::string> ingredient_names)
+{
+	std::sort(ingredient_names.begin(), ingredient_names.end());
+	return ingredient_names == _ingredient_names;
 }

@@ -305,7 +305,7 @@ std::string Party::to_xml()
 		xmlpp::Element* itemEl(invEl->add_child("item"));
 
 		itemEl->set_attribute("how_many", std::to_string(Party::Instance().inventory()->how_many_at(i)));
-		itemEl->add_child_text(item->luaName());
+		itemEl->add_child_text(item->get_lua_name());
 	}
 
 	return xml_doc.write_to_string_formatted().c_str();

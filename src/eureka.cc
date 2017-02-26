@@ -35,6 +35,7 @@
 #include "jimmylock.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "edibleshelper.hh"
 #include "util.hh"
 #include "profession.hh"
 #include "soundsample.hh"
@@ -42,10 +43,6 @@
 #include "indoorsmap.hh"
 #include "gamestate.hh"
 #include "eureka.hh"
-
-// TODO: Both are for testing. REMOVE!
-#include "potion.hh"
-#include "potionshelper.hh"
 
 #include <iostream>
 #include <cstdlib>
@@ -454,8 +451,8 @@ int init_game_env(int res_w, int res_h)
 	}
 
 	// Load Lua scripts, basically.
-	World::Instance().load_lua_arrays(_lua_state);
-	World::Instance().load_lua_spells(_lua_state);
+	World::Instance().init_lua_arrays(_lua_state);
+	World::Instance().set_spells(World::Instance().load_lua_spells(_lua_state));
 
 	return 0;
 }
@@ -706,6 +703,9 @@ int setup_dummy_game()
 	party->inventory()->add(WeaponHelper::createFromLua("sword", _lua_state));
 	party->inventory()->add(WeaponHelper::createFromLua("axe", _lua_state));
 	party->inventory()->add(ShieldHelper::createFromLua("small shield", _lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("garlic", _lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("sulphur", _lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("nightshade", _lua_state));
 	party->add_jimmylock();
 	party->add_jimmylock();
 	party->add_jimmylock();

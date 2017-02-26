@@ -110,7 +110,7 @@ void Item::weight(unsigned new_weight)
 	_weight = new_weight;
 }
 
-std::string Item::luaName()
+std::string Item::get_lua_name()
 {
 	return "";
 }

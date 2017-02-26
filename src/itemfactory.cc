@@ -47,7 +47,7 @@ Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 
 	lua_State* lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
-	World::Instance().load_lua_arrays(lua_state);
+	World::Instance().init_lua_arrays(lua_state);
 
 	if (lname_split.size() > 0) {
 		if (lname_split[0] == "weapons")
@@ -81,7 +81,7 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 {
 	lua_State* lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
-	World::Instance().load_lua_arrays(lua_state);
+	World::Instance().init_lua_arrays(lua_state);
 
 	if (WeaponHelper::existsInLua(item_name, lua_state))
 		return WeaponHelper::createFromLua(item_name, lua_state);

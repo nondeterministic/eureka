@@ -17,11 +17,15 @@
 
 class PotionsHelper
 {
+private:
+	static std::string _glob_array_name;
+
 public:
 	PotionsHelper();
 	virtual ~PotionsHelper();
 	static Potion* createFromLua(std::string, lua_State*);
 	static bool existsInLua(std::string, lua_State*);
+	static std::vector<Potion*> get_loaded_lua_potions(lua_State*);
 };
 
 #endif

@@ -144,7 +144,7 @@ std::vector<pair<StringAlignmentTuple, Item*>> Inventory::create_content_page(In
 	std::vector<std::pair<StringAlignmentTuple, Item*>> content_page;
 	int item_nr = 1;
 
-	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++, item_nr++) {
+	for (auto ptr = _items.begin(); ptr != _items.end(); ptr++) {
 		Item* item = ptr->second.at(0);
 		bool add_item = inventory_type == InventoryType::Anything;
 
@@ -159,7 +159,7 @@ std::vector<pair<StringAlignmentTuple, Item*>> Inventory::create_content_page(In
 			unsigned how_many_items = ptr->second.size();
 			ostringstream item_content_stringstr;
 
-			item_content_stringstr << item_nr << ") " << item->name() << " ";
+			item_content_stringstr << item_nr++ << ") " << item->name() << " ";
 			if (item->description().size() > 0)
 				item_content_stringstr << "[" << item->description().substr(0, 5) << "] ";
 			if (how_many_items > 1)

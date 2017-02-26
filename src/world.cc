@@ -428,10 +428,10 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, ICON_TRANS tr, ICON_W
 }
 
 /**
- * Initialises all of the Lua item arrays.
+ * Initialises all of the Lua item arrays, with respect to the passed Lua state.
  */
 
-void World::load_lua_arrays(lua_State* L)
+void World::init_lua_arrays(lua_State* L)
 {
 	LuaWrapper lua(L);
 
@@ -462,33 +462,40 @@ void World::load_lua_arrays(lua_State* L)
 	}
 }
 
-/**
- * Load all spells defined in Lua and store them inside the _spells container.
- */
-
-void World::load_lua_spells(lua_State* L)
+std::vector<Spell> World::load_lua_spells(lua_State* L)
 {
-	// Load spells, these are different, as those don't have a defs.lua and are separated into different directories.
-	if (_spells.size() == 0) {
-		cout << "INFO: world.cc: Loading spells...\n";
-		try {
-			boost::filesystem::path targetDir(conf_world_path / "spells");
-			boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+	std::vector<Spell> spells;
 
-			BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
-				if (is_regular_file(i)) {
-					Spell spell = Spell::spell_from_file_path(i.string(), L);
-					_spells.push_back(spell);
-				}
+	cout << "INFO: world.cc: Loading spells...\n";
+	try {
+		boost::filesystem::path targetDir(conf_world_path / "spells");
+		boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+
+		BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod)) {
+			if (is_regular_file(i)) {
+				Spell spell = Spell::spell_from_file_path(i.string(), L);
+				spells.push_back(spell);
 			}
 		}
-		catch (...) {
-			cerr << "WARNING: world.cc: Loading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
-		}
 	}
+	catch (...) {
+		cerr << "WARNING: world.cc: Loading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
+	}
+
+	return spells;
 }
 
 std::vector<Spell>* World::get_spells()
 {
 	return &_spells;
+}
+
+void World::set_spells(std::vector<Spell> spells)
+{
+	if (_spells.size() != 0) {
+		std::cerr << "WARNING: world.cc: Adding spells to already defined spells vector. Will overwrite vector instead.\n";
+		_spells.clear();
+	}
+
+	_spells.insert(_spells.end(), spells.begin(), spells.end());
 }

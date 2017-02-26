@@ -38,7 +38,7 @@ public:
   bool     is_magic_herb;
   Emphasis intoxicating;
 
-  std::string luaName();
+  std::string get_lua_name();
 };
 
 #endif

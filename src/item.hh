@@ -47,7 +47,7 @@ public:
 
   int icon;
 
-  virtual std::string luaName();
+  virtual std::string get_lua_name();
 
   Item& operator=(const Item&);
   std::string name() const;

@@ -74,12 +74,13 @@ public:
   void set_indoors_tile_size(unsigned);
   // Returns false if file was not found, or something else went wrong.
   bool xml_load_world_data(const std::string);
-  void load_lua_arrays(lua_State*);
-  void load_lua_spells(lua_State*);
+  void init_lua_arrays(lua_State*);
+  std::vector<Spell> load_lua_spells(lua_State*);
   void xml_write_world_data();
   void xml_write_world_data(boost::filesystem::path);
   std::vector<Creature>* get_creatures();
   std::vector<Spell>* get_spells();
+  void set_spells(std::vector<Spell>);
 
 protected:
   World();

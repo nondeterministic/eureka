@@ -90,6 +90,8 @@ extern "C" {
 #include "gameeventhandler.hh"
 #include "spell.hh"
 #include "spellcasthelper.hh"
+#include "potion.hh"
+#include "potionshelper.hh"
 #include "config.h"
 
 using namespace std;
@@ -975,9 +977,29 @@ void GameControl::keypress_mix_reagents()
 		mwin.println(0, "Mix for magic potion", CENTERALIGN);
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-		for (Item* item: zwin.execute(ztatswin_contentprovider.get(), SelectionMode::MultipleItems)) {
-			printcon("Selected: " + item->name());
+		std::vector<Item*> ingredients = zwin.execute(ztatswin_contentprovider.get(), SelectionMode::MultipleItems);
+
+		if (ingredients.size() == 0) {
+			printcon("Nothing selected, therefore nothing mixed.");
+			return;
 		}
+
+		std::vector<std::string> ingredient_names;
+		std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state);
+
+		for (Item* item: ingredients)
+			ingredient_names.push_back(item->name());
+
+		for (Potion* potion: all_potions) {
+			if (potion->consists_of(ingredient_names)) {
+				std::cout << "Mixing: " << potion->name() << "\n";
+			}
+		}
+		std::cout << "Finished mixing.\n";
+
+		for (Potion* potion: all_potions)
+			if (potion != NULL)
+				delete potion;
 
 		mwin.display_last();
 	}
@@ -1482,7 +1504,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 		mwin.println(0, "Ready item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = party->inventory()->create_content_selection_provider(InventoryType::Wearables);
 		std::vector<Item*> selected_items = zwin.execute(content_provider_selection.get(), SelectionMode::SingleItem);
 
 		if (selected_items.size() > 0) {
@@ -1683,8 +1705,8 @@ void GameControl::keypress_drop_items()
 			moTmp.set_coords(party->x, party->y);
 			moTmp.set_icon(selected_item->icon);
 			moTmp.set_description(selected_item->description());
-			moTmp.lua_name = selected_item->luaName();  // TODO: This can be empty. A problem? Handle this case?
-			if (selected_item->luaName().length() == 0)
+			moTmp.lua_name = selected_item->get_lua_name();  // TODO: This can be empty. A problem? Handle this case?
+			if (selected_item->get_lua_name().length() == 0)
 				std::cerr << "WARNING: gamecontrol.cc: About to drop an item that has no Lua name.\n";
 			moTmp.how_many = drop_how_many;
 			std::cout << "CREATING A MAPOBJ with lua_name: " << moTmp.lua_name << ", how many: " << moTmp.how_many << "\n";
