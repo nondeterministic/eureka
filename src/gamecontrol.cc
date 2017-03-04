@@ -971,44 +971,53 @@ void GameControl::keypress_mix_reagents()
 	printcon("Mix reagents for magic potion - select player");
 
 	int selected_player = zwin.select_player();
-	if (selected_player != -1) {
-		mwin.save_surf();
-		mwin.clear();
-		mwin.println(0, "Mix for magic potion", CENTERALIGN);
-		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-		std::vector<Item*> ingredients = zwin.execute(ztatswin_contentprovider.get(), SelectionMode::MultipleItems);
-
-		if (ingredients.size() == 0) {
-			printcon("Nothing selected, therefore nothing mixed.");
-			return;
-		}
-
-		std::vector<std::string> ingredient_names;
-		std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state); // Don't forget to delete those temporary potions later!
-
-		for (Item* item: ingredients)
-			ingredient_names.push_back(item->name());
-
-		bool success = false;
-		for (Potion* potion: all_potions) {
-			if (potion->consists_of(ingredient_names)) {
-				party->inventory()->add(potion);  // Adding potion to party inventory.
-				printcon("Successfully mixed one " + potion->name() + ".");
-				success = true;
-
-				// TODO: Remove ingredients from inventory...
-				// ...
-			}
-			else
-				delete potion; // Deleting temp. potion.
-		}
-
-		if (!success)
-			printcon("Unfortunately, this combination of ingredients yielded nothing.");
-
-		mwin.display_last();
+	if (selected_player == -1) {
+		printcon("Changed your mind then, I guess?!");
+		return;
 	}
+
+	if (!party->get_player(selected_player)->is_spell_caster()) {
+		printcon("Chosen party member does not possess the required magic abilities.");
+		return;
+	}
+
+	mwin.save_surf();
+	mwin.clear();
+	mwin.println(0, "Mix for magic potion", CENTERALIGN);
+	mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
+
+	std::vector<Item*> ingredients = zwin.execute(ztatswin_contentprovider.get(), SelectionMode::MultipleItems);
+
+	if (ingredients.size() == 0) {
+		printcon("Nothing selected, therefore nothing mixed.");
+		return;
+	}
+
+	std::vector<std::string> ingredient_names;
+	std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state); // Don't forget to delete those temporary potions later!
+
+	for (Item* item: ingredients)
+		ingredient_names.push_back(item->name());
+
+	bool success = false;
+	for (Potion* potion: all_potions) {
+		if (potion->consists_of(ingredient_names)) {
+			party->inventory()->add(potion);  // Adding potion to party inventory.
+			printcon("Successfully mixed one " + potion->name() + ".");
+			success = true;
+
+			// TODO: Remove ingredients from inventory...
+			// ...
+		}
+		else
+			delete potion; // Deleting temp. potion.
+	}
+
+	if (!success)
+		printcon("Unfortunately, this combination of ingredients yielded nothing.");
+
+	mwin.display_last();
 }
 
 void GameControl::keypress_ztats()
