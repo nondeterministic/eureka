@@ -117,13 +117,7 @@ do
    end
    
    function otherwise(item)
-      if (item == "edvard") then
-	 simpl_printcon("I do remember him, but I have not seen him since the battle. Perhaps ask Melnior the grand wizard about his whereabouts.")
-      elseif (item == "battle") then
-	 simpl_printcon("It is best, you try and ask Melnior about what happened.")
-      elseif (item == "melnior") then
-	 simpl_printcon("He is the great wizard of Velnibras. You can find him in the tower in the south east.")	 
-      elseif (item == "buy") then
+      if (item == "buy") then
 	 job()
       else	
 	 simpl_printcon("I am sorry, I cannot help you with that.")

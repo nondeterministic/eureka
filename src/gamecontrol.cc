@@ -2446,7 +2446,8 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 					arena->move(DIR_LEFT);
 					arena->move(DIR_LEFT);
 				}
-				break;
+			}
+			break;
 		case DIR_RIGHT:
 			if (walkable_for_party(party->x + 1, party->y) || ignore_walkable) {
 				moved = true;
@@ -2527,7 +2528,6 @@ bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
 					arena->move(DIR_DOWN);
 			}
 			break;
-			}
 		case DIR_NONE:
 			; // TODO
 			break;

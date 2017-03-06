@@ -61,8 +61,8 @@
     <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="35" y="15" ox="0" oy="0" icon_no="1139" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="23" ox="0" oy="0" icon_no="635" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="16" y="32" ox="0" oy="0" icon_no="53" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="person"/>
-    <object x="29" y="23" ox="0" oy="0" icon_no="271" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="person"/>
+    <object x="16" y="32" ox="0" oy="0" icon_no="53" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="29" y="23" ox="0" oy="0" icon_no="271" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="10" y="37" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="39" ox="0" oy="0" icon_no="110" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="38" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>

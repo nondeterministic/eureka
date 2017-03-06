@@ -297,7 +297,7 @@ std::string Party::to_xml()
 	for (unsigned i = 0; i < Party::Instance().inventory()->size(); i++) {
 		Item* item = inventory()->get_item(i);
 
-		// Skip jimmy locks as these are written and read separately, not as part of the inventory
+		// Skip jimmy locks as these are written and read separately, not as part of the inventory. TODO: Can't remember why...  :-)
 		JimmyLock l;
 		if (item->name() == l.name())
 			continue;

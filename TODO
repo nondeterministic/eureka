@@ -13,11 +13,7 @@ TODO
 
 - Check that save-game still works - perhaps write test for it? [prio med, skill med]
 
-- Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
-
 - NPCs & dogs (prio med, skill high)
-
-- Potions [prio med, skill med]
 
 - Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
 
@@ -31,6 +27,10 @@ IN PROGRESS
 
 DONE
 =====
+
+- Potions [prio med, skill med]
+
+- Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
 
 - Shift load stuff into GameState, where it belongs and free eureka.cc
 

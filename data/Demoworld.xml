@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world>
   <name>Demoworld</name>
-  <map href="./Demoworld/maps/landscape.xml" type="outdoors" initial="yes">landscape</map>
-  <map href="./Demoworld/maps/hut.xml" type="indoors">hut</map>
+  <map href="./Demoworld/maps/landscape.xml" type="outdoors">landscape</map>
+  <map href="./Demoworld/maps/hut.xml" type="indoors" initial="yes">hut</map>
   <map href="./Demoworld/maps/velnebras.xml" type="indoors">velnebras</map>
   <map href="./Demoworld/maps/dungeon.xml" type="indoors">dungeon</map>
   <map href="./Demoworld/maps/sarsen.xml" type="indoors">sarsen</map>
