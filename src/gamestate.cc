@@ -24,6 +24,7 @@
 #include "party.hh"
 #include "gamecontrol.hh"
 #include "ztatswin.hh"
+#include "itemfactory.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 
@@ -187,18 +188,14 @@ bool GameState::load(lua_State* lua_state)
 
 								reader.move_to_element();
 								std::string item_name = reader.read_string();
+								if (item_name.length() == 0) {
+									std::cerr << "WARNING: gamestate.cc: Skipping reading of inventory item due to empty description in XML-file.\n";
+									continue;
+								}
 								std::string short_name = item_name.substr(item_name.find("::") + 2);
-								bool is_weapon = item_name.substr(0, item_name.find("::")) == "weapons";
 
-								// TODO: At the moment the party can only carry weapons, no herbs, food dishes, etc.  Fix this later!
-								if (is_weapon) {
-									for (int i = 0; i < how_many; i++)
-										_inventory.add(WeaponHelper::createFromLua(short_name, lua_state));
-								}
-								else {
-									for (int i = 0; i < how_many; i++)
-										_inventory.add(ShieldHelper::createFromLua(short_name, lua_state));
-								}
+								for (int i = 0; i < how_many; i++)
+									_inventory.add(ItemFactory::create(item_name));
 							}
 						}
 					}

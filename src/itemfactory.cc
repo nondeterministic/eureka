@@ -43,6 +43,9 @@ ItemFactory::~ItemFactory()
 
 Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 {
+	if (lua_name.length() == 0)
+		throw std::runtime_error("create(): Cannot create Lua item from empty lua_name.");
+
 	std::vector<std::string> lname_split = Util::splitString(lua_name, "::");
 
 	lua_State* lua_state = luaL_newstate();

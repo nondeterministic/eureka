@@ -2019,7 +2019,7 @@ void GameControl::keypress_talk()
 			}
 		}
 	}
-	printcon("No one around to keypress_talk to");
+	printcon("No one around to talk to");
 }
 
 std::shared_ptr<Map> GameControl::get_map()
