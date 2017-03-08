@@ -53,7 +53,6 @@ public:
 
   ICON_TRANS _trans;
   ICON_WALK _is_walkable;
-
   
 protected:
   unsigned _icon;

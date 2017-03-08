@@ -11,6 +11,7 @@
 
 IconProps::IconProps()
 {
+	_flags = 0;
 	_radius = 0;
 	_icon = 0;
 	_next_anim = -1;

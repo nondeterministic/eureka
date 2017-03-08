@@ -304,6 +304,7 @@ int main(int argc, char *argv[])
 			 else {
 				 choice_is_made = true;
 				 recreate_old_game_state();
+				 ZtatsWin::Instance().update_player_list();
 			 }
 			 break;
 		 }

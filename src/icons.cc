@@ -1,5 +1,6 @@
 #include "icons.hh"
 #include "iconprops.hh"
+
 #include <vector>
 #include <iostream>
 
@@ -27,11 +28,16 @@ void Icons::add_props(IconProps new_props)
 IconProps* Icons::get_props(int icon_no)
 {
 	try {
-		if (icon_no > 0)
+		if (icon_no >= 0 && icon_no < (int)_icons_props.size()) {
 			return &_icons_props.at(icon_no);
+		}
+		else {
+			std::cerr << "WARNING: icons.cc: get_props(" << icon_no << ") yields no sensible result.\n";
+			return NULL;
+		}
 	}
 	catch (...) {
-		std::cerr << "WARNING: icons.cc: get_props(" << icon_no << ") yields no sensible result.\n";
+		std::cerr << "WARNING: icons.cc: Exception caught in get_props(" << icon_no << ") as it yields no sensible result.\n";
 		return NULL;
 	}
 }

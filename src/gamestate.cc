@@ -101,6 +101,7 @@ bool GameState::save_party(boost::filesystem::path fullFilePath)
     out.open(the_file.string());
     out << party_xml;
     out.close();
+	std::cout << "INFO: gamestate.cc: Written.\n";
 
 	return true;
 }
@@ -111,13 +112,13 @@ bool GameState::save()
 
 	// Create output file structure if need be
 	if (!boost::filesystem::create_directory(dir))
-		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << dir << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << dir << std::endl;
 
 	if (!boost::filesystem::create_directory(dir / World::Instance().get_name()))
-		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name()).string() << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name()).string() << std::endl;
 
 	if (!boost::filesystem::create_directory(dir / World::Instance().get_name() / "maps"))
-		std::cerr << "ERROR: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << std::endl;
 
 	// Store indoors maps
 	for (auto map: _maps) {
@@ -140,7 +141,7 @@ bool GameState::save()
 	_maps.clear();
 
 	// Save world map
-	std::string world_file = dir.string() + World::Instance().get_name() + ".xml";
+ 	boost::filesystem::path world_file = dir / (World::Instance().get_name() + ".xml");
 	if (boost::filesystem::exists(world_file)) {
 		std::cout << "INFO: gamestate.cc: Removing file " << world_file << ".\n";
 		boost::filesystem::remove(world_file);
