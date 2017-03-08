@@ -352,17 +352,23 @@ void World::xml_write_world_data(boost::filesystem::path path)
 			std::stringstream icon_no_str;
 			icon_no_str << i;
 
-			if (IndoorsIcons::Instance().get_props(i)->light_radius() > 0)
-				icon_node->set_attribute("light_radius", std::to_string(IndoorsIcons::Instance().get_props(i)->light_radius()));
+			IconProps* icon_props = IndoorsIcons::Instance().get_props(i);
+			if (!icon_props) {
+				std::cerr << "WARNING: world.cc: Skipping saving if icon " << i << " as I cannot get IconProps for it. Sort of serious.\n";
+				continue;
+			}
 
-			std::string sound_effect = IndoorsIcons::Instance().get_props(i)->sound_effect();
-			int next_anim = IndoorsIcons::Instance().get_props(i)->next_anim();
+			if (icon_props->light_radius() > 0)
+				icon_node->set_attribute("light_radius", std::to_string(icon_props->light_radius()));
+
+			std::string sound_effect = icon_props->sound_effect();
+			int next_anim = icon_props->next_anim();
 			std::stringstream next_anim_str;
 			next_anim_str << next_anim;
 
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			set_icon_attributes(icon_node, IndoorsIcons::Instance().get_props(i)->_trans, IndoorsIcons::Instance().get_props(i)->_is_walkable);
+			set_icon_attributes(icon_node, icon_props->_trans, icon_props->_is_walkable);
 
 			if (next_anim >= 0)
 				icon_node->set_attribute("next_anim", next_anim_str.str());
@@ -370,10 +376,10 @@ void World::xml_write_world_data(boost::filesystem::path path)
 			if (sound_effect.size() > 0)
 				icon_node->set_attribute("sound_effect", sound_effect);
 
-			if (IndoorsIcons::Instance().get_props(i)->default_lua_name().length() > 0)
-				icon_node->set_attribute("default_lua_name", IndoorsIcons::Instance().get_props(i)->default_lua_name());
+			if (icon_props->default_lua_name().length() > 0)
+				icon_node->set_attribute("default_lua_name", icon_props->default_lua_name());
 
-			icon_node->add_child_text(IndoorsIcons::Instance().get_props(i)->get_name().c_str());
+			icon_node->add_child_text(icon_props->get_name().c_str());
 		}
 
 		// Outdoors
