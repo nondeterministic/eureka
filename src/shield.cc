@@ -45,7 +45,7 @@ void Shield::protection(int p)
   _protection = p;
 }
 
-std::string Shield::luaName()
+std::string Shield::get_lua_name()
 {
 	return "shields::" + name();
 }

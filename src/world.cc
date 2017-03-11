@@ -354,7 +354,7 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 			IconProps* icon_props = IndoorsIcons::Instance().get_props(i);
 			if (!icon_props) {
-				std::cerr << "WARNING: world.cc: Skipping saving if icon " << i << " as I cannot get IconProps for it. Sort of serious.\n";
+				std::cerr << "WARNING: world.cc: Skipping saving of icon " << i << " as I cannot get IconProps for it. Sort of serious.\n";
 				continue;
 			}
 

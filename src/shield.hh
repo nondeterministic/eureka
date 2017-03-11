@@ -33,7 +33,7 @@ public:
   virtual ~Shield();
   Shield(const Shield&);
 
-  std::string luaName();
+  std::string get_lua_name();
   int protection();
   void protection(int);
 };

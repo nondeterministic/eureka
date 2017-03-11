@@ -112,13 +112,13 @@ bool GameState::save()
 
 	// Create output file structure if need be
 	if (!boost::filesystem::create_directory(dir))
-		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << dir << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << dir << ". Might already exist." << std::endl;
 
 	if (!boost::filesystem::create_directory(dir / World::Instance().get_name()))
-		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name()).string() << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name()).string() << ". Might already exist." << std::endl;
 
 	if (!boost::filesystem::create_directory(dir / World::Instance().get_name() / "maps"))
-		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << std::endl;
+		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << ". Might already exist." << std::endl;
 
 	// Store indoors maps
 	for (auto map: _maps) {

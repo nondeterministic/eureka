@@ -59,7 +59,7 @@ Weapon::~Weapon()
 {
 }
 
-std::string Weapon::luaName()
+std::string Weapon::get_lua_name()
 {
 	return "weapons::" + name();
 }

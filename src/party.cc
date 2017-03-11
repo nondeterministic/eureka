@@ -60,6 +60,8 @@ std::pair<int, int> Party::get_coords()
 Party::Party()
 {
 	rounds_intoxicated = 0;
+	_indoors = false;
+	prev_indoors = false;
 	x = 0; y = 0;
 	_gold = 0;
 	_food = 0;
@@ -282,12 +284,12 @@ std::string Party::to_xml()
 		playerEl->add_child("level")->add_child_text(std::to_string(player.level()));
 
 		if (player.weapon() != NULL)
-			playerEl->add_child("weapon")->add_child_text(player.weapon()->luaName());
+			playerEl->add_child("weapon")->add_child_text(player.weapon()->get_lua_name());
 		else
 			playerEl->add_child("weapon");
 
 		if (player.shield() != NULL)
-			playerEl->add_child("shield")->add_child_text(player.shield()->luaName());
+			playerEl->add_child("shield")->add_child_text(player.shield()->get_lua_name());
 		else
 			playerEl->add_child("shield");
 	}

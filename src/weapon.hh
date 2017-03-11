@@ -61,7 +61,7 @@ public:
   int range();
   void range(int);
 
-  std::string luaName();
+  std::string get_lua_name();
 };
 
 #endif
