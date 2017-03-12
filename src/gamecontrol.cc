@@ -1720,11 +1720,10 @@ void GameControl::keypress_drop_items()
 			moTmp.set_coords(party->x, party->y);
 			moTmp.set_icon(selected_item->icon);
 			moTmp.set_description(selected_item->description());
-			moTmp.lua_name = selected_item->get_lua_name();  // TODO: This can be empty. A problem? Handle this case?
-			if (selected_item->get_lua_name().length() == 0)
-				std::cerr << "WARNING: gamecontrol.cc: About to drop an item that has no Lua name.\n";
+			if (moTmp.description().length() == 0)
+				if ((moTmp.lua_name = selected_item->get_lua_name()).length() == 0)
+					std::cerr << "ERROR: gamecontrol.cc: Dropped an item with no Lua name. You will not be able to pick it up again!\n";
 			moTmp.how_many = drop_how_many;
-			std::cout << "CREATING A MAPOBJ with lua_name: " << moTmp.lua_name << ", how many: " << moTmp.how_many << "\n";
 
 			// Add dropped item to current map
 			arena->get_map()->push_obj(moTmp);
@@ -2062,7 +2061,6 @@ void GameControl::keypress_get_item()
 
 		if (selected_mapobjs.size() > 0) {
 			picked_up_mapobj = selected_mapobjs[0];
-			std::cout << "CHOSEN TO PICK UP: " << picked_up_mapobj.lua_name << "\n";
 		}
 		else {
 			printcon("Huh? Nothing taken.");
@@ -2085,7 +2083,6 @@ void GameControl::keypress_get_item()
 		GameEventHandler gh;
 
 		try {
-			std::cout << "CREATING MapObj with lua_name: " << picked_up_mapobj.lua_name << std::endl;
 			picked_up_item = ItemFactory::create(picked_up_mapobj.lua_name, &picked_up_mapobj);
 		}
 		catch (std::exception const& e) {
@@ -2154,7 +2151,6 @@ void GameControl::keypress_get_item()
 		// Picking up exactly 1 item
 		else {
 			printcon("Taking " + picked_up_item->name());
-			std::cout << "PICKING UP: " << picked_up_item->name() << std::endl;
 			party->inventory()->add(picked_up_item);
 
 			// Perform action events

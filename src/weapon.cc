@@ -31,6 +31,8 @@ Weapon::Weapon()
 	_hands = 1;
 	_dmg_bonus = 0;
 	icon = 0;
+	_dmg_max = 0;
+	_dmg_min = 0;
 }
 
 Weapon::Weapon(const Weapon& w): Item(w)

@@ -1,9 +1,6 @@
 TODO
 =====
 
-- FIX SAVE GAME. Also: When saving a game, first delete old save game or previously lying around map data may be outdated.
-  (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
-
 - Level up (already started in party.cc)
 
 - NPCs & dogs (prio med, skill high)
@@ -12,8 +9,6 @@ TODO
   we only redraw when TICK event occurs.  Perhaps, update effects of keyboard input immediately?
 
 - Make game characters definable in Lua
-
-- Check that save-game still works - perhaps write test for it? [prio med, skill med]
 
 - Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
 
@@ -24,9 +19,13 @@ IN PROGRESS
 
 - DONE? Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
 
-
 DONE
 =====
+
+- Check that save-game still works - perhaps write test for it? [prio med, skill med]
+
+- FIX SAVE GAME. Also: When saving a game, first delete old save game or previously lying around map data may be outdated.
+  (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
 
 - Potions [prio med, skill med]
 
