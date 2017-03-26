@@ -959,6 +959,7 @@ int l_add_hp(lua_State* L)
 	int value     = lua_tonumber(L, 2);
 
 	PlayerCharacter* player = Party::Instance().get_player(player_no);
+	int hp_old = player->hp();
 
 	// We cannot up the HP of a dead player
 	if (player->condition() == DEAD) {
@@ -971,7 +972,12 @@ int l_add_hp(lua_State* L)
 	else
 		player->set_hp(max(0, player->hp() + value));
 
-	return 0;
+	if (player->hp() > hp_old)
+		lua_pushboolean(L, true);
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
 }
 
 // Returns true if player referred to by number on Lua stack is dead.

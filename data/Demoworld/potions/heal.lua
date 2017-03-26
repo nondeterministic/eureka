@@ -23,12 +23,11 @@ Potions["healing potion"]  = {
 
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
 
-   effect = function()
-      -- simpl_play_sound(get_sound_path())
-      simpl_printcon("HEALING FIRED")
-      -- simpl_add_hp(targets, simpl_rand(1, 5))
-	 
-      -- If in combat, then the printcon is showing letter by letter, otherwise all at once.
-      simpl_printcon(name_of_potion_drinker .. " drinks a healing potion and feels much better.", simpl_party_in_combat())
+   effect = function(chosen_player)
+   		if (simpl_add_hp(chosen_player, math.random(3,7))) then
+   			simpl_printcon(simpl_get_player_name(chosen_player) .. " feels the full effect of the healing potion.")
+   		else
+   			simpl_printcon("The effect of the healing potion was positive, but not overwhelmingly so.")
+   		end
    end
 }

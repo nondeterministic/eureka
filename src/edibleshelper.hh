@@ -9,6 +9,7 @@
 #define EDIBLESHELPER_HH_
 
 #include "edible.hh"
+#include "playercharacter.hh"
 
 #include <string>
 
@@ -22,7 +23,8 @@ public:
 	virtual ~EdiblesHelper();
 	static Edible* createFromLua(std::string, lua_State*);
 	static bool existsInLua(std::string, lua_State*);
-	void eat(Edible*);
+	void eat_player(Edible*, PlayerCharacter*);
+	void eat_party(Edible*);
 };
 
 #endif

@@ -39,21 +39,29 @@ void PotionsHelper::drink(Potion* potion, lua_State* lua_state)
 	GameControl& gc  = GameControl::Instance();
 	ZtatsWin& zwin   = ZtatsWin::Instance();
 
-	// First compute the effects the potion has in terms of it being also a normal edible item...
-	EdiblesHelper edibles_helper;
-	edibles_helper.eat((Edible*)potion);
-
-	// Push function name on stack
-	lua_getglobal(lua_state, "Potions");          // Push "Potions" on stack
-    lua_pushstring(lua_state, "healing potion");  // Push item_id on stack, e.g., "healing potion"
-    lua_gettable(lua_state, -2);                  // Remove item_id from stack and put Potions[item_id] in its place
-
-	lua_getfield(lua_state, -1, "effect");
-	if (lua_pcall(lua_state, 0, 0, 0) != 0) {
-		std::cerr << "ERROR: potionshelper.cc: Lua: '" << lua_tostring(lua_state, -1) << "'." << std::endl;
+	int cplayer = zwin.select_player();
+	if (cplayer < 0) {
+		gc.printcon("Changed our minds then, have we?");
+		return;
 	}
 
-	std::cout << "DONE DRINKING.\n";
+	PlayerCharacter* player = party.get_player(cplayer);
+	gc.printcon(player->name() + " drinks the potion and waits for its effect...");
+
+	// First compute the effects the potion has in terms of it being also a normal edible item...
+	EdiblesHelper edibles_helper;
+	edibles_helper.eat_player((Edible*)potion, player);
+
+	lua_getglobal(lua_state, "Potions");                  // Push "Potions" on stack
+    lua_pushstring(lua_state, potion->name().c_str());    // Push item_id on stack, e.g., "healing potion"
+    lua_gettable(lua_state, -2);                          // Remove item_id from stack and put Potions[item_id] in its place
+	lua_getfield(lua_state, -1, "effect");
+	lua_pushinteger(lua_state, cplayer);                  // Tell effect, which player drank the potion.
+
+	if (lua_pcall(lua_state, 1, 0, 0) != 0)
+		std::cerr << "ERROR: potionshelper.cc: Lua: '" << lua_tostring(lua_state, -1) << "'." << std::endl;
+
+
 }
 
 /// See ShieldHelper.

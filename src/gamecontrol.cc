@@ -1349,7 +1349,7 @@ void GameControl::keypress_use()
 		}
 		else if (EdiblesHelper::existsInLua(selected_item->name(), _lua_state)) {
 			EdiblesHelper edibles_helper;
-			edibles_helper.eat((Edible*)selected_item);
+			edibles_helper.eat_party((Edible*)selected_item);
 
 			// Remove one such edible item from inventory
 			party->inventory()->remove(selected_item->name(), selected_item->description());
