@@ -3,7 +3,7 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Potions["heal"]  = { 
+Potions["healing potion"]  = { 
    name                   = "healing potion",
    plural_name            = "healing potion",
    description            = "",
@@ -19,15 +19,14 @@ Potions["heal"]  = {
    weight                 = 0,
    icon                   = 988,
 
-   ingredients            = { Edibles.nightshade.name, Edibles.garlic.name, Edibles.sulphur.name },
+   ingredients            = { Edibles.garlic.name, Edibles.sulphur.name },
 
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
-   
-   name_of_potion_drinker = "",
-   mixed_from             = { Edibles.nightshade, Edibles.sulphur, Edibles.garlic },
+
    effect = function()
-      simpl_play_sound(get_sound_path())
-      simpl_add_hp(targets, simpl_rand(1, 5))
+      -- simpl_play_sound(get_sound_path())
+      simpl_printcon("HEALING FIRED")
+      -- simpl_add_hp(targets, simpl_rand(1, 5))
 	 
       -- If in combat, then the printcon is showing letter by letter, otherwise all at once.
       simpl_printcon(name_of_potion_drinker .. " drinks a healing potion and feels much better.", simpl_party_in_combat())

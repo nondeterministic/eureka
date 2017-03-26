@@ -84,7 +84,7 @@ public:
 	void set_outdoors(bool);
 	void action_on_enter(std::shared_ptr<ActionOnEnter>);
 	bool leave_map();
-	void unlock_item();
+	bool unlock_item();
 	void game_over();
 
 	void keypress_talk();

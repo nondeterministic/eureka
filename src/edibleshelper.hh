@@ -22,6 +22,7 @@ public:
 	virtual ~EdiblesHelper();
 	static Edible* createFromLua(std::string, lua_State*);
 	static bool existsInLua(std::string, lua_State*);
+	void eat(Edible*);
 };
 
 #endif

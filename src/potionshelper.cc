@@ -8,6 +8,11 @@
 #include "potionshelper.hh"
 #include "potion.hh"
 #include "luawrapper.hh"
+#include "party.hh"
+#include "gamecontrol.hh"
+#include "ztatswin.hh"
+#include "edible.hh"
+#include "edibleshelper.hh"
 
 #include <string>
 #include <iostream>
@@ -26,6 +31,29 @@ PotionsHelper::PotionsHelper()
 PotionsHelper::~PotionsHelper()
 {
 	// TODO Auto-generated destructor stub
+}
+
+void PotionsHelper::drink(Potion* potion, lua_State* lua_state)
+{
+	Party& party     = Party::Instance();
+	GameControl& gc  = GameControl::Instance();
+	ZtatsWin& zwin   = ZtatsWin::Instance();
+
+	// First compute the effects the potion has in terms of it being also a normal edible item...
+	EdiblesHelper edibles_helper;
+	edibles_helper.eat((Edible*)potion);
+
+	// Push function name on stack
+	lua_getglobal(lua_state, "Potions");          // Push "Potions" on stack
+    lua_pushstring(lua_state, "healing potion");  // Push item_id on stack, e.g., "healing potion"
+    lua_gettable(lua_state, -2);                  // Remove item_id from stack and put Potions[item_id] in its place
+
+	lua_getfield(lua_state, -1, "effect");
+	if (lua_pcall(lua_state, 0, 0, 0) != 0) {
+		std::cerr << "ERROR: potionshelper.cc: Lua: '" << lua_tostring(lua_state, -1) << "'." << std::endl;
+	}
+
+	std::cout << "DONE DRINKING.\n";
 }
 
 /// See ShieldHelper.

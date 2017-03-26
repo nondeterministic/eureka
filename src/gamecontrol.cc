@@ -1265,11 +1265,11 @@ void GameControl::keypress_open_act()
 	return;
 }
 
-void GameControl::unlock_item()
+bool GameControl::unlock_item()
 {
 	if (!party->indoors()) {
 		printcon("Unlock - nothing to unlock here.");
-		return;
+		return false;
 	}
 
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1280,9 +1280,8 @@ void GameControl::unlock_item()
 	int chosen_player = zwin.select_player();
 	if (chosen_player < 0) {
 		printcon("Changed your mind then?");
-		return;
+		return false;
 	}
-	// PlayerCharacter* player = party->get_player(chosen_player);
 
 	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
 	if (avail_objects.first != avail_objects.second) {
@@ -1293,25 +1292,26 @@ void GameControl::unlock_item()
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK) {
 					printcon("Wow, you did it!");
-					party->rm_jimmylock();
 					the_obj.lock_type = UNLOCKED;
-					return;
+					return true;
 				}
 				else if (the_obj.lock_type == MAGIC_LOCK) {
 					printcon("It seems, this needs more than just a jimmy lock.");
-					return;
+					return false;
 				}
 				else {
 					printcon("Not locked. Don't waste a perfectly good jimmy lock on it.");
-					return;
+					return false;
 				}
 			}
 			else {
 				printcon("Nothing to open here.");
-				return;
+				return false;
 			}
 		}
 	}
+
+	return false;
 }
 
 void GameControl::keypress_use()
@@ -1335,159 +1335,24 @@ void GameControl::keypress_use()
 			printcon("Try to (r)eady a weapon instead.");
 		else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state))
 			printcon("Try to (r)eady a shield instead.");
-		else if (selected_item->name() == "jimmy lock")
-			unlock_item();
+		else if (selected_item->name() == "jimmy lock") {
+			if (unlock_item())
+				party->rm_jimmylock();
+		}
+		else if (PotionsHelper::existsInLua(selected_item->name(), _lua_state)) {
+			PotionsHelper potions_helper;
+			printcon("Drink potion - select player");
+			potions_helper.drink((Potion*)selected_item, _lua_state);
+
+			// Remove potion from inventory
+			party->inventory()->remove(selected_item->name(), selected_item->description());
+		}
 		else if (EdiblesHelper::existsInLua(selected_item->name(), _lua_state)) {
-			// Create a temporary item
-			Edible* item = NULL;
-			try {
-				item = (Edible*)ItemFactory::create_plain_name(selected_item->name());
-			}
-			catch (std::exception const& e) {
-			    std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
-			    return;
-			}
+			EdiblesHelper edibles_helper;
+			edibles_helper.eat((Edible*)selected_item);
 
-			if (item == NULL) {
-			    std::cerr << "ERROR: gamecontrol.cc: Cannot use item as it is NULL.\n";
-			    return;
-			}
-
-			// ----------------------------------------------------------------------------------
-			// Now eat it and compute effects of edible...
-
-			// Food up
-			if (item->food_up > 0) {
-				Party::Instance().set_food(Party::Instance().food() + item->food_up);
-				draw_status(); printcon("That was delicious. (PRESS SPACE BAR)"); em->get_key(" ");
-			}
-
-			// Intoxication
-			int intoxicating_rounds = 0;
-			switch (item->intoxicating) {
-			case VERY_LITTLE:
-				intoxicating_rounds = random(0, 10);
-				break;
-			case SOME:
-				intoxicating_rounds = random(10, 20);
-				break;
-			case STRONG:
-				intoxicating_rounds = random(20, 30);
-				break;
-			case VERY_STRONG:
-				intoxicating_rounds = random(30, 40);
-				break;
-			default:
-				break;
-			}
-			Party::Instance().rounds_intoxicated = Party::Instance().rounds_intoxicated + intoxicating_rounds;
-			if (intoxicating_rounds > 0) {
-				draw_status();
-				printcon("It seems that " + item->name() + " has an intoxicating effect... (PRESS SPACE BAR)");
-				em->get_key(" ");
-			}
-
-			// Getting poisoned
-			for (int i = 0; i < Party::Instance().party_size(); i++) {
-				PlayerCharacter* pl = Party::Instance().get_player(i);
-				bool poisoned = false;
-
-				if (pl->condition() != DEAD) {
-					switch (item->poisonous) {
-					case VERY_LITTLE:
-						poisoned = random(0, 10) >= 9;
-						break;
-					case SOME:
-						poisoned = random(0, 10) >= 7;
-						break;
-					case STRONG:
-						poisoned = random(0, 10) >= 5;
-						break;
-					case VERY_STRONG:
-						poisoned = random(0, 10) >= 3;
-						break;
-					default:
-						break;
-					}
-					if (poisoned) {
-						pl->set_condition(POISONED);
-						draw_status();
-						printcon(pl->name() + " is starting to feel quite sick... (PRESS SPACE BAR)");
-						em->get_key(" ");
-					}
-				}
-			}
-
-			// Poison healing
-			for (int i = 0; i < Party::Instance().party_size(); i++) {
-				PlayerCharacter* pl = Party::Instance().get_player(i);
-				bool phealed = false;
-
-				if (pl->condition() == POISONED) {
-					switch (item->poison_healing_power) {
-					case VERY_LITTLE:
-						phealed = random(0, 10) >= 9;
-						break;
-					case SOME:
-						phealed = random(0, 10) >= 7;
-						break;
-					case STRONG:
-						phealed = random(0, 10) >= 5;
-						break;
-					case VERY_STRONG:
-						phealed = random(0, 10) >= 3;
-						break;
-					default:
-						break;
-					}
-
-					if (phealed) {
-						pl->set_condition(GOOD);
-						draw_status();
-						printcon(pl->name() + " feels less sick suddenly... (PRESS SPACE BAR)");
-						em->get_key(" ");
-					}
-				}
-			}
-
-			{ // Normal healing
-				int healed = 0;
-
-				switch (item->healing_power) {
-				case VERY_LITTLE:
-					healed = random(1, 5);
-					break;
-				case SOME:
-					healed = random(4, 10);
-					break;
-				case STRONG:
-					healed = random(10, 20);
-					break;
-				case VERY_STRONG:
-					healed = random(20, 30);
-					break;
-				default:
-					break;
-				}
-
-				for (int i = 0; i < Party::Instance().party_size(); i++) {
-					PlayerCharacter* pl = Party::Instance().get_player(i);
-					if (healed) {
-						if (pl->hp() < pl->hpm()) {
-							pl->set_hp(min(pl->hpm(), pl->hp() + healed));
-
-							// TODO: Update party view to signal healed players
-							draw_status();
-							printcon(pl->name() + " feels reinvigorated... (PRESS SPACE BAR)");
-							em->get_key(" ");
-						}
-					}
-				}
-			}
-
-			// Remove one such item from inventory
-			party->inventory()->remove(item->name(), selected_item->description());
-			delete item;
+			// Remove one such edible item from inventory
+			party->inventory()->remove(selected_item->name(), selected_item->description());
 		}
 		else
 			printcon("You cannot use that.");
@@ -2133,9 +1998,9 @@ void GameControl::keypress_get_item()
 							gh.handle(*curr_ev, arena->get_map());
 					}
 				}
-
-				draw_status();
 			}
+			draw_status();
+
 			// See if some items are leftover after taking...
 			if (picked_up_mapobj.how_many - taking == 0)
 				arena->get_map()->rm_obj(&picked_up_mapobj);

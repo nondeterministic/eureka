@@ -26,6 +26,7 @@ public:
 	static Potion* createFromLua(std::string, lua_State*);
 	static bool existsInLua(std::string, lua_State*);
 	static std::vector<Potion*> get_loaded_lua_potions(lua_State*);
+	void drink(Potion*, lua_State*);
 };
 
 #endif
