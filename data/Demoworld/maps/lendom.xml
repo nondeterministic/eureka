@@ -4,6 +4,8 @@
   <outdoors>false</outdoors>
   <dungeon>false</dungeon>
   <guarded_city>false</guarded_city>
+  <initial_x>4</initial_x>
+  <initial_y>4</initial_y>
   <data>
     <row>4 7 7 7 7 7 7 4 7 7 4 4 4 7 4 4 7 7 7 7 7 4 7 4 7 4 4 4 4 4 4 4 4 4 7 7 7 7 4 7 7 7 7 7 7 7 7 7 7 7</row>
     <row>4 7 7 7 7 7 7 7 7 7 7 7 7 7 4 4 4 4 4 4 4 4 4 4 4 4 4 6 6 6 6 6 6 6 6 7 7 7 7 7 7 4 4 7 4 7 7 7 7 7</row>

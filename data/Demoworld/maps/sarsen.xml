@@ -4,6 +4,8 @@
   <outdoors>false</outdoors>
   <dungeon>false</dungeon>
   <guarded_city>false</guarded_city>
+  <initial_x>3</initial_x>
+  <initial_y>3</initial_y>
   <data>
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
