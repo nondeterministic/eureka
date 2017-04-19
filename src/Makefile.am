@@ -76,6 +76,7 @@ eureka_SOURCES = \
 	gamecontrol.hh gamecontrol.cc \
 	attackoption.hh attackoption.cc \
 	combat.hh combat.cc \
+	objectmover.hh objectmover.cc \
 	hexarena.hh hexarena.cc \
 	squarearena.hh squarearena.cc \
 	race.hh profession.hh \

@@ -114,7 +114,7 @@ boost::filesystem::path conf_savegame_path;
 bool _getops_exit_after_print = false;
 bool _getops_print_config = false;
 
-std::shared_ptr<Arena> arena;
+static std::shared_ptr<Arena> arena;
 
 // ******************************************************************************
 // Function definitions
