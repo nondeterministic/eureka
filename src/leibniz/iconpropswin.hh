@@ -21,11 +21,11 @@ public:
   std::string get_name();
   void set_name(const char*);
 
-  void set_walkable(ICON_WALK);
-  ICON_WALK get_walkable();
+  void set_walkable(PropertyStrength);
+  PropertyStrength get_walkable();
 
-  void set_trans(ICON_TRANS);
-  ICON_TRANS get_trans();
+  void set_trans(PropertyStrength);
+  PropertyStrength get_trans();
 
   void set_icon_no(unsigned);
   unsigned get_icon_no();

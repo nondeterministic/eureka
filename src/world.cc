@@ -274,22 +274,38 @@ bool World::xml_load_world_data(const std::string filename)
                             }
                             else if (reader.get_name() == "trans") {
                                 if (reader.get_value() == "full")
-                                	new_props._trans = IT_FULLY;
+                                	new_props._trans = PropertyStrength::Full;
                                 else if (reader.get_value() == "semi")
-                                	new_props._trans = IT_SEMI;
+                                	new_props._trans = PropertyStrength::Some;
                                 else if (reader.get_value() == "not")
-                                	new_props._trans = IT_NOT;
+                                	new_props._trans = PropertyStrength::None;
                             }
                             else if (reader.get_name().uppercase() == "DEFAULT_LUA_NAME") {
                             	new_props.set_default_lua_name(reader.get_value());
                             }
                             else if (reader.get_name() == "walk") {
                                 if (reader.get_value() == "full")
-                                	new_props._is_walkable = IW_FULL;
+                                	new_props._is_walkable = PropertyStrength::Full;
                                 else if (reader.get_value() == "slow")
-                                	new_props._is_walkable = IW_SLOW;
+                                	new_props._is_walkable = PropertyStrength::Some;
                                 else if (reader.get_value() == "not")
-                                	new_props._is_walkable = IW_NOT;
+                                	new_props._is_walkable = PropertyStrength::None;
+                            }
+                            else if (reader.get_name() == "poison") {
+                                if (reader.get_value() == "full")
+                                	new_props._poisonous = PropertyStrength::Full;
+                                else if (reader.get_value() == "semi")
+                                	new_props._poisonous = PropertyStrength::Some;
+                                else if (reader.get_value() == "not")
+                                	new_props._poisonous = PropertyStrength::None;
+                            }
+                            else if (reader.get_name() == "magic_force_field") {
+                                if (reader.get_value() == "full")
+                                	new_props._magical_force_field = PropertyStrength::Full;
+                                else if (reader.get_value() == "semi")
+                                	new_props._magical_force_field = PropertyStrength::Some;
+                                else if (reader.get_value() == "not")
+                                	new_props._magical_force_field = PropertyStrength::None;
                             }
                         } while (reader.move_to_next_attribute());
 
@@ -368,7 +384,36 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			set_icon_attributes(icon_node, icon_props->_trans, icon_props->_is_walkable);
+			// TODO: Reanimate this method and show below code into it!
+			// set_icon_attributes(icon_node, icon_props->_trans, icon_props->_is_walkable);
+
+			if (icon_props->_trans == PropertyStrength::Full)
+				icon_node->set_attribute("trans", "full");
+			else if (icon_props->_trans == PropertyStrength::Some)
+				icon_node->set_attribute("trans", "semi");
+			else
+				icon_node->set_attribute("trans", "not");
+
+			if (icon_props->_is_walkable == PropertyStrength::Full)
+		        icon_node->set_attribute("walk", "full");
+		    else if (icon_props->_is_walkable == PropertyStrength::None)
+		        icon_node->set_attribute("walk", "not");
+		    else
+		        icon_node->set_attribute("walk", "slow");
+
+			if (icon_props->_poisonous == PropertyStrength::Full)
+		        icon_node->set_attribute("poison", "full");
+		    else if (icon_props->_poisonous == PropertyStrength::None)
+		        icon_node->set_attribute("poison", "not");
+		    else
+		        icon_node->set_attribute("poison", "semi");
+
+			if (icon_props->_magical_force_field == PropertyStrength::Full)
+		        icon_node->set_attribute("magic_force_field", "full");
+		    else if (icon_props->_magical_force_field== PropertyStrength::None)
+		        icon_node->set_attribute("magic_force_field", "not");
+		    else
+		        icon_node->set_attribute("magic_force_field", "semi");
 
 			if (next_anim >= 0)
 				icon_node->set_attribute("next_anim", next_anim_str.str());
@@ -416,18 +461,18 @@ void World::xml_write_world_data(boost::filesystem::path path)
  * 	icon_node.
  */
 
-void World::set_icon_attributes(xmlpp::Element* icon_node, ICON_TRANS tr, ICON_WALK wa)
+void World::set_icon_attributes(xmlpp::Element* icon_node, PropertyStrength transparent, PropertyStrength walkable)
 {
-	if (tr == IT_FULLY)
+	if (transparent == PropertyStrength::Full)
 		icon_node->set_attribute("trans", "full");
-	else if (tr == IT_SEMI)
+	else if (transparent == PropertyStrength::Some)
 		icon_node->set_attribute("trans", "semi");
 	else
 		icon_node->set_attribute("trans", "not");
 
-	if (wa == IW_FULL)
+	if (walkable == PropertyStrength::Full)
         icon_node->set_attribute("walk", "full");
-    else if (wa == IW_NOT)
+    else if (walkable == PropertyStrength::None)
         icon_node->set_attribute("walk", "not");
     else
         icon_node->set_attribute("walk", "slow");

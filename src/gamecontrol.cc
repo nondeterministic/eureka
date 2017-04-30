@@ -1879,10 +1879,10 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 	bool icon_is_walkable = false;
 
 	if (is_arena_outdoors())
-		icon_is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_is_walkable != IW_NOT;
+		icon_is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_is_walkable != PropertyStrength::None;
 	else {
 		int tile = arena->get_map()->get_tile(x, y);
-		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != IW_NOT;
+		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != PropertyStrength::None;
 
 		// But don't walk over monsters...
 		if (icon_is_walkable) {
@@ -1892,7 +1892,7 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 					MapObj& map_obj = curr_obj->second;
 					IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
 
-					if (icon_props->_is_walkable == IW_NOT)
+					if (icon_props->_is_walkable == PropertyStrength::None)
 						return false;
 
 					if (map_obj.get_type() == MAPOBJ_MONSTER)

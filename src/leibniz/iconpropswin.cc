@@ -9,6 +9,8 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include <type_traits> // for underlying_type
+
 #include "iconpropswin.hh"
 #include "../iconprops.hh" 
 #include "../indoorsicons.hh"
@@ -84,25 +86,25 @@ void IconPropsWin::on_button_ok(void)
 
   switch (trans_combo.get_active_row_number()) {
   case 0:
-	  _iconProps._trans = IT_FULLY;
+	  _iconProps._trans = PropertyStrength::Full;
 	  break;
   case 1:
-	  _iconProps._trans = IT_SEMI;
+	  _iconProps._trans = PropertyStrength::Some;
 	  break;
   case 2:
-	  _iconProps._trans = IT_NOT;
+	  _iconProps._trans = PropertyStrength::None;
 	  break;
   }
 
   switch (walk_combo.get_active_row_number()) {
   case 0:
-	  _iconProps._is_walkable = IW_FULL;
+	  _iconProps._is_walkable = PropertyStrength::Full;
 	  break;
   case 1:
-	  _iconProps._is_walkable = IW_SLOW;
+	  _iconProps._is_walkable = PropertyStrength::Some;
 	  break;
   case 2:
-	  _iconProps._is_walkable = IW_NOT;
+	  _iconProps._is_walkable = PropertyStrength::None;
 	  break;
   }
 
@@ -120,30 +122,30 @@ void IconPropsWin::set_default_lua_name(std::string newName)
 	default_lua_name_entry.set_text(_default_lua_name);
 }
 
-void IconPropsWin::set_trans(ICON_TRANS it)
+void IconPropsWin::set_trans(PropertyStrength it)
 {
-	std::cout << "Setting trans to: " << it << "\n";
+	std::cout << "Setting trans to: " << static_cast<utype>(it) << "\n";
 
 	_iconProps._trans = it;
-	trans_combo.set_active(it);
+	trans_combo.set_active(static_cast<utype>(it));
 	queue_draw();
 }
 
-ICON_TRANS IconPropsWin::get_trans()
+PropertyStrength IconPropsWin::get_trans()
 {
 	return _iconProps._trans;
 }
 
-void IconPropsWin::set_walkable(ICON_WALK iw)
+void IconPropsWin::set_walkable(PropertyStrength iw)
 {
-	std::cout << "Setting walkable to: " << iw << "\n";
+	std::cout << "Setting walkable to: " << static_cast<utype>(iw) << "\n";
 
 	_iconProps._is_walkable = iw;
-	walk_combo.set_active(iw);
+	walk_combo.set_active(static_cast<utype>(iw));
 	queue_draw();
 }
 
-ICON_WALK IconPropsWin::get_walkable()
+PropertyStrength IconPropsWin::get_walkable()
 {
 	return _iconProps._is_walkable;
 }

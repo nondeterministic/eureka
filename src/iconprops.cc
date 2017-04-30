@@ -15,8 +15,10 @@ IconProps::IconProps()
 	_radius = 0;
 	_icon = 0;
 	_next_anim = -1;
-	_trans = IT_FULLY;
-	_is_walkable = IW_FULL;
+	_trans = PropertyStrength::Full;
+	_is_walkable = PropertyStrength::Full;
+	_poisonous = PropertyStrength::None;
+	_magical_force_field = PropertyStrength::None;
 	_name = "nothing special";
 	_seffect = "";
 	_default_lua_name = "";

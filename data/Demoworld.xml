@@ -114,7 +114,7 @@
       <icon no="102" trans="full" walk="full">nothing special</icon>
       <icon no="103" trans="full" walk="full">nothing special</icon>
       <icon no="104" trans="full" walk="full">nothing special</icon>
-      <icon no="105" trans="full" walk="full">nothing special</icon>
+      <icon no="105" trans="full" walk="full" poison="not" magic_force_field="full">a blue force field</icon>
       <icon no="106" trans="full" walk="full">nothing special</icon>
       <icon no="107" trans="full" walk="full">nothing special</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>

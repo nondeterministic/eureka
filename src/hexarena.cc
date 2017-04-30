@@ -398,11 +398,11 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
 	for (unsigned i = 0; i < row.size(); i++) {
 		IconProps *props = OutdoorsIcons::Instance().get_props(row[i]);
 		if (props) {
-			if (props->_trans == IT_NOT) {
+			if (props->_trans == PropertyStrength::None) {
 				row.clear();
 				return false;
 			}
-			else if (i > 0 && (props->_trans == IT_SEMI)) {
+			else if (i > 0 && (props->_trans == PropertyStrength::Some)) {
 				// Decrease viewing distance by 4 on semi transparent icons, but
 				// not when standing on one (i.e., i > 0), rather only when
 				// those icons block the view, i.e., are in front of the player.

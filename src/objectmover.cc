@@ -1,9 +1,11 @@
+#include <vector>
+#include <utility>
+
 #include "objectmover.hh"
 #include "mapobj.hh"
 #include "gamecontrol.hh"
-
-#include <vector>
-#include <utility>
+#include "iconprops.hh"
+#include "indoorsicons.hh"
 
 ObjectMover::ObjectMover()
 {
@@ -42,7 +44,8 @@ void ObjectMover::move()
 }
 
 /**
- * Instead of a return value, the result is afterwards stored in moved_objects_coords.
+ * Instead of a return value, the result is afterwards stored in moved_objects_coords -
+ * maybe not so super nice, but ok for now, as method is private and only called once from here.
  */
 
 void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,int>>& moved_objects_coords)
@@ -72,13 +75,23 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 			x_off = 1; y_off = 0;
 		}
 
+		// First check if everything is within bounds...
 		if (obj_x > 0 && obj_x < gc->get_map()->width() - 1 && obj_y > 0 && obj_y < gc->get_map()->height() - 1 &&
 				abs(obj_x - ox + x_off) <= 2 && abs(obj_y - oy + y_off) <= 2 &&
-				gc->walkable(obj_x + x_off, obj_y + y_off) &&
 				(obj_x + x_off != party->x || obj_y + y_off != party->y))
 		{
-			map_obj->set_coords(obj_x + x_off, obj_y + y_off);
-			moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+			// Now check "walkability properties" of icon in detail...
+			if (gc->walkable(obj_x + x_off, obj_y + y_off)) {
+				int icon = gc->get_arena()->get_map()->get_tile(obj_x + x_off, obj_y + y_off);
+				IconProps* icon_props = IndoorsIcons::Instance().get_props(icon);
+
+				if (icon_props->_poisonous == PropertyStrength::None &&
+				    icon_props->_magical_force_field == PropertyStrength::None)
+				{
+					map_obj->set_coords(obj_x + x_off, obj_y + y_off);
+					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				}
+			}
 		}
 	}
 

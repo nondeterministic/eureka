@@ -280,7 +280,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
-					if (!(props->_trans == IT_FULLY)) {
+					if (!(props->_trans == PropertyStrength::Full)) {
 						tmp_row_and_objs[std::max((int)row.size(), 0)].push_back(the_obj.get_icon());
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
@@ -301,7 +301,7 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 				for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 					MapObj& the_obj = curr_obj->second;
 					IconProps* props = IndoorsIcons::Instance().get_props(the_obj.get_icon());
-					if (!(props->_trans == IT_FULLY)) {
+					if (!(props->_trans == PropertyStrength::Full)) {
 						tmp_row_and_objs[std::max((int)row.size(), 0)].push_back(the_obj.get_icon());
 						// Add at most one object to row, and only if it isn't transparent. So we have one obj per location on the map.
 						row_objs.push_back(the_obj.get_icon());
@@ -329,9 +329,9 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 		for (unsigned l = 0; l < icons.size(); l++) {
 			IconProps* props = IndoorsIcons::Instance().get_props(icons[l]);
 
-			if (props && (props->_trans == IT_NOT))
+			if (props && (props->_trans == PropertyStrength::None))
 				return false;
-			else if (i > 0 && props && (props->_trans == IT_SEMI)) {
+			else if (i > 0 && props && (props->_trans == PropertyStrength::Some)) {
 				// Decrease viewing distance by 4 on semi transparent icons, but
 				// not when standing on one (i.e., i > 0), rather only when
 				// those icons block the view, i.e., are in front of the player.

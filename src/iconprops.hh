@@ -10,27 +10,17 @@
 #define __ICONPROPS_HH
 
 #include <string>
+#include <type_traits>
 
-//enum ICON_FLAGS {
-//  FULLY_TRANS = 0,         // Fully transparent
-//  SEMI_TRANS = 2,
-//  NOT_TRANS = 4,           // Not transparent
-//  WALK_FULLSPEED = 8,      // Fully passable
-//  WALK_SLOW = 16,
-//  WALK_NOT = 32,           // Impassable (by foot)
-//  WATER = 64,
-//  DEEP_WATER = 128,
-//  POISON = 256,
-//  ANIMATE = 512            // Human or animal
-//};
-
-enum ICON_TRANS {
-	IT_FULLY = 0, IT_SEMI = 1, IT_NOT = 2
+enum class PropertyStrength: int
+{
+	None = 2,
+	Some = 1,
+	Full = 0
 };
 
-enum ICON_WALK {
-	IW_FULL = 0, IW_SLOW = 1, IW_NOT = 2
-};
+// cf. http://stackoverflow.com/questions/14589417/can-an-enum-class-be-converted-to-the-underlying-type
+typedef std::underlying_type<PropertyStrength>::type utype;
 
 class IconProps
 {
@@ -51,8 +41,10 @@ public:
   std::string default_lua_name();
   void set_default_lua_name(std::string);
 
-  ICON_TRANS _trans;
-  ICON_WALK _is_walkable;
+  PropertyStrength _trans;
+  PropertyStrength _is_walkable;
+  PropertyStrength _poisonous;
+  PropertyStrength _magical_force_field;
   
 protected:
   unsigned _icon;
