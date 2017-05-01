@@ -148,81 +148,81 @@ int GameControl::show_win()
 
 void GameControl::draw_status(bool update_status_image)
 {
-  MiniWin& mwin = MiniWin::Instance();
+	MiniWin& mwin = MiniWin::Instance();
 
-  std::stringstream ss;
-  __attribute__ ((unused)) int moon_icon = 0;  // TODO
-  static std::string filename;
-  static std::string filename_old;
+	std::stringstream ss;
+	__attribute__ ((unused)) int moon_icon = 0;  // TODO
+	static std::string filename;
+	static std::string filename_old;
 
-  filename_old = filename;
+	filename_old = filename;
 
-  ss << "Gold: " << party->gold();
-  ss << ", Food: " << party->food();
-  ss << ", Time: ";
-  if (_clock.time().first < 10)
-    ss << "0" << _clock.time().first << ":";
-  else
-    ss << _clock.time().first << ":";
-  if (_clock.time().second < 10)
-    ss << "0" << _clock.time().second;
-  else
-    ss << _clock.time().second;
-  ss << "h";
+	ss << "Gold: " << party->gold();
+	ss << ", Food: " << party->food();
+	ss << ", Time: ";
+	if (_clock.time().first < 10)
+		ss << "0" << _clock.time().first << ":";
+	else
+		ss << _clock.time().first << ":";
+	if (_clock.time().second < 10)
+		ss << "0" << _clock.time().second;
+	else
+		ss << _clock.time().second;
+	ss << "h";
 
-  switch (_clock.tod()) {
-  case EARLY_MORNING:
-    filename = "sky_early_morning.png";
-    moon_icon = 425;
-    break;
-  case MORNING:
-    filename = "sky_noon.png";
-    moon_icon = 426;
-    break;
-  case NOON:
-    filename = "sky_noon.png";
-    moon_icon = 427;
-    break;
-  case AFTERNOON:
-    filename = "sky_noon.png";
-    moon_icon = 428;
-    break;
-  case EVENING:
-    filename = "sky_evening.png";
-    moon_icon = 429;
-    break;
-  case NIGHT:
-    filename = "sky_night.png";
-    moon_icon = 430;
-    break;
-  case MIDNIGHT:
-    filename = "sky_night.png";
-    moon_icon = 431;
-    break;
-  }
+	switch (_clock.tod()) {
+	case EARLY_MORNING:
+		filename = "sky_early_morning.png";
+		moon_icon = 425;
+		break;
+	case MORNING:
+		filename = "sky_noon.png";
+		moon_icon = 426;
+		break;
+	case NOON:
+		filename = "sky_noon.png";
+		moon_icon = 427;
+		break;
+	case AFTERNOON:
+		filename = "sky_noon.png";
+		moon_icon = 428;
+		break;
+	case EVENING:
+		filename = "sky_evening.png";
+		moon_icon = 429;
+		break;
+	case NIGHT:
+		filename = "sky_night.png";
+		moon_icon = 430;
+		break;
+	case MIDNIGHT:
+		filename = "sky_night.png";
+		moon_icon = 431;
+		break;
+	}
 
-  if (update_status_image && !party->indoors()) {
-	  static SDL_Surface* _tmp_surf = NULL;
+	if (update_status_image && !party->indoors()) {
+		static SDL_Surface* _tmp_surf = NULL;
 
-	  if (filename_old != filename) {
-		  if (_tmp_surf != NULL)
-			  SDL_FreeSurface(_tmp_surf);
+		if (filename_old != filename) {
+			if (_tmp_surf != NULL)
+				SDL_FreeSurface(_tmp_surf);
 
-		  if ((_tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL)
-			  std::cerr << "ERROR: gamecontrol.cc: miniwin could not load surface.\n";
-	  }
+			if ((_tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL)
+				std::cerr << "ERROR: gamecontrol.cc: miniwin could not load surface.\n";
+		}
 
-	  if (_tmp_surf != NULL)
-		SDL_BlitSurface(_tmp_surf, NULL, mwin.get_surface(), NULL);
-  }
+		if (_tmp_surf != NULL)
+			SDL_BlitSurface(_tmp_surf, NULL, mwin.get_surface(), NULL);
+	}
 
-  TinyWin& twin = TinyWin::Instance();
-  twin.clear();
-  twin.println(0, ss.str());
+	TinyWin& twin = TinyWin::Instance();
+	twin.clear();
+	twin.println(0, ss.str());
 
-  // Print moon symbol
-  // twin.printch(twin.get_surface()->w - 16, 0, moon_icon);
-  // twin.blit();
+	// Print moon symbol
+	// twin.printch(twin.get_surface()->w - 16, 0, moon_icon);
+	// twin.blit();
 }
 
 int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
@@ -868,6 +868,12 @@ void GameControl::keypress_hole_up()
 		mwin.display_last();
 		return;
 	}
+	else if (hours > 9) {
+		printcon("More than 9 hours of sleep isn't healthy.");
+		draw_status();
+		mwin.display_last();
+		return;
+	}
 
 	printcon("Do you want to set up a guard? (y/n)");
 	int selected_player = -1;
@@ -917,8 +923,11 @@ void GameControl::keypress_hole_up()
 			}
 		}
 
+		if (!party->indoors())
+			Console::Instance().pause(40);
+		else
+			Console::Instance().pause(5);
 		draw_status();
-		Console::Instance().pause(50);
 		rounds++;
 	} while (_clock.time().first != (old_time.first + hours) % 24);
 
@@ -1917,10 +1926,10 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 	return icon_is_walkable;
 }
 
-// Just moves party, doesn't do turn or play sounds.  Use move_party() for that as a wrapper around
-// this function.  If ignore_walkable is set, then the party is moved, even through unpassable terrain.
+/// Moves the party.
+/// If ignore_walkable is set, then the party is moved, even through unpassable terrain.
 
-bool GameControl::move_party_quietly(LDIR dir, bool ignore_walkable)
+bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 {
 	bool moved = false;
 	MiniWin& mwin = MiniWin::Instance();
@@ -2140,7 +2149,7 @@ void GameControl::keypress_move_party(LDIR dir)
 		}
 	}
 
-	if (move_party_quietly(dir)) {
+	if (move_party(dir)) {
 		sample.set_volume(50);
 		sample.play(WALK);
 		printcon(ldirToString.at(dir) + ".");

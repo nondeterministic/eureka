@@ -31,13 +31,13 @@
 #include <vector>
 #include <memory>
 
+#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
+
 #include "map.hh"
 #include "creature.hh"
 #include "spell.hh"
 #include "iconprops.hh"
-
-#include "boost/filesystem.hpp"
-#include "boost/filesystem/path.hpp"
 
 extern "C" {
 #include <lua5.1/lua.h>
@@ -98,7 +98,7 @@ protected:
   unsigned _indoors_tile_size, _outdoors_tile_size;
   xmlpp::Document* _main_world_xml_file;
   xmlpp::Node* _main_world_xml_root;
-  void set_icon_attributes(xmlpp::Element*, PropertyStrength transparent, PropertyStrength walkable);
+  void set_icon_attributes(xmlpp::Element*, IconProps*);
 };
 
 #endif

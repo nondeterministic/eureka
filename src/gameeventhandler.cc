@@ -266,9 +266,9 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 
 	gc->set_party(1, 1);
 	for (unsigned x = 1; party->get_coords().first < old_coords.first; x++)
-		gc->move_party_quietly(DIR_RIGHT, true);
+		gc->move_party(DIR_RIGHT, true);
 	for (unsigned y = 1; party->get_coords().second < old_coords.second; y++)
-		gc->move_party_quietly(DIR_DOWN, true);
+		gc->move_party(DIR_DOWN, true);
 
 	// TODO: Not sure if this line will always work as opposed to the original, commented out line below. I think, it's equivalent.
 	gc->set_party(party->x, party->y);
@@ -371,9 +371,9 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	gc->set_party(1, 1);
 
 	for (unsigned x = 1; x < event->get_x(); x++)
-		gc->move_party_quietly(DIR_RIGHT, true);
+		gc->move_party(DIR_RIGHT, true);
 	for (unsigned y = 1; y < event->get_y(); y++)
-		gc->move_party_quietly(DIR_DOWN, true);
+		gc->move_party(DIR_DOWN, true);
 
 	return true;
 }

@@ -2,8 +2,8 @@
 <world>
   <name>Demoworld</name>
   <map href="./Demoworld/maps/landscape.xml" type="outdoors">landscape</map>
-  <map href="./Demoworld/maps/hut.xml" type="indoors" initial="yes">hut</map>
-  <map href="./Demoworld/maps/velnebras.xml" type="indoors">velnebras</map>
+  <map href="./Demoworld/maps/hut.xml" type="indoors">hut</map>
+  <map href="./Demoworld/maps/velnebras.xml" type="indoors" initial="yes">velnebras</map>
   <map href="./Demoworld/maps/dungeon.xml" type="indoors">dungeon</map>
   <map href="./Demoworld/maps/sarsen.xml" type="indoors">sarsen</map>
   <map href="./Demoworld/maps/lendom.xml" type="indoors">lendom</map>
@@ -114,7 +114,7 @@
       <icon no="102" trans="full" walk="full">nothing special</icon>
       <icon no="103" trans="full" walk="full">nothing special</icon>
       <icon no="104" trans="full" walk="full">nothing special</icon>
-      <icon no="105" trans="full" walk="full" poison="not" magic_force_field="full">a blue force field</icon>
+      <icon no="105" light_radius="1" trans="full" walk="full" poison="not" next_anim="661" magic_force_field="full">a blue force field</icon>
       <icon no="106" trans="full" walk="full">nothing special</icon>
       <icon no="107" trans="full" walk="full">nothing special</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>
@@ -669,8 +669,8 @@
       <icon no="657" trans="full" walk="full">nothing special</icon>
       <icon no="658" trans="full" walk="full">nothing special</icon>
       <icon no="659" trans="full" walk="full">nothing special</icon>
-      <icon no="660" trans="full" walk="full">nothing special</icon>
-      <icon no="661" trans="full" walk="full">nothing special</icon>
+      <icon no="660" trans="full" walk="full" light_radius="4" next_anim="105" magic_force_field="full">a blue force field</icon>
+      <icon no="661" trans="full" walk="full" light_radius="2" next_anim="660" magic_force_field="full">a blue force field</icon>
       <icon no="662" trans="full" walk="full">nothing special</icon>
       <icon no="663" trans="full" walk="full">nothing special</icon>
       <icon no="664" trans="full" walk="full">nothing special</icon>

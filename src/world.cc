@@ -384,36 +384,7 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			// TODO: Reanimate this method and show below code into it!
-			// set_icon_attributes(icon_node, icon_props->_trans, icon_props->_is_walkable);
-
-			if (icon_props->_trans == PropertyStrength::Full)
-				icon_node->set_attribute("trans", "full");
-			else if (icon_props->_trans == PropertyStrength::Some)
-				icon_node->set_attribute("trans", "semi");
-			else
-				icon_node->set_attribute("trans", "not");
-
-			if (icon_props->_is_walkable == PropertyStrength::Full)
-		        icon_node->set_attribute("walk", "full");
-		    else if (icon_props->_is_walkable == PropertyStrength::None)
-		        icon_node->set_attribute("walk", "not");
-		    else
-		        icon_node->set_attribute("walk", "slow");
-
-			if (icon_props->_poisonous == PropertyStrength::Full)
-		        icon_node->set_attribute("poison", "full");
-		    else if (icon_props->_poisonous == PropertyStrength::None)
-		        icon_node->set_attribute("poison", "not");
-		    else
-		        icon_node->set_attribute("poison", "semi");
-
-			if (icon_props->_magical_force_field == PropertyStrength::Full)
-		        icon_node->set_attribute("magic_force_field", "full");
-		    else if (icon_props->_magical_force_field== PropertyStrength::None)
-		        icon_node->set_attribute("magic_force_field", "not");
-		    else
-		        icon_node->set_attribute("magic_force_field", "semi");
+			set_icon_attributes(icon_node, icon_props);
 
 			if (next_anim >= 0)
 				icon_node->set_attribute("next_anim", next_anim_str.str());
@@ -435,7 +406,7 @@ void World::xml_write_world_data(boost::filesystem::path path)
 			icon_no_str << i;
 			icon_node->set_attribute("no", icon_no_str.str());
 
-			set_icon_attributes(icon_node, OutdoorsIcons::Instance().get_props(i)->_trans, OutdoorsIcons::Instance().get_props(i)->_is_walkable);
+			set_icon_attributes(icon_node, OutdoorsIcons::Instance().get_props(i));
 
 			icon_node->add_child_text(OutdoorsIcons::Instance().get_props(i)->get_name().c_str());
 		}
@@ -457,25 +428,42 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 /**
  * This protected function is only called by xml_write_world_data.  It
- *	sets the flags to be written for the icon, represented by
- * 	icon_node.
+ * sets the flags to be written for the icon, represented by icon_node.
  */
 
-void World::set_icon_attributes(xmlpp::Element* icon_node, PropertyStrength transparent, PropertyStrength walkable)
+void World::set_icon_attributes(xmlpp::Element* icon_node, IconProps* prop)
 {
-	if (transparent == PropertyStrength::Full)
+	/* Note, we sometimes omit the Not/Default-Property, as this will only bloat the XML file.
+	 * Instead, use reasonable defaults on object creation.
+	 */
+
+	if (prop->_trans == PropertyStrength::Full)
 		icon_node->set_attribute("trans", "full");
-	else if (transparent == PropertyStrength::Some)
+	else if (prop->_trans == PropertyStrength::Some)
 		icon_node->set_attribute("trans", "semi");
 	else
 		icon_node->set_attribute("trans", "not");
 
-	if (walkable == PropertyStrength::Full)
+	if (prop ->_is_walkable == PropertyStrength::Full)
         icon_node->set_attribute("walk", "full");
-    else if (walkable == PropertyStrength::None)
-        icon_node->set_attribute("walk", "not");
-    else
+    else if (prop ->_is_walkable == PropertyStrength::Some)
         icon_node->set_attribute("walk", "slow");
+    else
+    	icon_node->set_attribute("walk", "not");
+
+	if (prop ->_poisonous == PropertyStrength::Full)
+        icon_node->set_attribute("poison", "full");
+    else if (prop->_poisonous == PropertyStrength::Some)
+        icon_node->set_attribute("poison", "semi");
+    else
+    	; // icon_node->set_attribute("poison", "not");
+
+	if (prop ->_magical_force_field == PropertyStrength::Full)
+        icon_node->set_attribute("magic_force_field", "full");
+    else if (prop ->_magical_force_field== PropertyStrength::Some)
+        icon_node->set_attribute("magic_force_field", "semi");
+    else
+    	; // icon_node->set_attribute("magic_force_field", "not");
 }
 
 /**

@@ -852,9 +852,9 @@ int start_game()
 
 		std::cout << "INFO: eureka.cc: Moving party quietly to " << initial_x << ", " << initial_y << ".\n";
 		for (unsigned x = 0; x < initial_x; x++)
-			gc->move_party_quietly(DIR_RIGHT, true);
+			gc->move_party(DIR_RIGHT, true);
 		for (unsigned y = 0; y < initial_y / 2; y++)
-			gc->move_party_quietly(DIR_DOWN, true);
+			gc->move_party(DIR_DOWN, true);
 	}
 	// Indoors
 	else {
@@ -867,9 +867,9 @@ int start_game()
 		gc->show_win();
 
 		for (unsigned x = 0; x < initial_x; x++)
-			gc->move_party_quietly(DIR_RIGHT, true);
+			gc->move_party(DIR_RIGHT, true);
 		for (unsigned y = 0; y < initial_y; y++)
-			gc->move_party_quietly(DIR_DOWN, true);
+			gc->move_party(DIR_DOWN, true);
 	}
 
 	gc->show_win();
