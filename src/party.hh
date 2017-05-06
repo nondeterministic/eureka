@@ -31,8 +31,9 @@
 #include "inventory.hh"
 #include "spellsbearer.hh"
 #include "ztatswincontentprovider.hh"
+#include "partyrules.hh"
 
-class Party : public SpellsBearer
+class Party : public SpellsBearer, public PartyRules
 {
 protected:
   std::vector<PlayerCharacter> _players;

@@ -96,7 +96,7 @@ int GameCharacter::spm()
 
 void GameCharacter::set_gold(int new_gold)
 {
-	_gold = new_gold;
+	_gold = std::max(0, new_gold);
 }
 
 int GameCharacter::gold()
@@ -106,10 +106,16 @@ int GameCharacter::gold()
 
 void GameCharacter::set_hp(int hp)
 {
-	_hp = hp;
+	_hp = std::max(0, hp);            // Needs to be >0
+	_hp = std::min(_hp, hpm());       // Needs to be <hmp()
 
-	if (hp == 0)
+	if (_hp == 0)
 		_condition = DEAD;
+}
+
+void GameCharacter::add_hp(int hpoints)
+{
+	set_hp(hp() + hpoints);
 }
 
 int GameCharacter::hp()

@@ -35,6 +35,7 @@ public:
   int get_tile(unsigned, unsigned);
   int set_tile(unsigned, unsigned, unsigned);
   void expand_map(int, int, int, int);
+  bool is_within_visible_bounds(int, int);
 };
 
 #endif

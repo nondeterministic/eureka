@@ -116,10 +116,10 @@ std::shared_ptr<Map> SquareArena::get_map(void) const
 
 Offsets SquareArena::move(int dir)
 {
-  //   std::cout << "top_hidden: " << _top_hidden << ", "
-  //        << "bot_hidden: " << _bot_hidden << ", "
-  //        << "left_hidden: " << _left_hidden << ", "
-  //        << "right_hidden: " << _right_hidden << "\n";
+//     std::cout << "top_hidden: " << _top_hidden << ", "
+//          << "bot_hidden: " << _bot_hidden << ", "
+//          << "left_hidden: " << _left_hidden << ", "
+//          << "right_hidden: " << _right_hidden << "\n";
 
   switch (dir) {
   case DIR_UP:
@@ -140,10 +140,10 @@ Offsets SquareArena::move(int dir)
     break;
   }
 
-  //   std::cout << "top_hidden: " << _top_hidden << ", "
-  //        << "bot_hidden: " << _bot_hidden << ", "
-  //        << "left_hidden: " << _left_hidden << ", "
-  //        << "right_hidden: " << _right_hidden << "\n";
+//     std::cout << "top_hidden: " << _top_hidden << ", "
+//          << "bot_hidden: " << _bot_hidden << ", "
+//          << "left_hidden: " << _left_hidden << ", "
+//          << "right_hidden: " << _right_hidden << "\n";
 
   return offsets();
 }
@@ -457,9 +457,11 @@ void SquareArena::show_map(int x_width, int y_width)
 				sound_effects_added.push_back(sample_path.string());
 			}
 
-			int party_x, party_y;
-			map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
-			screen_to_map(party_x, party_y, party_x, party_y);
+			int party_x = Party::Instance().x, party_y = Party::Instance().y;
+
+//			int party_x, party_y;
+//			map_to_screen(Party::Instance().x, Party::Instance().y, party_x, party_y);
+//			screen_to_map(party_x, party_y, party_x, party_y);
 
 			if (_show_map) {
 				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.

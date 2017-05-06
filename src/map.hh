@@ -83,6 +83,12 @@ public:
   virtual int get_tile(unsigned, unsigned) = 0;
   virtual int set_tile(unsigned, unsigned, unsigned) = 0;
   virtual bool is_outdoors() const = 0;
+  /**
+   * This is not really an out-of-bounds-check, as the visible map can still be within
+   * the bounds of the defined map.  But this shows whether coordinates would still be
+   * on the visible map, if the game placed something on them, given as x and y.
+   */
+  virtual bool is_within_visible_bounds(int, int) = 0;
   // Shrink or expand map, depending on the values
   virtual void expand_map(int, int, int, int) = 0;
   void expand_map_data(int, int, int, int);

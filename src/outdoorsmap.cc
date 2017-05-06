@@ -46,6 +46,14 @@ OutdoorsMap::~OutdoorsMap()
 {
 }
 
+bool OutdoorsMap::is_within_visible_bounds(int x, int y)
+{
+	return x < 1 ||
+		   x >= width() - 4 ||
+		   y >= height() - 4 ||
+		   y < 1;
+}
+
 bool OutdoorsMap::is_outdoors() const
 {
   return true;

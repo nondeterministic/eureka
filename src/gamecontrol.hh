@@ -64,6 +64,7 @@ protected:
 	unsigned _turns;
 	Clock _clock;
 	SoundSample* _game_music;
+	SoundSample _sample;
 	bool check_walkable(int, int, Walking);
 	GameControl();
 

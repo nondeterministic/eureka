@@ -85,6 +85,7 @@ public:
   int spm();
   void set_gold(int);
   int gold();
+  void add_hp(int);
   void set_hp(int);
   int hp();
   void set_sp(int);

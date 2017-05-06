@@ -48,6 +48,14 @@ IndoorsMap::~IndoorsMap()
 {
 }
 
+bool IndoorsMap::is_within_visible_bounds(int x, int y)
+{
+	return x > 0 &&
+		   x < ((int)width()) - 3 &&
+		   y < ((int)height() - 3) &&
+		   y > 0;
+}
+
 bool IndoorsMap::is_outdoors(void) const
 {
   return false;

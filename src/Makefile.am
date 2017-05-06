@@ -25,6 +25,7 @@ eureka_SOURCES = \
         luaapi.hh luaapi.cc \
 	luawrapper.hh luawrapper.cc \
 	spellsbearer.hh spellsbearer.cc \
+	partyrules.hh partyrules.cc \
 	gamecharacter.hh gamecharacter.cc \
 	creature.hh creature.cc \
 	sdlwindow.hh sdlwindow.cc \
