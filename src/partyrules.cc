@@ -30,3 +30,23 @@ bool PartyRules::walk_through_magic_field(PropertyStrength strength)
 
 	return somebody_hurt;
 }
+
+bool PartyRules::walk_through_poison_field(PropertyStrength strength)
+{
+	bool somebody_hurt = false;
+
+	if (strength == PropertyStrength::None)
+		return somebody_hurt;
+
+	GameControl& gc = GameControl::Instance();
+
+	// TODO: Ignores currently any kind of protection, the party member may have against poison fields!
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++) {
+		if (gc.random(0,10) < 5) {
+			player->set_condition(PlayerCondition::POISONED);
+			somebody_hurt = true;
+		}
+	}
+
+	return somebody_hurt;
+}

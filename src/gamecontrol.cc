@@ -2012,6 +2012,24 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 		// If we're ignoring walkability, or we don't and the map is walkable, do it!
 		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
+			int tile = arena->get_map()->get_tile(party->x + x_diff, party->y + y_diff);
+			IconProps* tile_props = IndoorsIcons::Instance().get_props(tile);
+
+			// Slow walking means to drop every third step.
+			if (tile_props->_is_walkable == PropertyStrength::Some) {
+				static int every_third_step = 0;
+				printcon("Slow.");
+				if (every_third_step == 0) {
+					std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+					every_third_step++;
+					return false;
+				}
+				else if (every_third_step == 1)
+					every_third_step++;
+				else // if (every_third_step == 2)
+					every_third_step = 0;
+			}
+
 			arena->moving(true);
 
 			if (screen_pos_party.first  + x_diff < screen_center_x)
@@ -2026,14 +2044,15 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			set_party(party->x + x_diff, party->y + y_diff);
 			arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
 
+			arena->moving(false);
+
 			// Check if poison, magic field, fire, etc. was entered and act accordingly.
-			int tile = arena->get_map()->get_tile(party->x, party->y);
-			IconProps* tile_props = IndoorsIcons::Instance().get_props(tile);
 			bool somebody_hurt = false;
 			somebody_hurt = party->walk_through_magic_field(tile_props->_magical_force_field);
+			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
-				_sample.play(HIT);
 				zwin.update_player_list();
+				_sample.play(HIT);
 			}
 
 			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
@@ -2111,6 +2130,10 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 	std::cerr << "WARNING: gamecontrol.cc: move_party() failed.\n";
+
+	_sample.play(HIT);
+	printcon("Blocked.");
+
 	return false;
 }
 
@@ -2134,11 +2157,11 @@ void GameControl::keypress_move_party(LDIR dir)
 		_sample.play(WALK);
 		printcon(ldirToString.at(dir) + ".");
 	}
-	else {
-		_sample.set_volume(24);
-		_sample.play(HIT);
-		printcon("Blocked.");
-	}
+//	else {
+//		_sample.set_volume(24);
+//		_sample.play(HIT);
+//		printcon("Blocked.");
+//	}
 
 	do_turn();
 }
