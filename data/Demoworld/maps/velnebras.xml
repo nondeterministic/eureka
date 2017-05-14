@@ -76,7 +76,7 @@
   <actions>
     <action type="ACT_ON_PULLPUSH" x="19" y="31">
       <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
-      <event type="EVENT_PLAY_SOUND">hit.wav</event>
+      <event type="EVENT_PLAY_SOUND">bridge.wav</event>
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="21" y="31" icon_now="71" icon_new="72"/>
       </event>

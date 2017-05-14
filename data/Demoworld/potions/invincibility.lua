@@ -22,13 +22,11 @@ Potions["potion of invincibility"]  = {
    ingredients            = { Edibles.nightshade.name, Edibles.sulphur.name },
 
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
-   
+
    effect = function(chosen_player)
-      -- simpl_play_sound(get_sound_path())
-      -- simpl_add_hp(targets, simpl_rand(1, 5))
-      
       -- Lasts 25 rounds.
       simpl_walk_through_fields(25)
+      simpl_play_sound("spell_normal.wav")
       simpl_printcon("Your party feels strangely immune...")
    end
 }

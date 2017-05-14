@@ -359,10 +359,9 @@ void GameControl::do_turn(bool resting)
 		Party::Instance().rounds_intoxicated--;
 
 	// Reduce immunised from (magic/poison/etc) fields in each round.
-	if (Party::Instance().immune_from_fields() > 0) {
+	if (Party::Instance().immune_from_fields() > 0)
 		if (Party::Instance().decrease_immunity_from_fields() == 0)
 			printcon("Your party feels somehow less protected again...");
-	}
 
 	// Check poisoned status
 	for (int i = 0; i < Party::Instance().party_size(); i++) {

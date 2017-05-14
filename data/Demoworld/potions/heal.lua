@@ -25,6 +25,7 @@ Potions["healing potion"]  = {
 
    effect = function(chosen_player)
       if (simpl_add_hp(chosen_player, math.random(3,7))) then
+	 simpl_play_sound("spell_normal.wav")
 	 simpl_printcon(simpl_get_player_name(chosen_player) .. " feels the full effect of the healing potion.")
       else
 	 simpl_printcon("The effect of the healing potion was positive, but not overwhelmingly so.")
