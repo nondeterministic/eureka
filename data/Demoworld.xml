@@ -1513,14 +1513,14 @@
     <outdoors>
       <icon no="0" trans="full" walk="not">deep water</icon>
       <icon no="1" trans="full" walk="not">water</icon>
-      <icon no="2" trans="semi" walk="full">forest</icon>
-      <icon no="3" trans="full" walk="full">rocks</icon>
+      <icon no="2" trans="semi" walk="slow">forest</icon>
+      <icon no="3" trans="full" walk="slow">rocks</icon>
       <icon no="4" trans="full" walk="full">nothing special</icon>
       <icon no="5" trans="full" walk="full">nothing special</icon>
       <icon no="6" trans="full" walk="full">nothing special</icon>
       <icon no="7" trans="full" walk="full">nothing special</icon>
       <icon no="8" trans="full" walk="full">nothing special</icon>
-      <icon no="9" trans="full" walk="full">castle</icon>
+      <icon no="9" trans="full" walk="slow">castle</icon>
       <icon no="10" trans="full" walk="full">nothing special</icon>
       <icon no="11" trans="full" walk="full">nothing special</icon>
       <icon no="12" trans="full" walk="full">nothing special</icon>
@@ -1533,12 +1533,12 @@
       <icon no="19" trans="full" walk="full">nothing special</icon>
       <icon no="20" trans="full" walk="full">nothing special</icon>
       <icon no="21" trans="full" walk="full">nothing special</icon>
-      <icon no="22" trans="full" walk="full">trees</icon>
+      <icon no="22" trans="full" walk="slow">trees</icon>
       <icon no="23" trans="full" walk="full">plain</icon>
       <icon no="24" trans="full" walk="full">nothing special</icon>
       <icon no="25" trans="full" walk="full">nothing special</icon>
       <icon no="26" trans="full" walk="full">nothing special</icon>
-      <icon no="27" trans="full" walk="full">rocks</icon>
+      <icon no="27" trans="full" walk="slow">rocks</icon>
       <icon no="28" trans="not" walk="not">mountain</icon>
       <icon no="29" trans="full" walk="full">nothing special</icon>
       <icon no="30" trans="full" walk="full">nothing special</icon>

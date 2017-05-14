@@ -59,6 +59,7 @@ std::pair<int, int> Party::get_coords()
 
 Party::Party()
 {
+	_rounds_immune_to_fields = 0;
 	rounds_intoxicated = 0;
 	_indoors = false;
 	prev_indoors = false;
@@ -554,4 +555,27 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 	}
 
 	return content_provider;
+}
+
+/// How many rounds is the party immune from magic fields, to poison fields, to fire, etc.?
+/// Immunity usually created by potion or spell.
+
+void Party::immunize_from_fields(int rounds)
+{
+	_rounds_immune_to_fields = rounds;
+}
+
+/// @see immunize_from_fields.
+
+int Party::decrease_immunity_from_fields()
+{
+	_rounds_immune_to_fields = std::max(_rounds_immune_to_fields - 1, 0);
+	return _rounds_immune_to_fields;
+}
+
+/// @see immunize_from_fields.
+
+int Party::immune_from_fields()
+{
+	return _rounds_immune_to_fields;
 }

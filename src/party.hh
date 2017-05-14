@@ -45,6 +45,7 @@ protected:
   int _guard;
   int _jlocks;
   int _magic_light_radius;
+  int _rounds_immune_to_fields;
 
   Party();
 
@@ -93,6 +94,10 @@ public:
   void set_magic_light_radius(int);
   bool level_up();
   std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
+
+  void immunize_from_fields(int);
+  int decrease_immunity_from_fields();
+  int immune_from_fields();
 };
 
 #endif

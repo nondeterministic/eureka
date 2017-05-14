@@ -1248,6 +1248,13 @@ int l_set_spell_duration_player(lua_State* L)
 	return 0;
 }
 
+int l_walk_through_fields(lua_State* L)
+{
+	int rounds = lua_tonumber(L, 1); // How many rounds does the effect last?
+	Party::Instance().immunize_from_fields(rounds);
+	return 0;
+}
+
 void publicize_api(lua_State* L)
 {
   // Lua 5.1
@@ -1385,6 +1392,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_remove_icon_walkable);
   lua_setglobal(L, "simpl_remove_icon_walkable");
+
+  lua_pushcfunction(L, l_walk_through_fields);
+  lua_setglobal(L, "simpl_walk_through_fields");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

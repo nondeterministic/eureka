@@ -358,6 +358,12 @@ void GameControl::do_turn(bool resting)
 	if (Party::Instance().rounds_intoxicated > 0)
 		Party::Instance().rounds_intoxicated--;
 
+	// Reduce immunised from (magic/poison/etc) fields in each round.
+	if (Party::Instance().immune_from_fields() > 0) {
+		if (Party::Instance().decrease_immunity_from_fields() == 0)
+			printcon("Your party feels somehow less protected again...");
+	}
+
 	// Check poisoned status
 	for (int i = 0; i < Party::Instance().party_size(); i++) {
 		PlayerCharacter* pl = Party::Instance().get_player(i);
@@ -1572,9 +1578,6 @@ void GameControl::keypress_attack()
 
 void GameControl::keypress_talk()
 {
-	MiniWin& mwin = MiniWin::Instance();
-	ZtatsWin& zwin = ZtatsWin::Instance();
-
 	if (!party->indoors()) {
 		printcon("Talk - sorry, no one is around");
 		return;
@@ -1998,6 +2001,8 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 		return false;
 	}
 
+	int tile = arena->get_map()->get_tile(party->x + x_diff, party->y + y_diff);
+
 	// Indoors
 	if (!is_arena_outdoors()) {
 		// Check if exiting map!
@@ -2012,11 +2017,10 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 		// If we're ignoring walkability, or we don't and the map is walkable, do it!
 		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
-			int tile = arena->get_map()->get_tile(party->x + x_diff, party->y + y_diff);
 			IconProps* tile_props = IndoorsIcons::Instance().get_props(tile);
 
 			// Slow walking means to drop every third step.
-			if (tile_props->_is_walkable == PropertyStrength::Some) {
+			if (!ignore_walkable && tile_props->_is_walkable == PropertyStrength::Some) {
 				static int every_third_step = 0;
 				printcon("Slow.");
 				if (every_third_step == 0) {
@@ -2065,7 +2069,24 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 		// In theory, what's here could move into the above switch stmt., but if we ever want a more generic
 		// handling of outdoor movements, then it would be nice to load it off right here, instead of blowing
 		// up that switch statement, which handles both indoors and outdoors coordinate changes.
-		if (walkable_for_party(party->x + x_diff, party->y + y_diff) || ignore_walkable) {
+		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
+			IconProps* tile_props = OutdoorsIcons::Instance().get_props(tile);
+
+			// Slow walking means to drop every third step.
+			if (!ignore_walkable && tile_props->_is_walkable == PropertyStrength::Some) {
+				static int every_third_step = 0;
+				printcon("Slow.");
+				if (every_third_step == 0) {
+					std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+					every_third_step++;
+					return false;
+				}
+				else if (every_third_step == 1)
+					every_third_step++;
+				else // if (every_third_step == 2)
+					every_third_step = 0;
+			}
+
 			switch (dir) {
 			case DIR_LEFT:
 				if (screen_pos_party.first < screen_center_x) {
@@ -2157,11 +2178,7 @@ void GameControl::keypress_move_party(LDIR dir)
 		_sample.play(WALK);
 		printcon(ldirToString.at(dir) + ".");
 	}
-//	else {
-//		_sample.set_volume(24);
-//		_sample.play(HIT);
-//		printcon("Blocked.");
-//	}
+	// else party did not move.  Handled inside move_party().
 
 	do_turn();
 }
