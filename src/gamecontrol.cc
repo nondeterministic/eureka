@@ -239,9 +239,6 @@ std::shared_ptr<Arena> GameControl::get_arena()
 void GameControl::do_turn(bool resting)
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
-//	static SoundSample sample;  // If this isn't static, then the var
-//	                            // gets discarded before the sample has
-//	                            // finished playing
 
 	_turns++;
 	_turn_passed = 0;
@@ -2159,8 +2156,6 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 void GameControl::keypress_move_party(LDIR dir)
 {
-	// static SoundSample sample;  // If this isn't static, then the var gets discarded before the sample has finished playing
-
 	if (Party::Instance().rounds_intoxicated > 0) {
 		bool move_random = random(0,10) >= 7;
 
