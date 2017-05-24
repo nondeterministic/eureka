@@ -9,7 +9,7 @@ do
    -- --------------------------------------------------------
 
    c_values = { 
-      name = "Lea", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
+      name = "Olav", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
       iq = 15, endd = 7, sex = "MALE", profession = "MAGE", weapon = Weapons["axe"], shield = Shields["small shield"] 
    } 
 
@@ -40,19 +40,17 @@ do
    -- -----------------------------------------------
 
    items = {}
-   items[0] = Edibles["nightshade"]
-   items[1] = Edibles["garlic"]
-   items[2] = Edibles["sulphur"]
-   -- items[3] = Edibles["standard ration"]
-   -- items[2] = Edibles["magic mushroom"]
+   items[0] = Services["heal light wounds"]
+   items[1] = Services["heal"]
+   items[2] = Services["heal poisonous state"]
 
    function description()
-      simpl_printcon("You see pretty woman wearing an unorderly, old dress.")
+      simpl_printcon("You see serious but friendly looking priest.")
    end
 
    function name()
-      simpl_printcon("My name is " .. c_values["name"] .. ", I collect herbs and sell them to the people who need them. " ..
-		     "Are you interested in buying some? (y/n)")
+      simpl_printcon("My name is " .. c_values["name"] .. ", I am a healer. " ..
+		     "Are you in need of healing? (y/n)")
 
       answer = simpl_getkey("yn")
       simpl_printcon(string.format("%s ", answer))
@@ -71,26 +69,20 @@ do
       
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyitem(selected_item)
+	 buyResult = simpl_buyservice(selected_item)
 	 if (buyResult == -1) then
-	    simpl_printcon("It seems, you already carry too much.")
-	 elseif (buyResult == -2) then
 	    simpl_printcon("You don't have enough gold.")
-	 elseif (buyResult == 0) then
-	    simpl_printcon("I am sure it will guide you well.")
-	 else
-	    simpl_printcon("Nevermind.")
 	 end
       else
-	 simpl_printcon("Changed your mind then, eh?")
+	 simpl_printcon("So, you changed your mind then?")
       end
       
-      simpl_printcon("Dost thou seek to undertake further business (y/n)?")
+      simpl_printcon("Dost thou seek to buy more of my time (y/n)?")
       job2()
    end
 
    function job()
-      simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)?")
+      simpl_printcon("In order to live, I sell my gift of healing to the people in need in this town. Are you in need of healing? (y/n)?")
       job2()
    end
    
@@ -108,7 +100,7 @@ do
    end
    
    function join()
-      simpl_printcon("I cannot join thee, my responsibilities are with my store.")
+      simpl_printcon("I cannot join thee, my responsibilities are with this town.")
       return false
    end
   

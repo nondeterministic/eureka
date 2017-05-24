@@ -9,7 +9,7 @@ do
    -- --------------------------------------------------------
 
    c_values = { 
-      name = "Lea", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
+      name = "Lera", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
       iq = 15, endd = 7, sex = "MALE", profession = "MAGE", weapon = Weapons["axe"], shield = Shields["small shield"] 
    } 
 
@@ -115,15 +115,11 @@ do
    end
    
    function otherwise(item)
-      if (item == "edvard") then
-	 simpl_printcon("I do remember him, but I have not seen him since the battle. Perhaps ask Melnior the grand wizard about his whereabouts.")
-      elseif (item == "battle") then
-	 simpl_printcon("It is best, you try and ask Melnior about what happened.")
-      elseif (item == "melnior") then
-	 simpl_printcon("He is the great wizard of Velnibras. You can find him in the tower in the south east.")	 
-      elseif (item == "buy") then
-	 job()
-      else	
+      if (item == "melnior") then
+	 simpl_printcon("Melnior is the great wizard of Velnibras. You can find him in the tower in the south east behind a magical force field.")
+      elseif (string.find(item,"force") or string.find(item, "magic")) then
+	 simpl_printcon("Thou must not attempt to enter without protection, or you will die!")
+      else
 	 simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end

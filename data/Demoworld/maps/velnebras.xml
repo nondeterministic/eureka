@@ -19,7 +19,7 @@
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 2</row>
     <row>4 4 4 4 4 82 5 4 4 4 4 4 4 4 4 4 82 4 4 4 4 4 4 4 82 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2</row>
     <row>4 4 4 4 4 4 4 190 190 197 190 190 197 190 190 4 4 4 4 4 4 4 4 4 4 4 4 4 190 190 197 190 190 197 190 190 4 4 2 2</row>
-    <row>4 4 4 4 4 4 4 190 89 89 89 89 89 89 190 4 4 4 4 4 4 4 4 4 4 4 4 4 190 514 89 89 89 89 465 190 4 4 2 2</row>
+    <row>4 4 4 4 4 4 4 190 89 89 89 89 89 37 190 4 4 4 4 4 4 4 4 4 4 4 4 4 190 514 89 89 89 89 465 190 4 4 2 2</row>
     <row>4 4 4 4 5 82 4 197 89 89 89 89 89 89 190 4 4 4 4 4 4 4 4 4 4 4 4 4 190 514 89 89 89 89 89 197 4 4 2 2</row>
     <row>4 4 4 4 82 4 5 190 89 89 89 89 89 89 190 190 190 190 190 190 4 4 4 190 190 190 190 190 190 89 89 89 89 89 465 190 82 4 4 2</row>
     <row>4 4 4 4 82 4 4 190 89 89 89 89 89 89 190 120 89 89 147 4 4 4 4 4 147 89 89 120 190 120 89 89 89 89 465 190 4 4 4 4</row>
@@ -28,20 +28,20 @@
     <row>4 4 4 4 4 82 4 190 89 89 89 89 190 190 190 190 89 89 190 4 4 4 4 4 190 89 89 190 190 415 89 89 89 89 465 190 4 4 4 4</row>
     <row>4 4 4 5 4 4 4 197 89 89 89 89 71 89 89 190 190 190 190 4 4 4 4 4 190 190 190 190 89 89 89 89 89 89 89 197 4 4 4 4</row>
     <row>4 4 4 4 4 4 4 190 190 190 190 190 190 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 190 190 190 190 190 4 4 4 4</row>
-    <row>4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 4 82 4 4 4 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4</row>
     <row>4 4 4 4 6 4 4 4 4 4 4 4 190 89 89 147 4 4 4 4 4 4 4 4 4 4 4 147 89 89 190 4 4 4 4 4 4 4 4 4</row>
     <row>4 4 4 4 4 5 6 4 4 4 5 4 198 89 89 168 4 4 4 4 4 4 4 4 4 4 4 168 89 89 198 4 4 4 4 4 4 4 4 4</row>
     <row>4 4 4 4 82 82 4 4 4 4 4 4 190 89 89 147 4 4 4 4 4 4 4 4 4 4 4 147 89 89 190 4 4 4 5 4 4 4 4 4</row>
-    <row>4 4 4 4 4 4 4 6 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 190 109 190 4 5 4 4 4 4 4 4 4</row>
-    <row>4 4 4 4 4 4 4 6 5 4 4 4 190 89 89 147 4 4 4 4 4 4 4 4 4 4 4 147 89 89 190 4 4 4 4 82 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 6 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 82 4 4 190 190 109 190 4 5 4 4 4 4 4 4 4</row>
+    <row>4 4 4 4 4 4 4 6 5 4 4 4 190 89 89 147 4 4 4 4 82 4 4 4 4 4 4 147 89 89 190 4 4 4 4 82 4 4 4 4</row>
     <row>4 4 4 4 4 5 4 4 4 4 4 4 198 89 89 168 4 4 4 4 4 4 4 4 4 4 4 168 89 89 198 4 4 4 6 4 4 4 4 4</row>
     <row>4 4 4 4 4 4 82 4 4 4 4 4 190 89 89 147 4 4 4 4 4 4 4 4 4 4 4 147 89 89 190 4 4 4 4 4 5 4 4 4</row>
-    <row>4 4 4 4 4 6 4 4 4 4 4 4 198 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 89 89 198 4 4 5 4 4 4 6 82 4</row>
+    <row>4 4 4 4 4 6 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 4 4 5 4 4 4 6 82 4</row>
     <row>4 4 4 4 6 6 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 4 4 4 4 190 89 89 190 4 4 4 4 4 4 4 82 4</row>
     <row>4 4 4 4 82 4 4 190 190 190 190 190 190 190 190 190 190 190 190 190 190 71 190 190 190 190 190 190 89 89 190 190 190 190 190 190 4 6 4 4</row>
-    <row>4 4 4 4 4 4 4 190 508 89 89 89 89 89 89 89 89 147 89 89 89 89 89 89 89 89 147 89 89 89 89 89 89 89 89 190 6 6 4 5</row>
+    <row>4 4 4 4 4 4 4 190 508 89 89 89 89 89 89 89 89 147 89 89 89 89 89 89 89 89 190 89 89 89 89 89 89 89 89 190 6 6 4 5</row>
     <row>4 4 4 4 4 82 4 197 187 157 154 176 151 177 188 89 89 89 89 89 89 89 89 89 89 89 89 89 105 105 105 105 105 105 89 197 4 4 4 5</row>
-    <row>4 4 4 5 4 4 4 190 89 89 89 89 89 89 89 89 89 147 89 89 89 89 89 89 89 89 147 89 105 89 89 89 89 105 89 190 4 82 4 4</row>
+    <row>4 4 4 5 4 4 4 190 89 89 89 89 89 89 89 89 89 147 89 89 89 89 89 89 89 89 190 89 105 89 89 89 89 105 89 190 4 82 4 4</row>
     <row>4 4 4 4 4 5 4 190 89 89 89 89 89 89 89 89 190 190 190 190 190 190 190 190 190 190 190 89 105 89 89 89 89 105 89 190 4 4 5 4</row>
     <row>4 4 4 4 82 4 4 197 187 155 164 164 153 185 188 89 190 4 4 4 4 4 4 4 4 4 190 89 105 105 105 105 105 105 89 197 4 82 4 4</row>
     <row>4 4 4 4 4 6 4 190 111 89 89 89 89 89 89 89 190 4 4 4 4 5 4 4 4 4 190 89 89 89 89 89 89 89 89 190 4 4 4 4</row>
@@ -52,26 +52,26 @@
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 0 4 4 4 4 4 4 4 4 0 4 4 4 4 4 4 4 4 4</row>
   </data>
   <objects>
-    <object x="9" y="13" ox="0" oy="0" icon_no="705" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="12" ox="0" oy="0" icon_no="702" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="31" y="35" ox="31" oy="35" icon_no="350" layer="0" id="magician" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_mage.lua"/>
-    <object x="29" y="34" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="12" ox="0" oy="0" icon_no="702" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="12" y="4" ox="0" oy="0" icon_no="42" layer="0" id="boat" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="27" y="27" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="24" y="16" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="16" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="32" ox="0" oy="0" icon_no="56" layer="0" id="hippiemerchant" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_herbs.lua"/>
-    <object x="8" y="13" ox="0" oy="0" icon_no="705" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="14" y="17" ox="0" oy="0" icon_no="93" layer="0" id="lever2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="22" y="30" ox="22" oy="30" icon_no="126" layer="0" id="guard3" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
-    <object x="21" y="18" ox="21" oy="18" icon_no="132" layer="0" id="jester" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_jester.lua"/>
+    <object x="11" y="15" ox="0" oy="0" icon_no="646" layer="0" id="armour" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="19" y="13" ox="19" oy="13" icon_no="126" layer="0" id="guard" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
+    <object x="11" y="37" ox="11" oy="37" icon_no="128" layer="0" id="merchant" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_food.lua"/>
+    <object x="13" y="23" ox="13" oy="23" icon_no="141" layer="0" id="mage2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_mage2.lua"/>
     <object x="23" y="13" ox="23" oy="13" icon_no="126" layer="0" id="guard2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
     <object x="19" y="31" ox="0" oy="0" icon_no="93" layer="0" id="lever" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="13" y="23" ox="13" oy="23" icon_no="141" layer="0" id="mage2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_mage2.lua"/>
-    <object x="11" y="37" ox="11" oy="37" icon_no="128" layer="0" id="merchant" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_food.lua"/>
-    <object x="19" y="13" ox="19" oy="13" icon_no="126" layer="0" id="guard" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
-    <object x="11" y="15" ox="0" oy="0" icon_no="646" layer="0" id="armour" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="18" ox="21" oy="18" icon_no="132" layer="0" id="jester" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_jester.lua"/>
+    <object x="22" y="30" ox="22" oy="30" icon_no="126" layer="0" id="guard3" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
+    <object x="8" y="13" ox="0" oy="0" icon_no="705" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="14" y="17" ox="0" oy="0" icon_no="93" layer="0" id="lever2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="32" ox="0" oy="0" icon_no="56" layer="0" id="hippiemerchant" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_herbs.lua"/>
+    <object x="18" y="16" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="24" y="16" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="27" y="27" ox="0" oy="0" icon_no="171" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="12" y="4" ox="0" oy="0" icon_no="42" layer="0" id="boat" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="12" ox="0" oy="0" icon_no="702" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="31" y="35" ox="31" oy="35" icon_no="350" layer="0" id="magician" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_mage.lua"/>
+    <object x="29" y="34" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="12" ox="0" oy="0" icon_no="702" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="13" ox="0" oy="0" icon_no="705" layer="0" id="potion" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_PULLPUSH" x="19" y="31">
@@ -79,6 +79,13 @@
       <event type="EVENT_PLAY_SOUND">bridge.wav</event>
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="21" y="31" icon_now="71" icon_new="72"/>
+      </event>
+    </action>
+    <action type="ACT_ON_PULLPUSH" x="14" y="17">
+      <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
+      <event type="EVENT_PLAY_SOUND">bridge.wav</event>
+      <event type="EVENT_CHANGE_ICON">
+        <change_icon x="12" y="19" icon_now="71" icon_new="72"/>
       </event>
     </action>
   </actions>

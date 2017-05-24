@@ -548,6 +548,7 @@ int l_level_up(lua_State* L)
 /**
  * On success, 0 is returned.
  * -1 is returned if the party doesn't have enough money to afford the service.
+ * 0 is returned on success.
  */
 
 int l_buyservice(lua_State* L)

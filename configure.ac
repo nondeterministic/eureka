@@ -80,6 +80,7 @@ AC_CONFIG_FILES([Makefile \
 		 data/Demoworld/images/Makefile
 		 data/Demoworld/maps/Makefile
 		 data/Demoworld/sound/Makefile
+		 data/Demoworld/services/Makefile
 		 data/Demoworld/weapons/Makefile
 		 data/Demoworld/shields/Makefile
 		 data/Demoworld/bestiary/Makefile
