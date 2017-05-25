@@ -93,7 +93,6 @@ do
 		  -- Open the gate and play a creeky sound!
 		  simpl_play_sound("55820__sergenious__bridge.wav")
 		  simpl_change_icon(39, 36, 71, 72)
-	       else
 	       end
 	    end
 	    simpl_printcon("To good health! (He raises his own drinking glass towards you.)")

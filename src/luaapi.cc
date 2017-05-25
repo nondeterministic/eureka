@@ -246,12 +246,14 @@ int l_ztatswin_restore(lua_State* L)
 	return 0;
 }
 
-// Returns number of selected player in party
+// Returns number of selected player in party,
+// -1, if action was somehow aborted by the user.
 
 int l_choose_player(lua_State* L)
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
+	zwin.update_player_list();
 	int player = zwin.select_player();
 	lua_pushnumber(L, player);
 
@@ -555,6 +557,8 @@ int l_buyservice(lua_State* L)
 {
     std::string selected_service = lua_tostring(L, 2);
     int selected_player          = lua_tonumber(L, 1);
+
+    std::cout << "SERVICE CHOSEN: " << selected_service << "\n";
 
     Service* service = NULL;
     try {

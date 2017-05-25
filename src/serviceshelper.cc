@@ -38,10 +38,11 @@ Service* ServicesHelper::createFromLua(std::string array_name, lua_State* lua_st
 	Service *w = new Service();
 
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
-	w->heal = (int)(lua.get_item_prop<double>(globArrayName, array_name, "heal"));
+	w->heal        = (int)(lua.get_item_prop<double>(globArrayName, array_name, "heal"));
 	w->heal_poison = lua.get_item_prop<bool>(globArrayName, array_name, "heal_poison");
-	w->resurrect = lua.get_item_prop<bool>(globArrayName, array_name, "resurrect");
+	w->resurrect   = lua.get_item_prop<bool>(globArrayName, array_name, "resurrect");
 	w->print_after = lua.get_item_prop<std::string>(globArrayName, array_name, "print_after");
+	w->level_up    = lua.get_item_prop<bool>(globArrayName, array_name, "level_up");
 
 	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
 
@@ -58,12 +59,21 @@ void ServicesHelper::apply(Service* s, int party_member)
 		GameControl::Instance().printcon(pl->name() + " is dead. Choose someone else, please.");
 		return;
 	}
-	else if (s->heal > 0)
+	else if (s->heal > 0 && pl->hp() < pl->hpm()) {
 		pl->set_hp(min(pl->hpm(), pl->hp() + s->heal));
-	else if (s->heal_poison || s->resurrect)
+	}
+	else if (s->heal_poison && pl->condition() == PlayerCondition::POISONED) {
 		pl->set_condition(GOOD);
+	}
+	else if (pl->hp() <= 0 && s->resurrect) {
+		pl->set_condition(GOOD);
+	}
+	else if (s->level_up) {
+		GameControl::Instance().printcon("TODO: NOT YET IMPLEMENTED.");  // TODO
+		return;
+	}
 	else {
-		std::cerr << "ERROR: serviceshelper.cc: Failed to apply service " << s->name() << ".\n";
+		GameControl::Instance().printcon("Not applicable.");
 		return;
 	}
 
