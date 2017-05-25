@@ -497,6 +497,7 @@ int l_buyitem(lua_State* L)
 			if (Party::Instance().gold() >= item->gold() * how_many) {  // Check if sufficient gold
 				Party::Instance().set_gold(Party::Instance().gold() - item->gold() * how_many);
 				// Add the bought item, which we also checked to see if the chosen name was correct, etc.
+				std::cout << "ADDING " << item->description() << item->name() << " TO INV.\n";
 				Party::Instance().inventory()->add(item);
 				// Now create and add the rest of the bought items...
 				for (int i = 0; i < how_many - 1; i++)

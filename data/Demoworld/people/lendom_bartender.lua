@@ -69,7 +69,7 @@ do
 
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyitem(selected_player, selected_item)
+	 buyResult = simpl_buyitem(selected_item)
 	 if (buyResult == -1) then
 	    simpl_printcon("It seems, you already carry too much.")
 	 elseif (buyResult == -2) then
@@ -113,9 +113,9 @@ do
    end
    
    function otherwise(item)
-      if (item == "buy") then
+      if (item == "thirsty" or item == "hungry" or item == "bartender" or item == "business" or item == "food" or item == "buy" or item == "menu" or item == "order" or item == "sell" or item == "pub" or item == "drink" or item == "drinks") then
 	 job()
-      elseif (string.find(item, "hotel") or string.find(item, "room") or string.find(item, "stay") or string.find(item, "bed") or string.finde(item, "guest") or string.find(item, "rest")) then
+      elseif (string.find(item, "hotel") or string.find(item, "door") or string.find(item, "room") or string.find(item, "stay") or string.find(item, "bed") or string.find(item, "guest") or string.find(item, "rest")) then
 	 simpl_printcon("Yes, I used to offer lodging here as well, but no one has been staying here for ages. If you like, I can unlock the room for you, and you can stay there for nothing. " ..
 			   "It is all the same to me. Are you interested? (y/n)")
 	 answer = simpl_getkey("yn")

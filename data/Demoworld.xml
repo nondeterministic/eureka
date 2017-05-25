@@ -118,7 +118,7 @@
       <icon no="106" trans="full" walk="full">nothing special</icon>
       <icon no="107" trans="full" walk="full">nothing special</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>
-      <icon no="109" trans="not" walk="not">a wall with something odd about it</icon>
+      <icon no="109" trans="not" walk="full">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
       <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.wav">a fireplace</icon>
       <icon no="112" trans="full" walk="slow">fire</icon>
