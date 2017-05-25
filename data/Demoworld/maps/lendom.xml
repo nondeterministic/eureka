@@ -62,14 +62,14 @@
   <objects>
     <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="35" y="15" ox="0" oy="0" icon_no="1139" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="16" y="32" ox="0" oy="0" icon_no="53" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="16" y="32" ox="16" oy="32" icon_no="53" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="26" y="23" ox="0" oy="0" icon_no="635" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="29" y="23" ox="0" oy="0" icon_no="271" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="29" y="23" ox="29" oy="23" icon_no="271" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_jester.lua"/>
     <object x="10" y="37" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="34" y="5" ox="0" oy="0" icon_no="999" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="34" y="5" ox="34" oy="5" icon_no="999" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="10" y="39" ox="0" oy="0" icon_no="110" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="38" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="4" y="39" ox="0" oy="0" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="4" y="39" ox="4" oy="39" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="26" y="37" ox="0" oy="0" icon_no="637" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="10" ox="0" oy="0" icon_no="638" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="36" y="40" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
@@ -79,12 +79,12 @@
     <object x="20" y="23" ox="20" oy="23" icon_no="51" layer="0" id="Aconite" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="12" y="19" ox="12" oy="19" icon_no="58" layer="0" id="Tinker" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="29" y="16" ox="29" oy="16" icon_no="128" layer="0" id="Bartender" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_bartender.lua"/>
-    <object x="6" y="45" ox="0" oy="0" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="6" y="45" ox="6" oy="45" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="28" y="29" ox="28" oy="29" icon_no="311" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="17" y="21" ox="0" oy="0" icon_no="612" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="21" y="30" ox="0" oy="0" icon_no="621" layer="0" id="magic_sword" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="21" ox="0" oy="0" icon_no="615" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="33" y="21" ox="33" oy="21" icon_no="62" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="33" y="21" ox="33" oy="21" icon_no="62" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger.lua"/>
     <object x="36" y="36" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="12" y="9" ox="12" oy="9" icon_no="64" layer="0" id="druid" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_druid.lua"/>
     <object x="29" y="38" ox="29" oy="38" icon_no="139" layer="0" id="mayor" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>

@@ -682,6 +682,33 @@ int l_bonus(lua_State* L)
   return 1;
 }
 
+int l_get_partysize(lua_State* L)
+{
+	lua_pushnumber(L, Party::Instance().party_size());
+	return 1;
+}
+
+int l_get_level(lua_State* L)
+{
+  int player_number = lua_tonumber(L, 1);
+
+  if (player_number < 0 || player_number >= Party::Instance().party_size()) {
+	  std::cerr << "ERROR: luaapi.cc: Cannot determine level of player " << player_number << "\n";
+	  lua_pushnumber(L, 0);
+	  return 1;
+  }
+
+  PlayerCharacter* player = Party::Instance().get_player(player_number);
+  if (player == NULL) {
+	  std::cerr << "ERROR: luaapi.cc: Cannot determine level of player " << player_number << "\n";
+	  lua_pushnumber(L, 0);
+	  return 1;
+  }
+
+  lua_pushnumber(L, player->level());
+  return 1;
+}
+
 int l_get_player_ac(lua_State* L)
 {
   std::string player_name = (std::string)(lua_tostring(L, 1));
@@ -1305,6 +1332,12 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_bonus);
   lua_setglobal(L, "simpl_bonus");
+
+  lua_pushcfunction(L, l_get_level);
+  lua_setglobal(L, "simpl_get_level");
+
+  lua_pushcfunction(L, l_get_partysize);
+  lua_setglobal(L, "simpl_get_partysize");
 
   lua_pushcfunction(L, l_get_player_ac);
   lua_setglobal(L, "simpl_get_ac");
