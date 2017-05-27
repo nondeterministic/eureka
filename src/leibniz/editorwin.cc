@@ -687,16 +687,16 @@ void EditorWin::add_action(int x, int y)
 
 void EditorWin::rm_obj(int x, int y)
 {
-  int map_x = 0;
-  int map_y = 0;
-  _sdleditor->pixel_to_map(x, y, map_x, map_y);
+	int map_x = 0;
+	int map_y = 0;
+	_sdleditor->pixel_to_map(x, y, map_x, map_y);
 
-//  get_curr_map()->pop_obj(map_x, map_y);
+	get_curr_map()->pop_obj(map_x, map_y);
 
-  ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
-  // This could be much more efficient if I would only draw the
-  // icon just drawn, but f*ck it for now...
-  this->queue_draw();
+	ref_actiongr->get_action("FileMenuSave")->set_sensitive(true);
+
+	// This could be much more efficient if I would only draw the icon just drawn, but f*ck it for now...
+	this->queue_draw();
 }
 
 // void EditorWin::put_curr_tile_in_obj_register(int x, int y)
