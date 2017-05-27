@@ -82,6 +82,7 @@ AC_CONFIG_FILES([Makefile \
 		 data/Demoworld/sound/Makefile
 		 data/Demoworld/services/Makefile
 		 data/Demoworld/weapons/Makefile
+		 data/Demoworld/armour/Makefile
 		 data/Demoworld/shields/Makefile
 		 data/Demoworld/bestiary/Makefile
 		 data/Demoworld/miscitems/Makefile

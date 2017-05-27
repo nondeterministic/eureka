@@ -46,6 +46,7 @@ do
    function name()
       simpl_printcon(c_values["name"] .. ". What is yours?")
       answer = simpl_getcon()
+      simpl_printcon(answer .. " ")
       simpl_printcon("That's a funny name.")
    end
 

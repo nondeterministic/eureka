@@ -103,7 +103,7 @@
             <object x="17" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_ADD_OBJECT">
-            <object x="17" y="9" ox="0" oy="0" icon_no="706" layer="0" id="potion_invincibility" lua_name="potions::invincibility" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+            <object x="17" y="9" ox="0" oy="0" icon_no="706" layer="0" id="potion of invincibility" lua_name="potions::potion of invincibility" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
         </action>
       </actions>

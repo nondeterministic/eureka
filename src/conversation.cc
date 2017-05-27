@@ -43,7 +43,9 @@ void Conversation::initiate()
 	// Load corresponding Lua conversation file
 	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(lua_conversation_file)).c_str())) {
 		std::cerr << "ERROR: conversation.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
-		exit(EXIT_FAILURE);
+		printcon("It seems the person can hear you, but cannot be bothered to respond...");
+		return;
+		// exit(EXIT_FAILURE);
 	}
 
 	lua.call_void_fn("description");

@@ -71,7 +71,7 @@
     <object x="11" y="37" ox="11" oy="37" icon_no="128" layer="0" id="merchant" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_food.lua"/>
     <object x="13" y="23" ox="13" oy="23" icon_no="141" layer="0" id="mage2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/velnebras_mage2.lua"/>
     <object x="19" y="13" ox="19" oy="13" icon_no="126" layer="0" id="guard" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="person" init_script="people/velnebras_guard.lua"/>
-    <object x="11" y="15" ox="0" oy="0" icon_no="646" layer="0" id="armour" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="15" ox="0" oy="0" icon_no="646" layer="0" id="armour" lua_name="armour::platemail" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_PULLPUSH" x="19" y="31">
