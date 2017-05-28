@@ -293,6 +293,11 @@ std::string Party::to_xml()
 			playerEl->add_child("shield")->add_child_text(player.shield()->get_lua_name());
 		else
 			playerEl->add_child("shield");
+
+		if (player.armour() != NULL)
+			playerEl->add_child("armour")->add_child_text(player.armour()->get_lua_name());
+		else
+			playerEl->add_child("armour");
 	}
 
 	// Add inventory
@@ -546,7 +551,16 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 
 		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
 		lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
-		lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
+
+		if (player.armour() != NULL) {
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "Armour: ";
+			string_to_be_added << player.armour()->name();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+		}
+		else
+			lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
+
 		lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
 
 		lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));

@@ -70,6 +70,8 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 
 PlayerCharacter::PlayerCharacter(const PlayerCharacter& p)
 {
+	std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
+
 	_race = p._race;
 	_prof = p._prof;
 	_name = p._name;
@@ -92,12 +94,11 @@ PlayerCharacter::PlayerCharacter(const PlayerCharacter& p)
 	_sex = p._sex;
 	_rh_item = p._rh_item;
 	_lh_item = p._lh_item;
+	_armour = p._armour;
 
 	BOOST_FOREACH(active_spell::value_type spell, p._active_spells) {
 		_active_spells[spell.first] = spell.second;
 	}
-
-	// std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
 }
 
 bool PlayerCharacter::is_spell_caster()

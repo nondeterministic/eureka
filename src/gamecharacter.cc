@@ -5,6 +5,7 @@
 #include "item.hh"
 #include "weapon.hh"
 #include "shield.hh"
+#include "armour.hh"
 
 #include <string>
 #include <iostream>
@@ -13,6 +14,22 @@ GameCharacter::GameCharacter()
 {
 	_rh_item = NULL;
 	_lh_item = NULL;
+	_armour = NULL;
+	_condition = GOOD;
+	_att = RIGHT;
+	_end = 0;
+	_char = 0;
+	_dxt = 0;
+	_sp_max = 0;
+	_sp = 0;
+	_hp = 1;
+	_hp_max = 1;
+	_sex = true;
+	_iq = 0;
+	_wis = 0;
+	_luck = 0;
+	_str = 0;
+	_race = HUMAN;
 	_gold = 0;
 }
 
@@ -37,6 +54,16 @@ void GameCharacter::set_shield(Shield* s)
 Shield* GameCharacter::shield()
 {
 	return _lh_item;
+}
+
+void GameCharacter::set_armour(Armour* s)
+{
+	_armour = s;
+}
+
+Armour* GameCharacter::armour()
+{
+	return _armour;
 }
 
 Weapon* GameCharacter::weapon()

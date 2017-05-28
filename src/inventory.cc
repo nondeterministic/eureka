@@ -21,6 +21,7 @@
 #include "item.hh"
 #include "weapon.hh"
 #include "shield.hh"
+#include "armour.hh"
 #include "edible.hh"
 #include "playercharacter.hh"
 #include "party.hh"
@@ -149,7 +150,7 @@ std::vector<pair<StringAlignmentTuple, Item*>> Inventory::create_content_page(In
 		bool add_item = inventory_type == InventoryType::Anything;
 
 		if (!add_item) {
-			if (inventory_type == InventoryType::Wearables && (dynamic_cast<Weapon*>(item) || dynamic_cast<Shield*>(item)))
+			if (inventory_type == InventoryType::Wearables && (dynamic_cast<Weapon*>(item) || dynamic_cast<Armour*>(item) || dynamic_cast<Shield*>(item)))
 				add_item = true;
 			else if (inventory_type == InventoryType::MagicHerbs && dynamic_cast<Edible*>(item) && ((Edible*)item)->is_magic_herb)
 				add_item = true;

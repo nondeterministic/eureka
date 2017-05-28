@@ -17,24 +17,35 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#ifndef __ARMOUR_HH
-#define __ARMOUR_HH
-
+#include "armour.hh"
 #include "item.hh"
+#include <iostream>
 
-class Armour : public Item
+Armour::Armour()
 {
-protected:
-  int _protection;
+	_protection = 0;
+}
 
-public:
-  Armour();
-  virtual ~Armour();
-  Armour(const Armour&);
+Armour::~Armour()
+{
+}
 
-  std::string get_lua_name();
-  int protection();
-  void protection(int);
-};
+Armour::Armour(const Armour& s): Item(s)
+{
+  _protection = s._protection;
+}
 
-#endif
+int Armour::protection()
+{
+  return _protection;
+}
+
+void Armour::protection(int p)
+{
+  _protection = p;
+}
+
+std::string Armour::get_lua_name()
+{
+	return "armour::" + name();
+}

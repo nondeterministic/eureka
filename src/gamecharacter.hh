@@ -25,6 +25,7 @@
 #include "item.hh"
 #include "weapon.hh"
 #include "shield.hh"
+#include "armour.hh"
 #include "race.hh"
 #include "spellsbearer.hh"
 
@@ -65,6 +66,7 @@ protected:
 
   Weapon* _rh_item;
   Shield* _lh_item;
+  Armour* _armour;
   
 public:
   GameCharacter();
@@ -73,6 +75,8 @@ public:
   Weapon* weapon();
   void set_shield(Shield*);
   Shield* shield();
+  Armour* armour();
+  void set_armour(Armour*);
   void set_name(const char*);
   void set_name(std::string);
   std::string name();

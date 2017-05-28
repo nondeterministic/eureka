@@ -12,6 +12,7 @@
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
 #include "serviceshelper.hh"
+#include "armourhelper.hh"
 #include "mischelper.hh"
 #include "util.hh"
 #include "world.hh"
@@ -57,6 +58,8 @@ Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 			return WeaponHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "shields")
 			return ShieldHelper::createFromLua(lname_split[1], lua_state);
+		else if (lname_split[0] == "armour")
+			return ArmourHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "edibles")
 			return EdiblesHelper::createFromLua(lname_split[1], lua_state);
 		else if (lname_split[0] == "potions")
@@ -90,6 +93,8 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 		return WeaponHelper::createFromLua(item_name, lua_state);
 	else if (ShieldHelper::existsInLua(item_name, lua_state))
 		return ShieldHelper::createFromLua(item_name, lua_state);
+	else if (ArmourHelper::existsInLua(item_name, lua_state))
+		return ArmourHelper::createFromLua(item_name, lua_state);
 	else if (EdiblesHelper::existsInLua(item_name, lua_state))
 		return EdiblesHelper::createFromLua(item_name, lua_state);
 	else if (ServicesHelper::existsInLua(item_name, lua_state))

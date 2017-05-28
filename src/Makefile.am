@@ -89,11 +89,13 @@ eureka_SOURCES = \
 	potion.hh potion.cc \
 	service.hh service.cc \
 	miscitem.hh miscitem.cc \
+	armour.hh armour.cc \
 	shield.hh shield.cc \
 	weapon.hh weapon.cc \
 	itemfactory.hh itemfactory.cc \
 	weaponhelper.hh weaponhelper.cc \
 	shieldhelper.hh shieldhelper.cc \
+	armourhelper.hh armourhelper.cc \
 	edibleshelper.hh edibleshelper.cc \
 	serviceshelper.hh serviceshelper.cc \
 	potionshelper.hh potionshelper.cc \

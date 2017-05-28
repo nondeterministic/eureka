@@ -23,12 +23,10 @@
 
 EdiblesHelper::EdiblesHelper()
 {
-/*	globArrayName = "Shields";*/
 }
 
 EdiblesHelper::~EdiblesHelper()
 {
-	// TODO Auto-generated destructor stub
 }
 
 void EdiblesHelper::eat_player(Edible* item, PlayerCharacter* pl)

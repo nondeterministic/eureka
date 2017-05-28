@@ -53,6 +53,8 @@ extern "C" {
 #include "weaponhelper.hh"
 #include "edible.hh"
 #include "edibleshelper.hh"
+#include "armour.hh"
+#include "armourhelper.hh"
 #include "shield.hh"
 #include "shieldhelper.hh"
 #include "creature.hh"
@@ -808,7 +810,10 @@ void GameControl::keypress_yield_item(int selected_player)
 		else
 			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Weapon: <none>", AL), NULL));
 
-		content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Armour: <none>", AL), NULL)); // TODO
+		if (player->armour())
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Armour: " + player->armour()->name(), AL), player->armour()));
+		else
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Armour: <none>", AL), NULL));
 
 		if (player->shield())
 			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Shield: " + player->shield()->name(), AL), player->shield()));
@@ -837,6 +842,11 @@ void GameControl::keypress_yield_item(int selected_player)
 			if (player->shield())
 				party->inventory()->add(player->shield());
 			player->set_shield(NULL);
+		}
+		else if (dynamic_cast<Armour*>(selected_item)) {
+			if (player->armour())
+				party->inventory()->add(player->armour());
+			player->set_armour(NULL);
 		}
 
 		// After yielding an item, the AC may have changed, for example.
@@ -1060,7 +1070,9 @@ void GameControl::keypress_use()
 			printcon("Try to (r)eady a weapon instead.");
 		else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state))
 			printcon("Try to (r)eady a shield instead.");
-		else if (selected_item->name() == "jimmy lock") {
+		else if (ArmourHelper::existsInLua(selected_item->name(), _lua_state))
+			printcon("Try to (r)eady an armour instead.");
+		else if (selected_item->name() == "jimmy lock" || selected_item->name() == "key") {
 			if (unlock_item())
 				party->rm_jimmylock();
 		}
@@ -1110,44 +1122,56 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
 		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = party->inventory()->create_content_selection_provider(InventoryType::Wearables);
-		std::vector<Item*> selected_items = zwin.execute(content_provider_selection.get(), SelectionMode::SingleItem);
 
-		if (selected_items.size() > 0) {
-			PlayerCharacter* player = party->get_player(selected_player);
-			Item* selected_item = selected_items[0];
+		if (content_provider_selection->get_page().size() > 0) {
+			std::vector<Item*> selected_items = zwin.execute(content_provider_selection.get(), SelectionMode::SingleItem);
 
-			if (WeaponHelper::existsInLua(selected_item->name(), _lua_state)) {
-				if (player->weapon() != NULL)
-					party->inventory()->add(player->weapon());
-				// This first creates a new weapon by reserving memory for it
-				Weapon* weapon = WeaponHelper::createFromLua(selected_item->name(), _lua_state);
-				player->set_weapon(weapon);
-				// ...and now we are freeing memory for a weapon with the same name in the inventory.
-				// A tad bit complicated, perhaps, but not overly difficult to understand.
-				// Besides, it makes it very explicit what is going on, and I like that.
-				// TODO: Alternatively, one could create a method Inventory::handOver(std::string weapon_name),
-				// which removes the weapon from the inventory list and returns its pointer so that the
-				// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
-				party->inventory()->remove(weapon->name(), weapon->description());
+			if (selected_items.size() > 0) {
+				PlayerCharacter* player = party->get_player(selected_player);
+				Item* selected_item = selected_items[0];
+
+				if (WeaponHelper::existsInLua(selected_item->name(), _lua_state)) {
+					if (player->weapon() != NULL)
+						party->inventory()->add(player->weapon());
+					// This first creates a new weapon by reserving memory for it
+					Weapon* weapon = WeaponHelper::createFromLua(selected_item->name(), _lua_state);
+					player->set_weapon(weapon);
+					// ...and now we are freeing memory for a weapon with the same name in the inventory.
+					// A tad bit complicated, perhaps, but not overly difficult to understand.
+					// Besides, it makes it very explicit what is going on, and I like that.
+					// TODO: Alternatively, one could create a method Inventory::handOver(std::string weapon_name),
+					// which removes the weapon from the inventory list and returns its pointer so that the
+					// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
+					party->inventory()->remove(weapon->name(), weapon->description());
+				}
+				else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state)) {
+					if (player->shield() != NULL)
+						party->inventory()->add(player->shield());
+					Shield* shield = ShieldHelper::createFromLua(selected_item->name(), _lua_state);
+					player->set_shield(shield);
+					party->inventory()->remove(shield->name(), shield->description());
+				}
+				else if (ArmourHelper::existsInLua(selected_item->name(), _lua_state)) {
+					if (player->armour() != NULL)
+						party->inventory()->add(player->armour());
+					Armour* armour = ArmourHelper::createFromLua(selected_item->name(), _lua_state);
+					player->set_armour(armour);
+					party->inventory()->remove(armour->name(), armour->description());
+				}
+				else
+					std::cerr << "WARNING: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
+
+				// After readying an item, the AC may have changed, for example.
+				zwin.update_player_list();
+				printcon("Readying " + selected_item->name());
+				mwin.display_last();
+
+				return selected_item->name();
 			}
-			else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state)) {
-				if (player->shield() != NULL)
-					party->inventory()->add(player->shield());
-				Shield* shield = ShieldHelper::createFromLua(selected_item->name(), _lua_state);
-				player->set_shield(shield);
-				party->inventory()->remove(shield->name(), shield->description());
-			}
-			else
-				std::cerr << "WARNING: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
-
-			// After readying an item, the AC may have changed, for example.
-			zwin.update_player_list();
-			printcon("Readying " + selected_item->name());
-			mwin.display_last();
-
-			return selected_item->name();
 		}
 	}
+	else
+		std::cerr << "INFO: gamecontrol.cc: Contentprovider was empty, while your inventory probably wasn't? Smells like a (harmless) program error.\n";
 
 	mwin.display_last();
 	printcon("Never mind...");
