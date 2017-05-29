@@ -27,6 +27,7 @@
 #include "itemfactory.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "armourhelper.hh"
 
 #include <vector>
 #include <iostream>
@@ -259,6 +260,11 @@ bool GameState::load(lua_State* lua_state)
 										std::string shield_name = reader.read_string();
 										std::string short_name = shield_name.substr(shield_name.find("::") + 2);
 										player.set_shield(ShieldHelper::createFromLua(short_name, lua_state));
+									}
+									else if (reader.get_name() == "armour") {
+										std::string armour_name = reader.read_string();
+										std::string short_name = armour_name.substr(armour_name.find("::") + 2);
+										player.set_armour(ArmourHelper::createFromLua(short_name, lua_state));
 									}
 								}
 							} // player-while-end

@@ -921,16 +921,24 @@ void GameControl::keypress_hole_up()
 			// Do actual party healing and spell point recharging
 			if (pl->condition() != DEAD) {
 				if (pl->hp() < pl->hpm()) {
-					if (is_arena_outdoors() && rounds % 3 == 0)
+					if (is_arena_outdoors() && rounds % 3 == 0) {
 						pl->set_hp(pl->hp() + 1);
-					else if (is_arena_outdoors() && rounds % 10 == 0)
+						zwin.update_player_list();
+					}
+					else if (!is_arena_outdoors() && rounds % 10 == 0) {
 						pl->set_hp(pl->hp() + 1);
+						zwin.update_player_list();
+					}
 				}
 				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
-					if (is_arena_outdoors() && rounds % 3 == 0)
+					if (is_arena_outdoors() && rounds % 3 == 0) {
 						pl->set_sp(pl->sp() + 1);
-					else if (is_arena_outdoors() && rounds % 10 == 0)
+						zwin.update_player_list();
+					}
+					else if (!is_arena_outdoors() && rounds % 10 == 0) {
 						pl->set_sp(pl->sp() + 1);
+						zwin.update_player_list();
+					}
 				}
 			}
 		}
@@ -949,6 +957,7 @@ void GameControl::keypress_hole_up()
 
 	draw_status();
 	mwin.display_last();
+	zwin.update_player_list();
 }
 
 void GameControl::keypress_open_act()
