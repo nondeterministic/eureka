@@ -1129,12 +1129,13 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 			if (selected_items.size() > 0) {
 				PlayerCharacter* player = party->get_player(selected_player);
 				Item* selected_item = selected_items[0];
+				std::string selected_item_name = selected_item->name();
 
-				if (WeaponHelper::existsInLua(selected_item->name(), _lua_state)) {
+				if (WeaponHelper::existsInLua(selected_item_name, _lua_state)) {
 					if (player->weapon() != NULL)
 						party->inventory()->add(player->weapon());
 					// This first creates a new weapon by reserving memory for it
-					Weapon* weapon = WeaponHelper::createFromLua(selected_item->name(), _lua_state);
+					Weapon* weapon = WeaponHelper::createFromLua(selected_item_name, _lua_state);
 					player->set_weapon(weapon);
 					// ...and now we are freeing memory for a weapon with the same name in the inventory.
 					// A tad bit complicated, perhaps, but not overly difficult to understand.
@@ -1144,17 +1145,17 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 					// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
 					party->inventory()->remove(weapon->name(), weapon->description());
 				}
-				else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state)) {
+				else if (ShieldHelper::existsInLua(selected_item_name, _lua_state)) {
 					if (player->shield() != NULL)
 						party->inventory()->add(player->shield());
-					Shield* shield = ShieldHelper::createFromLua(selected_item->name(), _lua_state);
+					Shield* shield = ShieldHelper::createFromLua(selected_item_name, _lua_state);
 					player->set_shield(shield);
 					party->inventory()->remove(shield->name(), shield->description());
 				}
-				else if (ArmourHelper::existsInLua(selected_item->name(), _lua_state)) {
+				else if (ArmourHelper::existsInLua(selected_item_name, _lua_state)) {
 					if (player->armour() != NULL)
 						party->inventory()->add(player->armour());
-					Armour* armour = ArmourHelper::createFromLua(selected_item->name(), _lua_state);
+					Armour* armour = ArmourHelper::createFromLua(selected_item_name, _lua_state);
 					player->set_armour(armour);
 					party->inventory()->remove(armour->name(), armour->description());
 				}
@@ -1163,10 +1164,10 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 
 				// After readying an item, the AC may have changed, for example.
 				zwin.update_player_list();
-				printcon("Readying " + selected_item->name());
+				printcon("Readying " + selected_item_name);
 				mwin.display_last();
 
-				return selected_item->name();
+				return selected_item_name;
 			}
 		}
 	}
