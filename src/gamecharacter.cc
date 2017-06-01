@@ -16,8 +16,8 @@ GameCharacter::GameCharacter()
 	_lh_item = NULL;
 	_armour = NULL;
 	_head_armour = NULL;
-	 _feet_armour = NULL;
-	 _hands_armour = NULL;
+	_feet_armour = NULL;
+	_hands_armour = NULL;
 	_condition = GOOD;
 	_att = RIGHT;
 	_end = 0;
@@ -67,6 +67,36 @@ void GameCharacter::set_armour(Armour* s)
 Armour* GameCharacter::armour()
 {
 	return _armour;
+}
+
+Armour* GameCharacter::armour_feet()
+{
+	return _feet_armour;
+}
+
+void GameCharacter::set_armour_feet(Armour* s)
+{
+	_feet_armour = s;
+}
+
+Armour* GameCharacter::armour_hands()
+{
+	return _hands_armour;
+}
+
+void GameCharacter::set_armour_hands(Armour* s)
+{
+	_hands_armour = s;
+}
+
+Armour* GameCharacter::armour_head()
+{
+	return _head_armour;
+}
+
+void GameCharacter::set_armour_head(Armour* s)
+{
+	_head_armour = s;
 }
 
 Weapon* GameCharacter::weapon()

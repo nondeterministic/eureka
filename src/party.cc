@@ -298,6 +298,21 @@ std::string Party::to_xml()
 			playerEl->add_child("armour")->add_child_text(player.armour()->get_lua_name());
 		else
 			playerEl->add_child("armour");
+
+		if (player.armour_hands() != NULL)
+			playerEl->add_child("gloves")->add_child_text(player.armour_hands()->get_lua_name());
+		else
+			playerEl->add_child("gloves");
+
+		if (player.armour_feet() != NULL)
+			playerEl->add_child("shoes")->add_child_text(player.armour_feet()->get_lua_name());
+		else
+			playerEl->add_child("shoes");
+
+		if (player.armour_head() != NULL)
+			playerEl->add_child("helmet")->add_child_text(player.armour_head()->get_lua_name());
+		else
+			playerEl->add_child("helmet");
 	}
 
 	// Add inventory
@@ -550,7 +565,6 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 			string_to_be_added << "empty (r)";
 
 		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-		lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
 
 		if (player.armour() != NULL) {
 			string_to_be_added.str(""); string_to_be_added.clear();
@@ -561,7 +575,32 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 		else
 			lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
 
-		lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
+		if (player.armour_head() != NULL) {
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "  Head: ";
+			string_to_be_added << player.armour_head()->name();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+		}
+		else
+			lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
+
+		if (player.armour_hands() != NULL) {
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "Gloves: ";
+			string_to_be_added << player.armour_hands()->name();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+		}
+		else
+			lines.push_back(StringAlignmentTuple("Gloves: ", LEFTALIGN));
+
+		if (player.armour_feet() != NULL) {
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "  Feet: ";
+			string_to_be_added << player.armour_feet()->name();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+		}
+		else
+			lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
 
 		lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
 

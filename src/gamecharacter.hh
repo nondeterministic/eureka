@@ -80,6 +80,12 @@ public:
   Shield* shield();
   Armour* armour();
   void set_armour(Armour*);
+  Armour* armour_head();
+  void set_armour_head(Armour*);
+  Armour* armour_feet();
+  void set_armour_feet(Armour*);
+  Armour* armour_hands();
+  void set_armour_hands(Armour*);
   void set_name(const char*);
   void set_name(std::string);
   std::string name();

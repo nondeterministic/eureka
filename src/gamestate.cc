@@ -266,6 +266,21 @@ bool GameState::load(lua_State* lua_state)
 										std::string short_name = armour_name.substr(armour_name.find("::") + 2);
 										player.set_armour(ArmourHelper::createFromLua(short_name, lua_state));
 									}
+									else if (reader.get_name() == "gloves") {
+										std::string gloves_name = reader.read_string();
+										std::string short_name = gloves_name.substr(gloves_name.find("::") + 2);
+										player.set_armour_hands(ArmourHelper::createFromLua(short_name, lua_state));
+									}
+									else if (reader.get_name() == "shoes") {
+										std::string shoes_name = reader.read_string();
+										std::string short_name = shoes_name.substr(shoes_name.find("::") + 2);
+										player.set_armour_feet(ArmourHelper::createFromLua(short_name, lua_state));
+									}
+									else if (reader.get_name() == "helmet") {
+										std::string helmet_name = reader.read_string();
+										std::string short_name = helmet_name.substr(helmet_name.find("::") + 2);
+										player.set_armour_head(ArmourHelper::createFromLua(short_name, lua_state));
+									}
 								}
 							} // player-while-end
 

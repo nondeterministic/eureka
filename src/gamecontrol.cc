@@ -820,6 +820,21 @@ void GameControl::keypress_yield_item(int selected_player)
 		else
 			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Shield: <none>", AL), NULL));
 
+		if (player->armour_head())
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Head: " + player->armour_head()->name(), AL), player->armour_head()));
+		else
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Head: <none>", AL), NULL));
+
+		if (player->armour_feet())
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Feet: " + player->armour_feet()->name(), AL), player->armour_feet()));
+		else
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Feet: <none>", AL), NULL));
+
+		if (player->armour_hands())
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Hands: " + player->armour_hands()->name(), AL), player->armour_hands()));
+		else
+			content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Hands: <none>", AL), NULL));
+
 		content_page.push_back(std::pair<StringAlignmentTuple,Item*>(StringAlignmentTuple("Other:  <none>", AL), NULL)); // TODO: Rings, torches, etc.
 
 		// Now execute selection provider...
@@ -844,9 +859,28 @@ void GameControl::keypress_yield_item(int selected_player)
 			player->set_shield(NULL);
 		}
 		else if (dynamic_cast<Armour*>(selected_item)) {
-			if (player->armour())
-				party->inventory()->add(player->armour());
-			player->set_armour(NULL);
+			Armour* armour = dynamic_cast<Armour*>(selected_item);
+
+			if (armour->is_gloves()) {
+				if (player->armour_hands())
+					party->inventory()->add(player->armour_hands());
+				player->set_armour_hands(NULL);
+			}
+			else if (armour->is_helmet()) {
+				if (player->armour_head())
+					party->inventory()->add(player->armour_head());
+				player->set_armour_head(NULL);
+			}
+			else if (armour->is_shoes()) {
+				if (player->armour_feet())
+					party->inventory()->add(player->armour_feet());
+				player->set_armour_feet(NULL);
+			}
+			else {
+				if (player->armour())
+					party->inventory()->add(player->armour());
+				player->set_armour(NULL);
+			}
 		}
 
 		// After yielding an item, the AC may have changed, for example.
@@ -1175,10 +1209,29 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 					party->inventory()->remove(shield->name(), shield->description());
 				}
 				else if (ArmourHelper::existsInLua(selected_item_name, _lua_state)) {
-					if (player->armour() != NULL)
-						party->inventory()->add(player->armour());
 					Armour* armour = ArmourHelper::createFromLua(selected_item_name, _lua_state);
-					player->set_armour(armour);
+
+					if (armour->is_gloves()) {
+						if (player->armour_hands() != NULL)
+							party->inventory()->add(player->armour());
+						player->set_armour_hands(armour);
+					}
+					else if (armour->is_helmet()) {
+						if (player->armour_head() != NULL)
+							party->inventory()->add(player->armour());
+						player->set_armour_head(armour);
+					}
+					else if (armour->is_shoes()) {
+						if (player->armour_feet() != NULL)
+							party->inventory()->add(player->armour());
+						player->set_armour_feet(armour);
+					}
+					else {
+						if (player->armour() != NULL)
+							party->inventory()->add(player->armour());
+						player->set_armour(armour);
+					}
+
 					party->inventory()->remove(armour->name(), armour->description());
 				}
 				else
