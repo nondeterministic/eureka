@@ -230,6 +230,12 @@ int l_change_icon(lua_State* L)
 	return 1;
 }
 
+int l_ztatswin_update(lua_State* L)
+{
+	ZtatsWin::Instance().update_player_list();
+	return 0;
+}
+
 int l_ztatswin_save(lua_State* L)
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
@@ -1314,6 +1320,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_ztatswin_save);
   lua_setglobal(L, "simpl_ztatssave");
+
+  lua_pushcfunction(L, l_ztatswin_update);
+  lua_setglobal(L, "simpl_ztatsupdate");
 
   lua_pushcfunction(L, l_ztatswin_restore);
   lua_setglobal(L, "simpl_ztatsrestore");

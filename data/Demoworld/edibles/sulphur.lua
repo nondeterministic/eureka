@@ -16,5 +16,5 @@ Edibles["sulphur"]  = {
 
    gold          = 1,
    weight        = 0,
-   icon          = 988
+   icon          = 1084
 }

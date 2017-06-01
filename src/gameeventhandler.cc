@@ -112,6 +112,12 @@ bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj*
 	return true;
 }
 
+bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj obj)
+{
+	map->push_obj(obj);
+	return true;
+}
+
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)
 {
 	if (luaL_dofile(_lua_state, (conf_world_path / "maps" / event->file_name).c_str())) {

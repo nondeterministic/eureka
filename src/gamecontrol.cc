@@ -1002,6 +1002,18 @@ void GameControl::keypress_open_act()
 				gh.handle_event_delete_object(arena->get_map(), &the_obj);
 				return;
 			}
+			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("closed") != std::string::npos &&
+						IndoorsIcons::Instance().get_props(icon)->get_name().find("chest") != std::string::npos)
+			{
+				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for chests triggered.\n";
+				GameEventHandler gh;
+				gh.handle_event_delete_object(arena->get_map(), &the_obj);
+				MapObj open_chest;
+				open_chest.set_icon(489);
+				open_chest.set_coords(coords.first, coords.second);
+				gh.handle_event_add_object(arena->get_map(), open_chest);
+				return;
+			}
 		}
 	}
 
@@ -1074,6 +1086,7 @@ void GameControl::keypress_use()
 	// User can either select exactly one item, or will have aborted the dialogue.
 	if (selected_items.size() == 1) {
 		Item* selected_item = selected_items[0];
+		printcon(selected_item->name());
 
 		if (WeaponHelper::existsInLua(selected_item->name(), _lua_state))
 			printcon("Try to (r)eady a weapon instead.");

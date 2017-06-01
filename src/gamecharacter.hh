@@ -67,6 +67,9 @@ protected:
   Weapon* _rh_item;
   Shield* _lh_item;
   Armour* _armour;
+  Armour* _head_armour;
+  Armour* _feet_armour;
+  Armour* _hands_armour;
   
 public:
   GameCharacter();

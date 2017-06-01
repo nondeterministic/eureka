@@ -16,5 +16,5 @@ Edibles["garlic"]  = {
 
    gold          = 1,
    weight        = 0,
-   icon          = 988
+   icon          = 1085
 }

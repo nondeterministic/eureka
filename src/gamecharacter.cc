@@ -15,6 +15,9 @@ GameCharacter::GameCharacter()
 	_rh_item = NULL;
 	_lh_item = NULL;
 	_armour = NULL;
+	_head_armour = NULL;
+	 _feet_armour = NULL;
+	 _hands_armour = NULL;
 	_condition = GOOD;
 	_att = RIGHT;
 	_end = 0;
@@ -22,8 +25,8 @@ GameCharacter::GameCharacter()
 	_dxt = 0;
 	_sp_max = 0;
 	_sp = 0;
-	_hp = 1;
-	_hp_max = 1;
+	_hp = -1;
+	_hp_max = -1;
 	_sex = true;
 	_iq = 0;
 	_wis = 0;
@@ -101,11 +104,6 @@ std::string GameCharacter::plural_name()
 	return _plural_name;
 }
 
-void GameCharacter::set_hpm(int hpm)
-{
-	_hp_max = hpm;
-}
-
 int GameCharacter::hpm()
 {
 	return _hp_max;
@@ -131,10 +129,17 @@ int GameCharacter::gold()
 	return _gold;
 }
 
+void GameCharacter::set_hpm(int hpm)
+{
+	_hp_max = hpm;
+}
+
 void GameCharacter::set_hp(int hp)
 {
 	_hp = std::max(0, hp);            // Needs to be >0
-	_hp = std::min(_hp, hpm());       // Needs to be <hmp()
+
+	if (hpm() >= 0)
+		_hp = std::min(_hp, hpm());   // Needs to be <hmp(), if hpm() has been set.  This might be the case during loading of an old game.
 
 	if (_hp == 0)
 		_condition = DEAD;

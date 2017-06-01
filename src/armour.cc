@@ -17,13 +17,18 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
+#include <iostream>
+#include <string>
+
 #include "armour.hh"
 #include "item.hh"
-#include <iostream>
 
 Armour::Armour()
 {
 	_protection = 0;
+	_is_shoes = false;
+	_is_helmet = false;
+	_is_gloves = false;
 }
 
 Armour::~Armour()
@@ -33,6 +38,39 @@ Armour::~Armour()
 Armour::Armour(const Armour& s): Item(s)
 {
   _protection = s._protection;
+  _is_gloves = s._is_gloves;
+  _is_helmet = s._is_helmet;
+  _is_shoes = s._is_shoes;
+}
+
+bool Armour::is_helmet()
+{
+	return _is_helmet;
+}
+
+bool Armour::is_shoes()
+{
+	return _is_shoes;
+}
+
+bool Armour::is_gloves()
+{
+	return _is_gloves;
+}
+
+void Armour::set_is_helmet()
+{
+	_is_helmet = true;
+}
+
+void Armour::set_is_gloves()
+{
+	_is_gloves = true;
+}
+
+void Armour::set_is_shoes()
+{
+	_is_shoes = true;
 }
 
 int Armour::protection()

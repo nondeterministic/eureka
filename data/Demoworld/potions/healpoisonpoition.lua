@@ -3,9 +3,9 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Potions["healing potion"]  = { 
-   name                   = "healing potion",
-   plural_name            = "healing potion",
+Potions["heal-poison potion"]  = { 
+   name                   = "heal-poison potion",
+   plural_name            = "heal-poison potions",
    description            = "",
    
    food_up                = 0,
@@ -17,9 +17,9 @@ Potions["healing potion"]  = {
 
    gold                   = 1,
    weight                 = 0,
-   icon                   = 988,
+   icon                   = 702,
 
-   ingredients            = { Edibles.garlic.name, Edibles.arnica.name },
+   ingredients            = { Edibles.garlic.name, Edibles.thuja.name },
 
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
 
@@ -29,7 +29,7 @@ Potions["healing potion"]  = {
 	 simpl_printcon(simpl_get_player_name(chosen_player) .. " feels the full effect of the healing potion.")
 	 simpl_ztatsupdate()
       else
-	 simpl_printcon("The effect of the healing potion was positive, but not overwhelmingly so.")
+	 simpl_printcon("The effect of the heal-poison potion was positive, but not overwhelmingly so.")
       end
    end
 }

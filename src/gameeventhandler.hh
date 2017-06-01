@@ -26,6 +26,7 @@ public:
   bool handle_event_lua_script(std::shared_ptr<EventLuaScript>, std::shared_ptr<Map>);
   bool handle_event_delete_object(std::shared_ptr<Map>, MapObj*);
   bool handle_event_add_object(std::shared_ptr<Map>, MapObj*);
+  bool handle_event_add_object(std::shared_ptr<Map>, MapObj);
   // bool handle_event_play_sound(std::shared_ptr<Map>, MapObj*);
 };
 

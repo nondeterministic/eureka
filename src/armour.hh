@@ -20,12 +20,17 @@
 #ifndef __ARMOUR_HH
 #define __ARMOUR_HH
 
+#include <string>
+
 #include "item.hh"
 
 class Armour : public Item
 {
 protected:
   int _protection;
+  bool _is_shoes;
+  bool _is_gloves;
+  bool _is_helmet;
 
 public:
   Armour();
@@ -35,6 +40,14 @@ public:
   std::string get_lua_name();
   int protection();
   void protection(int);
+
+  bool is_shoes();
+  bool is_gloves();
+  bool is_helmet();
+
+  void set_is_helmet();
+  void set_is_gloves();
+  void set_is_shoes();
 };
 
 #endif
