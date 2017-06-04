@@ -48,6 +48,9 @@ GameCharacter::GameCharacter(const GameCharacter& p)
 {
 	std::cout << "DEEP COPY OF GAMECHARACTER\n";
 
+	_name = p._name;
+	_plural_name = p._plural_name;
+
 	_rh_item = p._rh_item;
 	_lh_item = p._lh_item;
 	_armour = p._armour;

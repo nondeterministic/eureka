@@ -81,7 +81,7 @@ PlayerCharacter::PlayerCharacter(const PlayerCharacter& p) : GameCharacter(p)
 	}
 
 	//	_race = p._race;
-	//	_name = p._name;
+	//  _name = p._name;
 	//	_hp_max = p._hp_max;
 	//	_hp = p._hp;
 	//	_sp = p._sp;
