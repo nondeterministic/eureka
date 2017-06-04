@@ -44,6 +44,34 @@ GameCharacter::~GameCharacter()
 	//   delete _lh_item;
 }
 
+GameCharacter::GameCharacter(const GameCharacter& p)
+{
+	std::cout << "DEEP COPY OF GAMECHARACTER\n";
+
+	_rh_item = p._rh_item;
+	_lh_item = p._lh_item;
+	_armour = p._armour;
+	_head_armour = p._head_armour;
+	_feet_armour = p._feet_armour;
+	_hands_armour = p._hands_armour;
+	_condition = p._condition;
+	_att = p._att;
+	_end = p._end;
+	_char = p._char;
+	_dxt = p._dxt;
+	_sp_max = p._sp_max;
+	_sp = p._sp;
+	_hp = p._hp;
+	_hp_max = p._hp_max;
+	_sex = p._sex;
+	_iq = p._iq;
+	_wis = p._wis;
+	_luck = p._luck;
+	_str = p._str;
+	_race = p._race;
+	_gold = p._gold;
+}
+
 void GameCharacter::set_weapon(Weapon* w)
 {
 	_rh_item = w;
@@ -96,6 +124,7 @@ Armour* GameCharacter::armour_head()
 
 void GameCharacter::set_armour_head(Armour* s)
 {
+	std::cout << "SETTING HEAD ARMOUR: " << s->name() << "\n";
 	_head_armour = s;
 }
 

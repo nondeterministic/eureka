@@ -247,36 +247,36 @@ bool GameState::load(lua_State* lua_state)
 										int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
 										player.set_sex(sex);
 									}
-									else if (reader.get_name() == "level")
+									else if (reader.get_name().lowercase() == "level")
 										player.set_level(std::atoi(reader.read_string().c_str()));
-									else if (reader.get_name() == "race")
+									else if (reader.get_name().lowercase() == "race")
 										player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
-									else if (reader.get_name() == "weapon") {
+									else if (reader.get_name().lowercase() == "weapon") {
 										std::string weap_name = reader.read_string();
 										std::string short_name = weap_name.substr(weap_name.find("::") + 2);
 										player.set_weapon(WeaponHelper::createFromLua(short_name, lua_state));
 									}
-									else if (reader.get_name() == "shield") {
+									else if (reader.get_name().lowercase() == "shield") {
 										std::string shield_name = reader.read_string();
 										std::string short_name = shield_name.substr(shield_name.find("::") + 2);
 										player.set_shield(ShieldHelper::createFromLua(short_name, lua_state));
 									}
-									else if (reader.get_name() == "armour") {
+									else if (reader.get_name().lowercase() == "armour") {
 										std::string armour_name = reader.read_string();
 										std::string short_name = armour_name.substr(armour_name.find("::") + 2);
 										player.set_armour(ArmourHelper::createFromLua(short_name, lua_state));
 									}
-									else if (reader.get_name() == "gloves") {
+									else if (reader.get_name().lowercase() == "gloves") {
 										std::string gloves_name = reader.read_string();
 										std::string short_name = gloves_name.substr(gloves_name.find("::") + 2);
 										player.set_armour_hands(ArmourHelper::createFromLua(short_name, lua_state));
 									}
-									else if (reader.get_name() == "shoes") {
+									else if (reader.get_name().lowercase() == "shoes") {
 										std::string shoes_name = reader.read_string();
 										std::string short_name = shoes_name.substr(shoes_name.find("::") + 2);
 										player.set_armour_feet(ArmourHelper::createFromLua(short_name, lua_state));
 									}
-									else if (reader.get_name() == "helmet") {
+									else if (reader.get_name().lowercase() == "helmet") {
 										std::string helmet_name = reader.read_string();
 										std::string short_name = helmet_name.substr(helmet_name.find("::") + 2);
 										player.set_armour_head(ArmourHelper::createFromLua(short_name, lua_state));

@@ -74,6 +74,8 @@ protected:
 public:
   GameCharacter();
   ~GameCharacter();
+  GameCharacter(const GameCharacter&);
+
   void set_weapon(Weapon*);
   Weapon* weapon();
   void set_shield(Shield*);
