@@ -92,7 +92,7 @@ public:
   void add_jimmylock();
   int jimmylock_count();
   void set_magic_light_radius(int);
-  bool level_up();
+  // bool level_up();
   std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
 
   void immunize_from_fields(int);

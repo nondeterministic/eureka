@@ -399,6 +399,7 @@ int Party::light_radius()
 
 // Levels party members up. Returns true, if someone in the party was leveled up, usually called after victory()
 
+/*
 bool Party::level_up()
 {
 	bool leveled_up = false;
@@ -411,6 +412,7 @@ bool Party::level_up()
 
 	return leveled_up;
 }
+*/
 
 std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 {
