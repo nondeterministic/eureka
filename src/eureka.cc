@@ -889,6 +889,10 @@ int start_game()
 					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
 					false);
 
+
+	// Set "start game" flag
+	gc->set_game_started(true);
+
 	// Start event handling
 	gc->key_event_handler();
 

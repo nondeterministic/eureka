@@ -46,6 +46,7 @@ do
    function name()
       simpl_printcon("My name is " .. c_values["name"] .. ". And who art thou?")
       answer = simpl_getcon()
+      simpl_printcon(answer .. " ")
       simpl_printcon("I came across your name before...")
    end
 
@@ -65,9 +66,9 @@ do
    function otherwise(item)
       if (item == "mayor" or item == "lendom" or item == "town") then
 	 simpl_printcon("Now that we are rebuilding, it is my task to reinstate order and structures of public life.")
-      elseif (string.find(item, "wizard") or string.find("guild")) then
+      elseif (string.find(item, "wizard") or string.find(item, "guild")) then
 	 simpl_printcon("The guild used to have many members, most of which Alas! have died in the recent attacks.")
-      elseif (string.find(item, "attack") or string.find("died")) then
+      elseif (string.find(item, "attack") or string.find(item, "died")) then
 	 simpl_printcon("It was dark times, but now we are building for a brighter future. Take a look around, and see for yourself. Some of our stores have even reopened.")
       else
 	 simpl_printcon("I am sorry, I cannot help you with that.")

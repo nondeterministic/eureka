@@ -65,6 +65,7 @@ protected:
 	Clock _clock;
 	SoundSample* _game_music;
 	SoundSample _sample;
+	bool _game_is_started;
 	bool check_walkable(int, int, Walking);
 	GameControl();
 
@@ -125,6 +126,8 @@ public:
 	std::string select_spell(unsigned);
 	void cast_spell(int, Spell);
 	void create_random_monsters_in_dungeon();
+	void set_game_started(bool);
+	bool get_game_started();
 };
 
 #endif

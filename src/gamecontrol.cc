@@ -101,18 +101,29 @@ using namespace std;
 
 GameControl::GameControl()
 {
-  em = &EventManager::Instance();
-  party = &Party::Instance();
-  _turn_passed = 0;
-  _turns = 0;
-  input = "";
-  generator.seed(std::time(NULL)); // seed with the current time
+	em = &EventManager::Instance();
+	party = &Party::Instance();
+	_turn_passed = 0;
+	_turns = 0;
+	input = "";
+	generator.seed(std::time(NULL)); // seed with the current time
+	_game_is_started = false;
 }
 
 GameControl& GameControl::Instance()
 {
   static GameControl _inst;
   return _inst;
+}
+
+void GameControl::set_game_started(bool value)
+{
+	_game_is_started = value;
+}
+
+bool GameControl::get_game_started()
+{
+	return _game_is_started;
 }
 
 void GameControl::set_game_music(SoundSample* gm)
@@ -139,8 +150,15 @@ int GameControl::show_win()
 		SDLWindow::Instance().blit_interior();
 		return 0;
 	}
-	std::cerr << "ERROR: gamecontrol.cc: show_win() failed. Arena or map is null.\n";
-	return -1;
+
+	// If the above fails, this is only an error, if the game is running.
+	// Otherwise, it may be quite OK, not to have a map loaded, etc.
+	if (get_game_started()) {
+		std::cerr << "WARNING: gamecontrol.cc: show_win() failed. Arena or map is null.\n";
+		return -1;
+	}
+	else
+		return 0;
 }
 
 /**
@@ -460,6 +478,45 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					printcon("Pass");
 					do_turn();
 					break;
+				case SDLK_a:
+					keypress_attack();
+					break;
+				case SDLK_c: {
+					if (event.key.keysym.mod == KMOD_RCTRL || event.key.keysym.mod == KMOD_LCTRL) {
+						std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+						break;
+					}
+
+					printcon("Cast spell - select player");
+					int cplayer = zwin.select_player();
+
+					if (cplayer >= 0) {
+						PlayerCharacter* player = party->get_player(cplayer);
+
+						if (player->condition() == DEAD) {
+							printcon("Next time try picking an alive party member.");
+							break;
+						}
+
+						if (!player->is_spell_caster()) {
+							printcon(player->name() + " does not have magic abilities.");
+							break;
+						}
+
+						std::string spell_file_path = select_spell(cplayer);
+
+						if (spell_file_path.length() > 0)
+							cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
+						else
+							printcon("Never mind.");
+					}
+					else
+						printcon("Never mind.");
+					}
+					break;
+				case SDLK_d:
+					keypress_drop_items();
+					break;
 				case SDLK_e: {
 					// Check if party is on enterable icon, i.e., if there is an enter-action associated to it.
 					std::vector<std::shared_ptr<Action>> acts = arena->get_map()->get_actions(party->x, party->y);
@@ -480,40 +537,6 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 
 					break;
 				}
-				case SDLK_a:
-					keypress_attack();
-					break;
-				case SDLK_c: {
-						printcon("Cast spell - select player");
-						int cplayer = zwin.select_player();
-
-						if (cplayer >= 0) {
-							PlayerCharacter* player = party->get_player(cplayer);
-
-							if (player->condition() == DEAD) {
-								printcon("Next time try picking an alive party member.");
-								break;
-							}
-
-							if (!player->is_spell_caster()) {
-								printcon(player->name() + " does not have magic abilities.");
-								break;
-							}
-
-							std::string spell_file_path = select_spell(cplayer);
-
-							if (spell_file_path.length() > 0)
-								cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
-							else
-								printcon("Never mind.");
-						}
-						else
-							printcon("Never mind.");
-					}
-					break;
-				case SDLK_d:
-					keypress_drop_items();
-					break;
 				case SDLK_g:
 					keypress_get_item();
 					break;
@@ -560,7 +583,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_ztats();
 					break;
 				default:
-					printf("key_handler::default: %d (hex: %x)\n", event.key.keysym.sym, event.key.keysym.sym);
+					printf("INFO: gamecontrol.cc: key_handler::default: %d (hex: %x)\n", event.key.keysym.sym, event.key.keysym.sym);
 					break;
 				}
 
@@ -1028,9 +1051,9 @@ void GameControl::keypress_open_act()
 					}
 				}
 			}
-			// We implement some default behaviour for doors here: if they're not explicityly set in their object properties as locked, magic, etc.
-			// we let the user simply open them.
-			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("door") != std::string::npos) {
+			// We implement some default behaviour for doors here: if they're not explicitly set in their object
+			// properties as locked, magic, etc. we let the user simply open them.
+			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("a closed door") != std::string::npos) {
 				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for doors triggered.\n";
 				GameEventHandler gh;
 				gh.handle_event_delete_object(arena->get_map(), &the_obj);
@@ -2093,7 +2116,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			break;
 		}
 	default:
-		std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+		// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 		return false;
 	}
 
@@ -2107,7 +2130,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 		{
 			if (leave_map())
 				mwin.display_last();
-			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return false;
 		}
 
@@ -2120,7 +2143,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 				static int every_third_step = 0;
 				printcon("Slow.");
 				if (every_third_step == 0) {
-					std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+					// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 					every_third_step++;
 					return false;
 				}
@@ -2155,7 +2178,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 				_sample.play(HIT);
 			}
 
-			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return true;
 		}
 	}
@@ -2173,7 +2196,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 				static int every_third_step = 0;
 				printcon("Slow.");
 				if (every_third_step == 0) {
-					std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+					// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 					every_third_step++;
 					return false;
 				}
@@ -2240,12 +2263,12 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 			party->set_coords(party->x + x_diff, party->y + y_diff);
 			arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return true;
 		}
 	}
 
-	std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+	// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 	std::cerr << "WARNING: gamecontrol.cc: move_party() failed.\n";
 
 	_sample.play(HIT);

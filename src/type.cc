@@ -85,6 +85,9 @@ void Type::printch(SDL_Surface* surf, int c, int x, int y, SDL_Color* bgcol, SDL
 	int ascii = c;
 	SDL_Surface* charSurf = _map_chars[ascii];
 
+	if (c == 10)
+		return; // Ignore newline.
+
 	if (charSurf != NULL) {
 		if (x == -1 && y == -1) {
 			// Set background colour of printch.
