@@ -29,8 +29,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <SDL.h>
-#include <SDL_keysym.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 
 #include "eureka.hh"
 #include "console.hh"
@@ -146,7 +146,7 @@ bool Combat::initiate()
 				}
 			}
 
-			MiniWin::Instance().display_surf(foes.pic());
+			MiniWin::Instance().display_texture(foes.pic());
 			std::stringstream ss;
 			ss << "Upon getting closer you spotted "
 					<< foes.to_string() << ".\n"
@@ -181,7 +181,7 @@ bool Combat::initiate()
 		}
 		// Monsters were not noticed by party first...
 		else {
-			MiniWin::Instance().display_surf(foes.pic());
+			MiniWin::Instance().display_texture(foes.pic());
 			std::stringstream ss;
 			if (party->is_resting)
 				ss << "You suddenly find your camp surrounded by ";
@@ -422,7 +422,7 @@ void Combat::victory()
 		switch (em->get_key("yn")) {
 		case 'y': {
 			MiniWin&  mwin = MiniWin::Instance();
-			mwin.save_surf();
+			mwin.save_texture();
 			mwin.clear();
 			mwin.println(0, "Pick up items", CENTERALIGN);
 			mwin.println(1, "(Press space to select an item, q when done)", CENTERALIGN);
@@ -434,7 +434,7 @@ void Combat::victory()
 			for (auto item: selected_items)
 				party->inventory()->add(item);
 
-			GameControl::Instance().draw_status();
+			GameControl::Instance().redraw_graphics_status();
 			mwin.display_last();
 
 			// Finally, delete those items from bounty, which have NOT been picked up, otherwise, they will linger around in the heap somewhere...

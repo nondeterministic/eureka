@@ -70,7 +70,7 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 
 PlayerCharacter::PlayerCharacter(const PlayerCharacter& p) : GameCharacter(p)
 {
-	std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
+	// std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
 
 	_prof = p._prof;
 	_level = p._level;

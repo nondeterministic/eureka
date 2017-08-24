@@ -20,11 +20,13 @@
 #ifndef HEXARENA_HH
 #define HEXARENA_HH
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <utility>
 #include <memory>
+
 #include "map.hh"
 #include "arena.hh"
+#include "sdlwindow.hh"
 
 enum SIGN {
   GRTR,  // >
@@ -47,15 +49,12 @@ public:
   Offsets move(int);
   Offsets determine_offsets();
 
-  void set_SDL_surface(SDL_Surface*);
   SDL_Rect get_tile_coords(int, int) const;
   void screen_to_map(int, int, int&, int&);
   void map_to_screen(int, int, int&, int&);
-  int put_tile(int, int, SDL_Surface* = NULL);
-  int put_tile_hex(int, int, SDL_Surface* = NULL);
+  int put_tile_hex(int, int, SDL_Texture* = NULL);
   void get_center_coords(int&, int&);
   std::pair<int, int> show_party(int = -1, int = -1);
-  void update();
   bool adjacent(int, int, int, int);
 
   int get_screen_x(int) const;
@@ -75,7 +74,6 @@ protected:
 
   int _corner_tile_uneven_offset;
   unsigned _width, _height;
-  SDL_Surface* _clipped_surf;
 };
 
 #endif

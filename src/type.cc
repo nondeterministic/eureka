@@ -1,6 +1,6 @@
+// This source file is part of eureka
 //
-//
-// Copyright (c) 2010  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,53 +17,61 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#include "type.hh"
-#include "sdltricks.hh"
 #include <iostream>
 #include <string>
-#include <SDL.h>
-#include <SDL_image.h>
 #include <map>
 #include <utility>
 #include <iostream>
 
-using namespace std;
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+#include "type.hh"
+#include "sdltricks.hh"
+#include "sdlwindow.hh"
 
 Type::Type() 
 {
-  // Is true, when text on grey background is active, i.e., to display a cursor, etc.
-  _select = false; 
+	// std::cout << "Type()\n";
 
-  _w = 8;   // Character width
-  _h = 16;  // Character height
+	// Is true, when text on grey background is active, i.e., to display a cursor, etc.
+	_select = false;
 
-  _ptr_charset_surf = NULL;
+	_w = 8;   // Character width
+	_h = 16;  // Character height
 }
 
 Type::~Type()
 {
-  // std::cout << "~Type()\n";
+	// std::cout << "~Type()\n";
 
-  if (_ptr_charset_surf)
-    SDL_FreeSurface(_ptr_charset_surf);
-
-  for (map<int, SDL_Surface*>::iterator iter = _map_chars.begin(); iter != _map_chars.end(); iter++)
-    SDL_FreeSurface(iter->second);
-  _map_chars.clear();
+	for (std::map<int, SDL_Texture*>::iterator iter = _map_chars.begin(); iter != _map_chars.end(); iter++)
+		SDL_DestroyTexture(iter->second);
+	_map_chars.clear();
 }
 
-void Type::col_printch(SDL_Surface* surf, int c, int x, int y, SDL_Color bgcol, SDL_Color fgcol)
+void Type::col_printch(SDL_Texture* surf, int c, int x, int y, SDL_Color bgcol, SDL_Color fgcol)
 {
-  printch(surf, c, x, y, &bgcol, &fgcol);
+	printch(surf, c, x, y, &bgcol, &fgcol);
 }
 
-void Type::printch(SDL_Surface* surf, int c, int x, int y, SDL_Color* bgcol, SDL_Color* fgcol)
+/// Print ASCIII c onto texture. Texture is normally the entire texture of the console
+/// (miniwin, or wherever we want to print onto).
+
+void Type::printch(SDL_Texture* texture, int c, int x, int y, SDL_Color* bgcol, SDL_Color* fgcol)
 {
-	if (!surf)
+	if (c == 10)
+		return; // Ignore newline.
+
+	int w, h;
+	if (SDL_QueryTexture(texture, NULL, NULL, &w, &h) < 0) {
+		std::cerr << "ERROR: type.cc: printch: texture for ascii " << c << " onto is invalid: " << IMG_GetError() << "." << std::endl;
 		return;
+	}
 
-	// Define default colours for printing.
+	// Define default colours for printing, if none are supplied.
 	SDL_Color std_bgcol, std_fgcol;
+	SDL_Renderer* renderer = SDLWindow::Instance().getRenderer();
 
 	if (bgcol == NULL) {
 		std_bgcol.r = 0; std_bgcol.g = 0; std_bgcol.b = 0;
@@ -75,64 +83,63 @@ void Type::printch(SDL_Surface* surf, int c, int x, int y, SDL_Color* bgcol, SDL
 		fgcol = &std_fgcol;
 	}
 
-	Uint32 amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	amask = 0x000000ff;
-#else
-	amask = 0xff000000;
-#endif
+	SDL_Texture* charTexture = _map_chars[c];
+	if (charTexture == NULL) {
+		std::cerr << "ERROR: type.cc: printch: charSurf == NULL for ASCII: " << c << "\n";
+		return;
+	}
 
-	int ascii = c;
-	SDL_Surface* charSurf = _map_chars[ascii];
+	if (SDL_SetRenderTarget(renderer, texture) < 0) {
+		std::cerr << "ERROR: type.cc: printch: Cannot set texture as render target: " << IMG_GetError() << "." << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
-	if (c == 10)
-		return; // Ignore newline.
+	// Set background colour of printch.
+	SDL_SetRenderDrawColor(renderer, bgcol->r, bgcol->g, bgcol->b, 0);
 
-	if (charSurf != NULL) {
-		if (x == -1 && y == -1) {
-			// Set background colour of printch.
-			SDL_FillRect(surf, NULL, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
-			SDL_BlitSurface(charSurf, NULL, surf, NULL);
-		}
-		else {
-			SDL_Rect dstRect;
-			dstRect.x = x;
-			dstRect.y = y;
-			dstRect.w = _w;
-			dstRect.h = _h;
+	if (x == -1 && y == -1) {
+		std::cerr << "WARNING: type.cc: printch() got bad coordinates.\n";
+		SDL_RenderClear(renderer); // Perhaps, like in the else-case, one should construct sane coords instead of clearing entire texture...
+		return;
+	}
+	else {
+		SDL_Rect dstRect;
+		dstRect.x = x;
+		dstRect.y = y;
+		dstRect.w = _w;
+		dstRect.h = _h;
 
-			// Set background colour of printch.
-			SDL_FillRect(surf, &dstRect, SDL_MapRGBA(charSurf->format, bgcol->r, bgcol->g, bgcol->b, amask));
-			SDL_BlitSurface(charSurf, NULL, surf, &dstRect);
-		}
-
-		// Set foreground colour, if non-standard one is required.
-		if (fgcol->r != 253 || fgcol->g != 253 || fgcol->b != 253) {
-			SDL_Color old_fgcol;
-			old_fgcol.r = 252; old_fgcol.g = 252; old_fgcol.b = 252;
-			SDLTricks::Instance().replace_col(surf, old_fgcol, *fgcol, NULL);
+		SDL_RenderFillRect(renderer, &dstRect);
+		if (SDL_RenderCopy(renderer, charTexture, NULL, &dstRect) < 0) {
+			std::cerr << "ERROR: type.cc: printch: RenderCopy failed: " << IMG_GetError() << "." << std::endl;
+			return;
 		}
 	}
-	else
-		std::cerr << "WARNING: type.cc: charSurf == NULL for ASCII-code: " << c << "." << std::endl;
+
+//	// Set foreground colour, if non-standard one is required.
+//	if (fgcol->r != 253 || fgcol->g != 253 || fgcol->b != 253) {
+//		SDL_Color old_fgcol;
+//		old_fgcol.r = 252; old_fgcol.g = 252; old_fgcol.b = 252;
+//		SDLTricks::Instance().replace_col(texture, old_fgcol, *fgcol, NULL);
+//	}
 }
 
 int Type::char_width()
 {
-  return _w;
+	return _w;
 }
 
 int Type::char_height()
 {
-  return _h;
+	return _h;
 }
 
 void Type::set_select(bool new_select)
 {
-  _select = new_select;
+	_select = new_select;
 }
 
 void Type::toggle_select()
 {
-  _select = !_select;
+	_select = !_select;
 }

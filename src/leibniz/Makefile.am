@@ -1,6 +1,6 @@
 bin_PROGRAMS = leibniz
 
-AM_CXXFLAGS = -g -Wall -fdiagnostics-color=auto -std=c++11 \
+AM_CXXFLAGS = -g -Wall -O0 -fdiagnostics-color=auto -std=c++11 \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \
@@ -55,13 +55,13 @@ leibniz_SOURCES = leibniz.hh leibniz.cc \
 		newworldwin.cc newworldwin.hh  \
 		startupwin.cc startupwin.hh \
 		newmapwin.cc newmapwin.hh \
+		editorwin.cc editorwin.hh \
 		sdleditor.cc sdleditor.hh \
 		indoorssdleditor.cc indoorssdleditor.hh \
 		outdoorssdleditor.cc outdoorssdleditor.hh \
 		tabcontext.cc tabcontext.hh \
 		selectmapwin.cc selectmapwin.hh \
-		expandmapwin.cc expandmapwin.hh \
-		editorwin.cc editorwin.hh
+		expandmapwin.cc expandmapwin.hh 
 
 LIBS = @GTKMM_LIBS@ @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_REGEX_LIBS@ \

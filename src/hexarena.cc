@@ -20,6 +20,9 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+
+#include <SDL2/SDL.h>
+
 #include "hexarena.hh"
 #include "world.hh"
 #include "map.hh"
@@ -29,57 +32,34 @@
 
 HexArena::HexArena(std::shared_ptr<Map> map)
 {
-  _map = map;
-  _top_hidden = 0;
-  _bot_hidden = 0;
-  _left_hidden = 0;
-  _right_hidden = 0;
-  _width = 0;
-  _height = 0;
-  _corner_tile_uneven_offset = 0;
+	_map = map;
+	_top_hidden = 0;
+	_bot_hidden = 0;
+	_left_hidden = 0;
+	_right_hidden = 0;
+	_width = 0;
+	_height = 0;
+	_corner_tile_uneven_offset = 0;
 
-  _drawn_icons.reserve(OutdoorsIcons::Instance().number_of_icons());
-  for (unsigned i = 0; i < _drawn_icons.size(); i++)
-    _drawn_icons.at(i) = -1;
+	int iconsize = OutdoorsIcons::Instance().number_of_icons();
+	if (iconsize > 0 && _drawn_icons.size() == 0) {
+		for (int i = 0; i < iconsize; i++)
+			_drawn_icons.push_back(-1);
+	}
+	else {
+		std::cerr << "ERROR: hexarena.cc: Initialisation error. Icons not yet loaded although they should be.\n";
+		exit(-1);
+	}
+
+	_corner_tile_uneven_offset = 0;
 }
 
 HexArena::~HexArena(void)
 {
-  SDL_FreeSurface(_sdl_surf);
-  _drawn_icons.clear();
-  // SDL_Quit();
+	_drawn_icons.clear();
 }
 
-void HexArena::set_SDL_surface(SDL_Surface* s)
-{
-  _clipped_surf = s;
-  _sdl_surf = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCALPHA,
-				   s->w + 100, s->h + 100,
-				   32, 0, 0, 0, 0);
-
-  if (_sdl_surf == NULL)
-    std::cerr << "ERROR: hexarena.cc: hexarena.cc::_sdl_surf == null\n";
-}
-
-/// x and y are screen coordinates in pixels
-
-int HexArena::put_tile(int x, int y, SDL_Surface* brush)
-{
-  if (x < 0 || y < 0) {
-      std::cerr << "ERROR: hexarena.cc: put_tile has wrong coords: x: " << x << ", y: " << y << std::endl;
-      return -1;
-  }
-  
-  if (brush == NULL) {
-    std::cerr << "ERROR: hexarena.cc: brush to paint tile is NULL. " << std::endl;
-    return -1;
-  }
-  
-  SDL_Rect rect = get_tile_coords(x, y);
-  return SDL_BlitSurface(brush, NULL, _sdl_surf, &rect);
-}
-
-int HexArena::put_tile_hex(int hex_x, int hex_y, SDL_Surface* brush)
+int HexArena::put_tile_hex(int hex_x, int hex_y, SDL_Texture* brush)
 {
   return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
 }
@@ -161,8 +141,12 @@ Offsets HexArena::move(int dir)
 
 Offsets HexArena::determine_offsets()
 {
-	unsigned screen_width = _sdl_surf->w;
-	unsigned screen_height = _sdl_surf->h;
+	int w, h;
+	SDL_QueryTexture(get_win_texture(), NULL, NULL, &w, &h);
+
+	// Makes type conversion below easier...
+	unsigned screen_width = w;
+	unsigned screen_height = h;
 
 	// Determining the exact width of the hex map in pixels is a bit of
 	// a bitch...
@@ -478,7 +462,7 @@ void HexArena::show_map(int x_width, int y_width)
 				// to display night without torch, etc.
 
 				if (in_los(x, y, party_x, party_y) &&
-						(x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)))
+						( (x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))))
 				{
 					// TODO: Animate icons
 					// ...
@@ -524,8 +508,11 @@ Offsets HexArena::offsets(void)
 
 void HexArena::get_center_coords(int& x, int& y)
 {
-	x = _clipped_surf->w / 2 / (tile_size() - 11);
-	y = _clipped_surf->h / tile_size() + corner_tile_uneven_offset();
+	int w, h;
+	SDL_QueryTexture(_texture, NULL, NULL, &w, &h);
+
+	x = w / 2 / (tile_size() - 11);
+	y = h / tile_size() + corner_tile_uneven_offset();
 	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
@@ -552,17 +539,4 @@ std::pair<int, int> HexArena::show_party(int x, int y)
 	new_coords.second = my;
 
 	return new_coords;
-}
-
-/// Some extra blitting is required if a hex arena is used to fill the arena.
-
-void HexArena::update()
-{
-  SDL_Rect srcRect;
-  srcRect.x = tile_size() - 1;
-  srcRect.y = tile_size() - 1;
-  srcRect.w = _sdl_surf->w;
-  srcRect.h = _sdl_surf->h;
-  
-  SDL_BlitSurface(_sdl_surf, &srcRect, _clipped_surf, NULL);
 }

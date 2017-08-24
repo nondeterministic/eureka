@@ -1,6 +1,6 @@
+// This source file is part of eureka
 //
-//
-// Copyright (c) 2012  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,21 +20,21 @@
 #ifndef __SDLTRICKS_HH
 #define __SDLTRICKS_HH
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 using namespace std;
 
 class SDLTricks
 {
 public:
-  static SDLTricks& Instance();
-  bool replace_col(SDL_Surface*, SDL_Color, SDL_Color, SDL_Rect* = NULL);
-  void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-  unsigned int getpixel(SDL_Surface *s, int x, int y);
+	static SDLTricks& Instance();
+	bool replace_col(SDL_Renderer*, SDL_Texture*, SDL_Color, SDL_Color, SDL_Rect* = NULL);
+	void putpixel(SDL_Texture* surface, int x, int y, Uint32 pixel);
+	unsigned int getpixel(SDL_Texture* s, int x, int y);
 
 private:
-  SDLTricks();
-  ~SDLTricks();
+	SDLTricks();
+	~SDLTricks();
 };
 
 #endif

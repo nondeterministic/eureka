@@ -16,17 +16,17 @@ AC_PROG_CC
 AC_PROG_CXX
 
 # Check for SDL and SDL features, i.e. -lSDL
-SDL_VERSION=1.2.13
-AM_PATH_SDL($SDL_VERSION, 
+SDL_VERSION=2.0.4
+AM_PATH_SDL2($SDL_VERSION, 
             [], 
             [AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])]) 
-AC_CHECK_LIB(SDL_image, IMG_ReadXPMFromArray)
-AC_CHECK_HEADER([SDL/SDL_image.h],
+AC_CHECK_LIB(SDL2_image, IMG_ReadXPMFromArray)
+AC_CHECK_HEADER([SDL2/SDL_image.h],
                 [],
                 [AC_MSG_ERROR([*** SDL_image include files not found!
 		You should install the development package.])])
-AC_CHECK_LIB(SDL_mixer, Mix_OpenAudio)
-AC_CHECK_HEADERS([SDL/SDL_mixer.h], 
+AC_CHECK_LIB(SDL2_mixer, Mix_OpenAudio)
+AC_CHECK_HEADERS([SDL2/SDL_mixer.h], 
                 [],
                 [AC_MSG_ERROR([*** SDL_mixer include files not found!
 		You should install the development package.])])

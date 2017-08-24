@@ -20,14 +20,17 @@
 #ifndef INDOORSSDLEDITOR_HH
 #define INDOORSSDLEDITOR_HH
 
-#include <gtkmm.h>
-#include <gtkmm/socket.h>
 #include <vector>
 #include <memory>
-#include <SDL.h>
+
+#include <SDL2/SDL.h>
+
+#include <gtkmm.h>
+#include <gtkmm/socket.h>
+
 #include "../map.hh"
-#include "sdleditor.hh"
 #include "../indoorsmap.hh"
+#include "sdleditor.hh"
 
 class IndoorsSDLEditor : public SDLEditor
 {
@@ -38,8 +41,6 @@ public:
   // Overriding virtual methods
   void show_grid();
   void show_map();
-  void open_display(Gtk::Socket*, unsigned, unsigned);
-  void resize(unsigned, unsigned);
   std::shared_ptr<Map> get_map() const;
   void set_offset(int, int);
   bool grid_on() const;
@@ -51,16 +52,15 @@ public:
   void adjust_offsets(int = 0, int = 0, int = 0, int = 0);
   void set_offsets(unsigned = 0, unsigned = 0, unsigned = 0, unsigned = 0);
   SDL_Rect get_tile_coords(int, int) const;
-  int put_tile(int, int, SDL_Surface* = NULL);
+  int put_tile(int, int, SDL_Texture* = NULL);
 
 protected:
-  void clear();
   Offsets offsets();
   unsigned tile_size() const;
+  bool convert_icons_to_textures(SDL_Renderer*);
 
   // Number of pixels of the map that are currently not displayed
   unsigned _top_hidden, _bot_hidden, _left_hidden, _right_hidden;
-  unsigned _width, _height;
 };
 
 #endif

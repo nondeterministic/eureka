@@ -20,7 +20,7 @@
 #ifndef ARENA_HH
 #define ARENA_HH
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include <vector>
 #include <memory>
@@ -30,6 +30,7 @@
 #include <boost/unordered_map.hpp>
 
 #include "map.hh"
+#include "sdlwindow.hh"
 
 enum LDIR {
   DIR_UP,
@@ -82,6 +83,7 @@ public:
   void moving(bool);
   bool is_moving();
   void set_map(std::shared_ptr<Map>);
+  SDL_Texture* get_win_texture();
 
   virtual void show_map(int = 0, int = 0) = 0;
   virtual std::shared_ptr<Map> get_map() const = 0;
@@ -91,15 +93,15 @@ public:
   // This function is usually called when the editor window has been
   // resized and the right and lower offsets need to be redetermined.
   virtual Offsets determine_offsets() = 0;
-  virtual void set_SDL_surface(SDL_Surface*) = 0;
+  void set_SDLWindow_object(SDLWindow*);
 
   // The following methods were specifically added for SqArena:
   virtual SDL_Rect get_tile_coords(int, int) const = 0;
-  virtual int put_tile(int, int, SDL_Surface* = NULL) = 0;
+  int put_tile(int, int, SDL_Texture*);
   virtual unsigned tile_size() const = 0;
   virtual void get_center_coords(int&, int&) = 0;
   virtual std::pair<int, int> show_party(int = -1, int = -1) = 0;
-  virtual void update() = 0;
+  int blit();
   virtual void screen_to_map(int, int, int&, int&) = 0;
   virtual void map_to_screen(int, int, int&, int&) = 0;
   virtual bool adjacent(int, int, int, int) = 0;
@@ -107,12 +109,16 @@ public:
   virtual unsigned max_x_coordinate() = 0;
 
 protected:
-  SDL_Surface* _sdl_surf;
+  SDL_Texture* _texture;
+  SDLWindow* _sdlwindow_object;
+  SDL_Renderer* _renderer;
   std::shared_ptr<Map> _map;
   bool _show_grid, _show_map, _show_obj, _show_act;  
   unsigned _top_hidden, _bot_hidden, _left_hidden, _right_hidden;
   bool _party_is_moving;
   std::vector<int> _drawn_icons;
+
+  void resetRenderer();
 };
 
 #endif

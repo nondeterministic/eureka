@@ -175,7 +175,7 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 	GameControl* gc = &GameControl::Instance();
 	Party* party = &Party::Instance();
 
-	std::cout << "LEAVE HANDLING: old_map_name: " << event->get_old_map_name() << ", map_name: " << event->get_map_name() << "\n";
+	std::cout << "INFO: gameeventhandler.cc: leave handling: old_map_name: " << event->get_old_map_name() << ", map_name: " << event->get_map_name() << ".\n";
 
 	// Put animate objects back to their origins, not their last x and y coordinates
 	{
@@ -266,7 +266,7 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 		old_coords.second = party->y;
 	}
 
-	gc->get_arena()->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
+	gc->get_arena()->set_SDLWindow_object(&(SDLWindow::Instance()));
 	gc->get_arena()->determine_offsets();
 	gc->get_arena()->show_map(gc->get_viewport().first, gc->get_viewport().second);
 
@@ -323,14 +323,14 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	boost::filesystem::path tmp_path;
 	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";
-	mw->save_surf();
+	mw->save_texture();
 	mw->surface_from_file(tmp_path.string());
 
 	if (!party->indoors())
 		party->store_outside_coords();
 
 	map->unload_map_data();
-	gc->get_arena() = NULL;
+	gc->get_arena().reset(); // WAS: gc->get_arena() = NULL;
 
 	// There is only one landscape which can not be entered, but
 	// rather an indoors map may be left to it.  So it's safe to
@@ -340,7 +340,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	if (gc->get_arena() == NULL) {
 		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): Arena NULL.\n";
 		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): Map name: " << event->get_map_name() << ".\n";
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	if (gc->get_arena()->get_map() == NULL)
 		std::cerr << "ERROR: gameeventhandler.cc::action_on_enter(): arena->get_map NULL.\n";
@@ -364,7 +364,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 		gc->get_arena()->get_map()->xml_load_map_data();
 	}
 
-	gc->get_arena()->set_SDL_surface(SDLWindow::Instance().get_drawing_area_SDL_surface());
+	gc->get_arena()->set_SDLWindow_object(&(SDLWindow::Instance()));
 	gc->get_arena()->determine_offsets();
 
 	// The following is somewhat yucky code around the fact that you cannot place the party

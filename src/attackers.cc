@@ -23,13 +23,13 @@
 #include <vector>
 #include <map>
 
-#include "attackers.hh"
-#include "creature.hh"
-
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
-using namespace std;
+#include <SDL2/SDL.h>
+
+#include "attackers.hh"
+#include "creature.hh"
 
 Attackers::Attackers()
 {
@@ -177,11 +177,16 @@ boost::unordered_map<std::string, int>* Attackers::count()
   return &_enemies_count;
 }
 
-SDL_Surface* Attackers::pic()
+SDL_Texture* Attackers::pic()
 {
-  if (_enemies.size() > 0)
-    return _enemies.at(0)->load_img();
-  return NULL;
+	if (_enemies.size() > 0) {
+		SDL_Surface* surf = _enemies.at(0)->load_img();
+		SDL_Renderer* renderer = SDL_CreateSoftwareRenderer(surf);
+		SDL_Texture* image = SDL_CreateTextureFromSurface(renderer, surf);
+		SDL_FreeSurface(surf);
+		return image;
+	}
+	return NULL;
 }
 
 std::string Attackers::to_string()

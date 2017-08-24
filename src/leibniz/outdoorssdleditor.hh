@@ -20,11 +20,14 @@
 #ifndef OUTDOORSSDLEDITOR_HH
 #define OUTDOORSSDLEDITOR_HH
 
-#include <gtkmm.h>
 #include <gtkmm/socket.h>
 #include <vector>
 #include <memory>
+
+#include <gtkmm.h>
+
 #include <SDL.h>
+
 #include "../map.hh"
 #include "sdleditor.hh"
 #include "../outdoorsmap.hh"
@@ -38,8 +41,6 @@ public:
   // Overriding virtual methods
   void show_grid();
   void show_map();
-  void open_display(Gtk::Socket*, unsigned, unsigned);
-  void resize(unsigned, unsigned);
   std::shared_ptr<Map> get_map() const;
   void set_offset(int, int);
   bool grid_on() const;
@@ -51,8 +52,8 @@ public:
   void adjust_offsets(int = 0, int = 0, int = 0, int = 0);
   void set_offsets(unsigned = 0, unsigned = 0, unsigned = 0, unsigned = 0);
   SDL_Rect get_tile_coords(int, int) const;
-  int put_tile(int, int, SDL_Surface* = NULL);
-  int put_tile_hex(int, int, SDL_Surface* = NULL);
+  int put_tile(int, int, SDL_Texture* = NULL);
+  int put_tile_hex(int, int, SDL_Texture* = NULL);
 
   int get_screen_x(int) const;
   int get_screen_y(int) const;
@@ -61,7 +62,7 @@ protected:
   Offsets offsets();
   unsigned tile_size() const;
   int corner_tile_uneven_offset(void) const;
-  void clear();
+  bool convert_icons_to_textures(SDL_Renderer*);
 
   unsigned _top_hidden, _bot_hidden, _left_hidden, _right_hidden;
   int _corner_tile_uneven_offset;

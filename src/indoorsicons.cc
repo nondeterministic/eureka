@@ -1,9 +1,28 @@
+// This source file is part of eureka
+//
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #ifndef EDITOR_COMPILE
 #include "eureka.hh"
@@ -13,101 +32,43 @@
 
 #include "indoorsicons.hh"
 #include "world.hh"
+#include "icons.hh"
 #include "config.h"
 
 IndoorsIcons::IndoorsIcons()
 {
-  unsigned icon_size = World::Instance().get_indoors_tile_size();
+	// Load indoors icon set
+	_icons_surface = IMG_Load((conf_world_path / "images" / "icons_indoors.png").c_str());
+	if (_icons_surface == NULL)
+		std::cerr << "ERROR: indooricons.cc: Couldn't load indoors icons: " << IMG_GetError() << ": "
+				  << (conf_world_path / "images" / "icons_indoors.png").c_str() << std::endl;
 
-  // Load indoors icon set
-  _ptr_icon_surf = IMG_Load((conf_world_path / "images" / "icons_indoors.png").c_str());
-  if (!_ptr_icon_surf)
-    std::cerr << "ERROR: indooricons.cc: Couldn't load indoors icons: " << IMG_GetError() << ": " << (conf_world_path / "images" / "icons_indoors.png").c_str() << std::endl;
-  
-  // TODO: Why oh why do I have to disable alpha first?
-  SDL_SetAlpha(_ptr_icon_surf, 
-	       !SDL_SRCALPHA
-	       | SDL_RLEACCEL, 255);
+	// Determine, how many icons there are
+	unsigned icon_size = World::Instance().get_indoors_tile_size();
+	int i = 0;
 
-  // Fill icon vector
-  for (int y = 0; y < _ptr_icon_surf->h; y += icon_size)
-    {
-      for (int x = 0; x < _ptr_icon_surf->w; x += icon_size)
-	{
-	  SDL_Rect srcRect;
-	  srcRect.x = x;
-	  srcRect.y = y;
-	  srcRect.w = icon_size;
-	  srcRect.h = icon_size;
-	  	  
-	  SDL_Surface *surface;
-	  Uint32 rmask, gmask, bmask, amask;
-	  
-	  /* SDL interprets each pixel as a 32-bit number, so our masks must depend
-	     on the endianness (byte order) of the machine */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	  rmask = 0xff000000;
-	  gmask = 0x00ff0000;
-	  bmask = 0x0000ff00;
-	  amask = 0x000000ff;
-#else
-	  rmask = 0x000000ff;
-	  gmask = 0x0000ff00;
-	  bmask = 0x00ff0000;
-	  amask = 0xff000000;
-#endif
-	  
-	  surface = SDL_CreateRGBSurface(SDL_SWSURFACE
-					 // | SDL_HWSURFACE
-					 | SDL_SRCALPHA,
-					 icon_size, 
-					 icon_size, 
-					 32,  // What is this 32??
-					 rmask, 
-					 gmask, 
-					 bmask, 
-					 amask);
-	  // Alpha, alternatively:
-	  // http://www.sdltutorials.com/sdl-image/
-	  // SDL_SetAlpha(_ptr_icon_surf, !SDL_SRCALPHA, 255);
-	  SDL_BlitSurface(_ptr_icon_surf,
-			  &srcRect, 
-			  surface,
-			  NULL);
-	  _vec_sdlicons.push_back(surface);
-	}
-    }
+	for (int y = 0; y < _icons_surface->h; y += icon_size)
+		for (int x = 0; x < _icons_surface->w; x += icon_size)
+			i++;
 
-  // Tell super class how many icons there are
-  reserve(number_of_icons());
-}
-
-IndoorsIcons::~IndoorsIcons()
-{
-  SDL_FreeSurface(_ptr_icon_surf);
-
-  // Iterate through icon vector and SDL_FreeSurface on all entries!
-  for (std::vector<SDL_Surface*>::iterator curr_icon = _vec_sdlicons.begin();
-       curr_icon != _vec_sdlicons.end();
-       curr_icon++)
-    SDL_FreeSurface(*curr_icon);
-  _vec_sdlicons.clear();
+	// Tell super class how many icons there are for storing as many properties for them.
+	reserve(i);
 }
 
 IndoorsIcons& IndoorsIcons::Instance()
 {
-  static IndoorsIcons inst;
-  return inst;
+	static IndoorsIcons inst;
+	return inst;
 }
 
-SDL_Surface* IndoorsIcons::get_sdl_icon(unsigned no)
-{
-  if (no < _vec_sdlicons.size())
-    return _vec_sdlicons[no];
-  return NULL;  // TODO: or throw?!
-}
+/// Basically, CONVERT the icons' surfaces to textures, once we have a renderer.
+/// Because so far, the icons were only loaded as old-school SDL_Surfaces, which are
+/// useless for efficient rendering.
 
-unsigned IndoorsIcons::number_of_icons(void)
+int IndoorsIcons::convert_icons_to_textures(SDL_Renderer* renderer)
 {
-  return _vec_sdlicons.size();
+	int icon_size_offset = 0;
+	int icon_size = World::Instance().get_indoors_tile_size();
+
+	return Icons::convert_icons_to_textures(renderer, icon_size, icon_size_offset);
 }

@@ -71,6 +71,7 @@ int IndoorsMap::get_tile(unsigned x, unsigned y)
 	if (y < _data.size() && x < (_data[0]).size())
 		return (_data[y])[x];
 
+	std::cerr << "ERROR: indoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds!\n.";
 	return -1;
 }
 

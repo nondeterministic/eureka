@@ -49,8 +49,8 @@ OutdoorsMap::~OutdoorsMap()
 bool OutdoorsMap::is_within_visible_bounds(int x, int y)
 {
 	return x < 1 ||
-		   x >= width() - 4 ||
-		   y >= height() - 4 ||
+		   x >= (int)width() - 4 ||
+		   y >= (int)height() - 4 ||
 		   y < 1;
 }
 
@@ -66,10 +66,11 @@ int OutdoorsMap::get_tile(unsigned x, unsigned y)
 	else
 		y = (y-1)/2;
 
-	if (x < width() && y < height())
+	if (x < width() && y < height()) {
 		return (_data[y])[x];
+	}
 
-	// std::cerr << "ERROR: outdoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds!\n.";
+	// std::cerr << "ERROR: outdoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds (" << _data[0].size() << "x" << _data.size() << ").\n";
 	return -1;
 }
 

@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@
 #include "outdoorsmap.hh"
 #include "indoorsmap.hh"
 #include "gamestate.hh"
+#include "indoorsicons.hh"
+#include "outdoorsicons.hh"
 #include "eureka.hh"
 
 #include <iostream>
@@ -61,9 +63,10 @@
 #include <libxml++/parsers/textreader.h>
 
 extern "C" {
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_keycode.h>
 
 #include <getopt.h>
 
@@ -73,12 +76,15 @@ extern "C" {
 }
 
 // ******************************************************************************
-// Global variables
+// Global variables and definitions
 // ******************************************************************************
 
 lua_State* _lua_state = NULL;
 
-Uint32 tick_callback(Uint32 interval, void *param)
+/// Create a custom TICK-event, which can then be received in the event loop
+/// and reacted upon, e.g., to redraw icons.  grep for TICK, if you want to see
+/// how this is used in the game!
+Uint32 tick_callback(Uint32 interval, void* param)
 {
 	SDL_Event event;
 
@@ -217,7 +223,7 @@ int main(int argc, char *argv[])
 		std::cerr << "ERROR: No world name given as command-line argument. Minimal call pattern is '"
 				  << argv[0]
 				  << " <WORLDNAME>'.\nTry '" << argv[0] << " --help' for further information.\n";
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	// Remaining command line arguments (not options). i.e., worldname
@@ -248,7 +254,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (_getops_exit_after_print)
-		exit(0);
+		exit(EXIT_SUCCESS);
 
 	// Initialise random number generator
 	std::srand(std::time(NULL));
@@ -273,41 +279,43 @@ int main(int argc, char *argv[])
 	path_main_music /= "main.ogg";
 
 	SoundSample game_music;
-	game_music.set_channel(4711);
-	game_music.set_volume(128);
-	game_music.play(path_main_music.string(), 1);
+//	game_music.set_channel(4711);
+//	game_music.set_volume(128);
+//	game_music.play(path_main_music.string(), 1);
 
 	// Character creation?!
 	EventManager* em = &EventManager::Instance();
 	Charset normalFont;
 	bool choice_is_made = false;
 	while (!choice_is_made) {
-		Console::Instance().print(&normalFont, "Current game world loaded is " + conf_world_name + ". Would you like to\n" +
-											   "(J)ourney onward\n" +
-											   "(C)reate a new game character, or\n" +
-											   "(Q)uit game?", false);
-		 switch (em->get_key("djcq")) {
-		 case 'd': // SECRET DEVELOPMENT CHOICE *EVIL LAUGHTER*
-			 choice_is_made = true;
-			 setup_dummy_game();
-			 break;
-		 case 'q':
-			 exit(0);
-		 case 'c':
-			 Console::Instance().print(&normalFont, "Creating new game character.\n", false);
-			 choice_is_made = true;
-			 create_fresh_game_state(create_character());
-			 break;
-		 case 'j':
-			 if (!boost::filesystem::exists(conf_savegame_path / "party.xml"))
-				 Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
-			 else {
-				 choice_is_made = true;
-				 recreate_old_game_state();
-				 ZtatsWin::Instance().update_player_list();
-			 }
-			 break;
-		 }
+		Console::Instance().print(&normalFont,
+				"Current game world loaded is " + conf_world_name + ". Would you like to\n" +
+				"(J)ourney onward\n" +
+				"(C)reate a new game character, or\n" +
+				"(Q)uit game?");
+
+		switch (em->get_key("djcq")) {
+		case 'd': // SECRET DEVELOPMENT CHOICE *EVIL LAUGHTER*
+			choice_is_made = true;
+			setup_dummy_game();
+			break;
+		case 'q':
+			exit(EXIT_SUCCESS);
+		case 'c':
+			Console::Instance().print(&normalFont, "Creating new game character.\n", false);
+			choice_is_made = true;
+			create_fresh_game_state(create_character());
+			break;
+		case 'j':
+			if (!boost::filesystem::exists(conf_savegame_path / "party.xml"))
+				Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
+			else {
+				choice_is_made = true;
+				recreate_old_game_state();
+				ZtatsWin::Instance().update_player_list();
+			}
+			break;
+		}
 	}
 
 	 game_music.stop();
@@ -320,7 +328,27 @@ int main(int argc, char *argv[])
 
 int intro(int res_w, int res_h)
 {
-    SDL_Surface* img = NULL;
+	SDL_Window* window = NULL;
+	SDL_Surface* img = NULL;
+	SDL_Texture* texture = NULL;
+    SDL_Renderer* renderer = NULL;
+
+    // Initialize the SDL
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
+    	std::cerr << "ERROR: SDL_Init() failed: " << SDL_GetError() << std::endl;
+    	exit(EXIT_FAILURE);
+    }
+
+    if (!(window = SDL_CreateWindow(PACKAGE_STRING,
+							SDL_WINDOWPOS_UNDEFINED,
+							SDL_WINDOWPOS_UNDEFINED,
+							res_w, res_h, SDL_WINDOW_SHOWN)))
+    {
+    	std::cerr << "ERROR: SDL_CreateWindow() failed: " << SDL_GetError() << std::endl;
+    	exit(EXIT_FAILURE);
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
     boost::filesystem::path path_intro_pic((std::string)DATADIR);
     path_intro_pic /= PACKAGE_NAME;
@@ -329,12 +357,8 @@ int intro(int res_w, int res_h)
 
     if (!(img = IMG_Load(path_intro_pic.string().c_str())))
 		std::cerr << "ERROR: Couldn't load frame png: " << IMG_GetError() << std::endl;
-
-    // Initialize the SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-    	std::cerr << "ERROR: SDL_Init() Failed: " << SDL_GetError() << std::endl;
-    	exit(1);
-    }
+	texture = SDL_CreateTextureFromSurface(renderer, img);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
 
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
 		std::cerr << "ERROR: Could not initialize audio.\n";
@@ -344,24 +368,12 @@ int intro(int res_w, int res_h)
 	path_intro_music /= "data";
 	path_intro_music /= "intro.ogg";
 	SoundSample sample_intro;
-	sample_intro.set_channel(4711);
-	sample_intro.set_volume(128);
-	sample_intro.play(path_intro_music.string(), 1);
+//	sample_intro.set_channel(4711);
+//	sample_intro.set_volume(128);
+//	sample_intro.play(path_intro_music.string(), 1);
 
-    // Set the video mode
-    SDL_Surface* display = SDL_SetVideoMode(res_w, res_h, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    if (display == NULL) {
-    	std::cerr << "ERROR: SDL_SetVideoMode() Failed: " << SDL_GetError() << std::endl;
-    	exit(1);
-    }
-
-    if (SDL_BlitSurface(img, NULL, display, NULL) != 0) {
-    	std::cerr << "ERROR: SDL_BlitSurface() Failed: " << SDL_GetError() << std::endl;
-    	exit(1);
-    }
-
-    //Update the display
-    SDL_Flip(display);
+    // Update the display
+    SDL_RenderPresent(renderer);
 
     // Main loop
     SDL_Event event;
@@ -376,84 +388,104 @@ int intro(int res_w, int res_h)
     	}
     }
 
-	 sample_intro.stop();
+    sample_intro.stop();
 
     // Tell the SDL to clean up and shut down
-    SDL_Quit();
     Mix_CloseAudio();
+    SDL_Quit();
 
     return 0;
 }
 
 int init_game_env(int res_w, int res_h)
 {
-	EventManager* em = &EventManager::Instance();
-	Charset normalFont;
 	SDLWindow* win   = &SDLWindow::Instance();
 
 	// Now create shared_ptr from raw pointer
 	//  std::shared_ptr<HexArena> arena = std::dynamic_pointer_cast<HexArena>(_arena);
 
 	// Create window
-	// TODO: Not sure which flags are required.
-	win->init(res_w, res_h); // , 32, SDL_HWPALETTE | SDL_HWSURFACE | SDL_DOUBLEBUF);
+	if (win->init(res_w, res_h, SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) != 0) {
+		std::cerr << "ERROR: Cannot initialise SDL.\n";
+		exit(EXIT_FAILURE);
+	}
+
+	// Important, not to initialise at top, as the renderer of SDLWindow needs to be initialised in above init method.
+	// Perhaps, fix that later! TODO?
+	EventManager* em = &EventManager::Instance();
+	Charset normalFont;
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
 	// dynamic, we have to calculate the arena dimension as follows.
+	//
+	// (Also, creates arena_texture.)
 	if (win->draw_frame((int)(20.0*((float)res_w)/1024.0), (int)(24.0*((float)res_h)/768.0)) != 0) {
-		std::cerr << "Error: Canot create main window.\n";
+		std::cerr << "ERROR: Cannot create main window.\n";
 		exit(EXIT_FAILURE);
 	}
 
-	// Create in-game text console for textual user interaction and game
-	// output
-	if (win->create_console_surface() != 0) {
-		std::cerr << "Error: Canot create console window.\n";
+	// Create in-game text console for textual user interaction and game output
+	if (win->create_texture_console() != 0) {
+		std::cerr << "ERROR: Cannot create console window.\n";
 		exit(EXIT_FAILURE);
 	}
 
 	// Create surface for ztats display
-	if (win->create_ztats_surface() != 0) {
-		std::cerr << "Error: Canot create ztats window.\n";
+	if (win->create_texture_ztats() != 0) {
+		std::cerr << "ERROR: Cannot create ztats window.\n";
 		exit(EXIT_FAILURE);
 	}
 
 	// Create surface for mini stats display
-	if (win->create_mini_win_surface() != 0) {
-		std::cerr << "Error: Canot create mini window.\n";
+	if (win->create_texture_mini_win() != 0) {
+		std::cerr << "ERROR: Cannot create mini window.\n";
 		exit(EXIT_FAILURE);
 	}
 
 	// Create surface for mini stats display
-	if (win->create_tiny_win_surface() != 0) {
-		std::cerr << "Error: Canot create tiny window.\n";
+	if (win->create_texture_tiny_win() != 0) {
+		std::cerr << "ERROR: Cannot create tiny window.\n";
 		exit(EXIT_FAILURE);
 	}
 
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+	// TODO SDL: Disable or extend default non-delay of keyboard input!
+	// SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
 	Console::Instance().
 			print(&normalFont,
-					"Welcome to " + (std::string)PACKAGE_NAME + "!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
+					"Welcome to " + (std::string)PACKAGE_NAME +
+					"!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
 					false);
 
 	// Activate event handling
 	SDL_TimerID tick;
 	if (!(tick = em->add_event(500, tick_callback, NULL))) {
-		std::cerr << "Could not initialize timer.\n";
+		std::cerr << "ERROR: Could not initialize timer.\n";
 		return -1;
 	}
 
 	// Load game data
 	if (! World::Instance().xml_load_world_data(conf_world_path.string() + ".xml")) {
-		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml" << ". Did you run make install?" << std::endl;
+		std::cerr << "ERROR: Error loading game data from " << conf_world_path.string() << ".xml"
+				  << ". Did you run make install?" << std::endl;
 		return -1;
 	}
 
 	// Load Lua scripts, basically.
 	World::Instance().init_lua_arrays(_lua_state);
 	World::Instance().set_spells(World::Instance().load_lua_spells(_lua_state));
+
+
+	// It is important to do this once!
+	if (IndoorsIcons::Instance().convert_icons_to_textures(win->getRenderer()) < 0) {
+		std::cerr << "ERROR: Initialisation error. Could not convert indoors icons to textures.\n";
+		exit(-1);
+	}
+	if (OutdoorsIcons::Instance().convert_icons_to_textures(win->getRenderer()) < 0) {
+		std::cerr << "ERROR: Initialisation error. Could not convert outdoors icons to textures.\n";
+		exit(-1);
+	}
 
 	return 0;
 }
@@ -729,7 +761,7 @@ int recreate_old_game_state()
 		gstate->apply();
 	else {
 		std::cerr << "ERROR: eureka.cc: Loading of game file failed.\n";
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
 	// Now load referenced world data from disk
@@ -816,20 +848,21 @@ int create_fresh_game_state(PlayerCharacter player)
 
 int start_game()
 {
-	SDLWindow* win   = &SDLWindow::Instance();
-	GameControl* gc  = &GameControl::Instance();
-	Party* party     = &Party::Instance();
+	SDLWindow*     win = &SDLWindow::Instance();
+	GameControl*    gc = &GameControl::Instance();
+	Party*       party = &Party::Instance();
 	Charset normalFont;
-	unsigned int initial_x    = party->x;
-	unsigned int initial_y    = party->y;
+	unsigned int initial_x = party->x;
+	unsigned int initial_y = party->y;
 
 	if (arena == NULL) {
 		std::cerr << "ERROR: eureka.cc: arena pointer is NULL.\n";
-		exit(0);
+		exit(EXIT_FAILURE);
 	}
 
 	// Draw map
-	arena->set_SDL_surface(win->get_drawing_area_SDL_surface());
+	// Arena can simply use the singleton of SDLWindow itself!
+	arena->set_SDLWindow_object(win);
 	arena->determine_offsets();
 
 	// Set up game window and game control
@@ -848,7 +881,7 @@ int start_game()
 		gc->set_map_name(arena->get_map()->get_name().c_str());
 		std::cout << "INFO: eureka.cc: Setting map name to " << arena->get_map()->get_name() << ".\n";
 
-		gc->show_win();
+		gc->redraw_graphics_arena();
 
 		std::cout << "INFO: eureka.cc: Moving party quietly to " << initial_x << ", " << initial_y << ".\n";
 		for (unsigned x = 0; x < initial_x; x++)
@@ -864,7 +897,7 @@ int start_game()
 		gc->set_map_name(arena->get_map()->get_name().c_str());
 		std::cout << "INFO: eureka.cc: Setting map name to " << arena->get_map()->get_name() << ".\n";
 
-		gc->show_win();
+		gc->redraw_graphics_arena();
 
 		for (unsigned x = 0; x < initial_x; x++)
 			gc->move_party(DIR_RIGHT, true);
@@ -872,8 +905,8 @@ int start_game()
 			gc->move_party(DIR_DOWN, true);
 	}
 
-	gc->show_win();
-	gc->draw_status();
+	gc->redraw_graphics_arena();
+	gc->redraw_graphics_status();
 
 	SoundSample game_music;
 	game_music.set_channel(4711);
@@ -884,11 +917,9 @@ int start_game()
 
 	Console::Instance().
 			print(&normalFont,
-					"Remember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
+					"\nRemember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
 					"(d)rop item, (e)nter, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
-					"(t)alk, (u)se item, (y)ield item, (z)tats.\n",
-					false);
-
+					"(t)alk, (u)se item, (y)ield item, (z)tats.\n");
 
 	// Set "start game" flag
 	gc->set_game_started(true);

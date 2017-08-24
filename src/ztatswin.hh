@@ -1,9 +1,10 @@
 #ifndef ZTATSWIN_HH
 #define ZTATSWIN_HH
 
-#include <SDL.h>
 #include <iostream>
 #include <vector>
+
+#include <SDL2/SDL.h>
 
 #include "eureka.hh"
 #include "sdlwindowregion.hh"

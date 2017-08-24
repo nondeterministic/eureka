@@ -38,122 +38,97 @@
 
 SquareArena::SquareArena(std::shared_ptr<Map> map)
 {
-  _map = map;
-  _top_hidden = 0;
-  _bot_hidden = 0;
-  _left_hidden = 0;
-  _right_hidden = 0;
-  _width = 0;
-  _height = 0;
+	_map = map;
+	_top_hidden = 0;
+	_bot_hidden = 0;
+	_left_hidden = 0;
+	_right_hidden = 0;
+	_width = 0;
+	_height = 0;
 
-  int iconsize = IndoorsIcons::Instance().number_of_icons();
-  if (iconsize > 0) {
-    for (int i = 0; i < iconsize; i++)
-      _drawn_icons.push_back(-1);
-  }
-  else {
-    std::cerr << "ERROR: squarearena.cc: Initialisation error. Icons not yet loaded.\n";
-    exit(0);
-  }
+	int iconsize = IndoorsIcons::Instance().number_of_icons();
+	if (iconsize > 0 && _drawn_icons.size() == 0) {
+		for (int i = 0; i < iconsize; i++)
+			_drawn_icons.push_back(-1);
+	}
+	else {
+		std::cerr << "ERROR: squarearena.cc: Initialisation error. Icons not yet loaded although they should be.\n";
+		exit(-1);
+	}
 
-  // _corner_tile_uneven_offset = 0;
+	_corner_tile_uneven_offset = 0;
+	_water_anim = 0;
+	_party_anim = 0;
 }
 
 SquareArena::~SquareArena(void)
 {
-	if (_sdl_surf != NULL)
-		SDL_FreeSurface(_sdl_surf);
-
 	_drawn_icons.clear();
-	// SDL_Quit();
 }
 
-void SquareArena::set_SDL_surface(SDL_Surface* s)
-{
-  _clipped_surf = s;
-  _sdl_surf = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCALPHA,
-                                   s->w + 100, s->h + 100,
-                                   32, 0, 0, 0, 0);
-}
-
-// x and y are screen coordinates in pixels
-
-int SquareArena::put_tile(int x, int y, SDL_Surface* brush)
-{
-  if (x < 0 || y < 0) {
-    std::cerr << "WARNING: squarearena.cc: put_tile has wrong coords." << std::endl;
-    return -1;
-  }
-
-  if (brush == NULL) {
-    std::cerr << "WARNING: squarearena.cc: Brush to paint tile is NULL. " << std::endl;
-    return 0;
-  }
-
-  SDL_Rect rect = get_tile_coords(x, y);
-  return SDL_BlitSurface(brush, NULL, _sdl_surf, &rect);
-}
-
-// Gets the absolute coordinates in pixels for a tile on (x, y)
+/// Gets the absolute coordinates in pixels for a tile on (x, y)
 
 SDL_Rect SquareArena::get_tile_coords(int x, int y) const
 {
-  if (x < 0 || y < 0)
-    std::cerr << "WARNING: squarearena.cc: get_tile_coords has wrong coords." << std::endl;
+	if (x < 0 || y < 0)
+		std::cerr << "WARNING: squarearena.cc: get_tile_coords was called with invalid arguments." << std::endl;
 
-  SDL_Rect rect;
-  rect.x = tile_size() * x;
-  rect.w = tile_size();
-  rect.h = tile_size();
-  rect.y = tile_size() * y;
-  return rect;
+	SDL_Rect rect;
+	rect.x = tile_size() * x;
+	rect.w = tile_size();
+	rect.h = tile_size();
+	rect.y = tile_size() * y;
+	return rect;
 }
 
 std::shared_ptr<Map> SquareArena::get_map(void) const
 {
-  return _map;
+	return _map;
 }
 
 Offsets SquareArena::move(int dir)
 {
-//     std::cout << "top_hidden: " << _top_hidden << ", "
-//          << "bot_hidden: " << _bot_hidden << ", "
-//          << "left_hidden: " << _left_hidden << ", "
-//          << "right_hidden: " << _right_hidden << "\n";
+	//     std::cout << "top_hidden: " << _top_hidden << ", "
+	//          << "bot_hidden: " << _bot_hidden << ", "
+	//          << "left_hidden: " << _left_hidden << ", "
+	//          << "right_hidden: " << _right_hidden << "\n";
 
-  switch (dir) {
-  case DIR_UP:
-    if (_top_hidden >= tile_size())
-      adjust_offsets(-tile_size(), tile_size(), 0, 0);
-    break;
-  case DIR_DOWN:
-    if (_bot_hidden >= tile_size())
-      adjust_offsets(tile_size(), -tile_size(), 0, 0);
-    break;
-  case DIR_LEFT:
-    if (_left_hidden >= tile_size())
-      adjust_offsets(0, 0, -tile_size(), tile_size());
-    break;
-  case DIR_RIGHT:
-    if (_right_hidden >= tile_size())
-      adjust_offsets(0, 0, tile_size(), -tile_size());
-    break;
-  }
+	switch (dir) {
+	case DIR_UP:
+		if (_top_hidden >= tile_size())
+			adjust_offsets(-tile_size(), tile_size(), 0, 0);
+		break;
+	case DIR_DOWN:
+		if (_bot_hidden >= tile_size())
+			adjust_offsets(tile_size(), -tile_size(), 0, 0);
+		break;
+	case DIR_LEFT:
+		if (_left_hidden >= tile_size())
+			adjust_offsets(0, 0, -tile_size(), tile_size());
+		break;
+	case DIR_RIGHT:
+		if (_right_hidden >= tile_size())
+			adjust_offsets(0, 0, tile_size(), -tile_size());
+		break;
+	}
 
-//     std::cout << "top_hidden: " << _top_hidden << ", "
-//          << "bot_hidden: " << _bot_hidden << ", "
-//          << "left_hidden: " << _left_hidden << ", "
-//          << "right_hidden: " << _right_hidden << "\n";
+	//     std::cout << "top_hidden: " << _top_hidden << ", "
+	//          << "bot_hidden: " << _bot_hidden << ", "
+	//          << "left_hidden: " << _left_hidden << ", "
+	//          << "right_hidden: " << _right_hidden << "\n";
 
-  return offsets();
+	return offsets();
 }
 
 // Determine map offsets in terms of pixels - not tiles!
 
 Offsets SquareArena::determine_offsets()
 {
-	unsigned screen_width = _sdl_surf->w;
-	unsigned screen_height = _sdl_surf->h;
+	int w,h;
+	SDL_QueryTexture(_texture, NULL, NULL, &w, &h);
+
+	unsigned screen_width = w;
+	unsigned screen_height = h;
 
 	unsigned map_width  = get_map()->width()  * tile_size();
 	unsigned map_height = get_map()->height() * tile_size();
@@ -420,10 +395,9 @@ void SquareArena::show_map(int x_width, int y_width)
 	_show_obj = true;
 
 	// First, blank entire screen to avoid overlay graphic errors
-	SDL_FillRect(_sdl_surf, NULL, 0x000000);
+	_sdlwindow_object->clear_texture_arena();
 
-	// Determine which icon needs to be drawn, in case it has an
-	// animation sequence defined
+	// Determine which icon needs to be drawn, in case it has an animation sequence defined
 	if (!_party_is_moving) {
 		for (unsigned i = 0; i < _drawn_icons.size(); i++) {
 			if (IndoorsIcons::Instance().get_props(i)->next_anim() < 0)
@@ -446,7 +420,7 @@ void SquareArena::show_map(int x_width, int y_width)
 
 			if (tileno < 0) {
 				std::cerr << "ERROR: squarearena.cc: Invalid tile number in SquareArena::show_map(): " << tileno << ".\n";
-				exit(0);
+				exit(-1);
 			}
 
 			// Check for sound effects to be played for particular icon
@@ -466,7 +440,7 @@ void SquareArena::show_map(int x_width, int y_width)
 			if (_show_map) {
 				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.
 				if (in_los(x, y, party_x, party_y) &&
-						((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) ||
+						(((x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) ||
 							is_illuminated((int)x, (int)y)))
 				{
 					// Mirrors reflect, if an animate object is in front of it...
@@ -502,7 +476,9 @@ void SquareArena::show_map(int x_width, int y_width)
 					int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
 					if (in_los(x, y, party_x, party_y)) {
-						if ((x_width == 0 && y_width == 0 || abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width)) || is_illuminated((int)x, (int)y)) {
+						if (((x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) ||
+								is_illuminated((int)x, (int)y))
+						{
 							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
 								std::cerr << "WARNING: squarearena.cc: put_tile() returned " << puttile_errno << " in show_map()." << std::endl;
 						}
@@ -528,6 +504,7 @@ void SquareArena::show_map(int x_width, int y_width)
 	}
 
 	_party_is_moving = false;
+	blit();
 
 	// Keep only those sound effects playing that were added this time 'round...
 	for (auto itr = playlist.begin(); itr != playlist.end(); itr++) {
@@ -545,26 +522,29 @@ void SquareArena::show_map(int x_width, int y_width)
 
 unsigned SquareArena::tile_size(void) const
 {
-  return World::Instance().get_indoors_tile_size();
+	return World::Instance().get_indoors_tile_size();
 }
 
 Offsets SquareArena::offsets(void)
 {
-  Offsets new_offsets;
-  new_offsets.top = _top_hidden;
-  new_offsets.bot = _bot_hidden;
-  new_offsets.left = _left_hidden;
-  new_offsets.right = _right_hidden;
-  return new_offsets;
+	Offsets new_offsets;
+	new_offsets.top = _top_hidden;
+	new_offsets.bot = _bot_hidden;
+	new_offsets.left = _left_hidden;
+	new_offsets.right = _right_hidden;
+	return new_offsets;
 }
 
 // Returns relative coordinates on the hex arena.
 
 void SquareArena::get_center_coords(int& x, int& y)
 {
-  x = _clipped_surf->w / 2 / tile_size();
-  y = _clipped_surf->h / 2 / tile_size();
-  // std::cout << "Center: " << x << ", " << y << std::endl;
+	int w,h;
+	SDL_QueryTexture(_texture, NULL, NULL, &w, &h);
+
+	x = w / 2 / tile_size();
+	y = h / 2 / tile_size();
+	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
 std::pair<int, int> SquareArena::show_party(int x, int y)
@@ -602,20 +582,9 @@ std::pair<int, int> SquareArena::show_party(int x, int y)
 	return new_coords;
 }
 
-void SquareArena::update()
-{
-  SDL_Rect srcRect;
-  srcRect.x = tile_size();
-  srcRect.y = tile_size();
-  srcRect.w = _sdl_surf->w;
-  srcRect.h = _sdl_surf->h;
-
-  SDL_BlitSurface(_sdl_surf, &srcRect, _clipped_surf, NULL);
-}
-
 bool SquareArena::adjacent(int x1, int y1, int x2, int y2)
 {
-  return abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1;
+	return abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1;
 }
 
 unsigned SquareArena::max_y_coordinate()

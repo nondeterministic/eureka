@@ -20,32 +20,28 @@
 #ifndef TYPE_HH
 #define TYPE_HH
 
-#include <SDL.h>
-#include <SDL_image.h>
 #include <map>
 
-using namespace std;
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 class Type
 {
 public:
-  Type();
-  ~Type();
-  virtual int load_charset() = 0;
-  void col_printch(SDL_Surface*, int, int, int, SDL_Color, SDL_Color);
-  void printch(SDL_Surface*, int, int = -1, int = -1, SDL_Color* = NULL, SDL_Color* = NULL);
-  int char_width();
-  int char_height();
-  void set_select(bool);
-  void toggle_select();
+	Type();
+	virtual ~Type();
+	virtual int load_charset() = 0;
+	void col_printch(SDL_Texture*, int, int, int, SDL_Color, SDL_Color);
+	void printch(SDL_Texture*, int, int = -1, int = -1, SDL_Color* = NULL, SDL_Color* = NULL);
+	int char_width();
+	int char_height();
+	void set_select(bool);
+	void toggle_select();
 
 protected:
-  SDL_Surface* _ptr_charset_surf;
-  // SDL_Surface* _ptr_charset_surf_sel;
-  map<int, SDL_Surface*> _map_chars;
-  int _w;
-  int _h;
-  bool _select;
+	std::map<int, SDL_Texture*> _map_chars;
+	int _w, _h;
+	bool _select;
 };
 
 #endif

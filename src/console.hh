@@ -21,7 +21,10 @@
 #define CONSOLE_HH
 
 #include <string>
-#include <SDL.h>
+#include <utility>
+
+#include <SDL2/SDL.h>
+
 #include "type.hh"
 
 class Console
@@ -32,7 +35,8 @@ public:
   void print_line(Type*, const std::string);
   std::string gets();
 
-  SDL_Surface* get_surface();
+  SDL_Texture* get_texture();
+  std::pair<int,int> get_size();
   void animate_cursor(Type*, int x = -1, int y = -1, int offset = 2);
   void pause(int = 10);
   void alarm();
@@ -43,7 +47,7 @@ protected:
   int cursor;
   int cursor_x, cursor_y;
   int pre_cursor_x, pre_cursor_y;
-  std::string get_word(const string& s, int = 0);
+  std::string get_word(const std::string& s, int = 0);
 };
 
 #endif

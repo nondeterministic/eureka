@@ -55,7 +55,7 @@ void EdiblesHelper::eat_player(Edible* item, PlayerCharacter* pl)
 		}
 		if (poisoned) {
 			pl->set_condition(POISONED);
-			gc.draw_status();
+			gc.redraw_graphics_status();
 			gc.printcon(pl->name() + " is starting to feel quite sick... (PRESS SPACE BAR)");
 			em.get_key(" ");
 		}
@@ -83,7 +83,7 @@ void EdiblesHelper::eat_player(Edible* item, PlayerCharacter* pl)
 
 		if (phealed) {
 			pl->set_condition(GOOD);
-			gc.draw_status();
+			gc.redraw_graphics_status();
 			gc.printcon(pl->name() + " feels less sick suddenly... (PRESS SPACE BAR)");
 			em.get_key(" ");
 		}
@@ -114,7 +114,7 @@ void EdiblesHelper::eat_player(Edible* item, PlayerCharacter* pl)
 				pl->set_hp(min(pl->hpm(), pl->hp() + healed));
 
 				// TODO: Update party view to signal healed players
-				gc.draw_status();
+				gc.redraw_graphics_status();
 				gc.printcon(pl->name() + " feels reinvigorated... (PRESS SPACE BAR)");
 				em.get_key(" ");
 			}
@@ -130,7 +130,7 @@ void EdiblesHelper::eat_party(Edible* item)
 	// Food up
 	if (item->food_up > 0) {
 		Party::Instance().set_food(Party::Instance().food() + item->food_up);
-		gc.draw_status(); gc.printcon("That was delicious. (PRESS SPACE BAR)"); em.get_key(" ");
+		gc.redraw_graphics_status(); gc.printcon("That was delicious. (PRESS SPACE BAR)"); em.get_key(" ");
 	}
 
 	// Intoxication
@@ -153,7 +153,7 @@ void EdiblesHelper::eat_party(Edible* item)
 	}
 	Party::Instance().rounds_intoxicated = Party::Instance().rounds_intoxicated + intoxicating_rounds;
 	if (intoxicating_rounds > 0) {
-		gc.draw_status();
+		gc.redraw_graphics_status();
 		gc.printcon("It seems that " + item->name() + " has an intoxicating effect... (PRESS SPACE BAR)");
 		em.get_key(" ");
 	}
@@ -182,7 +182,7 @@ void EdiblesHelper::eat_party(Edible* item)
 			}
 			if (poisoned) {
 				pl->set_condition(POISONED);
-				gc.draw_status();
+				gc.redraw_graphics_status();
 				gc.printcon(pl->name() + " is starting to feel quite sick... (PRESS SPACE BAR)");
 				em.get_key(" ");
 			}
@@ -214,7 +214,7 @@ void EdiblesHelper::eat_party(Edible* item)
 
 			if (phealed) {
 				pl->set_condition(GOOD);
-				gc.draw_status();
+				gc.redraw_graphics_status();
 				gc.printcon(pl->name() + " feels less sick suddenly... (PRESS SPACE BAR)");
 				em.get_key(" ");
 			}
@@ -248,7 +248,7 @@ void EdiblesHelper::eat_party(Edible* item)
 					pl->set_hp(min(pl->hpm(), pl->hp() + healed));
 
 					// TODO: Update party view to signal healed players
-					gc.draw_status();
+					gc.redraw_graphics_status();
 					gc.printcon(pl->name() + " feels reinvigorated... (PRESS SPACE BAR)");
 					em.get_key(" ");
 				}

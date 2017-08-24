@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
-#include "charset.hh"
-#include "eureka.hh"
-
-#include <SDL.h>
-#include <SDL_image.h>
-
 #include <string>
 #include <iostream>
 #include <map>
@@ -31,69 +25,79 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 
-using namespace std;
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
-Charset::Charset() {
+#include "charset.hh"
+#include "eureka.hh"
+#include "sdlwindow.hh"
+
+Charset::Charset()
+{
 	load_charset();
 }
 
-Charset::~Charset() {
+Charset::~Charset()
+{
 	// std::cout << "~Charset()\n";
 }
 
-int Charset::load_charset() {
+int Charset::load_charset()
+{
 	boost::filesystem::path icon_path(conf_data_path);
 	icon_path /= "charset.png";
 
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
+	SDL_Texture* all_chars_texture = NULL;
+	SDL_Surface* all_chars_surface = NULL;
 
-	// SDL_Surface* temp = IMG_Load(icon_path.c_str());
-	// SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, SDL_ALPHA_OPAQUE);
-	// _ptr_charset_surf = SDL_DisplayFormatAlpha(temp);
-
-	if (!(_ptr_charset_surf = IMG_Load(icon_path.string().c_str()))) {
-		std::cerr << "ERROR: Couldn't load charset: " << IMG_GetError() << std::endl;
+	if (!(all_chars_surface = IMG_Load(icon_path.string().c_str()))) {
+		std::cerr << "ERROR: charset.cc: Couldn't load charset: " << IMG_GetError() << std::endl;
 		return -1;
 	}
 
+	SDL_Renderer* renderer = SDLWindow::Instance().getRenderer();
+	all_chars_texture = SDL_CreateTextureFromSurface(renderer, all_chars_surface);
+
+	if (SDL_SetTextureBlendMode(all_chars_texture, SDL_BLENDMODE_BLEND) < 0) {
+		std::cerr << "ERROR: charset.cc: setting blend mode (1) not working: " << IMG_GetError() << "\n";
+		return -1;
+	}
+
+// see also https://forums.libsdl.org/viewtopic.php?p=40949
+// SDL_SetRenderTarget(renderer, all_chars_texture);
+// SDL_SetRenderDrawColor(renderer, 0,0,0,0);
+// SDL_RenderClear(renderer);
+
 	// Fill character std::map.
 	int last_ascii = 0;
-	for (int y = 0; y < _ptr_charset_surf->h; y += _h) {
-		for (int x = 0; x < _ptr_charset_surf->w - 1; x += _w) {
+	for (int y = 0; y < all_chars_surface->h; y += _h) {
+		for (int x = 0; x < all_chars_surface->w - 1; x += _w) {
 			SDL_Rect srcRect;
 			srcRect.x = x;
 			srcRect.y = y;
 			srcRect.w = _w;
 			srcRect.h = _h;
 
-			SDL_Surface *surface = NULL;
+			SDL_Texture* single_char_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, _w, _h);
 
-			if (!(surface = SDL_CreateRGBSurface(SDL_HWSURFACE, _w, _h, 32, rmask, gmask, bmask, amask))) {
-				std::cerr << "ERROR: charset.cc surface == NULL\n";
-				return -2;
+			if (SDL_SetTextureBlendMode(single_char_texture, SDL_BLENDMODE_BLEND) < 0) {
+				std::cerr << "ERROR: charset.cc: setting blend mode (2) not working: " << IMG_GetError() << "\n";
+				continue;
 			}
 
-			// It is not f*cking obvious from the docs that you have to
-			// clear the SDL_SRCALPHA flag on the source surface in order to
-			// preserve its alpha mask in a subsequent blit.
-			//
-			// http://forums.libsdl.org/viewtopic.php?t=850&sid=50447b2dc7f77f03c86bed666ce568c2
-			SDL_SetAlpha(_ptr_charset_surf, 0, SDL_ALPHA_OPAQUE);
-			SDL_BlitSurface(_ptr_charset_surf, &srcRect, surface, NULL);
+			if (SDL_SetRenderTarget(renderer, single_char_texture) < 0) {
+				std::cerr << "ERROR: charset.cc: setting rendering target not working: " << IMG_GetError() << "\n";
+				exit(-1);
+			}
 
-			// Now enable transparency again to preserve for later blits.
-			SDL_SetAlpha(surface, SDL_SRCALPHA, SDL_ALPHA_TRANSPARENT);
+			// see above, and also link!
+			SDL_SetRenderDrawColor(renderer, 0,0,0,0);
+			SDL_RenderClear(renderer);
+
+			if (SDL_RenderCopy(renderer, all_chars_texture, &srcRect, NULL) < 0) {
+				std::cerr << "WARNING: charset.cc: render copy failed: " << IMG_GetError() << "\n";
+				continue;
+			}
 
 			int x2 = x / _w;
 			int y2 = y / _h;
@@ -215,9 +219,12 @@ int Charset::load_charset() {
 			}
 
 			// Insert in maps.
-			_map_chars.insert(make_pair(ascii, surface));
+			_map_chars.insert(std::make_pair(ascii, single_char_texture));
 		}
 	}
+
+	SDL_DestroyTexture(all_chars_texture);
+	SDL_FreeSurface(all_chars_surface);
 
 	return 0;
 };

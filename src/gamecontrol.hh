@@ -74,13 +74,13 @@ public:
 	bool is_arena_outdoors();
 	bool move_party(LDIR, bool = false);
 	void move_objects();
-	void draw_status(bool = true);
+	void redraw_graphics_status(bool = true);
 	int tick_event_handler();
 	int tick_event_turn_handler();
 	int key_event_handler(SDL_Event* = NULL);
 	int set_arena(std::shared_ptr<Arena>);
 	std::shared_ptr<Arena> get_arena();
-	int show_win();
+	int redraw_graphics_arena();
 	int close_win();
 	int set_party(int, int);
 	void set_outdoors(bool);

@@ -2,8 +2,6 @@ bin_PROGRAMS = eureka
 
 SUBDIRS = leibniz
 
-# -std=c++0x
-
 AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 -MD -MP \
 	$(LIBXMLPP_CFLAGS) \
 	$(SDL_CFLAGS) \
@@ -39,7 +37,7 @@ eureka_SOURCES = \
 	world.hh world.cc \
 	type.hh type.cc \
 	sdltricks.hh sdltricks.cc \
-	sdlwindowregion.hh \
+	sdlwindowregion.hh sdlwindowregion.cc \
 	ztatswin.hh ztatswin.cc \
 	ztatswincontentprovider.hh ztatswincontentprovider.cc \
 	tinywin.hh tinywin.cc \

@@ -20,7 +20,7 @@
 #ifndef __GCCOMBAT_HH
 #define __GCCOMBAT_HH
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "attackoption.hh"
 #include "gamecontrol.hh"

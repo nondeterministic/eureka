@@ -2,23 +2,23 @@
 #define __OUTDOORSICONS_HH
 
 #include <vector>
-#include <SDL.h>
-#include <SDL_image.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "icons.hh"
 
 class OutdoorsIcons : public Icons
 {
 public:
   static OutdoorsIcons& Instance();
-  SDL_Surface*          get_sdl_icon(unsigned);
-  unsigned              number_of_icons();
+  int                   convert_icons_to_textures(SDL_Renderer*);
+
+  OutdoorsIcons(OutdoorsIcons const&) = delete;
+  void operator=(OutdoorsIcons const&) = delete;
 
 protected:
   OutdoorsIcons();
-  ~OutdoorsIcons();
-
-  SDL_Surface*                                 _ptr_icon_surf;
-  std::vector<SDL_Surface*>                    _vec_sdlicons;
 };
 
 #endif

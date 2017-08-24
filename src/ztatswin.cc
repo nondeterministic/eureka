@@ -22,6 +22,16 @@ using namespace std;
 
 ZtatsWin::ZtatsWin()
 {
+	SDLWindow& win = SDLWindow::Instance();
+
+	set_texture(win.get_texture_ztats());
+
+	int ztats_w, ztats_h;
+	if (SDL_QueryTexture(win.get_texture_ztats(), NULL, NULL, &ztats_w, &ztats_h) < 0) {
+		std::cerr << "WARNING: ztatswin.cc: cannot set texture: " << IMG_GetError() << "\n";
+		exit(EXIT_FAILURE);
+	}
+
 	_content_provider = NULL;
 
 	standard_bgcolour.r = 0;
@@ -32,20 +42,18 @@ ZtatsWin::ZtatsWin()
 	highlight_colour.g = 50;
 	highlight_colour.b = 250;
 
-	set_surface(SDLWindow::Instance().get_ztats_SDL_surface());
-
 	SDL_Rect rect;
-	rect.x = SDLWindow::Instance().get_drawing_area_SDL_surface()->w + 2 * SDLWindow::Instance().frame_icon_size() - 6;
-	rect.y = SDLWindow::Instance().frame_icon_size() - 2;
-	rect.w = get_surface()->w;
-	rect.h = get_surface()->h;
-	set_position(rect);
+	rect.x = win.get_size().first - win.frame_icon_size() - ztats_w + 2;
+	rect.y = win.frame_icon_size() - 2;
+	rect.w = ztats_w;
+	rect.h = ztats_h;
+	set_dimensions(rect);
 }
 
 ZtatsWin& ZtatsWin::Instance()
 {
-  static ZtatsWin inst;
-  return inst;
+	static ZtatsWin inst;
+	return inst;
 }
 
 /// Highlights lines from to to in the ztats window.  Players in the
@@ -56,40 +64,40 @@ ZtatsWin& ZtatsWin::Instance()
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
-  swap_colours(from_top, to_bottom, standard_bgcolour, highlight_colour);
+	swap_colours(from_top, to_bottom, standard_bgcolour, highlight_colour);
 }
 
 void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 {
-  swap_colours(from_top, to_bottom, highlight_colour, standard_bgcolour);
+	swap_colours(from_top, to_bottom, highlight_colour, standard_bgcolour);
 }
 
 void ZtatsWin::unhighlight_all()
 {
-  unhighlight_lines(-1, -1);
+	unhighlight_lines(-1, -1);
 }
 
 // Swaps background colour A for B in lines from_top to to_bottom in the ztats window.
 
 void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color a, SDL_Colour b)
 {
-  SDL_Surface* surf = get_surface();
+	SDL_Texture* texture = get_texture();
 
-  // How many lines are displayed in the ztats window?
-  int lines = surf->h / font.char_height();
+	// How many lines are displayed in the ztats window?
+	int lines = get_dimensions().w / _font.char_height();
 
-  if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0)
-    SDLTricks::Instance().replace_col(surf, a, b, NULL);
-  else {
-    SDL_Rect rect;
-    rect.x = 0;
-    rect.y = from_top * font.char_height() + _inter_line_padding * from_top + _y_frame_offset;
-    rect.h = (to_bottom - from_top) * font.char_height() + _inter_line_padding;
-    rect.w = surf->w;
-    SDLTricks::Instance().replace_col(surf, a, b, &rect);
-  }
+	if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0)
+		SDLTricks::Instance().replace_col(_renderer, texture, a, b, NULL);
+	else {
+		SDL_Rect rect;
+		rect.x = 0;
+		rect.y = from_top * _font.char_height() + _inter_line_padding * from_top + _y_frame_offset;
+		rect.h = (to_bottom - from_top) * _font.char_height() + _inter_line_padding;
+		rect.w = get_dimensions().h;
+		SDLTricks::Instance().replace_col(_renderer, texture, a, b, &rect);
+	}
 
-  SDLWindow::Instance().blit_ztats();
+	SDLWindow::Instance().blit_ztats();
 }
 
 /*! Let user select a player from the party in the stats window using cursor keys.
@@ -99,43 +107,43 @@ void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color a, SDL_Colour
 
 int ZtatsWin::select_player()
 {
-  int player  =  0;
-  SDL_Event event;
+	int player  =  0;
+	SDL_Event event;
 
-  highlight_lines(player*2, player*2 + 2);
+	highlight_lines(player*2, player*2 + 2);
 
-  while (1) {
-    if ( SDL_WaitEvent(&event) ) {
-      if (event.type == SDL_KEYDOWN) {
-        unhighlight_lines(player*2, player*2 + 2);
+	while (1) {
+		if ( SDL_WaitEvent(&event) ) {
+			if (event.type == SDL_KEYDOWN) {
+				unhighlight_lines(player*2, player*2 + 2);
 
-        switch(event.key.keysym.sym) {
-        case SDLK_UP:
-          if (player > 0)
-            player--;
-          break;
-        case SDLK_DOWN:
-          if (player < Party::Instance().party_size() - 1)
-            player++;
-          break;
-        case SDLK_RETURN:
-          return player;
-        case SDLK_ESCAPE:
-        case SDLK_q:
-          // Reset UI flags to default
-          update_player_list();
-          SDLWindow::Instance().blit_interior();
-          return -1;
-        default:
-          break;
-        }
-        highlight_lines(player*2, player*2 + 2);
-        SDLWindow::Instance().blit_interior();
-      }
-    }
-  }
+				switch(event.key.keysym.sym) {
+				case SDLK_UP:
+					if (player > 0)
+						player--;
+					break;
+				case SDLK_DOWN:
+					if (player < Party::Instance().party_size() - 1)
+						player++;
+					break;
+				case SDLK_RETURN:
+					return player;
+				case SDLK_ESCAPE:
+				case SDLK_q:
+					// Reset UI flags to default
+					update_player_list();
+					SDLWindow::Instance().blit_arena();
+					return -1;
+				default:
+					break;
+				}
+				highlight_lines(player*2, player*2 + 2);
+				SDLWindow::Instance().blit_arena();
+			}
+		}
+	}
 
-  return -1;
+	return -1;
 }
 
 std::vector<int> ZtatsWin::select_items()
@@ -192,7 +200,7 @@ std::vector<int> ZtatsWin::select_items()
 					}
 				}
 				else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
-					ZtatsWin::Instance().update_player_list();
+					update_player_list();
 					return result;
 				}
 				else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
@@ -286,11 +294,11 @@ int ZtatsWin::select_item()
 				}
 			}
 			else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
-				ZtatsWin::Instance().update_player_list();
+				update_player_list();
 				return -1;
 			}
 			else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
-				ZtatsWin::Instance().update_player_list();
+				update_player_list();
 				return line + offset;
 			}
 		}
@@ -384,11 +392,14 @@ void ZtatsWin::scroll(unsigned start_page)
 			else if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_q) {
 				topmost_line_number = 0;
 
-				ZtatsWin::Instance().update_player_list();
-				SDLWindow::Instance().blit_interior();
+				update_player_list();
+				SDLWindow::Instance().blit_arena();
 				return;
 			}
 		}
+
+		if (SDLWindow::Instance().blit_console() < 0)
+			std::cerr << "WARNING: ztatswin.cc: blit_console in scroll() failed.\n";
 	}
 }
 
@@ -424,4 +435,6 @@ void ZtatsWin::update_player_list()
 		name_stats << " SP: " << player->sp() << "/" << player->spm();
 		println(i + 1, name_stats.str());
 	}
+
+	blit();
 }

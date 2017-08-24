@@ -23,16 +23,14 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <SDL.h>
-
-#include <boost/unordered_map.hpp>
 #include <memory>
 #include <vector>
 
+#include <boost/unordered_map.hpp>
+
+#include <SDL2/SDL.h>
+
 #include "creature.hh"
-
-
-using namespace std;
 
 class Attackers
 {
@@ -51,7 +49,7 @@ public:
   std::vector<std::shared_ptr<Creature>>::iterator end();
   std::string to_string();
   std::string get_plural_name(const string&);
-  SDL_Surface* pic();
+  SDL_Texture* pic();
   int get_distance(const std::string&);
   Creature* get_attacker(int distance);
   boost::unordered_map<std::string, int>* count();

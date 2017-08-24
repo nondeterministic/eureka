@@ -25,8 +25,11 @@
 #include "boost/filesystem.hpp"
 #include "boost/filesystem/path.hpp"
 
+#include <SDL.h>
+
 #include "leibniz.hh"
 #include "startupwin.hh"
+#include "editorwin.hh"
 #include "config.h"
 
 // #include <X11/Xlib.h>
@@ -40,6 +43,9 @@
 boost::filesystem::path conf_data_path;
 boost::filesystem::path conf_world_path;
 
+// Should be true, if the mouse is in the area of the SDL window.
+volatile bool EditorWin::isInSDLWindow = false;
+
 int main(int argc, char *argv[])
 {
 	conf_data_path = boost::filesystem::path((std::string)DATADIR);
@@ -51,6 +57,9 @@ int main(int argc, char *argv[])
 
 	// XSetErrorHandler(shm_errhandler);
 
+	std::cout << "Starting GTK event loop...\n";
 	kit.run(startupwin);
+	std::cout << "Exiting.\n";
+
 	return 0;
 }

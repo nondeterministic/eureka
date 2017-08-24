@@ -20,9 +20,11 @@
 #ifndef EVENTMANAGER_HH
 #define EVENTMANAGER_HH
 
-#include "SDL.h"
 #include <list>
+
 #include <boost/signals.hpp>
+
+#include <SDL2/SDL.h>
 
 // typedef boost::signal<void (SDL_Event*)> key_event;
 // typedef boost::signal<void ()>           tick_event;
@@ -30,21 +32,21 @@
 
 enum CustomEvent 
 {
-  // whatever timed events you want
-  TICK,
-  DRAW,
+	// whatever timed events you want
+	TICK,
+	DRAW,
 };
 
 class EventManager
 {
 protected:
-  EventManager();
+	EventManager();
 
 public:
-  static EventManager& Instance();
-  SDL_TimerID add_event(Uint32, SDL_NewTimerCallback, void*);
-  char get_key(const char* = NULL);
-  SDLKey get_generic_key(std::list<SDLKey>);
+	static EventManager& Instance();
+	SDL_TimerID add_event(Uint32, SDL_TimerCallback, void*);
+	char get_key(const char* = NULL);
+	SDL_Keycode get_generic_key(std::list<SDL_Keycode>&);
 };
 
 #endif

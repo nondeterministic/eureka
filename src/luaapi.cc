@@ -239,7 +239,7 @@ int l_ztatswin_update(lua_State* L)
 int l_ztatswin_save(lua_State* L)
 {
 	ZtatsWin& zwin = ZtatsWin::Instance();
-	zwin.save_surf();
+	zwin.save_texture();
 	zwin.clear();
 	return 0;
 }
@@ -421,7 +421,7 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
 				GameControl::Instance().printcon("Too bad. That's all I can offer you.");
 
     		delete tmp_item;
-        	GameControl::Instance().draw_status(false);
+        	GameControl::Instance().redraw_graphics_status(false);
     	}
     	else
     		std::cerr << "WARNING: Selling of item " << selected_item->name() << " failed. (This could be an error, but not necessarily so.)\n";
@@ -455,7 +455,7 @@ int l_additemtoinv(lua_State* L)
 	}
 
 	Party::Instance().inventory()->add(item);
-	GameControl::Instance().draw_status(false);
+	GameControl::Instance().redraw_graphics_status(false);
 	return 0;
 }
 
@@ -508,7 +508,7 @@ int l_buyitem(lua_State* L)
 				// Now create and add the rest of the bought items...
 				for (int i = 0; i < how_many - 1; i++)
 					Party::Instance().inventory()->add(ItemFactory::create_plain_name(item_name));
-				GameControl::Instance().draw_status(false);
+				GameControl::Instance().redraw_graphics_status(false);
 		    	lua_pushnumber(L, 0);
 			}
 			else {
@@ -820,7 +820,7 @@ int l_modify_gold(lua_State* L)
 
 	if (new_gold + party_gold >= 0) {
 		Party::Instance().set_gold(party_gold + new_gold);
-		GameControl::Instance().draw_status(false);
+		GameControl::Instance().redraw_graphics_status(false);
 		lua_pushboolean(L, true);
 	}
 	else

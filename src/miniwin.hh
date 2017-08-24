@@ -20,7 +20,7 @@
 #ifndef MINIWIN_HH
 #define MINIWIN_HH
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <string>
 
 #include "type.hh"
@@ -35,8 +35,6 @@ public:
   void surface_from_file(std::string);
 
 protected:
-  SDL_Surface* _tmp_surf;
-
   MiniWin();
 };
 

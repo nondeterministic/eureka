@@ -22,9 +22,12 @@
 
 #include <memory>
 #include <string>
+
 #include <gtkmm.h>
 #include <gtkmm/socket.h>
-#include <SDL.h>
+
+#include <SDL2/SDL.h>
+
 #include "../map.hh"
 
 typedef struct
@@ -49,19 +52,19 @@ public:
   SDLEditor();
   virtual ~SDLEditor();
 
-  // Does the return type need to be static to ensure only one object
-  // is created?
+  // Does the return type need to be static to ensure only one object is created?
   static SDLEditor* create(std::string, std::string);
 
   void set_show_map(bool = true);
   void set_show_obj(bool = true);
   void set_show_act(bool = true);
-  void refresh();
+  int refresh();
+  int clear();
 
   virtual void show_grid() = 0;
   virtual void show_map() = 0;
-  virtual void open_display(Gtk::Socket*, unsigned, unsigned) = 0;
-  virtual void resize(unsigned, unsigned) = 0;
+  virtual void open_display(Gtk::EventBox*, unsigned, unsigned);
+  virtual void resize(unsigned, unsigned);
   virtual std::shared_ptr<Map> get_map() const = 0;
   virtual bool grid_on() const = 0;
   virtual void set_grid(bool = true) = 0;
@@ -76,15 +79,20 @@ public:
   // The following methods were specifically added for
   // IndoorsSDLEditor:
   virtual void adjust_offsets(int = 0, int = 0, int = 0, int = 0) = 0;
-  virtual 
-  void set_offsets(unsigned = 0, unsigned = 0, unsigned = 0, unsigned = 0) = 0;
+  virtual void set_offsets(unsigned = 0, unsigned = 0, unsigned = 0, unsigned = 0) = 0;
   virtual SDL_Rect get_tile_coords(int, int) const = 0;
-  virtual int put_tile(int, int, SDL_Surface* = NULL) = 0;
+  virtual int put_tile(int, int, SDL_Texture* = NULL) = 0;
 
 protected:
-  SDL_Surface* _sdl_surf;
+  Gtk::EventBox* _event_box;
+  SDL_Texture* _texture;
+  SDL_Window*  _sdl_window;
+  SDL_Renderer* _renderer;
   std::shared_ptr<Map> _map;
   bool _show_grid, _show_map, _show_obj, _show_act;
+  unsigned _width, _height;
+
+  virtual bool convert_icons_to_textures(SDL_Renderer*) = 0;
 };
 
 #endif

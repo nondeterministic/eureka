@@ -24,11 +24,12 @@
 #include <memory>
 #include <utility>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include <boost/filesystem/path.hpp>
 
+#include "editorwin.hh"
 #include "outdoorssdleditor.hh"
 #include "../outdoorsicons.hh"
 #include "../world.hh"
@@ -60,19 +61,20 @@ OutdoorsSDLEditor::OutdoorsSDLEditor(std::shared_ptr<Map> map)
 
 	_hex_icon = IMG_Load(icon_path.c_str());
 	if (!_hex_icon)
-		std::cerr << "ERROR: outdoorssdleditor.cc: Couldn't load hex icon: " << IMG_GetError() << std::endl;
+		std::cerr << "ERROR: outdoorssdleditor.cc: Couldn't load hex icon: " << IMG_GetError() << "." << std::endl;
 
-	SDL_SetAlpha(_hex_icon, !SDL_SRCALPHA, 255);
+	SDL_SetSurfaceAlphaMod(_hex_icon, 255);
 }
 
-OutdoorsSDLEditor::~OutdoorsSDLEditor(void)
+OutdoorsSDLEditor::~OutdoorsSDLEditor()
 {
+	SDL_FreeSurface(_hex_icon);
 	SDL_Quit();
 }
 
 // x and y are screen coordinates in pixels
 
-int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Surface* brush)
+int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Texture* brush)
 {
   if (x < 0 || y < 0) {
     std::cerr << "WARNING: outdoorssdleditor.cc: put_tile has wrong coords." << std::endl;
@@ -85,10 +87,12 @@ int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Surface* brush)
   }
   
   SDL_Rect rect = get_tile_coords(x, y);
-  return SDL_BlitSurface(brush, NULL, _sdl_surf, &rect);
+  // TODO SDL return SDL_BlitSurface(brush, (SDL_Rect*)NULL, _sdl_surf, &rect);
+
+  return 0;
 }
 
-int OutdoorsSDLEditor::put_tile_hex(int hex_x, int hex_y, SDL_Surface* brush)
+int OutdoorsSDLEditor::put_tile_hex(int hex_x, int hex_y, SDL_Texture* brush)
 {
   return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
 }
@@ -242,12 +246,12 @@ void OutdoorsSDLEditor::set_grid(bool state)
 {
 }
  
-bool OutdoorsSDLEditor::grid_on(void) const 
+bool OutdoorsSDLEditor::grid_on() const
 { 
 	return true;
 }
 
-std::shared_ptr<Map> OutdoorsSDLEditor::get_map(void) const
+std::shared_ptr<Map> OutdoorsSDLEditor::get_map() const
 {
 	return _map;
 }
@@ -327,12 +331,12 @@ Offsets OutdoorsSDLEditor::determine_offsets(unsigned screen_width, unsigned scr
 
 // Returns 0 when tile hex-x-coordinate in the upper left corner is even, otherwise 1.
 
-int OutdoorsSDLEditor::corner_tile_uneven_offset(void) const
+int OutdoorsSDLEditor::corner_tile_uneven_offset() const
 {
 	return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
 }
 
-void OutdoorsSDLEditor::show_map(void)
+void OutdoorsSDLEditor::show_map()
 {
 	if (!_show_map && !_show_act)
 		return;
@@ -359,8 +363,9 @@ void OutdoorsSDLEditor::show_map(void)
 				if (tileno < 0)
 					std::cerr << "ERROR: outdoorssdleditor.cc: Invalid tile number in OutdoorsSDLEditor::show_map(): " << tileno << std::endl;
 
-				if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
-					std::cerr << "ERROR: outdoorssdleditor.cc: put_tile() returned " <<  puttile_errno << " in OutdoorsSDLEditor::show_map()." << std::endl;
+// TODO SDL
+//				if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
+//					std::cerr << "ERROR: outdoorssdleditor.cc: put_tile() returned " <<  puttile_errno << " in OutdoorsSDLEditor::show_map()." << std::endl;
 			}
 
 			if (_show_act) {
@@ -369,104 +374,53 @@ void OutdoorsSDLEditor::show_map(void)
 				if (_acts.size() > 0) {
 					// std::cout << "Actions: " << _acts.size() << "\n";
 					// std::cout << "Putting action (" << x << ", " << y << ")" << " to " << "(" << x2 << ", " << y2 << ")" << std::endl;
-					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(20));
+// TODO SDL					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(20));
 				}
 			}
 		}
 	}
 }
 
-unsigned OutdoorsSDLEditor::tile_size(void) const
+unsigned OutdoorsSDLEditor::tile_size() const
 {
 	return World::Instance().get_outdoors_tile_size();
 }
 
-void OutdoorsSDLEditor::resize(unsigned w, unsigned h)
+void OutdoorsSDLEditor::show_grid()
 {
-	_width = w;
-	_height = h;
-	_sdl_surf = SDL_SetVideoMode(_width, _height, 0, SDL_RESIZABLE);
-}
+	// First clear display, or we get some nasty graphics artifacts when scrolling horizontally.
+	clear();
 
-void OutdoorsSDLEditor::show_grid(void)
-{
-  // First clear display, or we get some nasty graphics artifacts when
-  // scrolling horizontally.
-  clear();
+	// Sort, of obvious note: If we want another grid, replace in the column%2 thinggie the 0 for the 16 and vice versa.
+	for (unsigned x = 0, column = 0; x < _width; x += (tile_size() - 10), column++)
+		for (unsigned y = ((column+corner_tile_uneven_offset())%2 == 0? 0 : 16); y < _height; y += (tile_size() - 1))
+			; // TODO SDL put_tile(x, y, _hex_icon);
 
-  // Sort, of obvious note: If we want another grid, replace in the
-  // column%2 thinggie the 0 for the 16 and vice versa.
-  for (unsigned x = 0, column = 0; x < _width; 
-       x += (tile_size() - 10), column++)
-    {
-      for (unsigned y = ((column+corner_tile_uneven_offset())%2 == 0? 0 : 16); 
-	   y < _height; 
-	   y += (tile_size() - 1))
-        put_tile(x, y, _hex_icon);
-    }
-  
-  // Later we can show the ugly green square grid again, if we need to
-  // by #defining GREEN_GRID_ON.
+	// Later we can show the ugly green square grid again, if we need to by #defining GREEN_GRID_ON.
 #ifdef GREEN_GRID_ON
   SDL_Rect rect;
-  for (unsigned x = 0; x < _width; x++)
-    {
-      if (x%(tile_size()-10) == 0)
-	{
-	  rect.x = x;
-	  rect.y = 0;
-	  rect.w = 1;
-	  rect.h = _height;
-	  SDL_FillRect(_sdl_surf, 
-		       &rect, 
-		       SDL_MapRGB(_sdl_surf->format, 0, 200, 0)); 
-	}
-    }
-  for (unsigned y = 0; y < _height; y++)
-    {
-      if (y%(tile_size()-1) == 0)
-	{
-	  rect.x = 0;
-	  rect.y = y;
-	  rect.w = _width;
-	  rect.h = 1;
-	  SDL_FillRect(_sdl_surf, 
-		       &rect, 
-		       SDL_MapRGB(_sdl_surf->format, 0, 200, 0)); 
-	}
-    }
+  for (unsigned x = 0; x < _width; x++) {
+      if (x%(tile_size()-10) == 0) {
+		  rect.x = x;
+		  rect.y = 0;
+		  rect.w = 1;
+		  rect.h = _height;
+		  SDL_FillRect(_sdl_surf, &rect, SDL_MapRGB(_sdl_surf->format, 0, 200, 0));
+      }
+  }
+  for (unsigned y = 0; y < _height; y++) {
+      if (y%(tile_size()-1) == 0) {
+		  rect.x = 0;
+		  rect.y = y;
+		  rect.w = _width;
+		  rect.h = 1;
+		  SDL_FillRect(_sdl_surf, &rect, SDL_MapRGB(_sdl_surf->format, 0, 200, 0));
+	  }
+  }
 #endif
 }
 
-void OutdoorsSDLEditor::open_display(Gtk::Socket* socket, 
-				     unsigned width, 
-				     unsigned height)
-{
-	char* winhack = new char[32];
-	_width = width; _height = height;
-
-	// Make SDL windows appear inside socket window
-	std::stringstream sdlhack;
-	sdlhack << "SDL_WINDOWID=" << socket->get_id() << std::ends;
-	sprintf(winhack,sdlhack.str().c_str());
-	SDL_putenv(winhack);
-
-	// Init SDL window
-	if (SDL_Init(SDL_INIT_VIDEO))
-		throw std::runtime_error("ERROR: outdoorssdleditor.cc: Error initialising SDL.");
-	else
-		_sdl_surf = SDL_SetVideoMode(_width, _height, 0,
-				SDL_RESIZABLE | SDL_DOUBLEBUF);
-
-	delete winhack;
-}
-
-void OutdoorsSDLEditor::clear(void)
-{
-	SDL_FillRect(SDL_GetVideoSurface(), NULL, 0);
-}
-
-Offsets OutdoorsSDLEditor::offsets(void)
+Offsets OutdoorsSDLEditor::offsets()
 {
 	Offsets new_offsets;
 	new_offsets.top = _top_hidden;
@@ -474,4 +428,9 @@ Offsets OutdoorsSDLEditor::offsets(void)
 	new_offsets.left = _left_hidden;
 	new_offsets.right = _right_hidden;
 	return new_offsets;
+}
+
+bool OutdoorsSDLEditor::convert_icons_to_textures(SDL_Renderer* renderer)
+{
+	return OutdoorsIcons::Instance().convert_icons_to_textures(renderer) >= 0;
 }

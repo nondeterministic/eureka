@@ -42,7 +42,7 @@ extern "C" {
 
 // *******************************************
 // *** Lookup keyboard symbols SDL_x here! ***
-#include "SDL_keysym.h"
+#include <SDL2/SDL_keycode.h>
 // *******************************************
 
 #include "eureka.hh"
@@ -139,16 +139,17 @@ int GameControl::set_party(int x, int y)
 	return 0;
 }
 
-/// Returns 0 on success, a negative value if no map can be drawn for whatever reason
+/**
+ * Returns 0 on success, a negative value if no map can be drawn for whatever reason
+ */
 
-int GameControl::show_win()
+int GameControl::redraw_graphics_arena()
 {
 	if (arena != NULL && arena->get_map() != NULL) {
 		arena->show_map(get_viewport().first, get_viewport().second);
 		arena->show_party(screen_pos_party.first, screen_pos_party.second);
-		arena->update();
-		SDLWindow::Instance().blit_interior();
-		return 0;
+		arena->blit();
+	    return 0;
 	}
 
 	// If the above fails, this is only an error, if the game is running.
@@ -166,7 +167,7 @@ int GameControl::show_win()
  * but also the small status win that displays city images, monsters, etc.
  */
 
-void GameControl::draw_status(bool update_status_image)
+void GameControl::redraw_graphics_status(bool update_status_image)
 {
 	MiniWin& mwin = MiniWin::Instance();
 
@@ -222,23 +223,40 @@ void GameControl::draw_status(bool update_status_image)
 	}
 
 	if (update_status_image && !party->indoors()) {
-		static SDL_Surface* _tmp_surf = NULL;
+		SDL_Texture* tmp_texture = NULL;
+		SDL_Surface* tmp_surf = NULL;
 
 		if (filename_old != filename) {
-			if (_tmp_surf != NULL)
-				SDL_FreeSurface(_tmp_surf);
+			if ((tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL) {
+				std::cerr << "ERROR: gamecontrol.cc: could not load surface " << (conf_world_path / "images" / filename).c_str() << "\n";
+				return;
+			}
 
-			if ((_tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL)
-				std::cerr << "ERROR: gamecontrol.cc: miniwin could not load surface.\n";
+			if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().getRenderer(), tmp_surf)) == NULL) {
+				std::cerr << "ERROR: gamecontrol.cc: could not convert surface to texture: " << IMG_GetError() << "\n";
+				return;
+			}
+
+			int w, h;
+			if (SDL_QueryTexture(tmp_texture, NULL, NULL, &w, &h) < 0) {
+				std::cerr << "WARNING: gamecontrol.cc: loading miniwin image yielded invalid texture: " << IMG_GetError() << "\n";
+				SDL_DestroyTexture(tmp_texture);
+				SDL_FreeSurface(tmp_surf);
+				return;
+			}
+
+			SDL_SetRenderTarget(SDLWindow::Instance().getRenderer(), mwin.get_texture());
+			SDL_RenderCopy(SDLWindow::Instance().getRenderer(), tmp_texture, NULL, NULL);
+			SDLWindow::Instance().resetRenderer();
+			mwin.blit();
+			SDL_DestroyTexture(tmp_texture);
+			SDL_FreeSurface(tmp_surf);
 		}
-
-		if (_tmp_surf != NULL)
-			SDL_BlitSurface(_tmp_surf, NULL, mwin.get_surface(), NULL);
 	}
-
 	TinyWin& twin = TinyWin::Instance();
 	twin.clear();
 	twin.println(0, ss.str());
+	twin.blit();
 
 	// Print moon symbol
 	// twin.printch(twin.get_surface()->w - 16, 0, moon_icon);
@@ -397,8 +415,7 @@ void GameControl::do_turn(bool resting)
 	if (Party::Instance().party_alive() == 0)
 		game_over();
 
-
-	draw_status();
+	redraw_graphics_status();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// TODO: If we wanted to, we could garbage collect the Lua stack, say, every 100 turns or so.
@@ -416,7 +433,7 @@ int GameControl::tick_event_handler()
 	Console::Instance().animate_cursor(&normal_font);
 
 	if (!arena->is_moving())
-		show_win();
+		return redraw_graphics_arena();
 
 	return 0;
 }
@@ -436,8 +453,11 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	SDL_Event event;
 
-	while (1) {
-		if (SDL_WaitEvent(&event)) {
+	while (true) {
+	    SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
+	    SDL_RenderPresent(SDLWindow::Instance().getRenderer());
+
+	    if (SDL_WaitEvent(&event)) {
 			if (event.type == SDL_USEREVENT) {
 				if (event.user.code == TICK) {
 					tick_event_handler();
@@ -447,31 +467,31 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 			else if (event.type == SDL_KEYDOWN) {
 				switch (event.key.keysym.sym) {
 				case SDLK_LEFT:
-				case SDLK_KP4:
+				case SDLK_KP_4:
 					keypress_move_party(DIR_LEFT);
 					break;
 				case SDLK_RIGHT:
-				case SDLK_KP6:
+				case SDLK_KP_6:
 					keypress_move_party(DIR_RIGHT);
 					break;
 				case SDLK_DOWN:
-				case SDLK_KP2:
+				case SDLK_KP_2:
 					keypress_move_party(DIR_DOWN);
 					break;
 				case SDLK_UP:
-				case SDLK_KP8:
+				case SDLK_KP_8:
 					keypress_move_party(DIR_UP);
 					break;
-				case SDLK_KP7:
+				case SDLK_KP_7:
 					keypress_move_party(DIR_LUP);
 					break;
-				case SDLK_KP1:
+				case SDLK_KP_1:
 					keypress_move_party(DIR_LDOWN);
 					break;
-				case SDLK_KP3:
+				case SDLK_KP_3:
 					keypress_move_party(DIR_RDOWN);
 					break;
-				case SDLK_KP9:
+				case SDLK_KP_9:
 					keypress_move_party(DIR_RUP);
 					break;
 				case SDLK_SPACE:
@@ -600,8 +620,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);
 				arena->show_party(screen_pos_party.first, screen_pos_party.second);
-				arena->update();
-				SDLWindow::Instance().blit_interior();
+
+			    if (SDLWindow::Instance().blit_all() < 0)
+			    	std::cerr << "WARNING: gamecontrol.cc: blit_all failed.\n";
 			}
 		}
 	}
@@ -660,7 +681,7 @@ std::string GameControl::select_spell(unsigned player_no)
 
 	printcon("Cast - select a spell");
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 	mwin.println(0, "Cast spell", CENTERALIGN);
 	mwin.println(1, "(Press space to cast selected spell, q to exit)");
@@ -723,7 +744,7 @@ void GameControl::keypress_mix_reagents()
 		return;
 	}
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 	mwin.println(0, "Mix for magic potion", CENTERALIGN);
 	mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
@@ -770,7 +791,7 @@ void GameControl::keypress_ztats()
 	if (selected_player != -1) {
 		MiniWin& mwin = MiniWin::Instance();
 
-		mwin.save_surf();
+		mwin.save_texture();
 		mwin.clear();
 		mwin.println(0, "Ztats", CENTERALIGN);
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
@@ -794,7 +815,7 @@ void GameControl::keypress_inventory()
 
 	printcon("Inventory");
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 	mwin.println(0, "Inventory", CENTERALIGN);
 	std::stringstream ss;
@@ -818,7 +839,7 @@ void GameControl::keypress_yield_item(int selected_player)
 	if (selected_player >= 0) {
 		PlayerCharacter* player = party->get_player(selected_player);
 
-		mwin.save_surf();
+		mwin.save_texture();
 		mwin.clear();
 		mwin.println(0, "Yield (let go of) item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
@@ -923,7 +944,7 @@ void GameControl::keypress_hole_up()
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 
 	printcon("Hole up and camp. For how many hours? (0-9)");
@@ -933,13 +954,13 @@ void GameControl::keypress_hole_up()
 
 	if (hours == 0) {
 		printcon("Changed your mind, huh?");
-		draw_status();
+		redraw_graphics_status();
 		mwin.display_last();
 		return;
 	}
 	else if (hours > 9) {
 		printcon("More than 9 hours of sleep isn't healthy.");
-		draw_status();
+		redraw_graphics_status();
 		mwin.display_last();
 		return;
 	}
@@ -1004,7 +1025,7 @@ void GameControl::keypress_hole_up()
 			Console::Instance().pause(40);
 		else
 			Console::Instance().pause(5);
-		draw_status();
+		redraw_graphics_status();
 		rounds++;
 	} while (_clock.time().first != (old_time.first + hours) % 24);
 
@@ -1012,7 +1033,7 @@ void GameControl::keypress_hole_up()
 	Party::Instance().unset_guard();
 	Party::Instance().is_resting = false;
 
-	draw_status();
+	redraw_graphics_status();
 	mwin.display_last();
 	zwin.update_player_list();
 }
@@ -1132,7 +1153,7 @@ void GameControl::keypress_use()
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 	mwin.println(0, "Use item", CENTERALIGN);
 	mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
@@ -1176,7 +1197,7 @@ void GameControl::keypress_use()
 	else
 		printcon("Changed your mind, huh?");
 
-	draw_status();
+	redraw_graphics_status();
 	mwin.display_last();
 }
 
@@ -1195,7 +1216,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
 	if (selected_player >= 0) {
-		mwin.save_surf();
+		mwin.save_texture();
 		mwin.clear();
 		mwin.println(0, "Ready item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
@@ -1285,7 +1306,7 @@ std::pair<int, int> GameControl::select_coords()
 	EventManager& em = EventManager::Instance();
 	const int CROSSHAIR_ICON = (party->indoors()? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS);
 
-	std::list<SDLKey> cursor_keys =
+	std::list<SDL_Keycode> cursor_keys =
 		{ SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE };
 
 	static int cx, cy;  // Cursor
@@ -1306,6 +1327,10 @@ std::pair<int, int> GameControl::select_coords()
 	arena->get_map()->push_obj(crosshair_tmp_obj);
 
 	while (1) {
+	    // If frames were 30, wait 33 ms before running the loop again
+	    SDL_Delay(1000/25);
+		SDL_RenderPresent(SDLWindow::Instance().getRenderer());
+
 		switch (em.get_generic_key(cursor_keys)) {
 		case SDLK_LEFT:
 			if (arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
@@ -1378,12 +1403,12 @@ void GameControl::keypress_drop_items()
 
 	printcon("Drop item - select which one");
 
-	mwin.save_surf();
+	mwin.save_texture();
 	mwin.clear();
 	mwin.println(0, "Drop item", CENTERALIGN);
 	mwin.println(1, "(Press space to drop selected item, q to exit)");
 
-	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	auto zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
 	std::vector<Item*> selected_items = zwin.execute(zwin_content_selection_provider.get(), SelectionMode::SingleItem);
 
 	// User can either select exactly one item, or will have aborted the dialogue.
@@ -1762,7 +1787,7 @@ void GameControl::keypress_get_item()
 		MiniWin& mwin = MiniWin::Instance();
 		ZtatsWin& zwin = ZtatsWin::Instance();
 
-		mwin.save_surf();
+		mwin.save_texture();
 		mwin.clear();
 		mwin.println(0, "Get item", CENTERALIGN);
 		mwin.println(1, "(Press space to get selected item, q to exit)");
@@ -1844,7 +1869,7 @@ void GameControl::keypress_get_item()
 					}
 				}
 			}
-			draw_status();
+			redraw_graphics_status();
 
 			// See if some items are leftover after taking...
 			if (picked_up_mapobj.how_many - taking == 0)
@@ -2416,30 +2441,30 @@ bool GameControl::leave_map()
 
 int GameControl::close_win()
 {
-  SDLWindow::Instance().close();
-  return 0;
+	SDLWindow::Instance().close();
+	return 0;
 }
 
 void GameControl::set_outdoors(bool mode)
 {
-  party->set_indoors(!mode);
+	party->set_indoors(!mode);
 }
 
 void GameControl::set_map_name(const char* new_name)
 {
-  party->set_map_name(new_name);
+	party->set_map_name(new_name);
 }
 
 int GameControl::random(int min, int max)
 {
-  NumberDistribution distribution(min, max);
-  Generator numberGenerator(generator, distribution);
-  return numberGenerator();
+	NumberDistribution distribution(min, max);
+	Generator numberGenerator(generator, distribution);
+	return numberGenerator();
 }
 
 void GameControl::printcon(const std::string s, bool wait)
 {
-  Console::Instance().print(&normal_font, s, wait);
+	Console::Instance().print(&normal_font, s, wait);
 }
 
 Clock* GameControl::get_clock()

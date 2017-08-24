@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #include <gtkmm/image.h>
+#include <gtkmm/application.h>
 
 // See http://www.boost.org/doc/libs/1_46_1/libs/filesystem/v3/doc/index.htm
 #define BOOST_FILESYSTEM_VERSION 3
@@ -120,7 +121,7 @@ void StartupWin::on_button_reopen(void)
 			world_name = results[1];
 		}
 		else {
-			std::cout << "ERROR: Could not extract world name of path '" << filename << "'. Did you use spaces or hidden characters?\n";
+			std::cerr << "ERROR: Could not extract world name of path '" << filename << "'. Did you use spaces or hidden characters?\n";
 			exit(0);
 		}
 
@@ -177,8 +178,7 @@ void StartupWin::on_button_new(void)
 			Gtk::BUTTONS_OK);
 	dirrerr_dlg.set_title("Error");
 
-	if (!(boost::filesystem::exists(data_dir)))
-	{
+	if (!(boost::filesystem::exists(data_dir)))	{
 		Gtk::MessageDialog
 		msgdlg("Directory does not exist.",
 				true,
@@ -187,15 +187,11 @@ void StartupWin::on_button_new(void)
 		msgdlg.set_secondary_text("Do you want to create it?");
 		msgdlg.set_title("Directory does not exist");
 
-		if (msgdlg.run() == Gtk::RESPONSE_YES)
-		{
-			try
-			{
+		if (msgdlg.run() == Gtk::RESPONSE_YES) {
+			try	{
 				msgdlg.hide();
 				boost::filesystem::create_directories(data_dir);
-			}
-			catch (...)
-			{
+			} catch (...) {
 				dirrerr_dlg.set_secondary_text(data_dir);
 				dirrerr_dlg.run();
 				dirrerr_dlg.hide();
@@ -222,13 +218,11 @@ void StartupWin::on_button_new(void)
 	World::Instance().xml_write_world_data();
 
 	// If all files and required directories are created, Go!
-	try
-	{
+	try {
 		if (World::Instance().get_name().length() > 0
 				&& boost::filesystem::exists(world_file)
-		&& boost::filesystem::exists(world_dir + "/maps")
-		&& boost::filesystem::exists(world_dir + "/images")
-		)
+				&& boost::filesystem::exists(world_dir + "/maps")
+				&& boost::filesystem::exists(world_dir + "/images"))
 		{
 			// Copy media data into world directory
 			boost::filesystem::copy_file((std::string)DATADIR +
@@ -243,14 +237,15 @@ void StartupWin::on_button_new(void)
 			// Remove start-up window
 			hide();
 
-			// Now start editor
+			// Now start editor...
+			// Is now deprecated, see:
+			// https://stackoverflow.com/questions/13773846/gtkmainrun-segfaults
+			// https://developer.gnome.org/gtkmm-tutorial/stable/sec-buildapp-trivial-app.html.en
 			EditorWin editor_win;
 			Gtk::Main::run(editor_win);
 		}
-	}
-	catch (...)
-	{
-		std::cerr << "startupwin.cc:on_button_new() failed." << std::endl;
+	} catch (...) {
+		std::cerr << "ERROR: startupwin.cc:on_button_new() failed." << std::endl;
 	}
 }
 

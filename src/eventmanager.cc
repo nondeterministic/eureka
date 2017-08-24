@@ -19,28 +19,30 @@
 
 #include <iostream>
 #include <algorithm>
-#include <SDL.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
+
 #include <boost/signals.hpp>
 #include <boost/bind.hpp>
+
 #include "eventmanager.hh"
 #include "charset.hh"
 #include "console.hh"
 #include "gamecontrol.hh"
 
-using namespace std;
-
 EventManager& EventManager::Instance()
 {
-  static EventManager ev;
-  return ev;
+	static EventManager ev;
+	return ev;
 }
 
 EventManager::EventManager() { }
 
-SDL_TimerID EventManager::add_event(Uint32 interval, SDL_NewTimerCallback callback, void* param)
+SDL_TimerID EventManager::add_event(Uint32 interval, SDL_TimerCallback callback_fn, void* callback_param)
 {
-  SDL_TimerID ti = SDL_AddTimer(interval, callback, param);
-  return ti;
+	SDL_TimerID ti = SDL_AddTimer(interval, callback_fn, callback_param);
+	return ti;
 }
 
 /**
@@ -55,6 +57,7 @@ SDL_TimerID EventManager::add_event(Uint32 interval, SDL_NewTimerCallback callba
 
 char EventManager::get_key(const char* valid_inputs)
 {
+	Charset normal_font;
 	SDL_Event ev;
 	char input = '_';  // To shut up GCC: any default char will do here.
 	std::string valid_inputs_str = "";
@@ -63,12 +66,14 @@ char EventManager::get_key(const char* valid_inputs)
 		valid_inputs_str = valid_inputs;
 
 	while (1) {
+		SDL_Delay(1000/25);
+		SDL_RenderPresent(SDLWindow::Instance().getRenderer());
+
 		while (SDL_WaitEvent(&ev)) {
 			if (ev.type == SDL_USEREVENT) {
 				if (ev.user.code == TICK) {
-					Charset normal_font;
 					Console::Instance().animate_cursor(&normal_font); // This animates the cursor during keyboard input
-					GameControl::Instance().show_win(); // TODO: This animates the map, but make sure that a map is visible first!!
+					GameControl::Instance().redraw_graphics_arena(); // TODO: This animates the map, but make sure that a map is visible first!!
 				}
 			}
 			else if (ev.type == SDL_KEYDOWN) {
@@ -115,7 +120,7 @@ char EventManager::get_key(const char* valid_inputs)
 				default: input = -1; break;
 				}
 				if (input == -1)
-					;
+					/* Do nothing. */ ;
 				else if ((!valid_inputs && isalnum(input)) ||
 						(!valid_inputs && (input == SDLK_RETURN || SDLK_BACKSPACE || SDLK_SPACE)) ||
 						(valid_inputs && valid_inputs_str.find(input) != std::string::npos))
@@ -128,7 +133,7 @@ char EventManager::get_key(const char* valid_inputs)
 /// A more generic version of the above.  Handy for checking cursor keys, etc.
 /// If keys is empty, any pressed key is returned!
 
-SDLKey EventManager::get_generic_key(std::list<SDLKey> keys)
+SDL_Keycode EventManager::get_generic_key(std::list<SDL_Keycode>& keys)
 {
 	SDL_Event ev;
 	Charset normal_font;
@@ -137,7 +142,7 @@ SDLKey EventManager::get_generic_key(std::list<SDLKey> keys)
 		if (ev.type == SDL_USEREVENT) {
 			if (ev.user.code == TICK) {
 				Console::Instance().animate_cursor(&normal_font); // This animates the cursor during keyboard input
-				GameControl::Instance().show_win();               // This animates the map, but make sure that a map is visible first!!
+				GameControl::Instance().redraw_graphics_arena();               // This animates the map, but make sure that a map is visible first!!
 			}
 		}
 		else if (ev.type == SDL_KEYDOWN) {

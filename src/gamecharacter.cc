@@ -46,7 +46,7 @@ GameCharacter::~GameCharacter()
 
 GameCharacter::GameCharacter(const GameCharacter& p)
 {
-	std::cout << "DEEP COPY OF GAMECHARACTER\n";
+	// std::cout << "DEEP COPY OF GAMECHARACTER\n";
 
 	_name = p._name;
 	_plural_name = p._plural_name;

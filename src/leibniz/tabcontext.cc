@@ -1,36 +1,67 @@
 #include <gtkmm.h>
+#include <memory>
 #include <iostream>
+
 #include "tabcontext.hh"
 
 TabContext::TabContext()
 {
-  _xoffset = 0;
-  _yoffset = 0;
-  _icon_brush_number = 0;
+	_box = std::make_shared<Gtk::VBox>(new Gtk::VBox());
+	_xoffset = 0;
+	_yoffset = 0;
+	_icon_brush_number = 0;
+
+	std::cout << "INFO: tabcontext: TabContext().\n";
+}
+
+//TabContext::TabContext(std::shared_ptr<Gtk::VBox> newbox) : _box(newbox)
+//{
+//	_xoffset = 0;
+//	_yoffset = 0;
+//	_icon_brush_number = 0;
+//}
+
+TabContext::TabContext(const TabContext& t)
+{
+	_box = std::make_shared<Gtk::VBox>(t._box.get());
+	_xoffset = t._xoffset;
+	_yoffset = t._yoffset;
+	_icon_brush_number = t._icon_brush_number;
+
+	std::cout << "INFO: tabcontext: TabContext copy constructor.\n";
 }
 
 TabContext::~TabContext()
 {
-  std::cout << "~TabContext()" << std::endl;
+	std::cout << "~TabContext()" << std::endl;
 }
 
-TabContext::TabContext(Gtk::Box* newbox)
+TabContext& TabContext::operator=(const TabContext& other)
 {
-  _box = newbox;
-  _xoffset = 0;
-  _yoffset = 0;
-  _icon_brush_number = 0;
+	// check for self-assignment
+	if (&other == this)
+		return *this;
+
+	_box = std::make_shared<Gtk::VBox>(other._box.get());
+	_xoffset = other._xoffset;
+	_yoffset = other._yoffset;
+	_icon_brush_number = other._icon_brush_number;
+
+	std::cout << "INFO: tabcontext: TabContext assignment constructor.\n";
+
+	return *this;
 }
 
-Gtk::Box* TabContext::get_box() const
+std::shared_ptr<Gtk::VBox> TabContext::get_box() const
 {
-  return _box;
+	// return std::make_shared<Gtk::VBox>(new Gtk::VBox());
+	return _box;
 }
 
-void TabContext::set_box(Gtk::Box* box)
-{
-  _box = box;
-}
+//Gtk::VBox* TabContext::get_box() const
+//{
+//	return _box;
+//}
 
 // This offset is counted in terms of icons, not pixel!
 
