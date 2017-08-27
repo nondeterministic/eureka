@@ -67,7 +67,7 @@ protected:
   unsigned _top_hidden, _bot_hidden, _left_hidden, _right_hidden;
   int _corner_tile_uneven_offset;
   unsigned _width, _height;
-  SDL_Surface* _hex_icon;
+  SDL_Texture* _hex_icon_texture;
 };
 
 #endif

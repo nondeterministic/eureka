@@ -157,10 +157,10 @@ void SDLEditor::open_display(Gtk::EventBox* event_box, unsigned width, unsigned 
 		std::cerr << "ERROR: sdleditor.cc: Failed to create the SDL window.\n";
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "aa\n";
-	SDL_DestroyWindow(_sdl_window);
-	std::cout << "bb\n";
-	exit(EXIT_SUCCESS);
+//	std::cout << "aa\n";
+//	SDL_DestroyWindow(_sdl_window);
+//	std::cout << "bb\n";
+//	exit(EXIT_SUCCESS);
 
 	SDL_SetWindowResizable(_sdl_window, SDL_TRUE);
 

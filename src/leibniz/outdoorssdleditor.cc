@@ -46,88 +46,68 @@ OutdoorsSDLEditor::OutdoorsSDLEditor(std::shared_ptr<Map> map)
 	_width = 0;
 	_height = 0;
 	_corner_tile_uneven_offset = 0;
-
-	// Load hex grid
-	boost::filesystem::path icon_path = boost::filesystem::path((std::string)(DATADIR));
-	icon_path /= (std::string)PACKAGE_NAME;
-	icon_path /= "data";
-	icon_path /= "leibniz";
-	icon_path /= "34x34hex.png";
-
-	//	std::string icon_path =
-	//			(std::string)DATADIR + "/" +
-	//			(std::string)PACKAGE +
-	//			"/data/leibniz/34x34hex.png";
-
-	_hex_icon = IMG_Load(icon_path.c_str());
-	if (!_hex_icon)
-		std::cerr << "ERROR: outdoorssdleditor.cc: Couldn't load hex icon: " << IMG_GetError() << "." << std::endl;
-
-	SDL_SetSurfaceAlphaMod(_hex_icon, 255);
+	_hex_icon_texture = NULL;
 }
 
 OutdoorsSDLEditor::~OutdoorsSDLEditor()
 {
-	SDL_FreeSurface(_hex_icon);
-	SDL_Quit();
 }
 
 // x and y are screen coordinates in pixels
 
-int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Texture* brush)
+int OutdoorsSDLEditor::put_tile(int x, int y, SDL_Texture* tile_texture)
 {
-  if (x < 0 || y < 0) {
-    std::cerr << "WARNING: outdoorssdleditor.cc: put_tile has wrong coords." << std::endl;
-    return -1;
-  }
+	if (x < 0 || y < 0) {
+		std::cerr << "WARNING: outdoorssdleditor.cc: put_tile has wrong coords." << std::endl;
+		return -1;
+	}
 
-  if (brush == NULL) {
-    std::cerr << "WARNING: outdoorssdleditor.cc: Brush to paint tile is NULL. " << std::endl;
-    return 0;
-  }
-  
-  SDL_Rect rect = get_tile_coords(x, y);
-  // TODO SDL return SDL_BlitSurface(brush, (SDL_Rect*)NULL, _sdl_surf, &rect);
+	if (tile_texture == NULL) {
+		std::cerr << "WARNING: outdoorssdleditor.cc: Brush to paint tile is NULL. " << std::endl;
+		return 0;
+	}
 
-  return 0;
+	SDL_Rect rect = get_tile_coords(x, y);
+	SDL_SetRenderTarget(_renderer, _texture);
+	return SDL_RenderCopy(_renderer, tile_texture, NULL, &rect);
 }
 
 int OutdoorsSDLEditor::put_tile_hex(int hex_x, int hex_y, SDL_Texture* brush)
 {
-  return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
+	return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
 }
 
 // Converts a x-hex coordinate to a screen coordinate
 
 int OutdoorsSDLEditor::get_screen_x(int hex_x) const
 {
-  return (hex_x - corner_tile_uneven_offset()) * (World::Instance().get_outdoors_tile_size() - 10);
+	return (hex_x - corner_tile_uneven_offset()) * (World::Instance().get_outdoors_tile_size() - 10);
 }
 
 // Converts a y-hex coordinate to a screen coordinate
 
 int OutdoorsSDLEditor::get_screen_y(int hex_y) const
 {
-  if (hex_y%2 == 0)
-    return hex_y/2 * (World::Instance().get_outdoors_tile_size() - 1);
-  else
-    return (World::Instance().get_outdoors_tile_size())/2 - 1 + 
-      hex_y/2 * (World::Instance().get_outdoors_tile_size() - 1);
+	if (hex_y%2 == 0)
+		return hex_y/2 * (World::Instance().get_outdoors_tile_size() - 1);
+	else
+		return (World::Instance().get_outdoors_tile_size())/2 - 1 +
+				hex_y/2 * (World::Instance().get_outdoors_tile_size() - 1);
 }
 
 // Gets the absolute coordinates in pixels for a tile on (x, y)
 
 SDL_Rect OutdoorsSDLEditor::get_tile_coords(int x, int y) const
 {
-  if (x < 0 || y < 0)
-    std::cerr << "WARNING: outdoorssdleditor.cc: get_tile_coords has wrong coords." << std::endl;
+	if (x < 0 || y < 0)
+		std::cerr << "WARNING: outdoorssdleditor.cc: get_tile_coords has wrong coords." << std::endl;
 
-  SDL_Rect rect;
-  rect.x = x;
-  rect.w = tile_size();
-  rect.h = tile_size();
-  rect.y = y;
-  return rect;
+	SDL_Rect rect;
+	rect.x = x;
+	rect.w = tile_size();
+	rect.h = tile_size();
+	rect.y = y;
+	return rect;
 }
 
 void OutdoorsSDLEditor::pixel_to_map(int x, int y, int& map_x, int& map_y)
@@ -363,18 +343,15 @@ void OutdoorsSDLEditor::show_map()
 				if (tileno < 0)
 					std::cerr << "ERROR: outdoorssdleditor.cc: Invalid tile number in OutdoorsSDLEditor::show_map(): " << tileno << std::endl;
 
-// TODO SDL
-//				if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
-//					std::cerr << "ERROR: outdoorssdleditor.cc: put_tile() returned " <<  puttile_errno << " in OutdoorsSDLEditor::show_map()." << std::endl;
+				if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(tileno))) != 0)
+					std::cerr << "ERROR: outdoorssdleditor.cc: put_tile() returned " <<  puttile_errno << " in OutdoorsSDLEditor::show_map()." << std::endl;
 			}
 
 			if (_show_act) {
 				std::vector<std::shared_ptr<Action>> _acts = _map->get_actions(x, y);
 
 				if (_acts.size() > 0) {
-					// std::cout << "Actions: " << _acts.size() << "\n";
-					// std::cout << "Putting action (" << x << ", " << y << ")" << " to " << "(" << x2 << ", " << y2 << ")" << std::endl;
-// TODO SDL					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(20));
+					put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(20));
 				}
 			}
 		}
@@ -394,7 +371,7 @@ void OutdoorsSDLEditor::show_grid()
 	// Sort, of obvious note: If we want another grid, replace in the column%2 thinggie the 0 for the 16 and vice versa.
 	for (unsigned x = 0, column = 0; x < _width; x += (tile_size() - 10), column++)
 		for (unsigned y = ((column+corner_tile_uneven_offset())%2 == 0? 0 : 16); y < _height; y += (tile_size() - 1))
-			; // TODO SDL put_tile(x, y, _hex_icon);
+			put_tile(x, y, _hex_icon_texture);
 
 	// Later we can show the ugly green square grid again, if we need to by #defining GREEN_GRID_ON.
 #ifdef GREEN_GRID_ON
@@ -432,5 +409,32 @@ Offsets OutdoorsSDLEditor::offsets()
 
 bool OutdoorsSDLEditor::convert_icons_to_textures(SDL_Renderer* renderer)
 {
+	// First, load hex grid icon...
+	boost::filesystem::path icon_path = boost::filesystem::path((std::string)(DATADIR));
+	icon_path /= (std::string)PACKAGE_NAME;
+	icon_path /= "data";
+	icon_path /= "leibniz";
+	icon_path /= "34x34hex.png";
+
+	SDL_Surface* hex_icon_surface = IMG_Load(icon_path.c_str());
+	if (!hex_icon_surface)
+		std::cerr << "ERROR: outdoorssdleditor.cc: Couldn't load hex icon: " << IMG_GetError() << "." << std::endl;
+
+	_hex_icon_texture = SDL_CreateTextureFromSurface(renderer, hex_icon_surface);
+
+	if (SDL_SetTextureBlendMode(_hex_icon_texture, SDL_BLENDMODE_BLEND) < 0) {
+		std::cerr << "ERROR: outdoorssdleditor.cc: setting blend mode not working: " << IMG_GetError() << "\n";
+		return -1;
+	}
+
+	int icons_texture_w, icons_texture_h;
+	if (SDL_QueryTexture(_hex_icon_texture, NULL, NULL, &icons_texture_w, &icons_texture_h) < 0) {
+		std::cerr << "ERROR: outdoorssdleditor.cc: icons_texture invalid: " << IMG_GetError() << "\n";
+		return -1;
+	}
+
+	SDL_FreeSurface(hex_icon_surface);
+
+	// Now, do actual icon conversion...
 	return OutdoorsIcons::Instance().convert_icons_to_textures(renderer) >= 0;
 }
