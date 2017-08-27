@@ -28,7 +28,7 @@ class SDLTricks
 {
 public:
 	static SDLTricks& Instance();
-	bool replace_col(SDL_Renderer*, SDL_Texture*, SDL_Color, SDL_Color, SDL_Rect* = NULL);
+	bool replace_color(SDL_Renderer*, SDL_Texture*, SDL_Color, SDL_Color, SDL_Rect* = NULL);
 	void putpixel(SDL_Texture* surface, int x, int y, Uint32 pixel);
 	unsigned int getpixel(SDL_Texture* s, int x, int y);
 

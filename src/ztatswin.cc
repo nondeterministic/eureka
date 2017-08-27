@@ -38,9 +38,9 @@ ZtatsWin::ZtatsWin()
 	standard_bgcolour.g = 0;
 	standard_bgcolour.b = 0;
 
-	highlight_colour.r = 50;
-	highlight_colour.g = 50;
-	highlight_colour.b = 250;
+	highlight_bgcolour.r = 50;
+	highlight_bgcolour.g = 50;
+	highlight_bgcolour.b = 250;
 
 	SDL_Rect rect;
 	rect.x = win.get_size().first - win.frame_icon_size() - ztats_w + 2;
@@ -64,40 +64,46 @@ ZtatsWin& ZtatsWin::Instance()
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
-	swap_colours(from_top, to_bottom, standard_bgcolour, highlight_colour);
+	swap_colours(from_top, to_bottom, standard_bgcolour, highlight_bgcolour);
+	blit();
+	SDLWindow::Instance().blit_entire_window_texture();
 }
 
 void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 {
-	swap_colours(from_top, to_bottom, highlight_colour, standard_bgcolour);
+	swap_colours(from_top, to_bottom, highlight_bgcolour, standard_bgcolour);
+	blit();
+	SDLWindow::Instance().blit_entire_window_texture();
 }
 
 void ZtatsWin::unhighlight_all()
 {
 	unhighlight_lines(-1, -1);
+	blit();
+	SDLWindow::Instance().blit_entire_window_texture();
 }
 
-// Swaps background colour A for B in lines from_top to to_bottom in the ztats window.
+/// Swaps background colour A for B in lines from_top to to_bottom in the ztats window.
+/// Negative values swap entire window's colors.
 
-void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color a, SDL_Colour b)
+void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color from_color, SDL_Color to_color)
 {
-	SDL_Texture* texture = get_texture();
+	// How many text lines are displayed in the ztats window?
+	int lines = get_dimensions().h / _font.char_height();
 
-	// How many lines are displayed in the ztats window?
-	int lines = get_dimensions().w / _font.char_height();
-
-	if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0)
-		SDLTricks::Instance().replace_col(_renderer, texture, a, b, NULL);
+	// Replace entire window's colors, not just single lines...
+	if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0) {
+		SDLTricks::Instance().replace_color(_renderer, _texture, from_color, to_color, NULL);
+	}
+	// Replace single singles...
 	else {
 		SDL_Rect rect;
 		rect.x = 0;
 		rect.y = from_top * _font.char_height() + _inter_line_padding * from_top + _y_frame_offset;
 		rect.h = (to_bottom - from_top) * _font.char_height() + _inter_line_padding;
-		rect.w = get_dimensions().h;
-		SDLTricks::Instance().replace_col(_renderer, texture, a, b, &rect);
+		rect.w = get_dimensions().w;
+		SDLTricks::Instance().replace_color(_renderer, _texture, from_color, to_color, &rect);
 	}
-
-	SDLWindow::Instance().blit_ztats();
 }
 
 /*! Let user select a player from the party in the stats window using cursor keys.
@@ -107,10 +113,14 @@ void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color a, SDL_Colour
 
 int ZtatsWin::select_player()
 {
-	int player  =  0;
+	int player =  0;
 	SDL_Event event;
 
 	highlight_lines(player*2, player*2 + 2);
+
+	SDL_Delay(500);
+
+	unhighlight_lines(player*2, player*2 + 2);
 
 	while (1) {
 		if ( SDL_WaitEvent(&event) ) {
@@ -133,12 +143,13 @@ int ZtatsWin::select_player()
 					// Reset UI flags to default
 					update_player_list();
 					SDLWindow::Instance().blit_arena();
+					SDLWindow::Instance().blit_entire_window_texture();
 					return -1;
 				default:
 					break;
 				}
+
 				highlight_lines(player*2, player*2 + 2);
-				SDLWindow::Instance().blit_arena();
 			}
 		}
 	}

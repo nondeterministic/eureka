@@ -28,7 +28,7 @@ protected:
 	int select_item();
 	std::vector<int> select_items();
 
-	SDL_Color highlight_colour, standard_bgcolour;
+	SDL_Color highlight_bgcolour, standard_bgcolour;
 	ZtatsWinContentProvider* _content_provider;
 	void scroll(unsigned start_page = 0);
 

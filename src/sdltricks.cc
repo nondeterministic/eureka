@@ -33,50 +33,55 @@ SDLTricks& SDLTricks::Instance()
 // the entire surface if rect == NULL.  Returns true on success, false
 // in case surf == NULL.
 
-bool SDLTricks::replace_col(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color old_col, SDL_Color new_col, SDL_Rect* rect)
+bool SDLTricks::replace_color(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color old_color, SDL_Color new_color, SDL_Rect* rect)
 {
-	int w, h;
-	Uint32 format;
-	if (SDL_QueryTexture(texture, &format, NULL, &w, &h) < 0) {
-		std::cerr << "ERROR: sdltricks.cc texture is NULL.\n";
+	if (old_color.r == new_color.r && old_color.g == new_color.g && old_color.b == new_color.b) {
+		std::cout << "INFO: sdltricks: swapcolors not invoked as new color == old color.\n";
+		return true;
+	}
+
+	SDL_Texture* tmp_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, rect->w, rect->h);
+
+	if (SDL_SetRenderTarget(renderer, tmp_texture) < 0) {
+		std::cerr << "ERROR: sdltricks.cc: Set render target failed..\n";
 		return false;
 	}
 
+	// Fill temporary texture with new color.
+	SDL_SetRenderDrawColor(renderer, new_color.r, new_color.g, new_color.b, 255); // Opaque
+	if (SDL_RenderFillRect(renderer, NULL) < 0) {
+		std::cerr << "ERROR: sdltricks.cc: set render draw color failed.\n";
+		return false;
+	}
+
+	// Make old texture's old color transparent.
 	SDL_SetRenderTarget(renderer, texture);
-	SDL_Surface* surf = SDL_CreateRGBSurface(0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ABGR8888, surf->pixels, surf->pitch); // w * 4 /*SDL_PIXELFORMAT_ABGR8888*/ );
+	if (SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND) < 0) {
+		std::cerr << "ERROR: sdltricks.cc: set blend mode failed.\n";
+		return false;
+	}
+	SDL_SetRenderDrawColor(renderer, old_color.r, old_color.g, old_color.b, 0); // Transparent
+	if (SDL_RenderFillRect(renderer, rect) < 0) {
+		std::cerr << "ERROR: sdltricks.cc: set render draw color failed.\n";
+		return false;
+	}
 
- 	if (surf == NULL) {
- 	    std::cerr << "ERROR: surf == NULL in SDLTricks::replace_col.\n";
- 	    return false;
- 	}
+	// Copy texture onto temp texture, so that the old transparent color becomes the new color.
+	SDL_SetRenderTarget(renderer, tmp_texture);
+	SDL_RenderCopy(renderer, texture, rect, NULL);
 
- 	SDL_Surface *surf2 = SDL_ConvertSurface(surf, surf->format, surf->flags);
- 	Uint32 amask;
- 	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
- 	  amask = 0x000000ff;
- 	#else
- 	  amask = 0xff000000;
- 	#endif
+	// Now remove alpha again and copy back.
+	if (SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE) < 0) {
+		std::cerr << "ERROR: sdltricks.cc: reset blend mode failed.\n";
+		return false;
+	}
+	SDL_SetRenderTarget(renderer, texture);
+	SDL_RenderCopy(renderer, tmp_texture, NULL, rect);
 
- 	SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGBA(surf->format, old_col.r, old_col.g, old_col.b, amask));
- 	SDL_FillRect(surf2, NULL, SDL_MapRGB(surf->format, new_col.r, new_col.g, new_col.b));
- 	SDL_BlitSurface(surf, NULL, surf2, NULL);
- 	SDL_BlitSurface(surf2, rect, surf, rect);
- 	SDL_FreeSurface(surf2);
+	// Destroy temp texture and good bye.
+	SDL_DestroyTexture(tmp_texture);
 
- 	// Remove transparency again
- 	SDL_SetColorKey(surf, 0, SDL_MapRGBA(surf->format, old_col.r, old_col.g, old_col.b, amask));
-
- 	SDL_Texture* target = SDL_CreateTextureFromSurface(renderer, surf);
- 	SDL_SetRenderTarget(renderer, texture);
- 	SDL_RenderClear(renderer);
- 	SDL_RenderCopy(renderer, target, NULL, NULL);
-
- 	SDL_FreeSurface(surf);
- 	SDL_DestroyTexture(target);
-
- 	return true;
+	return true;
 }
 
 unsigned int SDLTricks::getpixel(SDL_Texture* s, int x, int y)
