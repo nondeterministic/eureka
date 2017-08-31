@@ -21,16 +21,17 @@ enum class SelectionMode {
 class ZtatsWin : public SDLWindowRegion
 {
 protected:
-	ZtatsWin();
-	void swap_colours(int, int, SDL_Color, SDL_Color);
-	ZtatsWinContentProvider* content_provider();
-	void print_single_page(unsigned = 0, unsigned = 0);
-	int select_item();
-	std::vector<int> select_items();
-
 	SDL_Color highlight_bgcolour, standard_bgcolour;
 	ZtatsWinContentProvider* _content_provider;
-	void scroll(unsigned start_page = 0);
+	SDL_Texture* _tmp_texture;
+
+	                         ZtatsWin();
+	                    void change_bg_colour(int, int, SDL_Color);
+	ZtatsWinContentProvider* content_provider();
+	                    void print_single_page(unsigned = 0, unsigned = 0);
+	                     int select_item();
+	        std::vector<int> select_items();
+	                    void scroll(unsigned start_page = 0);
 
 public:
 	static ZtatsWin& Instance();
@@ -38,7 +39,7 @@ public:
 	void update_player_list();
 	void highlight_lines(int, int);
 	void unhighlight_lines(int, int);
-	void unhighlight_all();
+	// void unhighlight_all();
 	int select_player();
 	void execute(ZtatsWinContentProvider*, unsigned = 0);
 

@@ -33,6 +33,7 @@ ZtatsWin::ZtatsWin()
 	}
 
 	_content_provider = NULL;
+	_tmp_texture = nullptr;
 
 	standard_bgcolour.r = 0;
 	standard_bgcolour.g = 0;
@@ -64,36 +65,49 @@ ZtatsWin& ZtatsWin::Instance()
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
-	swap_colours(from_top, to_bottom, standard_bgcolour, highlight_bgcolour);
+	if (_tmp_texture != nullptr)
+		SDL_DestroyTexture(_tmp_texture);
+
+	// Store backup of texture
+	_tmp_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, get_dimensions().w, get_dimensions().h);
+	SDL_SetRenderTarget(_renderer, _tmp_texture);
+	SDL_RenderCopy(_renderer, _texture, NULL, NULL);
+
+	// Now change background color from black to highlight color.
+	change_bg_colour(from_top, to_bottom, highlight_bgcolour);
 	blit();
 	SDLWindow::Instance().blit_entire_window_texture();
 }
 
 void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 {
-	swap_colours(from_top, to_bottom, highlight_bgcolour, standard_bgcolour);
+	SDL_SetRenderTarget(_renderer, _texture);
+	SDL_RenderCopy(_renderer, _tmp_texture, NULL, NULL);
+
+	//	swap_colours(from_top, to_bottom, highlight_bgcolour, standard_bgcolour);
+
 	blit();
 	SDLWindow::Instance().blit_entire_window_texture();
 }
 
-void ZtatsWin::unhighlight_all()
-{
-	unhighlight_lines(-1, -1);
-	blit();
-	SDLWindow::Instance().blit_entire_window_texture();
-}
+//void ZtatsWin::unhighlight_all()
+//{
+//	unhighlight_lines(-1, -1);
+//	blit();
+//	SDLWindow::Instance().blit_entire_window_texture();
+//}
 
 /// Swaps background colour A for B in lines from_top to to_bottom in the ztats window.
 /// Negative values swap entire window's colors.
 
-void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color from_color, SDL_Color to_color)
+void ZtatsWin::change_bg_colour(int from_top, int to_bottom, SDL_Color to_color)
 {
 	// How many text lines are displayed in the ztats window?
 	int lines = get_dimensions().h / _font.char_height();
 
 	// Replace entire window's colors, not just single lines...
 	if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0) {
-		SDLTricks::Instance().replace_color(_renderer, _texture, from_color, to_color, NULL);
+		SDLTricks::Instance().replace_bg_color(_renderer, _texture, to_color, NULL);
 	}
 	// Replace single singles...
 	else {
@@ -102,7 +116,7 @@ void ZtatsWin::swap_colours(int from_top, int to_bottom, SDL_Color from_color, S
 		rect.y = from_top * _font.char_height() + _inter_line_padding * from_top + _y_frame_offset;
 		rect.h = (to_bottom - from_top) * _font.char_height() + _inter_line_padding;
 		rect.w = get_dimensions().w;
-		SDLTricks::Instance().replace_color(_renderer, _texture, from_color, to_color, &rect);
+		SDLTricks::Instance().replace_bg_color(_renderer, _texture, to_color, &rect);
 	}
 }
 
@@ -117,10 +131,6 @@ int ZtatsWin::select_player()
 	SDL_Event event;
 
 	highlight_lines(player*2, player*2 + 2);
-
-	SDL_Delay(500);
-
-	unhighlight_lines(player*2, player*2 + 2);
 
 	while (1) {
 		if ( SDL_WaitEvent(&event) ) {
