@@ -232,7 +232,7 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 				return;
 			}
 
-			if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().getRenderer(), tmp_surf)) == NULL) {
+			if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().get_renderer(), tmp_surf)) == NULL) {
 				std::cerr << "ERROR: gamecontrol.cc: could not convert surface to texture: " << IMG_GetError() << "\n";
 				return;
 			}
@@ -245,8 +245,8 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 				return;
 			}
 
-			SDL_SetRenderTarget(SDLWindow::Instance().getRenderer(), mwin.get_texture());
-			SDL_RenderCopy(SDLWindow::Instance().getRenderer(), tmp_texture, NULL, NULL);
+			SDL_SetRenderTarget(SDLWindow::Instance().get_renderer(), mwin.get_texture());
+			SDL_RenderCopy(SDLWindow::Instance().get_renderer(), tmp_texture, NULL, NULL);
 			SDLWindow::Instance().resetRenderer();
 			mwin.blit();
 			SDL_DestroyTexture(tmp_texture);
@@ -455,7 +455,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 
 	while (true) {
 	    SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
-	    SDL_RenderPresent(SDLWindow::Instance().getRenderer());
+	    SDL_RenderPresent(SDLWindow::Instance().get_renderer());
 
 	    if (SDL_WaitEvent(&event)) {
 			if (event.type == SDL_USEREVENT) {
@@ -1329,7 +1329,7 @@ std::pair<int, int> GameControl::select_coords()
 	while (1) {
 	    // If frames were 30, wait 33 ms before running the loop again
 	    SDL_Delay(1000/25);
-		SDL_RenderPresent(SDLWindow::Instance().getRenderer());
+		SDL_RenderPresent(SDLWindow::Instance().get_renderer());
 
 		switch (em.get_generic_key(cursor_keys)) {
 		case SDLK_LEFT:

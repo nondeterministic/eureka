@@ -367,56 +367,6 @@ int SDLWindow::blit_console()
 	return 0;
 }
 
-/**
- * Does what it says it does, one pixel at a time, amount times.
- * Returns -1 in case of error, 0 in case of coolness.
- */
-
-int SDLWindow::scroll_console(int amount, int delay)
-{
-	int console_width, console_height;
-	SDL_QueryTexture(_texture_console, NULL, NULL, &console_width, &console_height);
-
-	int scroll_pixels = 1;
-
-	if (amount > 0) {
-		SDL_Rect srcRect;
-		srcRect.x = 0;
-		srcRect.y = scroll_pixels;
-		srcRect.w = console_width;
-		srcRect.h = console_height - scroll_pixels;
-
-		SDL_Rect fillRect;
-		fillRect.x = 0;
-		fillRect.y = console_height - scroll_pixels;
-		fillRect.w = console_width;
-		fillRect.h = scroll_pixels;
-
-		SDL_Rect dstRect;
-		dstRect.x = 0;
-		dstRect.y = 0;
-		dstRect.w = console_width;
-		dstRect.h = console_height - scroll_pixels;
-
-		if (SDL_SetRenderTarget(_renderer, _texture_console) < 0) {
-			std::cerr << "ERROR: sdlwindow.cc: Setting RenderTarget failed: " << IMG_GetError() << std::endl;
-			return -1;
-		}
-
-		if (SDL_RenderCopy(_renderer, _texture_console, &srcRect, &dstRect) == 0) {
-			SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0);
-			SDL_RenderFillRect(_renderer, &fillRect);
-			return scroll_console(amount - 1, delay);
-		}
-		else {
-			std::cerr << "ERROR: sdlwindow.cc: scroll_console() failed: " << IMG_GetError() << std::endl;
-			return -1;
-		}
-	}
-
-	return 0;
-}
-
 int SDLWindow::frame_icon_size()
 {
 	return _frame_icon_size;
@@ -653,7 +603,7 @@ int SDLWindow::draw_frame(int arena_width, int arena_height)
 	return 0;
 }
 
-SDL_Renderer* SDLWindow::getRenderer() const
+SDL_Renderer* SDLWindow::get_renderer() const
 {
 	return _renderer;
 }

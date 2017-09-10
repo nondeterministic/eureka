@@ -71,7 +71,7 @@ void Type::printch(SDL_Texture* texture, int c, int x, int y, SDL_Color* bgcol, 
 
 	// Define default colours for printing, if none are supplied.
 	SDL_Color std_bgcol, std_fgcol;
-	SDL_Renderer* renderer = SDLWindow::Instance().getRenderer();
+	SDL_Renderer* renderer = SDLWindow::Instance().get_renderer();
 
 	if (bgcol == NULL) {
 		std_bgcol.r = 0; std_bgcol.g = 0; std_bgcol.b = 0;

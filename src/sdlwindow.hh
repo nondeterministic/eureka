@@ -67,7 +67,6 @@ public:
 	int blit_ztats();
 	int blit_mini_win();
 	int blit_tiny_win();
-	int scroll_console(int, int = 5);
 	int create_texture_console();
 	int create_texture_ztats();
 	int create_texture_mini_win();
@@ -76,7 +75,7 @@ public:
 	int frame_icon_size();
 	void clear_texture_arena();
 
-	SDL_Renderer* getRenderer() const;
+	SDL_Renderer* get_renderer() const;
 	bool resetRenderer();
 };
 

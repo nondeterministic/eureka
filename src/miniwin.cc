@@ -97,7 +97,7 @@ void MiniWin::surface_from_file(std::string filename)
 	if ((_tmp_surf = IMG_Load(filename.c_str())) == NULL)
 		std::cerr << "ERROR: miniwin.cc: miniwin could not load surface: '" << filename << "'.\n";
 
-	SDL_Renderer* renderer = SDLWindow::Instance().getRenderer();
+	SDL_Renderer* renderer = SDLWindow::Instance().get_renderer();
 	SDL_Texture* tmp_txt = SDL_CreateTextureFromSurface(renderer, _tmp_surf);
 	SDL_SetRenderTarget(renderer, _texture);
 	SDL_RenderCopy(renderer, tmp_txt, NULL, NULL);

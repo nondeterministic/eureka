@@ -74,7 +74,7 @@ void Console::print_line(Type* font, std::string s)
 		int y = get_size().second - font->char_height() - offset;
 		font->printch(get_texture(), s[i], x, y);
 	}
-	SDLWindow::Instance().blit_console();
+	blit();
 }
 
 void Console::print(Type* font, const std::string s, bool wait)
@@ -98,23 +98,73 @@ void Console::print(Type* font, const std::string s, bool wait)
 				i++;
 
 			// Tell SDLWindow to blit console upwards
-			SDLWindow::Instance().scroll_console(font->char_height() + offset);
+			scroll(font->char_height() + offset);
 
 			// Drop initial white spaces on the newline.
 			while (s[i] == ' ' && i < s.length() - 1)
 				i++;
 		}
 		font->printch(get_texture(), s[i], x, y);
-		SDLWindow::Instance().blit_console();
+		blit();
 
 		if (wait) {
 			pause();
-			SDLWindow::Instance().blit_console();
+			blit();
 		}
 	}
 
-	SDLWindow::Instance().scroll_console(font->char_height() + offset);
-	SDLWindow::Instance().blit_console();
+	scroll(font->char_height() + offset);
+	blit();
+}
+
+/**
+ * Does what it says it does, one pixel at a time, amount times.
+ * Returns -1 in case of error, 0 in case of coolness.
+ */
+
+int Console::scroll(int amount, int delay)
+{
+	int console_width, console_height;
+	SDL_QueryTexture(get_texture(), NULL, NULL, &console_width, &console_height);
+
+	int scroll_pixels = 1;
+
+	if (amount > 0) {
+		SDL_Rect srcRect;
+		srcRect.x = 0;
+		srcRect.y = scroll_pixels;
+		srcRect.w = console_width;
+		srcRect.h = console_height - scroll_pixels;
+
+		SDL_Rect fillRect;
+		fillRect.x = 0;
+		fillRect.y = console_height - scroll_pixels;
+		fillRect.w = console_width;
+		fillRect.h = scroll_pixels;
+
+		SDL_Rect dstRect;
+		dstRect.x = 0;
+		dstRect.y = 0;
+		dstRect.w = console_width;
+		dstRect.h = console_height - scroll_pixels;
+
+		if (SDL_SetRenderTarget(get_renderer(), get_texture()) < 0) {
+			std::cerr << "ERROR: sdlwindow.cc: Setting RenderTarget failed: " << IMG_GetError() << std::endl;
+			return -1;
+		}
+
+		if (SDL_RenderCopy(get_renderer(), get_texture(), &srcRect, &dstRect) == 0) {
+			SDL_SetRenderDrawColor(get_renderer(), 0, 0, 0, 0);
+			SDL_RenderFillRect(get_renderer(), &fillRect);
+			return scroll(amount - 1, delay);
+		}
+		else {
+			std::cerr << "ERROR: sdlwindow.cc: scroll_console() failed: " << IMG_GetError() << std::endl;
+			return -1;
+		}
+	}
+
+	return 0;
 }
 
 // Read a string from the console, i.e., get user input.
@@ -176,12 +226,17 @@ void Console::animate_cursor(Type* font, int x, int y, int offset)
 				  (cursor_x * font->char_width()) + (offset),
 				  (cursor_y * (font->char_height() + offset)) + (get_size().second - font->char_height() - offset));
 
-	SDLWindow::Instance().blit_console();
+	blit();
 }
 
 void Console::pause(int delay)
 {
 	SDL_Delay(delay);
+}
+
+SDL_Renderer* Console::get_renderer()
+{
+	return SDLWindow::Instance().get_renderer();
 }
 
 SDL_Texture* Console::get_texture()
@@ -228,4 +283,9 @@ void Console::alarm()
 //  SDL_Delay(100);
 //  SDL_BlitSurface(copy, NULL, s, NULL);
 //  SDL_FreeSurface(copy);
+}
+
+void Console::blit()
+{
+	SDLWindow::Instance().blit_console();
 }

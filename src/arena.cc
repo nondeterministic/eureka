@@ -33,7 +33,7 @@ Arena::Arena()
 	_party_is_moving = false;
 	_texture = NULL;
 
-	_renderer = SDLWindow::Instance().getRenderer();
+	_renderer = SDLWindow::Instance().get_renderer();
 
 	_left_hidden = 0;
 	_right_hidden = 0;

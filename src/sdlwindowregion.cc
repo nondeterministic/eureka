@@ -50,7 +50,7 @@ SDLWindowRegion::SDLWindowRegion()
 	_y_frame_offset = 4;
 	_inter_line_padding = 2;
 
-	_renderer = SDLWindow::Instance().getRenderer();
+	_renderer = SDLWindow::Instance().get_renderer();
 }
 
 SDLWindowRegion::~SDLWindowRegion()

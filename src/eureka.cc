@@ -478,11 +478,11 @@ int init_game_env(int res_w, int res_h)
 
 
 	// It is important to do this once!
-	if (IndoorsIcons::Instance().convert_icons_to_textures(win->getRenderer()) < 0) {
+	if (IndoorsIcons::Instance().convert_icons_to_textures(win->get_renderer()) < 0) {
 		std::cerr << "ERROR: Initialisation error. Could not convert indoors icons to textures.\n";
 		exit(-1);
 	}
-	if (OutdoorsIcons::Instance().convert_icons_to_textures(win->getRenderer()) < 0) {
+	if (OutdoorsIcons::Instance().convert_icons_to_textures(win->get_renderer()) < 0) {
 		std::cerr << "ERROR: Initialisation error. Could not convert outdoors icons to textures.\n";
 		exit(-1);
 	}

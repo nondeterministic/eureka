@@ -48,6 +48,9 @@ protected:
   int cursor_x, cursor_y;
   int pre_cursor_x, pre_cursor_y;
   std::string get_word(const std::string& s, int = 0);
+  int scroll(int, int = 5);
+  void blit();
+  SDL_Renderer* get_renderer();
 };
 
 #endif
