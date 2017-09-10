@@ -140,6 +140,9 @@ void Arena::set_SDLWindow_object(SDLWindow* win)
 		std::cerr << "WARNING: arena.cc: cannot set texture: " << IMG_GetError() << "\n";
 		exit(EXIT_FAILURE);
 	}
+
+	// Clear map, as in hexarena we get otherwise funny artefacts on the corners...
+	_sdlwindow_object->clear_texture_arena();
 }
 
 /// x and y are screen coordinates in pixels

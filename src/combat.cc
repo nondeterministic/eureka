@@ -29,9 +29,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_keycode.h>
-
 #include "eureka.hh"
 #include "console.hh"
 #include "creature.hh"
@@ -50,6 +47,7 @@
 #include "gold.hh"
 #include "gamerules.hh"
 #include "spellcasthelper.hh"
+#include "attackers.hh"
 #include "config.h"
 
 extern "C"
@@ -146,7 +144,7 @@ bool Combat::initiate()
 				}
 			}
 
-			MiniWin::Instance().display_texture(foes.pic());
+			MiniWin::Instance().display_texture(foes.pic(MiniWin::Instance().get_renderer()));
 			std::stringstream ss;
 			ss << "Upon getting closer you spotted "
 					<< foes.to_string() << ".\n"
@@ -181,7 +179,7 @@ bool Combat::initiate()
 		}
 		// Monsters were not noticed by party first...
 		else {
-			MiniWin::Instance().display_texture(foes.pic());
+			MiniWin::Instance().display_texture(foes.pic(MiniWin::Instance().get_renderer()));
 			std::stringstream ss;
 			if (party->is_resting)
 				ss << "You suddenly find your camp surrounded by ";

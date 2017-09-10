@@ -11,6 +11,7 @@ AM_CXXFLAGS = -g -Wall -O0 -fdiagnostics-color=auto -std=c++11 \
 AUTOMAKE_OPTIONS = no-dependencies
 
 leibniz_SOURCES = leibniz.hh leibniz.cc \
+		../sdl_shared.hh \
 		../util.hh ../util.cc \
 		../item.hh ../item.cc \
 		../weapon.hh ../weapon.cc \

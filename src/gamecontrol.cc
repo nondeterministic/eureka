@@ -2141,7 +2141,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			break;
 		}
 	default:
-		// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+		std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 		return false;
 	}
 
@@ -2150,14 +2150,14 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 	// Indoors
 	if (!is_arena_outdoors()) {
 		// Check if exiting map!
-		if (!ignore_walkable && walkable_for_party(party->x + x_diff, party->y + y_diff) &&
-				!arena->get_map()->is_within_visible_bounds(party->x + x_diff, party->y + y_diff))
-		{
+		if (!arena->get_map()->is_within_visible_bounds(party->x + x_diff, party->y + y_diff)) {
 			if (leave_map())
 				mwin.display_last();
-			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return false;
 		}
+
+		if (!ignore_walkable && !walkable_for_party(party->x + x_diff, party->y + y_diff))
+			return false;
 
 		// If we're ignoring walkability, or we don't and the map is walkable, do it!
 		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
@@ -2203,7 +2203,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 				_sample.play(HIT);
 			}
 
-			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return true;
 		}
 	}

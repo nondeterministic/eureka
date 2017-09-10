@@ -372,7 +372,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	// commands in quick succession to the actual location the party should be in.
 
 	party->set_indoors(true);
-	gc->get_arena()->show_map();
+	// gc->get_arena()->show_map();
 	gc->set_party(event->get_x(), event->get_y());
 	gc->set_party(1, 1);
 

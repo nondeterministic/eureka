@@ -21,6 +21,7 @@
 #define __SDLWINDOWREGION_HH
 
 #include <string>
+#include <memory>
 
 #include <SDL2/SDL.h>
 
@@ -47,9 +48,10 @@ public:
 
 	void set_dimensions(SDL_Rect dimensions);
 	void set_texture(SDL_Texture* s);
-	void display_texture(SDL_Texture* s);
+	void display_texture(std::shared_ptr<SDL_Texture> s);
 	SDL_Texture* get_texture();
 	SDL_Rect get_dimensions();
+	SDL_Renderer* get_renderer();
 	int blit();
 	void printch(int x_pos, int y_pos, int c);
 	void print_noblit(int x_pos, int y_pos, const std::string s, Alignment align = Alignment::LEFTALIGN);

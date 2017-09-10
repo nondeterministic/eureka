@@ -40,6 +40,7 @@ private:
 
 public:
   Attackers();
+  ~Attackers();
   Attackers(const Attackers&);
   void remove(int);
   const std::vector<std::shared_ptr<Creature>>* get();
@@ -49,7 +50,7 @@ public:
   std::vector<std::shared_ptr<Creature>>::iterator end();
   std::string to_string();
   std::string get_plural_name(const string&);
-  SDL_Texture* pic();
+  std::shared_ptr<SDL_Texture> pic(SDL_Renderer*);
   int get_distance(const std::string&);
   Creature* get_attacker(int distance);
   boost::unordered_map<std::string, int>* count();

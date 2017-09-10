@@ -50,10 +50,10 @@ IndoorsMap::~IndoorsMap()
 
 bool IndoorsMap::is_within_visible_bounds(int x, int y)
 {
-	return x > 0 &&
-		   x < ((int)width()) - 3 &&
-		   y < ((int)height() - 3) &&
-		   y > 0;
+	return x >= 0 &&
+		   x < ((int)width() - 1) &&
+		   y < ((int)height() - 1) &&
+		   y >= 0;
 }
 
 bool IndoorsMap::is_outdoors(void) const
@@ -64,14 +64,14 @@ bool IndoorsMap::is_outdoors(void) const
 int IndoorsMap::get_tile(unsigned x, unsigned y)
 {
 	if (_data.size() == 0) {
-		std::cerr << "ERROR: indoorsmap.cc: _data.size() == 0.\n";
+		std::cerr << "WARNING: indoorsmap.cc: _data.size() == 0.\n";
 		return -1;
 	}
 
 	if (y < _data.size() && x < (_data[0]).size())
 		return (_data[y])[x];
 
-	std::cerr << "ERROR: indoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds!\n.";
+	std::cerr << "WARNING: indoorsmap.cc: get_tile(" << x << ", " << y << ") is out of map bounds (" << _data[0].size() << "x" << _data.size() << ")!\n";
 	return -1;
 }
 

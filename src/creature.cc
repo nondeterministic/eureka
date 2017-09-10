@@ -28,6 +28,7 @@ Creature::Creature()
   _image_surf = NULL;
   _image = "";
   _distance = 0;
+  _max_group = 0;
 }
 
 Creature::~Creature()

@@ -18,6 +18,7 @@ LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 
 eureka_SOURCES = \
         eureka.hh eureka.cc \
+	sdl_shared.hh  \
 	clock.hh clock.cc \
 	util.hh util.cc \
         luaapi.hh luaapi.cc \

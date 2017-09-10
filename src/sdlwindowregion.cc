@@ -97,7 +97,6 @@ void SDLWindowRegion::set_texture(SDL_Texture* s)
 	}
 
 	// Now create the second texture of same dimensions...
-
 	if ((_texture_last = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h)) == NULL) {
 		std::cerr << "ERROR: sdlwindowregion.hh: cannot create _texture_last: " << IMG_GetError() << "\n";
 		exit(EXIT_FAILURE);
@@ -108,14 +107,26 @@ void SDLWindowRegion::set_texture(SDL_Texture* s)
 	}
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0);
 	SDL_RenderClear(_renderer);
+	if (SDL_RenderCopy(_renderer, _texture, NULL, NULL) < 0) {
+		std::cerr << "ERROR: sdlwindowregion.hh: cannot copy to _texture_last: " << IMG_GetError() << "\n";
+		exit(EXIT_FAILURE);
+	}
 	resetRenderer();
 
 	std::cout << "INFO: sdlwindowregion.hh: created texture with w: " << w << ", h: " << h << "\n";
 }
 
+void SDLWindowRegion::save_texture()
+{
+	SDL_SetRenderTarget(_renderer, _texture_last);
+	SDL_RenderClear(_renderer);
+	SDL_RenderCopy(_renderer, _texture, NULL, NULL);
+	resetRenderer();
+}
+
 /// Put texture s onto the region's own texture.
 
-void SDLWindowRegion::display_texture(SDL_Texture* s)
+void SDLWindowRegion::display_texture(std::shared_ptr<SDL_Texture> s)
 {
 	// Save existing texture for later
 	save_texture();
@@ -126,7 +137,7 @@ void SDLWindowRegion::display_texture(SDL_Texture* s)
 	}
 
 	int w, h;
-	if (SDL_QueryTexture(s, NULL, NULL, &w, &h) < 0) {
+	if (SDL_QueryTexture(s.get(), NULL, NULL, &w, &h) < 0) {
 		std::cerr << "ERROR: sdlwindowregion.hh: display_texture has invalid texture as argument: " << IMG_GetError() << "\n";
 		exit(EXIT_FAILURE);
 	}
@@ -136,10 +147,21 @@ void SDLWindowRegion::display_texture(SDL_Texture* s)
 		return;
 	}
 
-	if (SDL_RenderCopy(_renderer, s, NULL, NULL) < 0)
+	if (SDL_RenderCopy(_renderer, s.get(), NULL, NULL) < 0)
 		std::cerr << "INFO: sdlwindowregion.hh: render copy failed.\n";
 
 	resetRenderer();
+
+	blit();
+}
+
+void SDLWindowRegion::display_last()
+{
+	SDL_SetRenderTarget(_renderer, _texture);
+	SDL_RenderClear(_renderer);
+	SDL_RenderCopy(_renderer, _texture_last, NULL, NULL);
+	resetRenderer();
+	blit();
 }
 
 SDL_Texture* SDLWindowRegion::get_texture()
@@ -152,6 +174,11 @@ SDL_Texture* SDLWindowRegion::get_texture()
 SDL_Rect SDLWindowRegion::get_dimensions()
 {
 	return _dimensions;
+}
+
+SDL_Renderer* SDLWindowRegion::get_renderer()
+{
+	return _renderer;
 }
 
 int SDLWindowRegion::blit()
@@ -202,23 +229,6 @@ void SDLWindowRegion::print(int x_pos, int y_pos, const std::string s, Alignment
 void SDLWindowRegion::println(int line, const std::string s, Alignment align)
 {
 	println_noblit(line, s, align);
-	blit();
-}
-
-void SDLWindowRegion::save_texture()
-{
-	SDL_SetRenderTarget(_renderer, _texture_last);
-	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _texture, NULL, NULL);
-	resetRenderer();
-}
-
-void SDLWindowRegion::display_last()
-{
-	SDL_SetRenderTarget(_renderer, _texture);
-	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _texture_last, NULL, NULL);
-	resetRenderer();
 	blit();
 }
 

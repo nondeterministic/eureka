@@ -376,13 +376,13 @@ bool SquareArena::is_illuminated(int x, int y)
 
 void SquareArena::show_map(int x_width, int y_width)
 {
-	// std::cout << "Left hidden: " << _left_hidden
-	//        << ", Right hidden: " << _right_hidden
-	//        << ", Bot hidden: " << _bot_hidden
-	//        << ", Top hidden: " << _top_hidden << ".\n";
-	// std::cout << "Tile size: " << tile_size() << "\n";
-	// std::cout << "Map width: " << _map->width() << "\n";
-	// std::cout << "Map height: " << _map->height() << "\n";
+//	 std::cout << "Left hidden: " << _left_hidden
+//	        << ", Right hidden: " << _right_hidden
+//	        << ", Bot hidden: " << _bot_hidden
+//	        << ", Top hidden: " << _top_hidden << ".\n";
+//	 std::cout << "Tile size: " << tile_size() << "\n";
+//	 std::cout << "Map width: " << _map->width() << "\n";
+//	 std::cout << "Map height: " << _map->height() << "\n";
 
 	std::list<std::string> sound_effects_added;
 	Playlist& playlist = Playlist::Instance();
