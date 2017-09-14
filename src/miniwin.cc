@@ -62,32 +62,29 @@ MiniWin& MiniWin::Instance()
 
 void MiniWin::alarm()
 {
-// TODO SDL
+	const std::pair<int,int> size = std::make_pair(get_dimensions().w, get_dimensions().h);
+	SDL_Renderer*  r = get_renderer();
+	SDL_Texture*   t = get_texture();
+	SDL_Texture* tmp = SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.first, size.second);
 
-//	SDL_Texture* s = SDLWindow::Instance().get_mini_win_SDL_surface();
-//	// SDL_Surface *s = _surf; // SDLWindow::Instance().get_mini_win_SDL_surface();
-//	SDL_Surface *copy = SDL_ConvertSurface(s, s->format, s->flags);
-//
-//	// cf. http://cboard.cprogramming.com/game-programming/99430-how-make-grayscale-filter.html
-//	SDL_LockSurface(s);
-//	for ( int x = 0; x != s->w; ++x ) {
-//		for ( int y = 0; y != s->h; ++y ) {
-//			Uint32 pixel = SDLTricks::Instance().getpixel(s,x,y);
-//			Uint8 r = 0;
-//			Uint8 g = 0;
-//			Uint8 b = 0;
-//			SDL_GetRGB(pixel, s->format, &r, &g, &b);
-//			r = g = b = (( r+g+b )/3);
-//			r = 0xFF;
-//			SDLTricks::Instance().putpixel(s,x,y, SDL_MapRGB(s->format, r,g,b));
-//		}
-//	}
-//	SDL_UnlockSurface(s);
-//
-//	SDLWindow::Instance().blit_mini_win();
-//	SDL_Delay(300);
-//	SDL_BlitSurface(copy, NULL, s, NULL);
-//	SDL_FreeSurface(copy);
+	// Back texture up.
+	SDL_SetRenderTarget(r, tmp);
+	SDL_RenderCopy(r, t, NULL, NULL);
+
+	// Whiten texture.
+	SDL_SetRenderTarget(r, t);
+	SDL_SetRenderDrawColor(r, 255, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(r);
+
+	// Show for some time.
+	blit();
+	SDL_Delay(100);
+
+	// Show old texture again.
+	SDL_SetRenderTarget(r, t);
+	SDL_RenderCopy(r, tmp, NULL, NULL);
+	blit();
+	SDL_DestroyTexture(tmp);
 }
 
 void MiniWin::surface_from_file(std::string filename)

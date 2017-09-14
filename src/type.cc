@@ -95,7 +95,7 @@ void Type::printch(SDL_Texture* texture, int c, int x, int y, SDL_Color* bgcol, 
 	}
 
 	// Set background colour of printch.
-	SDL_SetRenderDrawColor(renderer, bgcol->r, bgcol->g, bgcol->b, 0);
+	SDL_SetRenderDrawColor(renderer, bgcol->r, bgcol->g, bgcol->b, SDL_ALPHA_OPAQUE);
 
 	if (x == -1 && y == -1) {
 		std::cerr << "WARNING: type.cc: printch() got bad coordinates.\n";

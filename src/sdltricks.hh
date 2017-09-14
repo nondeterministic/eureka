@@ -29,8 +29,8 @@ class SDLTricks
 public:
 	static SDLTricks& Instance();
 	bool replace_bg_color(SDL_Renderer*, SDL_Texture*, SDL_Color, SDL_Rect*);
-	void putpixel(SDL_Texture* surface, int x, int y, Uint32 pixel);
-	unsigned int getpixel(SDL_Texture* s, int x, int y);
+//	void putpixel(SDL_Texture* surface, int x, int y, Uint32 pixel);
+//	unsigned int getpixel(SDL_Texture* s, int x, int y);
 
 private:
 	SDLTricks();
