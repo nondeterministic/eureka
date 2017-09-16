@@ -21,12 +21,12 @@ enum class SelectionMode {
 class ZtatsWin : public SDLWindowRegion
 {
 protected:
-	SDL_Color highlight_bgcolour, standard_bgcolour;
+	SDL_Color bgcolour_highlight, bgcolour_standard;
 	ZtatsWinContentProvider* _content_provider;
 	SDL_Texture* _tmp_texture;
 
 	                         ZtatsWin();
-	                    void change_bg_colour(int, int, SDL_Color);
+	                    void change_bg_colour(int, int, SDL_Color, SDL_Color);
 	ZtatsWinContentProvider* content_provider();
 	                    void print_single_page(unsigned = 0, unsigned = 0);
 	                     int select_item();

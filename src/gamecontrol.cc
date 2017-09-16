@@ -1969,6 +1969,7 @@ void GameControl::keypress_look()
 				if (++curr_obj != found_obj.second)
 					ss << ", ";
 			}
+			ss << ".";
 			printcon(ss.str());
 		}
 
