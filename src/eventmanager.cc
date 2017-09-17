@@ -66,9 +66,6 @@ char EventManager::get_key(const char* valid_inputs)
 		valid_inputs_str = valid_inputs;
 
 	while (1) {
-		SDL_Delay(1000/25);
-		SDL_RenderPresent(SDLWindow::Instance().get_renderer());
-
 		while (SDL_WaitEvent(&ev)) {
 			if (ev.type == SDL_USEREVENT) {
 				if (ev.user.code == TICK) {

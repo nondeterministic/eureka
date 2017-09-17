@@ -239,10 +239,11 @@ void EditorWin::on_menu_file_save()
 
 void EditorWin::on_menu_file_quit()
 {
+	hide();
+	std::cout << "INFO: editorwin.cc: Trying to delete SDL editor...\n";
 	if (_sdleditor != NULL)
 		delete _sdleditor;
-	hide();
-	std::cerr << "INFO: editorwin.cc: Deleted _sdleditor.\n";
+	std::cout << "INFO: editorwin.cc: Deleted _sdleditor.\n";
 }
 
 void EditorWin::on_menu_map_new()

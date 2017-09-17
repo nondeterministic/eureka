@@ -454,7 +454,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	SDL_Event event;
 
 	while (true) {
-	    SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
+		SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
 	    SDL_RenderPresent(SDLWindow::Instance().get_renderer());
 
 	    if (SDL_WaitEvent(&event)) {
