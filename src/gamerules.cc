@@ -6,8 +6,10 @@
  */
 
 #include <iostream>
-#include "gamerules.hh"
 
+#include "gamerules.hh"
+#include "armour.hh"
+#include "shield.hh"
 
 int GameRules::bonus(int value)
 {
@@ -31,8 +33,8 @@ int GameRules::bonus(int value)
 
 // Determine armour class of creature, monster or player alike
 
-int GameRules::armour_class(int base_ac, int dext, Shield* shield) // Helmet, Armour, Magic
+int GameRules::armour_class(int base_ac, int dext, Shield* shield, Armour* armour) // Helmet, Magic
 {
-	return base_ac - bonus(dext) - (shield? shield->protection() : 0);
+	return base_ac - bonus(dext) - (shield? shield->protection() : 0) - (armour? armour->protection() : 0);
 }
 

@@ -351,5 +351,5 @@ int GameCharacter::armour_class()
 		std::cerr << "Error: No armour class defined for " << race() << std::endl;
 	}
 
-	return GameRules::armour_class(ac, dxt(), shield());
+	return GameRules::armour_class(ac, dxt(), shield(), armour());
 }

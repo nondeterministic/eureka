@@ -16,6 +16,7 @@ leibniz_SOURCES = leibniz.hh leibniz.cc \
 		../item.hh ../item.cc \
 		../weapon.hh ../weapon.cc \
 		../shield.hh ../shield.cc \
+		../armour.hh ../armour.cc \
 		../edible.hh ../edible.cc \
 		../spellsbearer.hh ../spellsbearer.cc \
 		../gamecharacter.hh ../gamecharacter.cc \
