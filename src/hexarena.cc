@@ -428,6 +428,9 @@ void HexArena::show_map(int x_width, int y_width)
 	if (!_show_map && !_show_act)
 		return;
 
+	// First, blank entire screen to avoid overlay graphic errors
+	_sdlwindow->clear_texture_arena();
+
 	// Don't show icons for actions.
 	_show_act = false;
 

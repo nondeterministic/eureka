@@ -395,7 +395,7 @@ void SquareArena::show_map(int x_width, int y_width)
 	_show_obj = true;
 
 	// First, blank entire screen to avoid overlay graphic errors
-	_sdlwindow_object->clear_texture_arena();
+	_sdlwindow->clear_texture_arena();
 
 	// Determine which icon needs to be drawn, in case it has an animation sequence defined
 	if (!_party_is_moving) {

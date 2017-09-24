@@ -24,7 +24,7 @@ bool Offsets::operator!= (Offsets a)
 
 Arena::Arena()
 {
-	_sdlwindow_object = NULL;
+	_sdlwindow = NULL;
 
 	_show_map = true;
 	_show_obj = true;
@@ -128,9 +128,9 @@ void Arena::set_SDLWindow_object(SDLWindow* win)
 		exit(EXIT_FAILURE);
 	}
 
-	_sdlwindow_object = win;
+	_sdlwindow = win;
 
-	if ((_texture = _sdlwindow_object->get_texture_arena()) == NULL) {
+	if ((_texture = _sdlwindow->get_texture_arena()) == NULL) {
 		std::cerr << "ERROR: arena.cc: couldn't set _texture.\n";
 		exit(EXIT_FAILURE);
 	}
@@ -142,7 +142,7 @@ void Arena::set_SDLWindow_object(SDLWindow* win)
 	}
 
 	// Clear map, as in hexarena we get otherwise funny artefacts on the corners...
-	_sdlwindow_object->clear_texture_arena();
+	_sdlwindow->clear_texture_arena();
 }
 
 /// x and y are screen coordinates in pixels
@@ -186,5 +186,5 @@ int Arena::put_tile(int x, int y, SDL_Texture* tile)
 
 int Arena::blit()
 {
-	return _sdlwindow_object->blit_arena();
+	return _sdlwindow->blit_arena();
 }

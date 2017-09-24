@@ -152,7 +152,7 @@ SDL_Window* SDLWindow::get_native_sdl_window()
 void SDLWindow::clear_texture_arena()
 {
 	if ( (SDL_SetRenderTarget(_renderer, _texture_arena) == 0) &&
-			(SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0) == 0) &&
+			(SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) == 0) &&
 				(SDL_RenderClear(_renderer) == 0) )
 	{
 		resetRenderer();

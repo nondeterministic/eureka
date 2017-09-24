@@ -110,7 +110,7 @@ public:
 
 protected:
   SDL_Texture* _texture;
-  SDLWindow* _sdlwindow_object;
+  SDLWindow* _sdlwindow;
   SDL_Renderer* _renderer;
   std::shared_ptr<Map> _map;
   bool _show_grid, _show_map, _show_obj, _show_act;  

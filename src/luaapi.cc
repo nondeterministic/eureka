@@ -395,7 +395,7 @@ int l_ztatswin_sell_arms_from_inventory(lua_State* L)
     	// Not nice to allocate and deallocate for that purpose, but not so bad either...
     	Item* tmp_item = NULL;
     	try {
-    		ItemFactory::create_plain_name(selected_item->name());
+    		tmp_item = ItemFactory::create_plain_name(selected_item->name());
     	}
 		catch (std::exception const& e) {
 		    std::cerr << "EXCEPTION: luaapi.cc: " << e.what() << "\n";
