@@ -89,6 +89,7 @@ public:
 	bool unlock_item();
 	void game_over();
 
+	void keypress_cast();
 	void keypress_talk();
 	void keypress_move_party(LDIR);
 	void keypress_use();

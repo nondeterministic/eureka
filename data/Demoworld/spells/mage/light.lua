@@ -43,11 +43,7 @@ do
    end
 
    function is_choose_function_defined()
-      if (choose == nil) then
-	 return false
-      else
-	 return true
-      end
+     return false
    end   
 
    function get_targets()

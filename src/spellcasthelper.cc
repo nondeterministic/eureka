@@ -72,7 +72,7 @@ bool SpellCastHelper::enabled()
 		return false;
 	}
 
-	if (!player->condition() == DEAD) {
+	if (player->condition() == DEAD) {
 		GameControl::Instance().printcon("Try that with an alive party member next time.");
 		return false;
 	}

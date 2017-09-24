@@ -501,38 +501,11 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_a:
 					keypress_attack();
 					break;
-				case SDLK_c: {
-					if (event.key.keysym.mod == KMOD_RCTRL || event.key.keysym.mod == KMOD_LCTRL) {
+				case SDLK_c:
+					if (event.key.keysym.mod == KMOD_RCTRL || event.key.keysym.mod == KMOD_LCTRL)
 						std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
-						break;
-					}
-
-					printcon("Cast spell - select player");
-					int cplayer = zwin.select_player();
-
-					if (cplayer >= 0) {
-						PlayerCharacter* player = party->get_player(cplayer);
-
-						if (player->condition() == DEAD) {
-							printcon("Next time try picking an alive party member.");
-							break;
-						}
-
-						if (!player->is_spell_caster()) {
-							printcon(player->name() + " does not have magic abilities.");
-							break;
-						}
-
-						std::string spell_file_path = select_spell(cplayer);
-
-						if (spell_file_path.length() > 0)
-							cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
-						else
-							printcon("Never mind.");
-					}
 					else
-						printcon("Never mind.");
-					}
+						keypress_cast();
 					break;
 				case SDLK_d:
 					keypress_drop_items();
@@ -1389,6 +1362,37 @@ std::pair<int, int> GameControl::select_coords()
 		arena->get_map()->push_obj(crosshair_tmp_obj);
 		old_x = cx; old_y = cy;
 	}
+}
+
+void GameControl::keypress_cast()
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	printcon("Cast spell - select player");
+	int cplayer = zwin.select_player();
+
+	if (cplayer >= 0) {
+		PlayerCharacter* player = party->get_player(cplayer);
+
+		if (player->condition() == DEAD) {
+			printcon("Next time try picking an alive party member.");
+			return;
+		}
+
+		if (!player->is_spell_caster()) {
+			printcon(player->name() + " does not have magic abilities.");
+			return;
+		}
+
+		std::string spell_file_path = select_spell(cplayer);
+
+		if (spell_file_path.length() > 0)
+			cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
+		else
+			printcon("Never mind.");
+	}
+	else
+		printcon("Never mind.");
 }
 
 void GameControl::keypress_drop_items()
