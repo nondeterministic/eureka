@@ -602,6 +602,37 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	return 0;
 }
 
+void GameControl::keypress_cast()
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+
+	printcon("Cast spell - select player");
+	int cplayer = zwin.select_player();
+
+	if (cplayer >= 0) {
+		PlayerCharacter* player = party->get_player(cplayer);
+
+		if (player->condition() == DEAD) {
+			printcon("Next time try picking an alive party member.");
+			return;
+		}
+
+		if (!player->is_spell_caster()) {
+			printcon(player->name() + " does not have magic abilities.");
+			return;
+		}
+
+		std::string spell_file_path = select_spell(cplayer);
+
+		if (spell_file_path.length() > 0)
+			cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
+		else
+			printcon("Never mind.");
+	}
+	else
+		printcon("Never mind.");
+}
+
 /// "Civilian" use of magic during non-combat...
 
 void GameControl::cast_spell(int player_no, Spell spell)
@@ -1362,37 +1393,6 @@ std::pair<int, int> GameControl::select_coords()
 		arena->get_map()->push_obj(crosshair_tmp_obj);
 		old_x = cx; old_y = cy;
 	}
-}
-
-void GameControl::keypress_cast()
-{
-	ZtatsWin& zwin = ZtatsWin::Instance();
-
-	printcon("Cast spell - select player");
-	int cplayer = zwin.select_player();
-
-	if (cplayer >= 0) {
-		PlayerCharacter* player = party->get_player(cplayer);
-
-		if (player->condition() == DEAD) {
-			printcon("Next time try picking an alive party member.");
-			return;
-		}
-
-		if (!player->is_spell_caster()) {
-			printcon(player->name() + " does not have magic abilities.");
-			return;
-		}
-
-		std::string spell_file_path = select_spell(cplayer);
-
-		if (spell_file_path.length() > 0)
-			cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
-		else
-			printcon("Never mind.");
-	}
-	else
-		printcon("Never mind.");
 }
 
 void GameControl::keypress_drop_items()

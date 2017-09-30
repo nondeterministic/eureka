@@ -172,6 +172,7 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 
 bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> event, std::shared_ptr<Map> map)
 {
+	MiniWin* mw = &MiniWin::Instance();
 	GameControl* gc = &GameControl::Instance();
 	Party* party = &Party::Instance();
 
@@ -282,11 +283,12 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 
 	// Stop all sounds when leaving a map
 	Playlist::Instance().clear();
+	mw->display_last();
 
 	return true;
 }
 
-bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> event, std::shared_ptr<Map> map)
+bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> event, std::shared_ptr<Map> current_map)
 {
 	Party* party = &Party::Instance();
 	GameControl* gc = &GameControl::Instance();
@@ -295,7 +297,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	// Before changing map, when indoors (e.g. climb down a ladder), store state
 	if (party->indoors()) {
-		std::shared_ptr<Map> new_map = map;
+		std::shared_ptr<Map> new_map = current_map;
 		IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
 		std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
 		GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
@@ -320,16 +322,12 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	}
 
 	gc->printcon("Entering " + map_long_name);
-
-	boost::filesystem::path tmp_path;
-	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images" / "indoors_city.png";
 	mw->save_texture();
-	mw->surface_from_file(tmp_path.string());
 
 	if (!party->indoors())
 		party->store_outside_coords();
 
-	map->unload_map_data();
+	current_map->unload_map_data();
 	gc->get_arena().reset(); // WAS: gc->get_arena() = NULL;
 
 	// There is only one landscape which can not be entered, but
@@ -366,6 +364,15 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 
 	gc->get_arena()->set_SDLWindow_object(&(SDLWindow::Instance()));
 	gc->get_arena()->determine_offsets();
+
+	// Change miniwin image...
+	boost::filesystem::path tmp_path;
+	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images";
+	if (gc->get_arena()->get_map()->is_dungeon)
+		tmp_path /= "dungeon.png";
+	else
+		tmp_path /= "indoors_city.png";
+	mw->surface_from_file(tmp_path.string());
 
 	// The following is somewhat yucky code around the fact that you cannot place the party
 	// just inside an arbitrary location in the map. So I put it on (1,1) and then use move
