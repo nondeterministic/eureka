@@ -222,35 +222,45 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 		break;
 	}
 
-	if (update_status_image && !party->indoors()) {
-		SDL_Texture* tmp_texture = NULL;
-		SDL_Surface* tmp_surf = NULL;
+	if (update_status_image) {
+		if (!party->indoors()) {
+			SDL_Texture* tmp_texture = NULL;
+			SDL_Surface* tmp_surf = NULL;
 
-		if (filename_old != filename) {
-			if ((tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL) {
-				std::cerr << "ERROR: gamecontrol.cc: could not load surface " << (conf_world_path / "images" / filename).c_str() << "\n";
-				return;
-			}
+			if (filename_old != filename) {
+				if ((tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL) {
+					std::cerr << "ERROR: gamecontrol.cc: could not load surface " << (conf_world_path / "images" / filename).c_str() << "\n";
+					return;
+				}
 
-			if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().get_renderer(), tmp_surf)) == NULL) {
-				std::cerr << "ERROR: gamecontrol.cc: could not convert surface to texture: " << IMG_GetError() << "\n";
-				return;
-			}
+				if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().get_renderer(), tmp_surf)) == NULL) {
+					std::cerr << "ERROR: gamecontrol.cc: could not convert surface to texture: " << IMG_GetError() << "\n";
+					return;
+				}
 
-			int w, h;
-			if (SDL_QueryTexture(tmp_texture, NULL, NULL, &w, &h) < 0) {
-				std::cerr << "WARNING: gamecontrol.cc: loading miniwin image yielded invalid texture: " << IMG_GetError() << "\n";
+				int w, h;
+				if (SDL_QueryTexture(tmp_texture, NULL, NULL, &w, &h) < 0) {
+					std::cerr << "WARNING: gamecontrol.cc: loading miniwin image yielded invalid texture: " << IMG_GetError() << "\n";
+					SDL_DestroyTexture(tmp_texture);
+					SDL_FreeSurface(tmp_surf);
+					return;
+				}
+
+				SDL_SetRenderTarget(SDLWindow::Instance().get_renderer(), mwin.get_texture());
+				SDL_RenderCopy(SDLWindow::Instance().get_renderer(), tmp_texture, NULL, NULL);
+				SDLWindow::Instance().resetRenderer();
+				mwin.blit();
 				SDL_DestroyTexture(tmp_texture);
 				SDL_FreeSurface(tmp_surf);
-				return;
 			}
+		}
+		else {
+			boost::filesystem::path tmp_path = conf_world_path / "images";
 
-			SDL_SetRenderTarget(SDLWindow::Instance().get_renderer(), mwin.get_texture());
-			SDL_RenderCopy(SDLWindow::Instance().get_renderer(), tmp_texture, NULL, NULL);
-			SDLWindow::Instance().resetRenderer();
-			mwin.blit();
-			SDL_DestroyTexture(tmp_texture);
-			SDL_FreeSurface(tmp_surf);
+			if (get_map()->is_dungeon)
+				mwin.surface_from_file((tmp_path / "dungeon.png").c_str());
+			else
+				mwin.surface_from_file((tmp_path / "indoors_city.png").c_str());
 		}
 	}
 	TinyWin& twin = TinyWin::Instance();
@@ -364,6 +374,7 @@ void GameControl::do_turn(bool resting)
 
 		Combat combat;
 		combat.initiate();
+		redraw_graphics_status(true);
 	}
 	else {
 		if (_turns%60 == 0)
@@ -1605,8 +1616,10 @@ void GameControl::get_attacked()
 					if (map_obj->get_init_script_path().length() > 0) {
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
-						if (combat.initiate())
+						if (combat.initiate()) {
 							get_map()->rm_obj_by_id(map_obj->id);
+							redraw_graphics_status(true);
+						}
 						return;
 					}
 					else
@@ -1619,6 +1632,7 @@ void GameControl::get_attacked()
 						combat.set_foes(map_obj->get_foes());
 						if (combat.initiate()) {
 							get_map()->rm_obj_by_id(map_obj->id);
+							redraw_graphics_status(true);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1629,6 +1643,7 @@ void GameControl::get_attacked()
 						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
 						if (combat.initiate()) {
 							get_map()->rm_obj_by_id(map_obj->id);
+							redraw_graphics_status(true);
 							return;
 						}
 						map_obj->set_foes(combat.get_foes());
@@ -1677,8 +1692,10 @@ void GameControl::keypress_attack()
 					the_obj.move_mode = FLEE;
 					make_guards(HOSTILE);
 
-					if (combat.initiate())
+					if (combat.initiate()) {
 						get_map()->rm_obj_by_id(the_obj.id);
+						redraw_graphics_status(true);
+					}
 					return;
 				}
 				else {
@@ -1693,6 +1710,7 @@ void GameControl::keypress_attack()
 					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
 					if (combat.initiate()) {
 						get_map()->rm_obj_by_id(the_obj.id);
+						redraw_graphics_status(true);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());
@@ -1704,6 +1722,7 @@ void GameControl::keypress_attack()
 					combat.set_foes(the_obj.get_foes());
 					if (combat.initiate()) {
 						get_map()->rm_obj_by_id(the_obj.id);
+						redraw_graphics_status(true);
 						return;
 					}
 					the_obj.set_foes(combat.get_foes());

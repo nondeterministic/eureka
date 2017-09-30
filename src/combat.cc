@@ -81,9 +81,13 @@ Combat::~Combat()
 
 bool Combat::initiate()
 {
+	MiniWin& mwin = MiniWin::Instance();
+
 	// This if-block is executed, when foes are left over from a previous encounter.
 	// Otherwise, the random monster generation below is executed first.
 	if (foes.size() > 0) {
+		mwin.display_texture(foes.pic(mwin.get_renderer()));
+
 		std::stringstream ss;
 		ss << "\nYou're faced with "
 				<< foes.to_string() << ".\n"
@@ -112,7 +116,6 @@ bool Combat::initiate()
 			break;
 		default:
 			printcon("You got away this time!");
-			MiniWin::Instance().display_last();
 			return false;
 		}
 	}
@@ -128,7 +131,7 @@ bool Combat::initiate()
 
 				if (em->get_key("ik") == 'k') {
 					printcon("Indeed, it seems it was nothing.");
-					MiniWin::Instance().display_last();
+					mwin.display_last();
 					return false;
 				}
 			}
@@ -139,12 +142,13 @@ bool Combat::initiate()
 
 				if (em->get_key("im") == 'm') {
 					printcon("You got away this time!");
-					MiniWin::Instance().display_last();
+					mwin.display_last();
 					return false;
 				}
 			}
 
-			MiniWin::Instance().display_texture(foes.pic(MiniWin::Instance().get_renderer()));
+			mwin.save_texture();
+			mwin.display_texture(foes.pic(mwin.get_renderer()));
 			std::stringstream ss;
 			ss << "Upon getting closer you spotted "
 					<< foes.to_string() << ".\n"
@@ -173,13 +177,14 @@ bool Combat::initiate()
 				break;
 			default:
 				printcon("You got away this time!");
-				MiniWin::Instance().display_last();
+				mwin.display_last();
 				return false;
 			}
 		}
 		// Monsters were not noticed by party first...
 		else {
-			MiniWin::Instance().display_texture(foes.pic(MiniWin::Instance().get_renderer()));
+			mwin.save_texture();
+			mwin.display_texture(foes.pic(mwin.get_renderer()));
 			std::stringstream ss;
 			if (party->is_resting)
 				ss << "You suddenly find your camp surrounded by ";
@@ -211,7 +216,7 @@ bool Combat::initiate()
 				break;
 			default:
 				printcon("You got away this time!");
-				MiniWin::Instance().display_last();
+				mwin.display_last();
 				return false;
 			}
 		}
@@ -410,8 +415,10 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 
 void Combat::victory()
 {
+	MiniWin& mwin = MiniWin::Instance();
+
 	printcon("Your party emerged victorious!", true);
-	MiniWin::Instance().display_last();
+	mwin.display_last();
 
 	if (_bounty_items.size() > 0) {
 		ZtatsWin& zwin = ZtatsWin::Instance();
@@ -419,7 +426,6 @@ void Combat::victory()
 
 		switch (em->get_key("yn")) {
 		case 'y': {
-			MiniWin&  mwin = MiniWin::Instance();
 			mwin.save_texture();
 			mwin.clear();
 			mwin.println(0, "Pick up items", CENTERALIGN);
@@ -680,8 +686,9 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
     foes.add(std::static_pointer_cast<Creature>(foe));
 
     // Set distance of foe to 10'
-    for (auto f: foes)
+    for (auto f: foes) {
     	f->set_distance(10);
+    }
 
 	return true;
 }
