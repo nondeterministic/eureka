@@ -62,46 +62,17 @@ MiniWin& MiniWin::Instance()
 
 void MiniWin::alarm()
 {
-	const std::pair<int,int> size = std::make_pair(get_dimensions().w, get_dimensions().h);
-	SDL_Renderer*  r = get_renderer();
-	SDL_Texture*   t = get_texture();
-	SDL_Texture* tmp = SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.first, size.second);
+	save_texture();
 
-	// Back texture up.
-	SDL_SetRenderTarget(r, tmp);
-	SDL_RenderCopy(r, t, NULL, NULL);
-
-	// Whiten texture.
-	SDL_SetRenderTarget(r, t);
-	SDL_SetRenderDrawColor(r, 255, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(r);
+	SDL_SetRenderTarget(_renderer, _texture);
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(_renderer, NULL);
 
 	// Show for some time.
 	blit();
+	SDLWindow::Instance().blit_entire_window_texture();
 	SDL_Delay(100);
 
-	// Show old texture again.
-	SDL_SetRenderTarget(r, t);
-	SDL_RenderCopy(r, tmp, NULL, NULL);
-	blit();
-	SDL_DestroyTexture(tmp);
-}
-
-void MiniWin::surface_from_file(std::string filename)
-{
-	SDL_Surface* _tmp_surf = NULL;
-
-	if ((_tmp_surf = IMG_Load(filename.c_str())) == NULL)
-		std::cerr << "ERROR: miniwin.cc: miniwin could not load surface: '" << filename << "'.\n";
-
-	SDL_Renderer* renderer = SDLWindow::Instance().get_renderer();
-	SDL_Texture* tmp_txt = SDL_CreateTextureFromSurface(renderer, _tmp_surf);
-	SDL_SetRenderTarget(renderer, _texture);
-	SDL_RenderCopy(renderer, tmp_txt, NULL, NULL);
-	SDLWindow::Instance().resetRenderer();
-
-	SDL_FreeSurface(_tmp_surf);
-	SDL_DestroyTexture(tmp_txt);
-
-	// SDL_BlitSurface(_tmp_surf, NULL, _surf, NULL);
+	display_last();
+	SDLWindow::Instance().blit_entire_window_texture();
 }

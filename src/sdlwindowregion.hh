@@ -61,6 +61,7 @@ public:
 	void save_texture();
 	void display_last();
 	void clear();
+	void surface_from_file(std::string);
 };
 
 #endif

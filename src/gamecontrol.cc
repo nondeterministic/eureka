@@ -223,45 +223,18 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 	}
 
 	if (update_status_image) {
-		if (!party->indoors()) {
-			SDL_Texture* tmp_texture = NULL;
-			SDL_Surface* tmp_surf = NULL;
+		boost::filesystem::path tmp_path = conf_world_path / "images";
 
-			if (filename_old != filename) {
-				if ((tmp_surf = IMG_Load((conf_world_path / "images" / filename).c_str())) == NULL) {
-					std::cerr << "ERROR: gamecontrol.cc: could not load surface " << (conf_world_path / "images" / filename).c_str() << "\n";
-					return;
-				}
-
-				if ((tmp_texture = SDL_CreateTextureFromSurface(SDLWindow::Instance().get_renderer(), tmp_surf)) == NULL) {
-					std::cerr << "ERROR: gamecontrol.cc: could not convert surface to texture: " << IMG_GetError() << "\n";
-					return;
-				}
-
-				int w, h;
-				if (SDL_QueryTexture(tmp_texture, NULL, NULL, &w, &h) < 0) {
-					std::cerr << "WARNING: gamecontrol.cc: loading miniwin image yielded invalid texture: " << IMG_GetError() << "\n";
-					SDL_DestroyTexture(tmp_texture);
-					SDL_FreeSurface(tmp_surf);
-					return;
-				}
-
-				SDL_SetRenderTarget(SDLWindow::Instance().get_renderer(), mwin.get_texture());
-				SDL_RenderCopy(SDLWindow::Instance().get_renderer(), tmp_texture, NULL, NULL);
-				SDLWindow::Instance().resetRenderer();
-				mwin.blit();
-				SDL_DestroyTexture(tmp_texture);
-				SDL_FreeSurface(tmp_surf);
-			}
-		}
-		else {
-			boost::filesystem::path tmp_path = conf_world_path / "images";
-
+		if (party->indoors()) {
 			if (get_map()->is_dungeon)
-				mwin.surface_from_file((tmp_path / "dungeon.png").c_str());
+				filename = "dungeon.png";
 			else
-				mwin.surface_from_file((tmp_path / "indoors_city.png").c_str());
+				filename = "indoors_city.png";
 		}
+
+		// To avoid reloading image on each step...
+		if (filename_old != filename)
+			mwin.surface_from_file((tmp_path / filename).c_str());
 	}
 	TinyWin& twin = TinyWin::Instance();
 	twin.clear();
@@ -969,14 +942,12 @@ void GameControl::keypress_hole_up()
 
 	if (hours == 0) {
 		printcon("Changed your mind, huh?");
-		redraw_graphics_status();
-		mwin.display_last();
+		redraw_graphics_status(true);
 		return;
 	}
 	else if (hours > 9) {
 		printcon("More than 9 hours of sleep isn't healthy.");
-		redraw_graphics_status();
-		mwin.display_last();
+		redraw_graphics_status(true);
 		return;
 	}
 
@@ -1048,8 +1019,7 @@ void GameControl::keypress_hole_up()
 	Party::Instance().unset_guard();
 	Party::Instance().is_resting = false;
 
-	redraw_graphics_status();
-	mwin.display_last();
+	redraw_graphics_status(true);
 	zwin.update_player_list();
 }
 
@@ -1212,8 +1182,7 @@ void GameControl::keypress_use()
 	else
 		printcon("Changed your mind, huh?");
 
-	redraw_graphics_status();
-	mwin.display_last();
+	redraw_graphics_status(true);
 }
 
 // TODO: Do something more useful here...
@@ -1299,7 +1268,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 				// After readying an item, the AC may have changed, for example.
 				zwin.update_player_list();
 				printcon("Readying " + selected_item_name);
-				mwin.display_last();
+				redraw_graphics_status(true);
 
 				return selected_item_name;
 			}
@@ -1308,7 +1277,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 	else
 		std::cerr << "INFO: gamecontrol.cc: Contentprovider was empty, while your inventory probably wasn't? Smells like a (harmless) program error.\n";
 
-	mwin.display_last();
+	redraw_graphics_status(true);
 	printcon("Never mind...");
 	return "";
 }
@@ -1616,10 +1585,9 @@ void GameControl::get_attacked()
 					if (map_obj->get_init_script_path().length() > 0) {
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
-						if (combat.initiate()) {
+						if (combat.initiate())
 							get_map()->rm_obj_by_id(map_obj->id);
-							redraw_graphics_status(true);
-						}
+						redraw_graphics_status(true);
 						return;
 					}
 					else
@@ -1635,6 +1603,7 @@ void GameControl::get_attacked()
 							redraw_graphics_status(true);
 							return;
 						}
+						redraw_graphics_status(true);
 						map_obj->set_foes(combat.get_foes());
 						return;
 					}
@@ -1646,6 +1615,7 @@ void GameControl::get_attacked()
 							redraw_graphics_status(true);
 							return;
 						}
+						redraw_graphics_status(true);
 						map_obj->set_foes(combat.get_foes());
 						return;
 					}
@@ -2176,7 +2146,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 		// Check if exiting map!
 		if (!arena->get_map()->is_within_visible_bounds(party->x + x_diff, party->y + y_diff)) {
 			if (leave_map())
-				mwin.display_last();
+				redraw_graphics_status(true);
 			return false;
 		}
 

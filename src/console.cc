@@ -272,6 +272,7 @@ void Console::alarm()
 	SDL_RenderClear(r);
 
 	// Show for some time.
+	SDLWindow::Instance().blit_entire_window_texture();
 	blit();
 	SDL_Delay(100);
 
@@ -279,6 +280,7 @@ void Console::alarm()
 	SDL_SetRenderTarget(r, t);
 	SDL_RenderCopy(r, tmp, NULL, NULL);
 	blit();
+	SDLWindow::Instance().blit_entire_window_texture();
 	SDL_DestroyTexture(tmp);
 }
 

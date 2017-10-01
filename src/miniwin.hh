@@ -32,7 +32,6 @@ class MiniWin : public SDLWindowRegion
 public:
   static MiniWin& Instance();
   void alarm();
-  void surface_from_file(std::string);
 
 protected:
   MiniWin();

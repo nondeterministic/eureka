@@ -251,3 +251,22 @@ void SDLWindowRegion::clear()
 
 	resetRenderer();
 }
+
+/// It is your own responsibility that filename points to a file which has the exact same dimensions
+/// as the _texture.
+
+void SDLWindowRegion::surface_from_file(std::string filename)
+{
+	SDL_Surface* _tmp_surf = NULL;
+
+	if ((_tmp_surf = IMG_Load(filename.c_str())) == NULL)
+		std::cerr << "ERROR: sdlwindowregion.cc: could not load surface: '" << filename << "'.\n";
+
+	SDL_Texture* tmp_txt = SDL_CreateTextureFromSurface(_renderer, _tmp_surf);
+	SDL_SetRenderTarget(_renderer, _texture);
+	SDL_RenderCopy(_renderer, tmp_txt, NULL, NULL);
+	resetRenderer();
+
+	SDL_FreeSurface(_tmp_surf);
+	SDL_DestroyTexture(tmp_txt);
+}

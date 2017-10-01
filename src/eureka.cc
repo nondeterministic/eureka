@@ -368,9 +368,9 @@ int intro(int res_w, int res_h)
 	path_intro_music /= "data";
 	path_intro_music /= "intro.ogg";
 	SoundSample sample_intro;
-//	sample_intro.set_channel(4711);
-//	sample_intro.set_volume(128);
-//	sample_intro.play(path_intro_music.string(), 1);
+	sample_intro.set_channel(4711);
+	sample_intro.set_volume(128);
+	sample_intro.play(path_intro_music.string(), 1);
 
     // Update the display
     SDL_RenderPresent(renderer);
