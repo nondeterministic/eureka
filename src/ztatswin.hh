@@ -21,7 +21,7 @@ enum class SelectionMode {
 class ZtatsWin : public SDLWindowRegion
 {
 protected:
-	SDL_Color bgcolour_highlight, bgcolour_standard;
+	SDL_Color _bgcolour_highlight, _bgcolour_standard;
 	ZtatsWinContentProvider* _content_provider;
 	SDL_Texture* _tmp_texture;
 

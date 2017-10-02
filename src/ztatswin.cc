@@ -35,13 +35,13 @@ ZtatsWin::ZtatsWin()
 	_content_provider = NULL;
 	_tmp_texture = nullptr;
 
-	bgcolour_standard.r = 0;
-	bgcolour_standard.g = 0;
-	bgcolour_standard.b = 0;
+	_bgcolour_standard.r = 0;
+	_bgcolour_standard.g = 0;
+	_bgcolour_standard.b = 0;
 
-	bgcolour_highlight.r = 50;
-	bgcolour_highlight.g = 50;
-	bgcolour_highlight.b = 250;
+	_bgcolour_highlight.r = 50;
+	_bgcolour_highlight.g = 50;
+	_bgcolour_highlight.b = 250;
 
 	SDL_Rect rect;
 	rect.x = win.get_size().first - win.frame_icon_size() - ztats_w + 2;
@@ -74,14 +74,14 @@ void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 	SDL_RenderCopy(_renderer, _texture, NULL, NULL);
 
 	// Now change background color from black to highlight color.
-	change_bg_colour(from_top, to_bottom, bgcolour_highlight, bgcolour_standard);
+	change_bg_colour(from_top, to_bottom, _bgcolour_highlight, _bgcolour_standard);
 	blit();
 	SDLWindow::Instance().blit_entire_window_texture();
 }
 
 //void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 //{
-//	change_bg_colour(from_top, to_bottom, bgcolour_standard, bgcolour_highlight);
+//	change_bg_colour(from_top, to_bottom, _bgcolour_standard, _bgcolour_highlight);
 //
 //	blit();
 //	SDLWindow::Instance().blit_entire_window_texture();

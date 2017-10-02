@@ -79,7 +79,7 @@ Combat::~Combat()
 
 // Returns true on victory, false otherwise.
 
-bool Combat::initiate()
+Combat_Return_Codes Combat::initiate()
 {
 	MiniWin& mwin = MiniWin::Instance();
 
@@ -111,12 +111,12 @@ bool Combat::initiate()
 				return initiate();
 			else {
 				victory();
-				return true;
+				return VICTORY;
 			}
 			break;
 		default:
 			printcon("You got away this time!");
-			return false;
+			return FLED;
 		}
 	}
 
@@ -132,7 +132,7 @@ bool Combat::initiate()
 				if (em->get_key("ik") == 'k') {
 					printcon("Indeed, it seems it was nothing.");
 					mwin.display_last();
-					return false;
+					return NOT_INITIATED;
 				}
 			}
 			else {
@@ -143,7 +143,7 @@ bool Combat::initiate()
 				if (em->get_key("im") == 'm') {
 					printcon("You got away this time!");
 					mwin.display_last();
-					return false;
+					return NOT_INITIATED;
 				}
 			}
 
@@ -170,7 +170,7 @@ bool Combat::initiate()
 
 				if (foes.size() <= 0) {
 					victory();
-					return true;
+					return VICTORY;
 				}
 				else
 					return initiate();
@@ -178,7 +178,7 @@ bool Combat::initiate()
 			default:
 				printcon("You got away this time!");
 				mwin.display_last();
-				return false;
+				return FLED;
 			}
 		}
 		// Monsters were not noticed by party first...
@@ -209,7 +209,7 @@ bool Combat::initiate()
 
 				if (foes.size() <= 0) {
 					victory();
-					return true;
+					return VICTORY;
 				}
 				else
 					return initiate();
@@ -217,12 +217,12 @@ bool Combat::initiate()
 			default:
 				printcon("You got away this time!");
 				mwin.display_last();
-				return false;
+				return FLED;
 			}
 		}
 	}
 
-	return false;
+	return OTHER;
 }
 
 // group refers to the n-th group of attackers.  There are always >= 1 groups.
@@ -298,6 +298,7 @@ std::vector<AttackOption*> Combat::attack_options()
 			}
 		}
 		else if (input == 'c') {
+			ZtatsWin::Instance().save_texture();
 			std::string spell_file_path = GameControl::Instance().select_spell(player_no);
 
 			if (spell_file_path == "") {
@@ -326,8 +327,7 @@ std::vector<AttackOption*> Combat::attack_options()
 				lua.push_fn_arg((std::string)thiss.str());
 				lua.call_void_fn("set_combat_ptr");
 
-				try
-				{
+				try {
 					spellCastHelper->init();
 
 					if (spellCastHelper->choose() >= 0) {
@@ -369,6 +369,11 @@ std::vector<AttackOption*> Combat::attack_options()
 
 			attackOptions[player_no] = new DefendOption(player_no);
 		}
+		// This is a terrible hack: I quickly put the players back so that the "hacked" unhighlight lines
+		// puts back the correct texture, the players list, not the spells list.
+		// I need to do this so long as I can't get unhighlight/transparency to work properly.
+		ZtatsWin::Instance().update_player_list();
+		ZtatsWin::Instance().highlight_lines(player_no * 2, player_no * 2 + 2);
 		ZtatsWin::Instance().unhighlight_lines(player_no * 2, player_no * 2 + 2);
 	}
 

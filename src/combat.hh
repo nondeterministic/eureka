@@ -37,6 +37,10 @@
 
 class AttackOption;
 
+enum Combat_Return_Codes {
+	VICTORY, SNUCK_AWAY, FLED, NOT_INITIATED, OTHER
+};
+
 class Combat
 {
 protected:
@@ -50,7 +54,7 @@ protected:
 public:
   Combat();
   ~Combat();
-  bool initiate();
+  Combat_Return_Codes initiate();
   int select_enemy();
   int fight(std::vector<AttackOption*>);
   int party_fight(std::vector<AttackOption*>);

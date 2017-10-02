@@ -233,8 +233,8 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 		}
 
 		// To avoid reloading image on each step...
-		if (filename_old != filename)
-			mwin.surface_from_file((tmp_path / filename).c_str());
+		// if (filename_old != filename)
+		mwin.surface_from_file((tmp_path / filename).c_str());
 	}
 	TinyWin& twin = TinyWin::Instance();
 	twin.clear();
@@ -264,8 +264,8 @@ void GameControl::do_turn(bool resting)
 	_turns++;
 	_turn_passed = 0;
 
-	// Consume food
-	if (!resting) { // We don't need to worry about food while resting
+	// Consume food when not resting
+	if (!resting) {
 		if (Party::Instance().food() == 0) {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
@@ -346,8 +346,15 @@ void GameControl::do_turn(bool resting)
 			_clock.inc(30);
 
 		Combat combat;
-		combat.initiate();
-		redraw_graphics_status(true);
+		Combat_Return_Codes combat_result = combat.initiate();
+		if (combat_result == Combat_Return_Codes::VICTORY ||
+			combat_result == Combat_Return_Codes::FLED ||
+			combat_result == Combat_Return_Codes::OTHER)
+		{
+			redraw_graphics_status(true);
+		}
+		else
+			redraw_graphics_status();
 	}
 	else {
 		if (_turns%60 == 0)
@@ -1007,11 +1014,7 @@ void GameControl::keypress_hole_up()
 			}
 		}
 
-		if (!party->indoors())
-			Console::Instance().pause(40);
-		else
-			Console::Instance().pause(5);
-		redraw_graphics_status();
+		SDLWindow::Instance().blit_entire_window_texture();
 		rounds++;
 	} while (_clock.time().first != (old_time.first + hours) % 24);
 
@@ -1291,7 +1294,8 @@ std::pair<int, int> GameControl::select_coords()
 	const int CROSSHAIR_ICON = (party->indoors()? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS);
 
 	std::list<SDL_Keycode> cursor_keys =
-		{ SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE };
+		{ SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE, SDLK_KP_4,
+		  SDLK_KP_6, SDLK_KP_8, SDLK_KP_2 /*, SDLK_KP_1, SDLK_KP_3, SDLK_KP_7, SDLK_KP_9 */ };
 
 	static int cx, cy;  // Cursor
 	int px, py;         // Party
@@ -1317,20 +1321,24 @@ std::pair<int, int> GameControl::select_coords()
 
 		switch (em.get_generic_key(cursor_keys)) {
 		case SDLK_LEFT:
+		case SDLK_KP_4:
 			if (arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
 				cx--;
 			break;
 		case SDLK_RIGHT:
+		case SDLK_KP_6:
 			if (arena->adjacent(cx + 1, cy, px, py) && cx + 1 <= (int)arena->get_map()->width() - 4)
 				cx++;
 			break;
 		case SDLK_UP:
+		case SDLK_KP_8:
 			if (party->indoors() && arena->adjacent(cx, cy - 1, px, py) && cy - 1 > 0)
 				cy--;
 			else if (!party->indoors() && arena->adjacent(cx, cy - 2, px, py) && cy - 2 > 0)
 				cy -= 2;
 			break;
 		case SDLK_DOWN:
+		case SDLK_KP_2:
 			if (party->indoors() && arena->adjacent(cx, cy + 1, px, py) &&
 					cy + 1 <= (int)arena->get_map()->height() - 4)
 				cy++;
@@ -1585,7 +1593,7 @@ void GameControl::get_attacked()
 					if (map_obj->get_init_script_path().length() > 0) {
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
-						if (combat.initiate())
+						if (combat.initiate() == Combat_Return_Codes::VICTORY)
 							get_map()->rm_obj_by_id(map_obj->id);
 						redraw_graphics_status(true);
 						return;
@@ -1598,7 +1606,7 @@ void GameControl::get_attacked()
 					if (map_obj->get_foes().size() > 0) {
 						Combat combat;
 						combat.set_foes(map_obj->get_foes());
-						if (combat.initiate()) {
+						if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 							get_map()->rm_obj_by_id(map_obj->id);
 							redraw_graphics_status(true);
 							return;
@@ -1610,7 +1618,7 @@ void GameControl::get_attacked()
 					else if (map_obj->get_combat_script_path().length() > 0) {
 						Combat combat;
 						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
-						if (combat.initiate()) {
+						if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 							get_map()->rm_obj_by_id(map_obj->id);
 							redraw_graphics_status(true);
 							return;
@@ -1662,7 +1670,7 @@ void GameControl::keypress_attack()
 					the_obj.move_mode = FLEE;
 					make_guards(HOSTILE);
 
-					if (combat.initiate()) {
+					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 						get_map()->rm_obj_by_id(the_obj.id);
 						redraw_graphics_status(true);
 					}
@@ -1678,7 +1686,7 @@ void GameControl::keypress_attack()
 				if (the_obj.get_combat_script_path().length() > 0) {
 					Combat combat;
 					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
-					if (combat.initiate()) {
+					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 						get_map()->rm_obj_by_id(the_obj.id);
 						redraw_graphics_status(true);
 						return;
@@ -1690,7 +1698,7 @@ void GameControl::keypress_attack()
 				else if (the_obj.get_foes().size() > 0) {
 					Combat combat;
 					combat.set_foes(the_obj.get_foes());
-					if (combat.initiate()) {
+					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 						get_map()->rm_obj_by_id(the_obj.id);
 						redraw_graphics_status(true);
 						return;
