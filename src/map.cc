@@ -461,6 +461,8 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 				new_obj.move_mode = FLEE;
 			else if (attribute->get_value().uppercase() == "FOLLOWING")
 				new_obj.move_mode = FOLLOWING;
+			else if (attribute->get_value().uppercase() == "FOLLOW")
+				new_obj.move_mode = FOLLOWING;
 			else if (attribute->get_value().uppercase() == "ROAM")
 				new_obj.move_mode = ROAM;
 		}
