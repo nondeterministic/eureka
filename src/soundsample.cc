@@ -155,7 +155,8 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 	if (wav != NULL) {
 		// Max volume is 128, we want half the volume for samples!
 		Mix_Volume(_chan, _vol);
-		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << Mix_PlayChannel(_chan, wav, loop) << "\n";
+		_chan = Mix_PlayChannel(_chan, wav, loop);
+		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << "\n";
 		_audio_on = true;
 	}
 	else
@@ -164,9 +165,12 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 
 void SoundSample::stop()
 {
-	Mix_ExpireChannel(_chan, 200);
-	_audio_on = false;
-	_initialised = false;
+	if (_chan != -1) {
+		Mix_ExpireChannel(_chan, 200);
+		_audio_on = false;
+		_initialised = false;
+		_chan = -1;
+	}
 }
 
 std::string SoundSample::filename()
