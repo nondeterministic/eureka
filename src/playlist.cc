@@ -30,72 +30,75 @@ Playlist::Playlist()
 
 Playlist& Playlist::Instance()
 {
-  static Playlist inst;
-  return inst;
+	static Playlist inst;
+	return inst;
 }
 
 // Everything that is added to the playlist is automatically played.
 
 void Playlist::add_wav(std::string filename, int volume)
 {
-  for (auto it = _list.begin(); it != _list.end(); it++) {
-    if ((*it)->filename() == filename)
-      return; // file already in playlist
-  }
+	for (auto it = _list.begin(); it != _list.end(); it++) {
+		if ((*it)->filename() == filename)
+			return; // file already in playlist
+	}
 
-  std::shared_ptr<SoundSample> sample(new SoundSample(filename));
-  _list.push_front(sample);
-  (*_list.begin())->play(-1, volume);
+	std::shared_ptr<SoundSample> sample(new SoundSample(filename));
+	_list.push_front(sample);
+	(*_list.begin())->play(-1, volume); // Loop infinitely with certain volume
 }
 
 bool Playlist::has_sample(std::string filename)
 {
-  for (auto it = _list.begin(); it != _list.end(); it++)
-    if ((*it)->filename() == filename)
-      return true;
-  return false;
+	for (auto it = _list.begin(); it != _list.end(); it++)
+		if ((*it)->filename() == filename)
+			return true;
+	return false;
 }
 
 void Playlist::stop_wav(std::string filename)
 {
-  for (auto it = _list.begin(); it != _list.end(); it++) {
-    if ((*it)->filename() == filename) {
-      (*it)->stop();
-      return;
-    }
-  }
+	for (auto it = _list.begin(); it != _list.end(); it++) {
+		if ((*it)->filename() == filename) {
+			(*it)->stop();
+			return;
+		}
+	}
 }
 
 void Playlist::clear()
 {
-  for (auto it = _list.begin(); it != _list.end(); it++)
-    (*it)->stop();
-  _list.clear();
+	for (auto it = _list.begin(); it != _list.end(); it++)
+		(*it)->stop();
+	_list.clear();
 }
 
-bool is_stopped(std::shared_ptr<SoundSample> ptr) { return ptr->stopped(); }
+bool is_stopped(std::shared_ptr<SoundSample> ptr)
+{
+	return ptr->stopped();
+}
 
 void Playlist::clear_stopped()
 {
-  _list.erase(remove_if(_list.begin(), _list.end(), is_stopped), _list.end());
+	_list.erase(remove_if(_list.begin(), _list.end(), is_stopped), _list.end());
 }
 
 std::list< std::shared_ptr<SoundSample> >::iterator Playlist::begin()
 {
-  return _list.begin();
+	return _list.begin();
 }
 
 std::list< std::shared_ptr<SoundSample> >::iterator Playlist::end()
 {
-  return _list.end();
+	return _list.end();
 }
 
 int Playlist::size()
 {
-  return _list.size();
+	return _list.size();
 }
 
 void Playlist::pause()
 {
-  
+
 }
