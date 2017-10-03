@@ -29,6 +29,8 @@
 #include "indoorssdleditor.hh"
 #include "outdoorssdleditor.hh"
 #include "editorwin.hh"
+#include "indoorsicons.hh"
+#include "outdoorsicons.hh"
 
 SDLEditor::SDLEditor()
 {
@@ -179,4 +181,12 @@ void SDLEditor::open_display(Gtk::EventBox* event_box, unsigned width, unsigned 
 	}
 
 	std::cout << "INFO: sdleditor.cc: SDL initialised.\n";
+}
+
+bool SDLEditor::convert_icons_to_textures(SDL_Renderer* renderer)
+{
+	// We need to convert both or when saving map, the number of tiles of one could be 0,
+	// and the icon properties deleted in world XML-file.
+	return IndoorsIcons::Instance().convert_icons_to_textures(renderer) >= 0 &&
+			OutdoorsIcons::Instance().convert_icons_to_textures(renderer) >= 0;
 }

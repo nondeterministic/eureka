@@ -92,7 +92,7 @@ protected:
   bool _show_grid, _show_map, _show_obj, _show_act;
   unsigned _width, _height;
 
-  virtual bool convert_icons_to_textures(SDL_Renderer*) = 0;
+  bool convert_icons_to_textures(SDL_Renderer*);
 };
 
 #endif
