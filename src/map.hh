@@ -97,6 +97,7 @@ public:
   int rm_obj_by_id(std::string);
   void rm_obj(MapObj*);
   void pop_obj_animate(unsigned, unsigned);
+  void pop_obj_animate(std::pair<unsigned, unsigned>);
   void push_obj(MapObj);
   std::vector<MapObj*> get_objs(unsigned x, unsigned y);
   std::vector<MapObj*> get_objs(std::pair<unsigned, unsigned> coords);

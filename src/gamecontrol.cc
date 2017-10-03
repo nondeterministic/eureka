@@ -1594,7 +1594,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_init_path(map_obj->get_init_script_path());
 						if (combat.initiate() == Combat_Return_Codes::VICTORY)
-							get_map()->rm_obj_by_id(map_obj->id);
+							get_map()->pop_obj_animate(map_obj->get_coords());
 						redraw_graphics_status(true);
 						return;
 					}
@@ -1607,7 +1607,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.set_foes(map_obj->get_foes());
 						if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-							get_map()->rm_obj_by_id(map_obj->id);
+							get_map()->pop_obj_animate(map_obj->get_coords());
 							redraw_graphics_status(true);
 							return;
 						}
@@ -1619,7 +1619,7 @@ void GameControl::get_attacked()
 						Combat combat;
 						combat.create_monsters_from_combat_path(map_obj->get_combat_script_path());
 						if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-							get_map()->rm_obj_by_id(map_obj->id);
+							get_map()->pop_obj_animate(map_obj->get_coords());
 							redraw_graphics_status(true);
 							return;
 						}
@@ -1671,7 +1671,7 @@ void GameControl::keypress_attack()
 					make_guards(HOSTILE);
 
 					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-						get_map()->rm_obj_by_id(the_obj.id);
+						get_map()->pop_obj_animate(the_obj.get_coords());
 						redraw_graphics_status(true);
 					}
 					return;
@@ -1687,7 +1687,7 @@ void GameControl::keypress_attack()
 					Combat combat;
 					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
 					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-						get_map()->rm_obj_by_id(the_obj.id);
+						get_map()->pop_obj_animate(the_obj.get_coords());
 						redraw_graphics_status(true);
 						return;
 					}
@@ -1699,7 +1699,7 @@ void GameControl::keypress_attack()
 					Combat combat;
 					combat.set_foes(the_obj.get_foes());
 					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-						get_map()->rm_obj_by_id(the_obj.id);
+						get_map()->pop_obj_animate(the_obj.get_coords());
 						redraw_graphics_status(true);
 						return;
 					}

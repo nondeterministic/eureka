@@ -309,14 +309,14 @@
       <icon no="297" trans="full" walk="not" next_anim="298">a fighter</icon>
       <icon no="298" trans="full" walk="not" next_anim="297">a fighter</icon>
       <icon no="299" trans="full" walk="full">nothing special</icon>
-      <icon no="300" trans="full" walk="full">nothing special</icon>
-      <icon no="301" trans="full" walk="full">nothing special</icon>
-      <icon no="302" trans="full" walk="full">nothing special</icon>
-      <icon no="303" trans="full" walk="full">nothing special</icon>
-      <icon no="304" trans="full" walk="full">nothing special</icon>
-      <icon no="305" trans="full" walk="full">nothing special</icon>
-      <icon no="306" trans="full" walk="full">nothing special</icon>
-      <icon no="307" trans="full" walk="full">nothing special</icon>
+      <icon no="300" trans="full" walk="full" next_anim="301">an orc</icon>
+      <icon no="301" trans="full" walk="full" next_anim="302">an orc</icon>
+      <icon no="302" trans="full" walk="full" next_anim="303">an orc</icon>
+      <icon no="303" trans="full" walk="full" next_anim="300">an orc</icon>
+      <icon no="304" trans="full" walk="full" next_anim="305">a skeleton</icon>
+      <icon no="305" trans="full" walk="full" next_anim="306">a skeleton</icon>
+      <icon no="306" trans="full" walk="full" next_anim="307">a skeleton</icon>
+      <icon no="307" trans="full" walk="full" next_anim="305">a skeleton</icon>
       <icon no="308" trans="full" walk="full">nothing special</icon>
       <icon no="309" trans="full" walk="full">nothing special</icon>
       <icon no="310" trans="full" walk="full">nothing special</icon>
@@ -342,10 +342,10 @@
       <icon no="330" trans="full" walk="full">nothing special</icon>
       <icon no="331" trans="full" walk="full">nothing special</icon>
       <icon no="332" trans="full" walk="full">nothing special</icon>
-      <icon no="333" trans="full" walk="full">nothing special</icon>
-      <icon no="334" trans="full" walk="full">nothing special</icon>
-      <icon no="335" trans="full" walk="full">nothing special</icon>
-      <icon no="336" trans="full" walk="full">nothing special</icon>
+      <icon no="333" trans="full" walk="full" next_anim="334">a troll</icon>
+      <icon no="334" trans="full" walk="full" next_anim="335">a troll</icon>
+      <icon no="335" trans="full" walk="full" next_anim="336">a troll</icon>
+      <icon no="336" trans="full" walk="full" next_anim="334">a troll</icon>
       <icon no="337" trans="full" walk="full">nothing special</icon>
       <icon no="338" trans="full" walk="full">nothing special</icon>
       <icon no="339" trans="full" walk="full">nothing special</icon>

@@ -38,7 +38,7 @@ public:
   SDL_Texture* get_texture();
   std::pair<int,int> get_size();
   void animate_cursor(Type*, int x = -1, int y = -1, int offset = 2);
-  void pause(int = 10);
+  void pause(int = 30);
   void alarm();
   
 protected:
@@ -48,7 +48,7 @@ protected:
   int cursor_x, cursor_y;
   int pre_cursor_x, pre_cursor_y;
   std::string get_word(const std::string& s, int = 0);
-  int scroll(int, int = 5);
+  int scroll(int, int = 10);
   void blit();
   SDL_Renderer* get_renderer();
 };

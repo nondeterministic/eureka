@@ -261,8 +261,7 @@ void Map::rm_obj(MapObj* map_obj)
 //		if (ptr->lua_name == map_obj->lua_name &&
 //				curr_obj->id == map_obj->id &&
 //				curr_obj->description() == map_obj->description())
-		if (curr_obj == *map_obj)
-		{
+		if (curr_obj == *map_obj) {
 			_map_objects.erase(ptr);
 			_modified = true;
 			return;
@@ -328,6 +327,11 @@ void Map::pop_obj_animate(unsigned x, unsigned y)
 	}
 
 	std::cerr << "WARNING: map.cc: pop_obj_animate(x,y) failed. No animate object on location?\n";
+}
+
+void Map::pop_obj_animate(std::pair<unsigned, unsigned> coords)
+{
+	pop_obj_animate(coords.first, coords.second);
 }
 
 // Returns the number of deleted MapObj.

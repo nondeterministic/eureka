@@ -19,9 +19,11 @@ end
 
 function get_default_icon(monster_name)
    icons = {}
-   icons["orc"] = 355
-   icons["troll"] = 355
-
+   icons["orc"] = 300 
+   icons["troll"] = 333 
+   icons["spider"] = 233
+   icons["skeleton"] = 304
+   
    if (icons[monster_name]) then
       return icons[monster_name]
    else
