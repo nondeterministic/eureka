@@ -242,10 +242,10 @@
       <icon no="230" trans="full" walk="full">nothing special</icon>
       <icon no="231" trans="full" walk="full">nothing special</icon>
       <icon no="232" trans="full" walk="full">nothing special</icon>
-      <icon no="233" trans="full" walk="full">nothing special</icon>
-      <icon no="234" trans="full" walk="full">nothing special</icon>
-      <icon no="235" trans="full" walk="full">nothing special</icon>
-      <icon no="236" trans="full" walk="full">nothing special</icon>
+      <icon no="233" trans="full" walk="full" next_anim="234">a giant spider</icon>
+      <icon no="234" trans="full" walk="full" next_anim="235">a giant spider</icon>
+      <icon no="235" trans="full" walk="full" next_anim="236">a giant spider</icon>
+      <icon no="236" trans="full" walk="full" next_anim="233">a giant spider</icon>
       <icon no="237" trans="full" walk="full">nothing special</icon>
       <icon no="238" trans="full" walk="full">nothing special</icon>
       <icon no="239" trans="full" walk="full">nothing special</icon>

@@ -326,7 +326,7 @@ void Map::pop_obj_animate(unsigned x, unsigned y)
 		}
 	}
 
-	std::cerr << "WARNING: map.cc: pop_obj_animate(x,y) failed. No animate object on location?\n";
+	std::cerr << "WARNING: map.cc: pop_obj_animate(" << x << ", " << y << ") failed. No animate object on location?\n";
 }
 
 void Map::pop_obj_animate(std::pair<unsigned, unsigned> coords)

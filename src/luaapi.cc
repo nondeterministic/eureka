@@ -727,6 +727,23 @@ int l_get_player_ac(lua_State* L)
   return 1;
 }
 
+int l_player_set_condition(lua_State* L)
+{
+	std::string player_name = (std::string)(lua_tostring(L, 1));
+	std::string condition = (std::string)(lua_tostring(L, 2));
+
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+
+	if (condition == "POISONED")
+		player->set_condition(PlayerCondition::POISONED);
+	else if (condition == "DEAD")
+		player->set_condition(PlayerCondition::DEAD);
+	else // if (condition == "GOOD")
+		player->set_condition(PlayerCondition::GOOD);
+
+	return 0;
+}
+
 int l_player_change_hp(lua_State* L)
 {
 	std::string player_name = (std::string)(lua_tostring(L, 1));
@@ -1350,6 +1367,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_get_player_ac);
   lua_setglobal(L, "simpl_get_ac");
+
+  lua_pushcfunction(L, l_player_set_condition);
+  lua_setglobal(L, "simpl_set_player_condition");
 
   lua_pushcfunction(L, l_player_change_hp);
   lua_setglobal(L, "simpl_player_change_hp");
