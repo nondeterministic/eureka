@@ -542,7 +542,7 @@ int l_level_up(lua_State* L)
 				pl->level() < pl->potential_level())
 		{
 			std::cout << "INFO: luaapi.cc: Leveled up player " << pl->name()  << " from " << pl->level() << " to " << pl->potential_level() << std::endl;
-			pl->set_level(pl->potential_level());
+			pl->set_level_actively(pl->potential_level());
 			GameControl::Instance().printcon(pl->name() + " now has experience level " + std::to_string(pl->level()) + ".");
 			leveled_up++;
 		}

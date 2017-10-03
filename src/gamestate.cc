@@ -248,7 +248,7 @@ bool GameState::load(lua_State* lua_state)
 										player.set_sex(sex);
 									}
 									else if (reader.get_name().lowercase() == "level")
-										player.set_level(std::atoi(reader.read_string().c_str()));
+										player.set_level_passively(std::atoi(reader.read_string().c_str()));
 									else if (reader.get_name().lowercase() == "race")
 										player.set_race(static_cast<RACE>(std::atoi(reader.read_string().c_str())));
 									else if (reader.get_name().lowercase() == "weapon") {

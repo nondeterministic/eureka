@@ -62,7 +62,8 @@ public:
   int ep();
   void inc_ep(int);
   int level();
-  void set_level(const int);
+  void set_level_actively(const int);
+  void set_level_passively(const int);
   int potential_level();
   bool is_spell_caster();
   std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> create_spells_content_selection_provider();

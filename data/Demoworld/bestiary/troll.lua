@@ -71,7 +71,7 @@ do
    end
 
    function img_path()
-      return simpl_datapath() .. "/bestiary/orc.png"
+      return simpl_datapath() .. "/bestiary/troll.png"
    end
    
    function get_hp()

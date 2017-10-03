@@ -126,9 +126,15 @@ void PlayerCharacter::set_profession(PROFESSION np)
   _prof = np;
 }
 
+
+void PlayerCharacter::set_level_passively(const int l)
+{
+	_level = l;
+}
+
 // This not simply sets the level, but, if l greater than the current level, increases the player characteristics.
 
-void PlayerCharacter::set_level(const int l)
+void PlayerCharacter::set_level_actively(const int l)
 {
 	if (l <= _level) {
 		std::cerr << "WARNING: playercharacter.cc: Tried to set a lower (or the same) experience level for " << name() << " than he/she currently has. Level NOT set!\n";
