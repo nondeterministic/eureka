@@ -60,7 +60,7 @@ do
    -- Does the actual casting of spell, after choose() was called
    
    function cast()
-      simpl_play_sound(get_sound_path())
+      simpl_play_sound(get_sound_path(), 1)
       simpl_printcon(caster .. " casts a strong light spell and the surroundings become more clear and visible.")
       simpl_set_magic_light_radius(5)
    end

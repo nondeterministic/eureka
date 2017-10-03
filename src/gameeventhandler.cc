@@ -28,6 +28,7 @@
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
 #include "eventdeleteobj.hh"
+#include "eventplaysound.hh"
 #include "eventaddobj.hh"
 #include "eventleavemap.hh"
 #include "gamecontrol.hh"
@@ -66,6 +67,8 @@ bool GameEventHandler::handle(std::shared_ptr<GameEvent> event, std::shared_ptr<
 		return handle_event_printcon(std::dynamic_pointer_cast<EventPrintcon>(event), map);
 	else if (std::dynamic_pointer_cast<EventPlaySound>(event))
 		return handle_event_playsound(std::dynamic_pointer_cast<EventPlaySound>(event), map);
+	else if (std::dynamic_pointer_cast<EventPlayMusic>(event))
+		return handle_event_playmusic(std::dynamic_pointer_cast<EventPlayMusic>(event), map);
 	else if (std::dynamic_pointer_cast<EventLuaScript>(event))
 		return handle_event_lua_script(std::dynamic_pointer_cast<EventLuaScript>(event), map);
 	else if (std::dynamic_pointer_cast<EventChangeIcon>(event))
@@ -153,17 +156,25 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 	static SoundSample sample;  // If this isn't static, then the var
 	                            // gets discarded before the sample has
                                 // finished playing
+	sample.stop();
+
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 
 	if (boost::filesystem::exists(samples_path / event->filename)) {
-		sample.play((samples_path / event->filename).c_str());
+		sample.play((samples_path / event->filename).c_str(), event->loop, event->volume);
 		return true;
 	}
 	else {
 		std::cerr << "ERROR: gameeventhandler.cc: Sample to be played cannot be found: " << (samples_path / event->filename).c_str() << ".\n";
 		return false;
 	}
+}
+
+bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> event, std::shared_ptr<Map> map)
+{
+	std::shared_ptr<EventPlaySound> dummy_event(new EventPlaySound(event->filename, event->loop, event->volume));
+	return handle_event_playsound(dummy_event, map);
 }
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!

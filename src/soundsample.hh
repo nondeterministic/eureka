@@ -34,16 +34,19 @@ public:
   SoundSample(std::string);
   ~SoundSample();
 
-  void play(int = 0);
+  void play(int, int);
   void toggle();
   void stop();
   void set_volume(int);
   void set_channel(int);
-  void play(SampleType t, int = 0);
-  void play(std::string, int = 0);
+  void play_predef(SampleType t, int, int);
+  void play(std::string, int, int);
   std::string filename();
   bool stopped();
   // void set_filename(std::string);
+
+  static int const sample_volume = 24;
+  static int const music_volume = 182;
 
 private:
   Mix_Chunk *other_wav;
@@ -56,6 +59,7 @@ private:
   int _chan;
   int _vol;
   bool _audio_on;
+  bool _initialised;
 };
 
 #endif	/* SOUNDSAMPLE_HH */

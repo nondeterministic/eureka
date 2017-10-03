@@ -279,8 +279,6 @@ int main(int argc, char *argv[])
 	path_main_music /= "main.ogg";
 
 	SoundSample game_music;
-//	game_music.set_channel(4711);
-//	game_music.set_volume(128);
 //	game_music.play(path_main_music.string(), 1);
 
 	// Character creation?!
@@ -318,8 +316,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	 game_music.stop();
-	 return start_game();
+	//game_music.stop();
+	return start_game();
 }
 
 // ******************************************************************************
@@ -368,9 +366,7 @@ int intro(int res_w, int res_h)
 	path_intro_music /= "data";
 	path_intro_music /= "intro.ogg";
 	SoundSample sample_intro;
-	sample_intro.set_channel(4711);
-	sample_intro.set_volume(128);
-	sample_intro.play(path_intro_music.string(), 1);
+	sample_intro.play(path_intro_music.string(), -1, SoundSample::music_volume);
 
     // Update the display
     SDL_RenderPresent(renderer);
@@ -909,9 +905,7 @@ int start_game()
 	gc->redraw_graphics_status();
 
 	SoundSample game_music;
-	game_music.set_channel(4711);
-	game_music.set_volume(128);
-	game_music.play((conf_world_path / "sound" / "travel.ogg").string(), 1);
+	game_music.play((conf_world_path / "sound" / "travel.ogg").string(), -1, SoundSample::music_volume);
 
 	gc->set_game_music(&game_music);
 

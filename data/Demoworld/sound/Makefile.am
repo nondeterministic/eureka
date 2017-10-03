@@ -1,4 +1,4 @@
-EXTRA_DIST = $(wildcard *.wav)
+EXTRA_DIST = $(wildcard *.wav) $(wildcard *.ogg) 
 
 sounddir = $(datadir)/eureka/data/Demoworld/sound
 

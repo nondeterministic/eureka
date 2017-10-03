@@ -28,7 +28,7 @@
 class Playlist
 {
 public:
-  void add_wav(std::string);
+  void add_wav(std::string, int);
   void stop_wav(std::string);
   void clear();
   int size();

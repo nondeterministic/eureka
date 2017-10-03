@@ -53,6 +53,7 @@
 #include "actionopened.hh"
 #include "actonlook.hh"
 #include "indoorsicons.hh"
+#include "soundsample.hh"
 
 Map::Map()
 {
@@ -624,11 +625,28 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						else
 							std::cerr << "ERROR: map.cc: Tried to add an object to event, but no object found. Is map the XML-file OK?\n";
 					}
-					else if (event_type_s == "EVENT_PLAY_SOUND") {
+					else if (event_type_s == "EVENT_PLAY_MUSIC" || event_type_s == "EVENT_PLAY_SOUND") {
+						int loop = event_type_s == "EVENT_PLAY_MUSIC"? -1 : 1;
+						int volume = event_type_s == "EVENT_PLAY_MUSIC"? SoundSample::music_volume : SoundSample::sample_volume;
+
+						std::string loop_string = nodeElement->get_attribute_value("loop");
+						if (loop_string.length() > 0)
+							loop = atoi(loop_string.c_str());
+
+						std::string vol_string = nodeElement->get_attribute_value("volume");
+						if (vol_string.length() > 0)
+							volume = atoi(vol_string.c_str());
+
 						std::string filename = eventElement->get_child_text()->get_content().c_str();
 						boost::algorithm::trim(filename);
-						std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename));
-						_act->add_event(new_ev);
+						if (event_type_s == "EVENT_PLAY_SOUND") {
+							std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename, loop, volume));
+							_act->add_event(new_ev);
+						}
+						else {
+							std::shared_ptr<EventPlayMusic> new_ev(new EventPlayMusic(filename, loop, volume));
+							_act->add_event(new_ev);
+						}
 					}
 					else if (event_type_s == "EVENT_CHANGE_ICON") {
 						const xmlpp::Element* event_change_icon = (xmlpp::Element*)(*event)->get_children("change_icon").front();

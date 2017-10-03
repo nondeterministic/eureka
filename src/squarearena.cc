@@ -427,7 +427,7 @@ void SquareArena::show_map(int x_width, int y_width)
 			if (IndoorsIcons::Instance().get_props(tileno)->sound_effect().size() > 0) {
 				boost::filesystem::path sample_path((std::string)DATADIR);
 				sample_path = sample_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound" / IndoorsIcons::Instance().get_props(tileno)->sound_effect();
-				playlist.add_wav(sample_path.string());
+				playlist.add_wav(sample_path.string(), SoundSample::sample_volume);
 				sound_effects_added.push_back(sample_path.string());
 			}
 
@@ -488,7 +488,7 @@ void SquareArena::show_map(int x_width, int y_width)
 					if (IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect().size() > 0) {
 						boost::filesystem::path sample_path((std::string)DATADIR);
 						sample_path = sample_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound" / IndoorsIcons::Instance().get_props(obj_icon_no)->sound_effect();
-						playlist.add_wav(sample_path.string());
+						playlist.add_wav(sample_path.string(), SoundSample::sample_volume);
 						sound_effects_added.push_back(sample_path.string());
 					}
 				}

@@ -36,7 +36,7 @@ Playlist& Playlist::Instance()
 
 // Everything that is added to the playlist is automatically played.
 
-void Playlist::add_wav(std::string filename)
+void Playlist::add_wav(std::string filename, int volume)
 {
   for (auto it = _list.begin(); it != _list.end(); it++) {
     if ((*it)->filename() == filename)
@@ -45,7 +45,7 @@ void Playlist::add_wav(std::string filename)
 
   std::shared_ptr<SoundSample> sample(new SoundSample(filename));
   _list.push_front(sample);
-  (*_list.begin())->play(-1);
+  (*_list.begin())->play(-1, volume);
 }
 
 bool Playlist::has_sample(std::string filename)

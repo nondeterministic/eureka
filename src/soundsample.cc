@@ -43,10 +43,7 @@ SoundSample::SoundSample(std::string filename)
 
 void SoundSample::init()
 {
-	// _chan = -1 ; // TODO: is this a good init value? -1 is an error in
-	_chan = 1 ;  // TODO: is this a good init value? -1 is an error in
-	             // Mix_PlayChannel, so it should be, i.e., any other
-	             // value will be the actual channel.
+	_chan = -1;   // TODO: is this a good init value? -1 finds next best free channel...
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 	boost::filesystem::path file = samples_path / "walk.wav";
@@ -56,8 +53,8 @@ void SoundSample::init()
 	file = samples_path / "foe_hit.wav";
 	foe_hit_wav = Mix_LoadWAV(file.c_str());
 	other_wav = NULL;
-	// _vol = 24;
-	_vol = 128; // TODO: I used to think it a good idea to make background noises more quiet (ie vol = 24) Not so sure anymore...
+	_vol = sample_volume;
+	_initialised = true;
 }
 
 SoundSample::~SoundSample()
@@ -73,6 +70,9 @@ SoundSample::~SoundSample()
 
 void SoundSample::toggle()
 {
+	if (!_initialised)
+		init();
+
 	if (_audio_on) {
 		Mix_Pause(_chan);
 		Mix_PauseMusic();
@@ -85,13 +85,22 @@ void SoundSample::toggle()
 	}
 }
 
-void SoundSample::play(int loop)
+void SoundSample::play(int loop, int volume)
 {
-	play(_filename, loop);
+	if (!_initialised)
+		init();
+
+	play(_filename, loop, volume);
 }
 
-void SoundSample::play(std::string filename, int loop)
+// If loop is negative, loop infinitely.  If >0, loop n times.
+
+void SoundSample::play(std::string filename, int loop, int volume)
 {
+	if (!_initialised)
+		init();
+
+	set_volume(volume);
 	boost::filesystem::path filepath(filename);
 	other_wav = Mix_LoadWAV(filepath.string().c_str());
 	play_chunk(other_wav, loop);
@@ -100,8 +109,12 @@ void SoundSample::play(std::string filename, int loop)
 
 // Play some standard, predefined samples (see enum above)
 
-void SoundSample::play(SampleType t, int loop)
+void SoundSample::play_predef(SampleType t, int loop, int volume)
 {
+	if (!_initialised)
+		init();
+
+	set_volume(volume);
 	switch (t) {
 	case WALK:
 		play_chunk(walk_wav, loop);
@@ -118,20 +131,31 @@ void SoundSample::play(SampleType t, int loop)
 // 0 (min) - 128 (max)
 void SoundSample::set_volume(int v)
 {
+	if (!_initialised)
+		init();
+
 	_vol = std::max(0, std::min(128, v));
 }
 
 void SoundSample::set_channel(int c)
 {
+	if (!_initialised)
+		init();
+
 	_chan = c;
 }
 
-void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
+// If loop is negative, loop infinitely.  If >0, loop n times.
+
+void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 {
+	if (!_initialised)
+		init();
+
 	if (wav != NULL) {
 		// Max volume is 128, we want half the volume for samples!
 		Mix_Volume(_chan, _vol);
-		_chan = Mix_PlayChannel(-1, wav, loop);
+		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << Mix_PlayChannel(_chan, wav, loop) << "\n";
 		_audio_on = true;
 	}
 	else
@@ -140,11 +164,9 @@ void SoundSample::play_chunk(Mix_Chunk *wav, int loop)
 
 void SoundSample::stop()
 {
-	if (_chan != -1) {
-		Mix_ExpireChannel(_chan, 200);
-		_chan = -1;
-		_audio_on = false;
-	}
+	Mix_ExpireChannel(_chan, 200);
+	_audio_on = false;
+	_initialised = false;
 }
 
 std::string SoundSample::filename()
@@ -154,5 +176,5 @@ std::string SoundSample::filename()
 
 bool SoundSample::stopped()
 {
-	return _chan == -1;
+	return _initialised;
 }
