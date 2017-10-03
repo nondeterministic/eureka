@@ -767,7 +767,7 @@ int l_notify_party_hit(lua_State* L)
 	static SoundSample sample;
 
 	Console::Instance().alarm();
-	sample.play_predef(HIT, 1, SoundSample::sample_volume);
+	sample.play_predef(HIT, 0, SoundSample::sample_volume);
 
 	return 0;
 }
@@ -1179,7 +1179,7 @@ int l_magic_attack(lua_State* L)
 				lua.call_void_fn("set_hp");
 
 				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT, 1, SoundSample::sample_volume);
+				sample.play_predef(FOE_HIT, 0, SoundSample::sample_volume);
 			}
 			else {
 				ss << player->name() << " casts a spell, killing the " << opponent->name() << ".";
@@ -1189,7 +1189,7 @@ int l_magic_attack(lua_State* L)
 				player->inc_ep(lua.call_fn<double>("get_ep"));
 
 				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT, 1, SoundSample::sample_volume);
+				sample.play_predef(FOE_HIT, 0, SoundSample::sample_volume);
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.

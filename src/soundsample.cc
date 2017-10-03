@@ -183,5 +183,5 @@ std::string SoundSample::filename()
 
 bool SoundSample::stopped()
 {
-	return _initialised == false;
+	return _chan == -1;
 }
