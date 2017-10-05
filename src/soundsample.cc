@@ -104,6 +104,7 @@ void SoundSample::play(std::string filename, int loop, int volume)
 	if (!_initialised)
 		init();
 
+	_filename = filename;
 	set_volume(volume);
 	boost::filesystem::path filepath(filename);
 	other_wav = Mix_LoadWAV(filepath.string().c_str());
@@ -160,7 +161,7 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 		_audio_on = true;
 		_chan = Mix_PlayChannel(_chan, wav, loop);
 		Mix_Volume(_chan, _vol);
-		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << "\n";
+		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play file '" << _filename << "'.\n";

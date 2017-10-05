@@ -124,7 +124,7 @@
       </event>
     </action>
     <action type="ACT_ON_ENTER" x="74" y="136">
-	  <event type="EVENT_PLAY_SOUND" loop="-1">dungeon.ogg</event>
+	  <event type="EVENT_PLAY_MUSIC">dungeon.ogg</event>
       <event type="EVENT_PRINTCON">Climbing down the dungeons of darkness...</event>
       <event type="EVENT_ENTER_MAP">
         <x>3</x>

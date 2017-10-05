@@ -156,8 +156,8 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 	static SoundSample sample;  // If this isn't static, then the var
 	                            // gets discarded before the sample has
                                 // finished playing
-	sample.stop();
 
+	// sample.stop();
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 
@@ -174,6 +174,7 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> event, std::shared_ptr<Map> map)
 {
 	std::shared_ptr<EventPlaySound> dummy_event(new EventPlaySound(event->filename, event->loop, event->volume));
+	std::cout << "LOOP: " << event->loop << "\n";
 	return handle_event_playsound(dummy_event, map);
 }
 

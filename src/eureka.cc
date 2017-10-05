@@ -360,6 +360,7 @@ int intro(int res_w, int res_h)
 
 	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
 		std::cerr << "ERROR: Could not initialize audio.\n";
+	Mix_AllocateChannels(16);
 
 	boost::filesystem::path path_intro_music(DATADIR);
 	path_intro_music /= PACKAGE_NAME;

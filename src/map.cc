@@ -878,6 +878,11 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			ev_node->set_attribute("type", "EVENT_PLAY_SOUND");
 			ev_node->set_child_text(event_playsound->filename);
 		}
+		else if (std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev)) {
+			std::shared_ptr<EventPlayMusic> event_playmusic = std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev);
+			ev_node->set_attribute("type", "EVENT_PLAY_MUSIC");
+			ev_node->set_child_text(event_playmusic->filename);
+		}
 		else if (std::dynamic_pointer_cast<EventLuaScript>(*curr_ev)) {
 			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_LUA_SCRIPT");
