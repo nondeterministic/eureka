@@ -157,12 +157,13 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 	                            // gets discarded before the sample has
                                 // finished playing
 
-	// sample.stop();
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 
 	if (boost::filesystem::exists(samples_path / event->filename)) {
-		sample.play((samples_path / event->filename).c_str(), event->loop, event->volume);
+		sample.set_loop(event->loop);
+		sample.set_volume(event->volume);
+		sample.play((samples_path / event->filename).c_str());
 		return true;
 	}
 	else {
@@ -173,9 +174,23 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 
 bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> event, std::shared_ptr<Map> map)
 {
-	std::shared_ptr<EventPlaySound> dummy_event(new EventPlaySound(event->filename, event->loop, event->volume));
-	std::cout << "LOOP: " << event->loop << "\n";
-	return handle_event_playsound(dummy_event, map);
+	static SoundSampleSong song;    // If this isn't static, then the var
+	                                // gets discarded before the song has
+                                    // finished playing
+
+	boost::filesystem::path samples_path((std::string)DATADIR);
+	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
+
+	if (boost::filesystem::exists(samples_path / event->filename)) {
+		song.set_loop(event->loop);
+		song.set_volume(event->volume);
+		song.play((samples_path / event->filename).c_str());
+		return true;
+	}
+	else {
+		std::cerr << "ERROR: gameeventhandler.cc: Song to be played cannot be found: " << (samples_path / event->filename).c_str() << ".\n";
+		return false;
+	}
 }
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!

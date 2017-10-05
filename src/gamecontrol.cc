@@ -272,7 +272,7 @@ void GameControl::do_turn(bool resting)
 					for (int i = 0; i < Party::Instance().party_size(); i++) {
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 1));
-						_sample.play_predef(HIT, 0, SoundSample::sample_volume);
+						_sample.play_predef(HIT);
 					}
 					zwin.update_player_list();
 				}
@@ -282,7 +282,7 @@ void GameControl::do_turn(bool resting)
 					for (int i = 0; i < Party::Instance().party_size(); i++) {
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 2));
-						_sample.play_predef(HIT, 0, SoundSample::sample_volume);
+						_sample.play_predef(HIT);
 					}
 					zwin.update_player_list();
 				}
@@ -397,7 +397,7 @@ void GameControl::do_turn(bool resting)
 			pl->set_hp(max(0, pl->hp() - 1));
 			if (pl->hp() == 0)
 				pl->set_condition(DEAD);
-			_sample.play_predef(HIT, 0, SoundSample::sample_volume);
+			_sample.play_predef(HIT);
 			zwin.update_player_list();
 		}
 	}
@@ -2202,7 +2202,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
 				zwin.update_player_list();
-				_sample.play_predef(HIT, 0, SoundSample::sample_volume);
+				_sample.play_predef(HIT);
 			}
 
 			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
@@ -2298,7 +2298,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 	// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 	std::cerr << "WARNING: gamecontrol.cc: move_party() failed.\n";
 
-	_sample.play_predef(HIT, 0, SoundSample::sample_volume);
+	_sample.play_predef(HIT);
 	printcon("Blocked.");
 
 	return false;
@@ -2318,7 +2318,7 @@ void GameControl::keypress_move_party(LDIR dir)
 	}
 
 	if (move_party(dir)) {
-		_sample.play_predef(WALK, 0, SoundSample::sample_volume);
+		_sample.play_predef(WALK);
 		printcon(ldirToString.at(dir) + ".");
 	}
 	// else party did not move.  Handled inside move_party().

@@ -65,7 +65,7 @@ do
    
    function cast()
       simpl_printcon(caster .. " casts a walk over water spell, and walking suddenly becomes light as a feather...")
-      simpl_play_sound(get_sound_path(), 1)
+      simpl_play_sound(get_sound_path())
       simpl_make_icon_walkable(2)  -- 2 is the icon of shallow water, see Demoworld.xml	 
    end
 

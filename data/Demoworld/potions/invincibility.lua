@@ -26,7 +26,7 @@ Potions["potion of invincibility"]  = {
    effect = function(chosen_player)
       -- Lasts 25 rounds.
       simpl_walk_through_fields(25)
-      simpl_play_sound("spell_normal.wav", 1)
+      simpl_play_sound("spell_normal.wav")
       simpl_printcon("Your party feels strangely immune...")
    end
 }

@@ -626,7 +626,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 							std::cerr << "ERROR: map.cc: Tried to add an object to event, but no object found. Is map the XML-file OK?\n";
 					}
 					else if (event_type_s == "EVENT_PLAY_MUSIC" || event_type_s == "EVENT_PLAY_SOUND") {
-						int loop = event_type_s == "EVENT_PLAY_MUSIC"? -1 : 1;
+						int loop = event_type_s == "EVENT_PLAY_MUSIC"? -1 : 0; // Songs loop forever (-1), samples once by default (0)!
 						int volume = event_type_s == "EVENT_PLAY_MUSIC"? SoundSample::music_volume : SoundSample::sample_volume;
 
 						std::string loop_string = nodeElement->get_attribute_value("loop");
@@ -877,12 +877,22 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			std::shared_ptr<EventPlaySound> event_playsound = std::dynamic_pointer_cast<EventPlaySound>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PLAY_SOUND");
 			ev_node->set_child_text(event_playsound->filename);
+
+			if (event_playsound->loop != 0)
+				ev_node->set_attribute("loop", std::to_string(event_playsound->loop));
+			if (event_playsound->volume != SoundSample::sample_volume)
+				ev_node->set_attribute("loop", std::to_string(event_playsound->volume));
 		}
 		else if (std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev)) {
 			std::shared_ptr<EventPlayMusic> event_playmusic = std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PLAY_MUSIC");
 			ev_node->set_child_text(event_playmusic->filename);
-		}
+
+			if (event_playmusic->loop != -1)
+				ev_node->set_attribute("loop", std::to_string(event_playmusic->loop));
+			if (event_playmusic->volume != SoundSample::music_volume)
+				ev_node->set_attribute("loop", std::to_string(event_playmusic->volume));
+}
 		else if (std::dynamic_pointer_cast<EventLuaScript>(*curr_ev)) {
 			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_LUA_SCRIPT");

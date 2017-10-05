@@ -67,7 +67,7 @@ do
       if (targets >= 0) then
 	 player_name = simpl_get_player_name(targets)
 	 
-	 simpl_play_sound(get_sound_path(), 1)
+	 simpl_play_sound(get_sound_path())
 	 simpl_add_hp(targets, simpl_rand(1, 5))
 	 
 	 -- If in combat, then the printcon is showing letter by letter, otherwise all at once.

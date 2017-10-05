@@ -45,7 +45,8 @@ void Playlist::add_wav(std::string filename, int volume)
 
 	std::shared_ptr<SoundSample> sample(new SoundSample(filename));
 	_list.push_front(sample);
-	(*_list.begin())->play(-1, volume); // Loop infinitely with certain volume
+	(*_list.begin())->set_loop(-1); // Loop infinitely!
+	(*_list.begin())->play();
 }
 
 bool Playlist::has_sample(std::string filename)

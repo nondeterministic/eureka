@@ -29,21 +29,13 @@
 #include "soundsample.hh"
 #include "config.h"
 
-SoundSample::SoundSample()
-{
-	_filename = "";
-	init();
-}
+SoundSample::SoundSample() : SoundSample("") {};
 
 SoundSample::SoundSample(std::string filename)
 {
 	_filename = filename;
-	init();
-}
+	_chan = -1; // Select first free channel.
 
-void SoundSample::init()
-{
-	_chan = -1;   // TODO: is this a good init value? -1 finds next best free channel...
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 	boost::filesystem::path file = samples_path / "walk.wav";
@@ -53,16 +45,19 @@ void SoundSample::init()
 	file = samples_path / "foe_hit.wav";
 	foe_hit_wav = Mix_LoadWAV(file.c_str());
 	other_wav = NULL;
+
 	_vol = sample_volume;
-	_initialised = true;
+	_audio_on = true;
+	_loop = 0;
 }
 
 SoundSample::~SoundSample()
 {
 	std::cout << "~Sample() for " << _filename << "\n";
 
-	if (_chan != -1) // Otherwise ALL channels are halted!
+	if (_chan != -1) // Otherwise ALL channels are halted for -1!
 		Mix_HaltChannel(_chan);
+
 	Mix_FreeChunk(walk_wav);
 	Mix_FreeChunk(hit_wav);
 	Mix_FreeChunk(foe_hit_wav);
@@ -74,9 +69,6 @@ SoundSample::~SoundSample()
 
 void SoundSample::toggle()
 {
-	if (!_initialised)
-		init();
-
 	if (_audio_on) {
 		Mix_Pause(_chan);
 		Mix_PauseMusic();
@@ -89,46 +81,35 @@ void SoundSample::toggle()
 	}
 }
 
-void SoundSample::play(int loop, int volume)
+void SoundSample::play()
 {
-	if (!_initialised)
-		init();
-
-	play(_filename, loop, volume);
+	play(_filename);
 }
 
-// If loop is negative, loop infinitely.  If >0, loop n times.
+// If loop is negative, loop infinitely.  If >= 0, loop n + 1 times.
 
-void SoundSample::play(std::string filename, int loop, int volume)
+void SoundSample::play(std::string filename)
 {
-	if (!_initialised)
-		init();
-
 	_filename = filename;
-	set_volume(volume);
 	boost::filesystem::path filepath(filename);
 	other_wav = Mix_LoadWAV(filepath.string().c_str());
-	play_chunk(other_wav, loop);
+	play_chunk(other_wav);
 	_audio_on = true;
 }
 
 // Play some standard, predefined samples (see enum above)
 
-void SoundSample::play_predef(SampleType t, int loop, int volume)
+void SoundSample::play_predef(SampleType t)
 {
-	if (!_initialised)
-		init();
-
-	set_volume(volume);
 	switch (t) {
 	case WALK:
-		play_chunk(walk_wav, loop);
+		play_chunk(walk_wav);
 		break;
 	case HIT:
-		play_chunk(hit_wav, loop);
+		play_chunk(hit_wav);
 		break;
 	case FOE_HIT:
-		play_chunk(foe_hit_wav, loop);
+		play_chunk(foe_hit_wav);
 		break;
 	}
 }
@@ -136,27 +117,23 @@ void SoundSample::play_predef(SampleType t, int loop, int volume)
 // 0 (min) - 128 (max)
 void SoundSample::set_volume(int v)
 {
-	if (!_initialised)
-		init();
-
 	_vol = std::max(0, std::min(128, v));
 }
 
 void SoundSample::set_channel(int c)
 {
-	if (!_initialised)
-		init();
-
 	_chan = c;
 }
 
-// If loop is negative, loop infinitely.  If >0, loop n times.
+void SoundSample::set_loop(int loop)
+{
+	_loop = loop;
+}
+
+// If loop is negative, loop infinitely.  If >= 0, loop n + 1 times.
 
 void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 {
-	if (!_initialised)
-		init();
-
 	if (wav != NULL) {
 		_audio_on = true;
 		_chan = Mix_PlayChannel(_chan, wav, loop);
@@ -172,7 +149,6 @@ void SoundSample::stop()
 	if (_chan != -1) {
 		Mix_ExpireChannel(_chan, 200);
 		_audio_on = false;
-		_initialised = false;
 		_chan = -1;
 	}
 }
@@ -182,7 +158,29 @@ std::string SoundSample::filename()
 	return _filename;
 }
 
+/// Stopped != paused.  Stopped means, we can discard the sample, basically.
+/// Either because it hasn't played yet at all, or because the sample is no longer
+/// relevant, e.g., player walked out of radius.
+
 bool SoundSample::stopped()
 {
 	return _chan == -1;
 }
+
+
+// *************************************************************************************************************
+// ****************************** SOUNDSAMPLESONG **************************************************************
+// *************************************************************************************************************
+
+SoundSampleSong::SoundSampleSong() : SoundSampleSong("") {};
+
+SoundSampleSong::SoundSampleSong(std::string filename) : SoundSample(filename)
+{
+	_chan = 15; // Music is always played on channel 15!
+	_vol = music_volume;
+	_loop = -1;
+}
+
+// *************************************************************************************************************
+// *************************************************************************************************************
+// *************************************************************************************************************

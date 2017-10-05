@@ -159,6 +159,8 @@
   <actions>
     <action type="ACT_ON_ENTER" x="3" y="2">
       <event type="EVENT_LEAVE_MAP"/>
+	  <event type="EVENT_PLAY_MUSIC">travel.ogg</event>
+	  <event type="EVENT_PRINTCON">You feel as if you can breathe again...</event>
     </action>
   </actions>
 </map>

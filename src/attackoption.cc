@@ -120,7 +120,7 @@ void AttackOption::execute(Combat* combat)
 			}
 			printcon(ss.str(), true);
 			MiniWin::Instance().alarm();
-			sample.play_predef(FOE_HIT, 0, SoundSample::sample_volume);
+			sample.play_predef(FOE_HIT);
 		}
 		else {
 			ss << " and misses.";

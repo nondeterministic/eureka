@@ -91,7 +91,7 @@ do
 		  simpl_printcon("Alright then, I shall open the gate for you. Feel free to take a look downstairs...")
 		  conv_over = true
 		  -- Open the gate and play a creeky sound!
-		  simpl_play_sound("55820__sergenious__bridge.wav", 1)
+		  simpl_play_sound("55820__sergenious__bridge.wav")
 		  simpl_change_icon(39, 36, 71, 72)
 	       end
 	    end

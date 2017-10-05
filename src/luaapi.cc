@@ -767,7 +767,7 @@ int l_notify_party_hit(lua_State* L)
 	static SoundSample sample;
 
 	Console::Instance().alarm();
-	sample.play_predef(HIT, 0, SoundSample::sample_volume);
+	sample.play_predef(HIT);
 
 	return 0;
 }
@@ -1069,8 +1069,8 @@ int l_play_sound(lua_State* L)
 {
 	GameEventHandler gh;
 	std::string filename = lua_tostring(L, 1);
-	int loop = lua_tonumber(L, 2); // Loop how many times?  -1 for infinite!
-	int volume = (loop <= 0)? SoundSample::music_volume : SoundSample::sample_volume; // Assume that -1 is only used for music, positive looping for samples...
+	int loop = 0; // Default for samples.
+	int volume = SoundSample::sample_volume; // Default for samples.  For music, write new separate function!
 
 	boost::algorithm::trim(filename);
 	std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename, loop, volume));
@@ -1179,7 +1179,7 @@ int l_magic_attack(lua_State* L)
 				lua.call_void_fn("set_hp");
 
 				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT, 0, SoundSample::sample_volume);
+				sample.play_predef(FOE_HIT);
 			}
 			else {
 				ss << player->name() << " casts a spell, killing the " << opponent->name() << ".";
@@ -1189,7 +1189,7 @@ int l_magic_attack(lua_State* L)
 				player->inc_ep(lua.call_fn<double>("get_ep"));
 
 				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT, 0, SoundSample::sample_volume);
+				sample.play_predef(FOE_HIT);
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.

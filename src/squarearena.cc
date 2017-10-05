@@ -510,10 +510,10 @@ void SquareArena::show_map(int x_width, int y_width)
 	for (auto itr = playlist.begin(); itr != playlist.end(); itr++) {
 		if (std::find(sound_effects_added.begin(), sound_effects_added.end(), (*itr)->filename()) == sound_effects_added.end()) {
 			playlist.stop_wav((*itr)->filename());
-			std::cout << "Removing from playlist: " << (*itr)->filename() << "\n";
+			// std::cout << "Removing from playlist: " << (*itr)->filename() << "\n";
 		}
 		else
-		   std::cout << "NOT removing from playlist: " << (*itr)->filename() << "\n";
+			; // std::cout << "NOT removing from playlist: " << (*itr)->filename() << "\n";
 	}
 	playlist.clear_stopped();
 	// std::cout << "Finished removing from playlist: " << playlist.size() << "\n";

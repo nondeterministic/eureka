@@ -85,7 +85,7 @@ do
 			   "some magical items, which shall help you in your quest. But you must not loose any more time! " ..
 			   "You must find her, and return her to safety! It may be that Ignaz of Sarsen may be able to assist you. " ..
 			   "Sarsen is north east of here, tell him that I sent you, and he might join you. He fought hard in the battle.")
-	 simpl_play_sound("55820__sergenious__bridge.wav", 1)
+	 simpl_play_sound("55820__sergenious__bridge.wav")
 	 simpl_change_icon(12, 19, 71, 72)
       elseif (item == "enemy") then
 	 simpl_printcon("He is still out there. Be careful!")

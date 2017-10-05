@@ -28,38 +28,55 @@ enum SampleType {
   FOE_HIT
 };
 
-class SoundSample {
+/// Helper for playing short sound samples.
+
+class SoundSample
+{
 public:
   SoundSample();
   SoundSample(std::string);
-  ~SoundSample();
+  virtual ~SoundSample();
 
-  void play(int, int);
   void toggle();
   void stop();
   void set_volume(int);
-  void set_channel(int);
-  void play_predef(SampleType t, int, int);
-  void play(std::string, int, int);
-  std::string filename();
+  void set_loop(int);
+  void play();
+  void play(std::string);
+  void play_predef(SampleType t);
   bool stopped();
-  // void set_filename(std::string);
+  std::string filename();
 
   static int const sample_volume = 24;
   static int const music_volume = 182;
 
-private:
+protected:
   Mix_Chunk *other_wav;
   Mix_Chunk *walk_wav;
   Mix_Chunk *hit_wav;
   Mix_Chunk *foe_hit_wav;
   std::string _filename;
-  void play_chunk(Mix_Chunk*, int = 0);
-  void init();
   int _chan;
   int _vol;
+  int _loop;
   bool _audio_on;
-  bool _initialised;
+
+  void play_chunk(Mix_Chunk*, int = 0);
+  void set_channel(int);
+};
+
+/// SoundSample is more or less meant to play short samples only.
+/// Long music pieces should be handled in a specialised variant of it:
+///
+/// (Technically speaking, this class is the same as its base, but makes sure
+/// all long tracks use the same channel, so that only ever 1 song can play
+/// at most at a time.)
+
+class SoundSampleSong : public SoundSample
+{
+public:
+	SoundSampleSong();
+	SoundSampleSong(std::string);
 };
 
 #endif	/* SOUNDSAMPLE_HH */
