@@ -12,7 +12,7 @@ COPYRIGHT OF GAME SUPPORT FILES IN THIS DIRECTORY:
 - intro.png: Image is based upon
   http://wallpapersdesktops.com/view/3-blue-night-sky
 
-- Demoworld/sound/travel.ogg:
+- intro.ogg:
   This piece is by French artist Adragante, originally called Passage du vent,
   and obtained under license
     http://creativecommons.org/licenses/by-sa/3.0/
@@ -24,9 +24,10 @@ COPYRIGHT OF GAME SUPPORT FILES IN THIS DIRECTORY:
     http://lazarus.thehawkonline.com/music.html
   Used with personal permission from the author.
 
-- Demoworld/sound/town.ogg
+- Demoworld/sound/{town.ogg, travel.ogg}
   Composed and arranged by Derek & Brandon Fiechter, taken from
    https://www.youtube.com/watch?v=46kFG7JwhDI
+   https://www.youtube.com/watch?v=3wQ-mWK85yY
   As stated on their YouTube channel: free for non-commercial use if attributed.
 
 OLD
