@@ -108,6 +108,7 @@
   </data>
   <actions>
     <action type="ACT_ON_ENTER" x="44" y="70">
+	  <event type="EVENT_PLAY_MUSIC">town.ogg</event>
       <event type="EVENT_PRINTCON">Home sweet home...</event>
       <event type="EVENT_ENTER_MAP">
         <x>3</x>
@@ -116,6 +117,7 @@
       </event>
     </action>
     <action type="ACT_ON_ENTER" x="42" y="50">
+	  <event type="EVENT_PLAY_MUSIC">town.ogg</event>
       <event type="EVENT_PRINTCON">Entering the castle of Velnebras...</event>
       <event type="EVENT_ENTER_MAP">
         <x>21</x>
@@ -133,6 +135,7 @@
       </event>
     </action>
     <action type="ACT_ON_ENTER" x="42" y="144">
+	  <event type="EVENT_PLAY_MUSIC">town.ogg</event>
       <event type="EVENT_PRINTCON">Entering the town of Lendom...</event>
       <event type="EVENT_ENTER_MAP">
         <x>6</x>
@@ -141,6 +144,7 @@
       </event>
     </action>
     <action type="ACT_ON_ENTER" x="66" y="56">
+	  <event type="EVENT_PLAY_MUSIC">town.ogg</event>
       <event type="EVENT_PRINTCON">Entering the farm Sarsen...</event>
       <event type="EVENT_ENTER_MAP">
         <x>9</x>

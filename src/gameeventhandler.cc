@@ -311,6 +311,12 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 	Playlist::Instance().clear();
 	gc->redraw_graphics_status(true);
 
+	// When leaving into landscape, play travel.ogg as default.
+	if (!party->indoors()) {
+		std::shared_ptr<EventPlayMusic> music_event(new EventPlayMusic("travel.ogg", -1, SoundSample::music_volume));
+		handle_event_playmusic(music_event, gc->get_arena()->get_map());
+	}
+
 	return true;
 }
 
