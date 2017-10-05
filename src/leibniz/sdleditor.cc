@@ -29,8 +29,8 @@
 #include "indoorssdleditor.hh"
 #include "outdoorssdleditor.hh"
 #include "editorwin.hh"
-#include "indoorsicons.hh"
-#include "outdoorsicons.hh"
+#include "../indoorsicons.hh"
+#include "../outdoorsicons.hh"
 
 SDLEditor::SDLEditor()
 {

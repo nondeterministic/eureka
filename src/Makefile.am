@@ -12,6 +12,8 @@ AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 -MD -MP \
 
 AUTOMAKE_OPTIONS = no-dependencies
 
+CLEANFILES = $(wildcard *.d)
+
 LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_SIGNALS_LIBS@ @BOOST_REGEX_LIBS@ \
 	@LUA_LIBS@ @LIBS@

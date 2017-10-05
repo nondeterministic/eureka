@@ -273,6 +273,7 @@ void GameControl::do_turn(bool resting)
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 1));
 						_sample.play_predef(HIT);
+						printcon("Your party is starving.");
 					}
 					zwin.update_player_list();
 				}
@@ -283,6 +284,7 @@ void GameControl::do_turn(bool resting)
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 2));
 						_sample.play_predef(HIT);
+						printcon("Your party is starving.");
 					}
 					zwin.update_player_list();
 				}
