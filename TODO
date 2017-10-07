@@ -1,7 +1,7 @@
 TODO
 =====
 
-- Level up (already started in party.cc)
+- Select multiple items cannot select multiple items in multiple quantities. Change return value of select_items to pair of ints!
 
 - NPCs & dogs (prio med, skill high)
 
@@ -10,10 +10,6 @@ TODO
 - Problem is: coord selection and other keyboard input sometimes seems sluggish.  It's not cause the game is slow, but because
   we only redraw when TICK event occurs.  Perhaps, update effects of keyboard input immediately?
 
-- Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
-
-- In game music (prio low, skill low)
-
 IN PROGRESS
 ============
 
@@ -21,6 +17,12 @@ IN PROGRESS
 
 DONE
 =====
+
+- In game music (prio low, skill low)
+
+- Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
+
+- Level up (already started in party.cc)
 
 - Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
 

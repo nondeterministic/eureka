@@ -150,8 +150,8 @@ void get_opts (int argc, char* argv[])
       	  case 1:
       		  std::cout << PACKAGE_NAME << " - ye olde roleplaying game engine.\n";
       		  std::cout << "Lets you play games that have been designed for " << PACKAGE_NAME << "." << std::endl << std::endl;
-      		  std::cout << "Usage:   " << argv[0] << " [OPTIONS] <WORLDNAME>" << std::endl;
-      		  std::cout << "Example: " << argv[0] << " MyExcitingGameWorld" << std::endl << std::endl;
+      		  std::cout << "Usage:   " << argv[0] << " [OPTIONS] <WORLDNAME>" << std::endl << std::endl;
+      		  std::cout << "Example: " << argv[0] << " Demoworld" << std::endl << std::endl;
               std::cout << "If a long option shows an argument as mandatory, then it is mandatory for the equivalent short option also.\n\n";
               std::cout << "Options:" << std::endl;
               std::cout << "  -x <ARG>, --width=<ARG>        ";
@@ -182,7 +182,7 @@ void get_opts (int argc, char* argv[])
       	  case 'v':
       	  case 4:
       		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
-      		  std::cout << "Copyright (c) 2007 - 2016  Andreas Bauer <baueran@gmail.com>\n\n";
+      		  std::cout << "Copyright (c) 2007 - 2017  Andreas Bauer <baueran@gmail.com>\n\n";
       		  std::cout << "This is free software; see the source for copying conditions.\n"
       				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
               _getops_exit_after_print = true;

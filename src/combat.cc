@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -440,8 +440,11 @@ void Combat::victory()
 			std::vector<Item*> selected_items = zwin.execute(content_selection_provider.get(), SelectionMode::MultipleItems);
 			std::vector<Item*> not_selected_items;
 
-			for (auto item: selected_items)
+			for (auto item: selected_items) {
 				party->inventory()->add(item);
+				std::cout << "Adding: " << item->name() << "\n";
+			}
+			std::cout << "Added: " << selected_items.size() << "\n";
 
 			GameControl::Instance().redraw_graphics_status();
 			mwin.display_last();

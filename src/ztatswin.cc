@@ -1,3 +1,22 @@
+// This source file is part of eureka
+//
+// Copyright (c) 2007-2017  Andreas Bauer <baueran@gmail.com>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+// USA.
+
 #include "ztatswin.hh"
 #include "sdlwindow.hh"
 #include "party.hh"
@@ -236,18 +255,18 @@ std::vector<int> ZtatsWin::select_items()
 					if (std::find(result.begin(), result.end(), line + offset) == result.end()) {
 						result.push_back(line + offset);
 
-						StringAlignmentTuple tuple     = page[line + offset];
-						std::string linestr  = tuple.get<0>();
+						StringAlignmentTuple tuple = page[line + offset];
+						std::string linestr = tuple.get<0>();
 						page[line + offset] = StringAlignmentTuple("*" + linestr.substr(linestr.find_first_of(")")),  // String
 																   tuple.get<1>());                                   // Alginment
 					}
 					else {
 						result.erase(std::find(result.begin(), result.end(), line + offset));
 
-						StringAlignmentTuple tuple     = page[line + offset];
-						std::string linestr  = tuple.get<0>();
+						StringAlignmentTuple tuple = page[line + offset];
+						std::string linestr = tuple.get<0>();
 						page[line + offset] = StringAlignmentTuple(boost::lexical_cast<string>(line + offset + 1) + linestr.substr(linestr.find_first_of(")")),
-								tuple.get<1>());
+																   tuple.get<1>());
 					}
 
 					for (unsigned i = offset; i < page.size(); i++)
@@ -274,7 +293,8 @@ int ZtatsWin::select_item()
 	const int dheight = 16;  // Ztats display is 16 lines tall
 
 	if (content_provider()->get_pages().size() != 1) {
-		std::cerr << "WARNING: ztatswin.cc: ZtatsWinContentSelection provider holds " << content_provider()->get_pages().size() << " page(s), but should hold exactly one.\n";
+		std::cerr << "WARNING: ztatswin.cc: ZtatsWinContentSelection provider holds "
+				  << content_provider()->get_pages().size() << " page(s), but should hold exactly one.\n";
 		return -1;
 	}
 
