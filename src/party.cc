@@ -52,9 +52,9 @@ void Party::set_coords(std::pair<int, int> coords)
 
 std::pair<int, int> Party::get_coords()
 {
-  std::pair<int, int> coords;
-  coords.first = this->x; coords.second = this->y;
-  return coords;
+	std::pair<int, int> coords;
+	coords.first = this->x; coords.second = this->y;
+	return coords;
 }
 
 Party::Party()
@@ -77,8 +77,8 @@ Party::Party()
 
 Party& Party::Instance()
 {
-  static Party inst;
-  return inst;
+	static Party inst;
+	return inst;
 }
 
 int Party::jimmylock_count()
@@ -106,30 +106,30 @@ void Party::rm_jimmylock()
 
 int Party::gold()
 {
-  return _gold;
+	return _gold;
 }
 
 void Party::set_gold(int g)
 {
-  _gold = g;
+	_gold = g;
 }
 
 int Party::food()
 {
-  return _food;
+	return _food;
 }
 
 void Party::set_food(int g)
 {
-  _food = g;
+	_food = g;
 }
 
 void Party::store_outside_coords()
 {
 	prev_x = x;
 	prev_y = y;
-//	prev_indoors = _indoors;
-//	prev_map_name = _map_name;
+	//	prev_indoors = _indoors;
+	//	prev_map_name = _map_name;
 }
 
 bool Party::restore_outside_coords()
@@ -165,22 +165,22 @@ void Party::set_map_name(const char* name)
 
 std::string Party::map_name()
 {
-  return _map_name;
+	return _map_name;
 }
 
 void Party::add_player(PlayerCharacter player)
 {
-  _players.push_back(player);
-  std::cout << "INFO: party.cc: Added player " << player.name() << " to roaster.\n";
+	_players.push_back(player);
+	std::cout << "INFO: party.cc: Added player " << player.name() << " to roaster.\n";
 }
 
 PlayerCharacter* Party::get_player(int number)
 {
-  int i = 0;
-  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++)
-    if (i == number)
-      return &(*player);
-  return NULL;
+	int i = 0;
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++)
+		if (i == number)
+			return &(*player);
+	return NULL;
 }
 
 PlayerCharacter* Party::get_guard()
@@ -223,20 +223,20 @@ void Party::unset_guard()
 
 PlayerCharacter* Party::get_player(std::string name)
 {
-  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
-    if (player->name() == name)
-      return &(*player);
-  return NULL;
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
+		if (player->name() == name)
+			return &(*player);
+	return NULL;
 }
 
 // Returns the number of alive party members
 unsigned Party::party_alive()
 {
-  unsigned i = 0;
-  for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
-    if (player->hp() > 0)
-      i++;
-  return i;
+	unsigned i = 0;
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
+		if (player->hp() > 0)
+			i++;
+	return i;
 }
 
 /**

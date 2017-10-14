@@ -440,8 +440,9 @@ void SquareArena::show_map(int x_width, int y_width)
 			if (_show_map) {
 				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.
 				if (in_los(x, y, party_x, party_y) &&
-						(((x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) ||
-							is_illuminated((int)x, (int)y)))
+						  (((x_width == 0 && y_width == 0) ||
+						  (x-party_x + x_width / 2 <= (unsigned int)x_width && y-party_y + y_width / 2 <= (unsigned int)y_width)) ||
+						  is_illuminated((int)x, (int)y)))
 				{
 					// Mirrors reflect, if an animate object is in front of it...
 					if (IndoorsIcons::Instance().get_props(tileno)->get_name().find("mirror") != std::string::npos) {
@@ -455,7 +456,7 @@ void SquareArena::show_map(int x_width, int y_width)
 							}
 						}
 
-						if (Party::Instance().x == x && abs((int)(Party::Instance().y) - (int)y) == 1)
+						if (Party::Instance().x == (int)x && abs((int)(Party::Instance().y) - (int)y) == 1)
 							tileno += 1;
 					}
 
@@ -476,8 +477,9 @@ void SquareArena::show_map(int x_width, int y_width)
 					int obj_icon_no = ((MapObj)curr_obj->second).get_icon();
 
 					if (in_los(x, y, party_x, party_y)) {
-						if (((x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))) ||
-								is_illuminated((int)x, (int)y))
+						if (((x_width == 0 && y_width == 0) ||
+							 (x-party_x + x_width / 2 <= (unsigned int)x_width && y-party_y + y_width / 2 <= (unsigned int)y_width)) ||
+							 is_illuminated((int)x, (int)y))
 						{
 							if ((puttile_errno = put_tile(x2, y2, IndoorsIcons::Instance().get_sdl_icon(_drawn_icons[obj_icon_no])) != 0))
 								std::cerr << "WARNING: squarearena.cc: put_tile() returned " << puttile_errno << " in show_map()." << std::endl;

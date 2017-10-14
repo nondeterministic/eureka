@@ -27,6 +27,8 @@ Clock::Clock()
   m = 0;
 }
 
+/// Returns a pair <hour, minute>.
+
 std::pair<int,int> Clock::time()
 {
   return std::make_pair(h,m);

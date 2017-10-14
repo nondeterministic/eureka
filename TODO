@@ -1,8 +1,6 @@
 TODO
 =====
 
-- Select multiple items cannot select multiple items in multiple quantities. Change return value of select_items to pair of ints!
-
 - NPCs & dogs (prio med, skill high)
 
 - Make game characters definable in Lua
@@ -17,6 +15,8 @@ IN PROGRESS
 
 DONE
 =====
+
+- Select multiple items cannot select multiple items in multiple quantities. Change return value of select_items to pair of ints!
 
 - In game music (prio low, skill low)
 

@@ -465,7 +465,8 @@ void HexArena::show_map(int x_width, int y_width)
 				// to display night without torch, etc.
 
 				if (in_los(x, y, party_x, party_y) &&
-						( (x_width == 0 && y_width == 0) || (abs(x-party_x + x_width / 2) <= x_width && abs(y-party_y + y_width / 2 <= y_width))))
+						  ((x_width == 0 && y_width == 0) ||
+						   (x-party_x + x_width / 2 <= (unsigned int)x_width && y-party_y + y_width / 2 <= (unsigned int)y_width)))
 				{
 					// TODO: Animate icons
 					// ...

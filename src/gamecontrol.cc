@@ -344,7 +344,7 @@ void GameControl::do_turn(bool resting)
 	// Check if random combat ensues and handle it in case
 	if (is_arena_outdoors()) {
 		// Increment clock by 5 minutes every turn when outdoors, time doesn't elapse indoors
-		if (_turns % 2 == 0)
+		if (_turns % 10 == 0)
 			_clock.inc(30);
 
 		Combat combat;
@@ -359,7 +359,7 @@ void GameControl::do_turn(bool resting)
 			redraw_graphics_status();
 	}
 	else {
-		if (_turns%60 == 0)
+		if (_turns%35 == 0)
 			_clock.inc(30);
 	}
 
@@ -555,7 +555,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_talk();
 					break;
 				case SDLK_EQUALS:
-					printcon("Toggling sound");
+					printcon("Toggling music");
 					_game_music->toggle();
 					break;
 				case SDLK_u:

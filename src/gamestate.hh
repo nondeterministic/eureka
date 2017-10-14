@@ -36,9 +36,13 @@
 class GameState
 {
 protected:
-	std::vector<std::shared_ptr<IndoorsMap>> _maps;
 	GameState();
 	bool save_party(boost::filesystem::path);
+	bool save_misc(boost::filesystem::path);
+	bool load_party(lua_State*);
+	bool load_misc(lua_State*);
+
+	std::vector<std::shared_ptr<IndoorsMap>> _maps;
 	bool _cur_outdoors;
 	std::string _cur_map_name;
 	std::vector<PlayerCharacter> _players;

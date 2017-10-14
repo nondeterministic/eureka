@@ -441,10 +441,11 @@ void Combat::victory()
 			std::vector<Item*> not_selected_items;
 
 			for (auto item: selected_items) {
-				party->inventory()->add(item);
-				std::cout << "Adding: " << item->name() << "\n";
+				// Determine how many there are in the bounty of the current item...
+				for (unsigned i = 0; i < _bounty_items.how_many_of(item->name(), item->description()); i++) {
+					party->inventory()->add(item);
+				}
 			}
-			std::cout << "Added: " << selected_items.size() << "\n";
 
 			GameControl::Instance().redraw_graphics_status();
 			mwin.display_last();
@@ -483,7 +484,7 @@ void Combat::victory()
 	}
 }
 
-// Foes fight now against the party...
+/// Foes fight now against the party...
 
 int Combat::foes_fight()
 {
@@ -570,9 +571,9 @@ int Combat::foes_fight()
 	return 0;
 }
 
-// Returns which monster is going to be attacked in the next round by player player_no.
-//
-// TODO: Make this as nice as select_player in ztats window!
+/// Returns which monster is going to be attacked in the next round by player player_no.
+///
+/// TODO: Make this as nice as select_player in ztats window!
 
 int Combat::select_enemy()
 {
@@ -595,9 +596,9 @@ int Combat::select_enemy()
 	return atoi(&pressed);
 }
 
-// Makes the n-th foe in vector foes try to leave combat without a fight.
-// If it was the last foe of a group, the group disappears (e.g., group consisting of 1 Orc only).
-// If it was the last foe in combat, the combad ends.
+/// Makes the n-th foe in vector foes try to leave combat without a fight.
+/// If it was the last foe of a group, the group disappears (e.g., group consisting of 1 Orc only).
+/// If it was the last foe in combat, the combad ends.
 
 void Combat::flee_foe(int n)
 {
@@ -614,7 +615,7 @@ void Combat::flee_foe(int n)
   fled = true;
 }
 
-// Called advance party, but really decreases monsters' distances.
+/// Called advance party, but really decreases monsters' distances.
 
 void Combat::advance_party()
 {
@@ -635,7 +636,7 @@ void Combat::set_foes(Attackers new_foes)
 	foes = new_foes;
 }
 
-// Advances the foes by 10' and returns the name of the foes that have moved.
+/// Advances the foes by 10' and returns the name of the foes that have moved.
 
 boost::unordered_set<std::string> Combat::advance_foes()
 {
@@ -662,9 +663,9 @@ boost::unordered_set<std::string> Combat::advance_foes()
   return moved;
 }
 
-// Used for town folk, when the player attacks, e.g. a guard or runs amok otherwise.
-// Then we need to initiate battle, too, but create the "monsters", so to speak, rather
-// differently.  Script_path is the path to the Lua script defining the person in the town.
+/// Used for town folk, when the player attacks, e.g. a guard or runs amok otherwise.
+/// Then we need to initiate battle, too, but create the "monsters", so to speak, rather
+/// differently.  Script_path is the path to the Lua script defining the person in the town.
 
 bool Combat::create_monsters_from_init_path(std::string script_file)
 {
@@ -701,7 +702,7 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 	return true;
 }
 
-// Usually used for monsters inside dungeons...
+/// Usually used for monsters inside dungeons...
 
 bool Combat::create_monsters_from_combat_path(std::string script_file)
 {
