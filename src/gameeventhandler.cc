@@ -174,7 +174,7 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 
 bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> event, std::shared_ptr<Map> map)
 {
-	static SoundSampleSong song;    // If this isn't static, then the var
+	static SoundSample song;        // If this isn't static, then the var
 	                                // gets discarded before the song has
                                     // finished playing
 

@@ -269,9 +269,13 @@ void GameControl::do_turn(bool resting)
 		if (Party::Instance().food() == 0) {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
+					bool starving = false;
 					for (int i = 0; i < Party::Instance().party_size(); i++) {
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 1));
+						starving = true;
+					}
+					if (starving) {
 						_sample.play_predef(HIT);
 						printcon("Your party is starving.");
 					}
@@ -280,9 +284,13 @@ void GameControl::do_turn(bool resting)
 			}
 			else {
 				if (_turns%40 == 0) {
+					bool starving = false;
 					for (int i = 0; i < Party::Instance().party_size(); i++) {
 						PlayerCharacter* pl = Party::Instance().get_player(i);
 						pl->set_hp(max(0, pl->hp() - 2));
+						starving = true;
+					}
+					if (starving) {
 						_sample.play_predef(HIT);
 						printcon("Your party is starving.");
 					}

@@ -138,7 +138,8 @@ int SDLWindow::init(int width, int height, int bpp, Uint32 flags)
 		return -1;
 	}
 
-	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
+	// if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != 0)
 		std::cerr << "WARNING: sdlwindow.cc: Could not initialize audio.\n";
 	Mix_AllocateChannels(16);
 

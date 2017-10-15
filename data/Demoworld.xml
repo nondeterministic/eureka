@@ -11,7 +11,7 @@
     <indoors>
       <icon no="0" trans="full" walk="not">deep water</icon>
       <icon no="1" trans="full" walk="not">water</icon>
-      <icon no="2" trans="full" walk="not" next_anim="587" sound_effect="shallow_water.ogg">shallow water</icon>
+      <icon no="2" trans="full" walk="not" next_anim="587" sound_effect="shallow_water.wav">shallow water</icon>
       <icon no="3" trans="full" walk="full">nothing special</icon>
       <icon no="4" trans="full" walk="full">nothing special</icon>
       <icon no="5" trans="semi" walk="slow">forest</icon>
@@ -120,7 +120,7 @@
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="full">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
-      <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.ogg">a fireplace</icon>
+      <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.wav">a fireplace</icon>
       <icon no="112" trans="full" walk="slow">fire</icon>
       <icon no="113" trans="full" walk="full">nothing special</icon>
       <icon no="114" trans="full" walk="full">nothing special</icon>
@@ -130,9 +130,9 @@
       <icon no="118" trans="full" walk="full">nothing special</icon>
       <icon no="119" trans="full" walk="full">nothing special</icon>
       <icon no="120" trans="full" walk="slow">a bed</icon>
-      <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.ogg">a fireplace</icon>
-      <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.ogg">a fireplace</icon>
-      <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.ogg">a torch</icon>
+      <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.wav">a fireplace</icon>
+      <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.wav">a fireplace</icon>
+      <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.wav">a torch</icon>
       <icon no="124" trans="full" walk="full">nothing special</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">a guard</icon>
       <icon no="126" trans="full" walk="not" next_anim="125">a guard</icon>
@@ -146,8 +146,8 @@
       <icon no="134" trans="full" walk="not" next_anim="133">a praying person</icon>
       <icon no="135" trans="full" walk="not" next_anim="136">a child</icon>
       <icon no="136" trans="full" walk="not" next_anim="135">a child</icon>
-      <icon no="137" trans="full" walk="not" next_anim="138" sound_effect="57790__reinsamba__1191-two-cows.ogg">a bull</icon>
-      <icon no="138" trans="full" walk="not" next_anim="137" sound_effect="57790__reinsamba__1191-two-cows.ogg">a bull</icon>
+      <icon no="137" trans="full" walk="not" next_anim="138" sound_effect="57790__reinsamba__1191-two-cows.wav">a bull</icon>
+      <icon no="138" trans="full" walk="not" next_anim="137" sound_effect="57790__reinsamba__1191-two-cows.wav">a bull</icon>
       <icon no="139" trans="full" walk="not" next_anim="140">a magic user</icon>
       <icon no="140" trans="full" walk="not" next_anim="139">a magic user</icon>
       <icon no="141" trans="full" walk="not" next_anim="142">a shepherd</icon>
@@ -156,8 +156,8 @@
       <icon no="144" trans="full" walk="full">nothing special</icon>
       <icon no="145" trans="full" walk="full">nothing special</icon>
       <icon no="146" trans="full" walk="full">nothing special</icon>
-      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.ogg" default_lua_name="weapons::torch">a wall-mounted torch</icon>
-      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.ogg" default_lua_name="weapons::torch">a wall-mounted torch</icon>
+      <icon light_radius="4" no="147" trans="not" walk="not" next_anim="148" sound_effect="torch.wav" default_lua_name="weapons::torch">a wall-mounted torch</icon>
+      <icon light_radius="4" no="148" trans="not" walk="not" next_anim="147" sound_effect="torch.wav" default_lua_name="weapons::torch">a wall-mounted torch</icon>
       <icon no="149" trans="full" walk="full">nothing special</icon>
       <icon no="150" trans="full" walk="not">a bench</icon>
       <icon no="151" trans="full" walk="not">a bench</icon>
@@ -181,7 +181,7 @@
       <icon no="169" trans="not" walk="not">a closed door</icon>
       <icon no="170" trans="full" walk="full">nothing special</icon>
       <icon no="171" trans="semi" walk="not">a closed door with iron bars</icon>
-      <icon light_radius="4" no="172" trans="full" walk="full" sound_effect="torch.ogg">a torch</icon>
+      <icon light_radius="4" no="172" trans="full" walk="full" sound_effect="torch.wav">a torch</icon>
       <icon no="173" trans="full" walk="full">a toy</icon>
       <icon no="174" trans="full" walk="full">nothing special</icon>
       <icon no="175" trans="full" walk="not">a bench</icon>
@@ -546,7 +546,7 @@
       <icon no="534" trans="full" walk="not" next_anim="514">a magically locked chest</icon>
       <icon no="535" trans="full" walk="full" default_lua_name="miscitems::gold coin">gold coins</icon>
       <icon no="536" trans="full" walk="full">a door sign</icon>
-      <icon no="537" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.ogg">a door sign</icon>
+      <icon no="537" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">a door sign</icon>
       <icon no="538" trans="full" walk="full">a door sign</icon>
       <icon no="539" trans="full" walk="full">nothing special</icon>
       <icon no="540" trans="full" walk="full">nothing special</icon>
@@ -596,10 +596,10 @@
       <icon no="584" trans="full" walk="full">nothing special</icon>
       <icon no="585" trans="full" walk="full">nothing special</icon>
       <icon no="586" trans="full" walk="full">nothing special</icon>
-      <icon no="587" trans="full" walk="not" next_anim="590" sound_effect="shallow_water.ogg">water</icon>
+      <icon no="587" trans="full" walk="not" next_anim="590" sound_effect="shallow_water.wav">water</icon>
       <icon no="588" trans="full" walk="full">nothing special</icon>
       <icon no="589" trans="full" walk="full">nothing special</icon>
-      <icon no="590" trans="full" walk="not" next_anim="2" sound_effect="shallow_water.ogg">water</icon>
+      <icon no="590" trans="full" walk="not" next_anim="2" sound_effect="shallow_water.wav">water</icon>
       <icon no="591" trans="full" walk="full">a dagger</icon>
       <icon no="592" trans="full" walk="full">a mace</icon>
       <icon no="593" trans="full" walk="full" default_lua_name="weapons::sword">a sword</icon>
@@ -619,12 +619,12 @@
       <icon no="607" trans="full" walk="full">nothing special</icon>
       <icon no="608" trans="full" walk="full">nothing special</icon>
       <icon no="609" trans="full" walk="full">nothing special</icon>
-      <icon no="610" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.ogg">a door sign</icon>
-      <icon no="611" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.ogg">a door sign</icon>
-      <icon no="612" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.ogg">a door sign</icon>
+      <icon no="610" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">a door sign</icon>
+      <icon no="611" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">a door sign</icon>
+      <icon no="612" trans="full" walk="full" sound_effect="137836__thefilmbakery__blacksmith-workshop.wav">a door sign</icon>
       <icon no="613" trans="full" walk="full">a door sign</icon>
       <icon no="614" trans="full" walk="full">a door sign</icon>
-      <icon no="615" trans="full" walk="full" sound_effect="crowd-talking-2.ogg">a door sign</icon>
+      <icon no="615" trans="full" walk="full" sound_effect="crowd-talking-2.wav">a door sign</icon>
       <icon no="616" trans="full" walk="full">a magic sword</icon>
       <icon no="617" trans="full" walk="full">a magic sword</icon>
       <icon no="618" trans="full" walk="full">a magic sword</icon>
@@ -644,7 +644,7 @@
       <icon no="632" trans="full" walk="full">nothing special</icon>
       <icon no="633" trans="full" walk="full">nothing special</icon>
       <icon no="634" trans="full" walk="full">nothing special</icon>
-      <icon no="635" trans="full" walk="full" sound_effect="crowd-talking-2.ogg">a door sign</icon>
+      <icon no="635" trans="full" walk="full" sound_effect="crowd-talking-2.wav">a door sign</icon>
       <icon no="636" trans="full" walk="full">a door sign</icon>
       <icon no="637" trans="full" walk="full">a door sign</icon>
       <icon no="638" trans="full" walk="full">a door sign</icon>
@@ -1006,9 +1006,9 @@
       <icon no="994" trans="full" walk="full">nothing special</icon>
       <icon no="995" trans="full" walk="full">nothing special</icon>
       <icon no="996" trans="full" walk="full">nothing special</icon>
-      <icon no="997" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.ogg">a small dog</icon>
-      <icon no="998" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.ogg">a medium sized dog</icon>
-      <icon no="999" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.ogg">a large dog</icon>
+      <icon no="997" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">a small dog</icon>
+      <icon no="998" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">a medium sized dog</icon>
+      <icon no="999" trans="full" walk="not" sound_effect="276267__apolloaiello__mr-dog-01.wav">a large dog</icon>
       <icon no="1000" trans="full" walk="full">nothing special</icon>
       <icon no="1001" trans="full" walk="full">nothing special</icon>
       <icon no="1002" trans="full" walk="full">nothing special</icon>

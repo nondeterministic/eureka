@@ -51,17 +51,19 @@ public:
   static int const music_volume = 182;
 
 protected:
-  Mix_Chunk *other_wav;
-  Mix_Chunk *walk_wav;
-  Mix_Chunk *hit_wav;
-  Mix_Chunk *foe_hit_wav;
+  Mix_Music*  _music_ogg;
+  Mix_Chunk*  _other_wav;
+  Mix_Chunk*  _walk_wav;
+  Mix_Chunk*  _hit_wav;
+  Mix_Chunk*  _foe_hit_wav;
   std::string _filename;
-  int _chan;
-  int _vol;
-  int _loop;
+  int  _chan;
+  int  _vol;
+  int  _loop;
   bool _audio_on;
 
   void play_chunk(Mix_Chunk*, int = 0);
+  void play_music(Mix_Music*, int = -1);
   void set_channel(int);
 };
 

@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
 	path_main_music /= "data";
 	path_main_music /= "main.ogg";
 
-	SoundSampleSong game_music;
+	SoundSample game_music;
 //	game_music.play(path_main_music.string(), 1);
 
 	// Character creation?!
@@ -358,7 +358,8 @@ int intro(int res_w, int res_h)
 	texture = SDL_CreateTextureFromSurface(renderer, img);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-	if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
+	// if (Mix_OpenAudio(22050,AUDIO_S16SYS,2,640) != 0)
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != 0)
 		std::cerr << "ERROR: Could not initialize audio.\n";
 	Mix_AllocateChannels(16);
 
@@ -366,7 +367,7 @@ int intro(int res_w, int res_h)
 	path_intro_music_path /= PACKAGE_NAME;
 	path_intro_music_path /= "data";
 	path_intro_music_path /= "intro.ogg";
-	SoundSampleSong song_intro;
+	SoundSample song_intro;
 	song_intro.play(path_intro_music_path.string());
 
     // Update the display
@@ -905,7 +906,7 @@ int start_game()
 	gc->redraw_graphics_arena();
 	gc->redraw_graphics_status();
 
-	SoundSampleSong game_music;
+	SoundSample game_music;
 	game_music.play((conf_world_path / "sound" / "travel.ogg").string());
 
 	gc->set_game_music(&game_music);
