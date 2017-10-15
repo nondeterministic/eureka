@@ -1,6 +1,9 @@
 TODO
 =====
 
+- Fix SquareArena::is_illuminated: 
+  Illumination of icons doesn't work, e.g., when entering Lendom at 22:00, one can see it clearly.
+
 - NPCs & dogs (prio med, skill high)
 
 - Make game characters definable in Lua

@@ -39,11 +39,11 @@ SoundSample::SoundSample(std::string filename)
 	boost::filesystem::path samples_path((std::string)DATADIR);
 	samples_path = samples_path / PACKAGE_NAME / "data" / World::Instance().get_name() / "sound";
 	boost::filesystem::path file = samples_path / "walk.wav";
-	walk_wav = Mix_LoadWAV(file.c_str());
+	walk_wav = Mix_LoadMUS(file.c_str());
 	file = samples_path /  "hit.wav";
-	hit_wav = Mix_LoadWAV(file.c_str());
+	hit_wav = Mix_LoadMUS(file.c_str());
 	file = samples_path / "foe_hit.wav";
-	foe_hit_wav = Mix_LoadWAV(file.c_str());
+	foe_hit_wav = Mix_LoadMUS(file.c_str());
 	other_wav = NULL;
 
 	_vol = sample_volume;
@@ -92,7 +92,7 @@ void SoundSample::play(std::string filename)
 {
 	_filename = filename;
 	boost::filesystem::path filepath(filename);
-	other_wav = Mix_LoadWAV(filepath.string().c_str());
+	other_wav = Mix_LoadMUS(filepath.string().c_str());
 	play_chunk(other_wav);
 	_audio_on = true;
 }

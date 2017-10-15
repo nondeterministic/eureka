@@ -1,16 +1,48 @@
 COPYRIGHT OF GAME SUPPORT FILES IN THIS DIRECTORY:
 ==================================================
-- intro.ogg: Is a converted file from MusOpen Open Music Library
-  https://musopen.org/music/2554/johann-sebastian-bach/prelude-and-fugue-in-dm-bwv-539/
 
-- main.ogg: Is converted file from MusOpen Open Music Library
-  https://musopen.org/music/2554/johann-sebastian-bach/prelude-and-fugue-in-dm-bwv-539/
+SAMPLES:
+--------
+
+- 137836__thefilmbakery__blacksmith-workshop.ogg
+  https://freesound.org/s/137836/
+  Creative Commons
+
+- 276267__apolloaiello__mr-dog-01.ogg
+  https://freesound.org/s/347763/
+  Creative Commons
+
+- 55820__sergenious__bridge.ogg
+  https://freesound.org/s/55820/
+  Creative Commons
+
+- 57790__reinsamba__1191-two-cows.ogg
+  https://freesound.org/s/57790/
+  Creative Commons
+
+- crowd_talking02.ogg, foe_hit.ogg, hit.ogg, shallow_water.ogg, spell_normal.ogg, torch.ogg
+  Unfortunately, I have no recollection of the archive, these samples are from.
+  I am sure, however, that these are taken from freesound.org or similar sites and can be
+  used under a free license.  If you are the copyright holder of any of these samples, do let
+  me know, and I will attribute you accordingly!
+
+IMAGERY:
+--------
 
 - charset.png and frame.png are both taken from the GPL'ed game Nazghul
   https://sourceforge.net/projects/nazghul/
 
 - intro.png: Image is based upon
   http://wallpapersdesktops.com/view/3-blue-night-sky
+
+- The small bestiary pictures are composed with graphics taken from the GPL'ed game
+  Battle for Wesnoth.
+
+- Large graphics and otherwise used imagery is either original or taken from classical
+  painters such as Canaletto (see in-town image, for example).
+
+MUSIC:
+------
 
 - intro.ogg:
   This piece is by French artist Adragante, originally called Passage du vent,
@@ -22,19 +54,12 @@ COPYRIGHT OF GAME SUPPORT FILES IN THIS DIRECTORY:
 - Demoworld/sound/dungeon.ogg:
   Original track titled Oppression.MP3, arranged by Jared Ellsworth, taken from:
     http://lazarus.thehawkonline.com/music.html
-  Used with personal permission from the author.
+  Used with personal permission from the author given via Google+ in 2016.
 
-- Demoworld/sound/{town.ogg, travel.ogg}
+- Demoworld/sound/{town.ogg, travel.ogg}:
   Composed and arranged by Derek & Brandon Fiechter, taken from
    https://www.youtube.com/watch?v=46kFG7JwhDI
    https://www.youtube.com/watch?v=3wQ-mWK85yY
   As stated on their YouTube channel: free for non-commercial use if attributed.
 
-OLD
-
-intro3.xfc
-https://elkinsparkfarm.files.wordpress.com/2013/01/easterntrees.jpg
-
-- intro.ogg: is really the file Locus Iste.ogg and is taken from
-  https://archive.org/details/LocusIste
 

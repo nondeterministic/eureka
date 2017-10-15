@@ -76,14 +76,14 @@
   <actions>
     <action type="ACT_ON_PULLPUSH" x="19" y="31">
       <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
-      <event type="EVENT_PLAY_SOUND">bridge.wav</event>
+      <event type="EVENT_PLAY_SOUND">55820__sergenious__bridge.ogg</event>
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="21" y="31" icon_now="71" icon_new="72"/>
       </event>
     </action>
     <action type="ACT_ON_PULLPUSH" x="14" y="17">
       <event type="EVENT_PRINTCON">You hear a rattling sound...</event>
-      <event type="EVENT_PLAY_SOUND">bridge.wav</event>
+      <event type="EVENT_PLAY_SOUND">55820__sergenious__bridge.ogg</event>
       <event type="EVENT_CHANGE_ICON">
         <change_icon x="12" y="19" icon_now="71" icon_new="72"/>
       </event>
