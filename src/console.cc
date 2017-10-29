@@ -252,6 +252,17 @@ std::pair<int,int> Console::get_size()
 	return std::make_pair(w,h);
 }
 
+void Console::clear()
+{
+	SDL_Texture*   t = get_texture();
+	SDL_Renderer*  r = get_renderer();
+
+	SDL_SetRenderTarget(r, t);
+	SDL_SetRenderDrawColor(r, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(r);
+	blit();
+}
+
 // Briefly highlights the window in white as a kind of alarm.
 // Used for noting the fact that the player has been hit.
 

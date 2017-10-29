@@ -98,13 +98,18 @@ void SoundSample::play(std::string filename)
 	if (filename_upper.find(".WAV") != std::string::npos) {
 		_filename = filename;
 		boost::filesystem::path filepath(filename);
-		_other_wav = Mix_LoadWAV(filepath.string().c_str());
+		if (_other_wav == NULL)
+			std::cout << "NULL: " << filepath.c_str() << "\n";
+		else
+			std::cout << "!NULL: " << filepath.c_str() << "\n";
+		_other_wav = Mix_LoadWAV(filepath.c_str());
+		std::cout << "PLAYED.\n";
 		play_chunk(_other_wav);
 	}
 	else if (filename_upper.find(".OGG") != std::string::npos) {
 		_filename = filename;
 		boost::filesystem::path filepath(filename);
-		_music_ogg = Mix_LoadMUS(filepath.string().c_str());
+		_music_ogg = Mix_LoadMUS(filepath.c_str());
 		play_music(_music_ogg);
 	}
 	else {

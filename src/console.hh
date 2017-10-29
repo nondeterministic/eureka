@@ -40,6 +40,7 @@ public:
   void animate_cursor(Type*, int x = -1, int y = -1, int offset = 2);
   void pause(int = 30);
   void alarm();
+  void clear();
   
 protected:
   Console();

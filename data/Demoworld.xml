@@ -113,10 +113,10 @@
       <icon no="101" trans="full" walk="full">nothing special</icon>
       <icon no="102" trans="full" walk="full">nothing special</icon>
       <icon no="103" trans="full" walk="full">nothing special</icon>
-      <icon no="104" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="1" no="104" trans="full" walk="slow" magic_force_field="full" next_anim="662">a green force field</icon>
       <icon light_radius="1" no="105" trans="full" walk="slow" magic_force_field="full" next_anim="661">a blue force field</icon>
-      <icon no="106" trans="full" walk="full">nothing special</icon>
-      <icon no="107" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="1" no="106" trans="full" walk="slow" magic_force_field="full" next_anim="664">a red force field</icon>
+      <icon light_radius="1" no="107" trans="full" walk="slow" magic_force_field="full" next_anim="685">a purple forc field</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="full">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
@@ -671,10 +671,10 @@
       <icon no="659" trans="full" walk="full">nothing special</icon>
       <icon light_radius="4" no="660" trans="full" walk="slow" magic_force_field="full" next_anim="105">a blue force field</icon>
       <icon light_radius="2" no="661" trans="full" walk="slow" magic_force_field="full" next_anim="660">a blue force field</icon>
-      <icon no="662" trans="full" walk="full">nothing special</icon>
-      <icon no="663" trans="full" walk="full">nothing special</icon>
-      <icon no="664" trans="full" walk="full">nothing special</icon>
-      <icon no="665" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="1" no="662" trans="full" walk="slow" magic_force_field="full" next_anim="663">a green force field</icon>
+      <icon light_radius="1" no="663" trans="full" walk="slow" magic_force_field="full" next_anim="104">a green force field</icon>
+      <icon light_radius="1" no="664" trans="full" walk="slow" magic_force_field="full" next_anim="665">a red force field</icon>
+      <icon light_radius="1" no="665" trans="full" walk="slow" magic_force_field="full" next_anim="106">a red force field</icon>
       <icon no="666" trans="full" walk="full">nothing special</icon>
       <icon no="667" trans="full" walk="full">nothing special</icon>
       <icon no="668" trans="full" walk="full">nothing special</icon>
@@ -694,8 +694,8 @@
       <icon no="682" trans="full" walk="full">nothing special</icon>
       <icon no="683" trans="full" walk="full">nothing special</icon>
       <icon no="684" trans="full" walk="full">nothing special</icon>
-      <icon no="685" trans="full" walk="full">nothing special</icon>
-      <icon no="686" trans="full" walk="full">nothing special</icon>
+      <icon light_radius="1" no="685" trans="full" walk="slow" magic_force_field="full" next_anim="686">a purple forc field</icon>
+      <icon light_radius="1" no="686" trans="full" walk="slow" magic_force_field="full" next_anim="107">a purple forc field</icon>
       <icon no="687" trans="full" walk="full">nothing special</icon>
       <icon no="688" trans="full" walk="full">nothing special</icon>
       <icon no="689" trans="full" walk="full">nothing special</icon>

@@ -449,7 +449,7 @@ int init_game_env(int res_w, int res_h)
 
 	// TODO SDL: Disable or extend default non-delay of keyboard input!
 	// SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-
+	Console::Instance().clear();
 	Console::Instance().
 			print(&normalFont,
 					"Welcome to " + (std::string)PACKAGE_NAME +
