@@ -589,7 +589,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				get_attacked();
 
 				// Create random monsters in dungeons
-				create_random_monsters_in_dungeon();
+				// create_random_monsters_in_dungeon();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);

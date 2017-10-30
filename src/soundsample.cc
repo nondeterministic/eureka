@@ -98,12 +98,7 @@ void SoundSample::play(std::string filename)
 	if (filename_upper.find(".WAV") != std::string::npos) {
 		_filename = filename;
 		boost::filesystem::path filepath(filename);
-		if (_other_wav == NULL)
-			std::cout << "NULL: " << filepath.c_str() << "\n";
-		else
-			std::cout << "!NULL: " << filepath.c_str() << "\n";
 		_other_wav = Mix_LoadWAV(filepath.c_str());
-		std::cout << "PLAYED.\n";
 		play_chunk(_other_wav);
 	}
 	else if (filename_upper.find(".OGG") != std::string::npos) {
@@ -161,7 +156,7 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 		_audio_on = true;
 		_chan = Mix_PlayChannel(_chan, wav, loop);
 		Mix_Volume(_chan, _vol);
-		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
+		// std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play file '" << _filename << "'.\n";
@@ -175,7 +170,7 @@ void SoundSample::play_music(Mix_Music* ogg, int loop)
 		_audio_on = true;
 		_chan = Mix_PlayMusic(ogg, loop);
 		Mix_Volume(_chan, _vol);
-		std::cout << "INFO: soundsample.cc: Playing music: " << _filename << ".\n";
+		// std::cout << "INFO: soundsample.cc: Playing music: " << _filename << ".\n";
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play music file '" << _filename << "'.\n";
@@ -209,14 +204,14 @@ bool SoundSample::stopped()
 // ****************************** SOUNDSAMPLESONG **************************************************************
 // *************************************************************************************************************
 
-SoundSampleSong::SoundSampleSong() : SoundSampleSong("") {};
-
-SoundSampleSong::SoundSampleSong(std::string filename) : SoundSample(filename)
-{
-	_chan = 15; // Music is always played on channel 15!
-	_vol = music_volume;
-	_loop = -1;
-}
+//SoundSampleSong::SoundSampleSong() : SoundSampleSong("") {};
+//
+//SoundSampleSong::SoundSampleSong(std::string filename) : SoundSample(filename)
+//{
+//	_chan = 15; // Music is always played on channel 15!
+//	_vol = music_volume;
+//	_loop = -1;
+//}
 
 // *************************************************************************************************************
 // *************************************************************************************************************

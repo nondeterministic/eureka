@@ -9,7 +9,7 @@ require "math"
 do
    local hp          = 0
    local hp_max      = 0
-   local weapon
+   local weapon      = nil
    local strength    = 0
    local luck        = 0
    local dxt         = 0
@@ -30,7 +30,7 @@ do
       hp_max   = 1
       -- hp_max   = simpl_rand(5, 14) + 4
       hp       = hp_max
-      weapon   = Weapons.axe
+      weapon   = nil
       strength = simpl_rand(5, 14) + 4
       luck     = simpl_rand(5, 12)
       gold     = simpl_rand(1, 2)  -- An Orc may carry up to 2 gold coins
@@ -111,7 +111,7 @@ do
    end
 
    function get_weapon()
-      return weapon.name
+      return ""
    end
 
    function set_weapon(name)
@@ -143,8 +143,8 @@ do
       attack_successful = r < simpl_get_ac(player_name)
       
       if (attack_successful == false) then
-      	 simpl_printcon(string.format("An %s swings his %s at %s but misses.", 
-      				      get_name(), get_weapon(), player_name), true)
+      	 simpl_printcon(string.format("A %s tries to ram its venomous fangs into %s, but misses.", 
+      				                   get_name(), player_name), true)
       end
 		     
       return attack_successful

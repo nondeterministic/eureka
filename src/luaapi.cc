@@ -963,8 +963,13 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_pop(L,1);
 
 	LuaWrapper lua(L);
-    player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), L));
-    player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield"), L));
+	// Only if Lua-land returns non-empty weapon-descriptions, set one accordingly.
+	// Otherwise monster has none.
+	// (Default values should be NULL for weapon etc. anyway, indicating, None.)
+	if (lua.call_fn<std::string>("get_weapon").length() > 0)
+		player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), L));
+	if (lua.call_fn<std::string>("get_shield").length() > 0)
+		player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield"), L));
 
     return player;
 }
@@ -1193,7 +1198,8 @@ int l_magic_attack(lua_State* L)
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.
-				combat->add_to_bounty(opponent->weapon());
+				if (opponent->weapon() != NULL)
+					combat->add_to_bounty(opponent->weapon());
 
 				// Add monster's gold
 				int gold_coins = lua.call_fn<double>("get_gold");

@@ -5,14 +5,15 @@
  *      Author: baueran
  */
 
-#include "weaponhelper.hh"
-#include "weapon.hh"
-#include "luawrapper.hh"
+#include <memory>
+#include <iostream>
 
 #include <lua.h>
 #include <lualib.h>
 
-#include <memory>
+#include "weaponhelper.hh"
+#include "weapon.hh"
+#include "luawrapper.hh"
 
 WeaponHelper::WeaponHelper()
 {

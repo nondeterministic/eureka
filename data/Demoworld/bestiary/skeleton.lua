@@ -143,7 +143,7 @@ do
       attack_successful = r < simpl_get_ac(player_name)
       
       if (attack_successful == false) then
-      	 simpl_printcon(string.format("An %s swings his %s at %s but misses.", 
+      	 simpl_printcon(string.format("A %s swings his %s at %s but misses.", 
       				      get_name(), get_weapon(), player_name), true)
       end
 		     
@@ -154,13 +154,13 @@ do
       wep = Weapons[get_weapon()]
 
       if (distance > 10) then
-      	 simpl_printcon(string.format("An %s swings his %s at %s but cannot reach.",
+      	 simpl_printcon(string.format("A %s swings his %s at %s but cannot reach.",
       				      get_name(), wep.name, player_name), true)
       	 return
       end
 
       damage = simpl_rand(wep.damage_min, wep.damage_max)
-      simpl_printcon(string.format("An %s swings his %s and hits %s for %d points of damage.",
+      simpl_printcon(string.format("A %s swings his %s and hits %s for %d points of damage.",
     				                get_name(), wep.name, player_name, damage), true)
     				                
       simpl_player_change_hp(player_name, -damage)

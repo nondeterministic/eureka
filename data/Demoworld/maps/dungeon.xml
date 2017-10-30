@@ -26,7 +26,7 @@
     <row>84 84 84 4 84 4 4 4 4 222 84 84 4 4 4 4 4 4 4 4 4 84 84 84 84 4 84 84 84 84 84 84 84 84 4 4 4 4 84 4 4 84 84 84 4 84 84 84 4 4 84 84 84 4 4 2 2 84 84 84 84 4 84 4 84 4 4 4 4 4 84 84 4 4 4 4 4 84 84 4 4 4 4 4 4 84 84 84 84 4 84 84 84 84 84 84 84 84 84 84</row>
     <row>84 84 84 4 84 222 4 4 4 4 84 84 82 4 82 4 4 4 4 4 4 84 84 84 84 4 84 84 84 84 84 84 84 4 4 4 4 4 4 4 4 84 84 84 4 84 84 84 84 4 4 84 84 4 4 2 4 84 84 84 84 4 84 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84</row>
     <row>84 84 84 4 84 84 84 84 84 84 84 84 4 4 4 4 4 4 4 4 4 84 84 84 84 4 84 84 84 84 84 84 84 4 4 4 4 4 4 4 4 4 4 84 4 4 84 84 84 84 4 4 4 4 2 2 4 4 4 4 84 4 84 84 84 4 4 4 4 4 84 84 4 4 4 4 4 84 84 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
-    <row>84 84 84 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 84 84 84 84 84 84 84 2 2 4 4 4 84 4 84 4 84 84 84 4 4 4 4 4 84 84 4 4 4 4 4 84 84 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
+    <row>84 84 84 4 4 4 4 4 4 4 4 168 4 4 4 4 4 4 4 4 4 168 4 4 4 4 4 4 4 4 4 4 168 4 4 4 4 4 4 4 4 4 4 4 4 4 84 84 84 84 84 84 84 2 2 4 4 4 84 4 84 4 84 84 84 4 4 4 4 4 84 84 4 4 4 4 4 84 84 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
     <row>84 84 84 84 84 84 84 84 84 84 84 84 4 4 4 4 4 4 4 4 4 84 84 84 84 4 84 84 84 84 84 84 84 4 4 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 2 4 4 4 84 84 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
     <row>84 84 84 84 84 84 84 84 84 84 84 84 82 4 4 4 4 4 4 82 4 84 84 84 84 4 84 84 84 84 84 84 84 82 82 4 4 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 2 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
     <row>84 84 84 84 84 84 84 84 84 84 84 84 82 82 4 4 4 4 4 4 82 84 84 84 84 4 84 84 84 84 84 84 84 84 82 82 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 2 2 84 4 4 4 4 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
@@ -110,56 +110,64 @@
     <row>84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84</row>
   </data>
   <objects>
-    <object x="33" y="17" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="12" y="19" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="33" y="19" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="71" y="16" ox="0" oy="0" icon_no="106" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="12" y="17" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="79" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="84" y="7" ox="0" oy="0" icon_no="286" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="20" y="17" ox="0" oy="0" icon_no="123" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="6" y="14" ox="6" oy="14" icon_no="235" layer="0" id="spider" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="following" type="monster" combat_script="bestiary/spider.lua"/>
-    <object x="68" y="16" ox="0" oy="0" icon_no="328" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="79" y="5" ox="0" oy="0" icon_no="127" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
-    <object x="85" y="16" ox="0" oy="0" icon_no="105" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="6" y="16" ox="0" oy="0" icon_no="223" layer="0" id="skel" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
-    <object x="76" y="8" ox="0" oy="0" icon_no="296" layer="0" id="wife" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
-    <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="16" ox="0" oy="0" icon_no="508" layer="0" id="chest1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="38" y="19" ox="0" oy="0" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="16" y="18" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="20" y="19" ox="0" oy="0" icon_no="123" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="85" y="8" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="5" y="13" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="82" y="15" ox="0" oy="0" icon_no="378" layer="0" id="balron" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="84" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="32" y="18" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="21" y="18" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="18" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="39" y="14" ox="39" oy="14" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/troll.lua"/>
+    <object x="69" y="17" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="73" y="16" ox="73" oy="16" icon_no="388" layer="0" id="bluebalron" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="76" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="36" y="18" ox="0" oy="0" icon_no="836" layer="0" id="stat2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="72" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="18" y="18" ox="18" oy="18" icon_no="357" layer="0" id="skeletonmagician" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/skeleton.lua"/>
+    <object x="65" y="15" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="81" y="8" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="14" ox="0" oy="0" icon_no="508" layer="0" id="chest2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="78" y="4" ox="0" oy="0" icon_no="136" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="78" y="16" ox="0" oy="0" icon_no="107" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="64" y="16" ox="0" oy="0" icon_no="104" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="36" y="17" ox="0" oy="0" icon_no="811" layer="0" id="stat1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="83" y="9" ox="0" oy="0" icon_no="287" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="80" y="6" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="88" y="9" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="66" y="17" ox="0" oy="0" icon_no="361" layer="0" id="dragon" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="87" y="5" ox="0" oy="0" icon_no="133" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="86" y="6" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="85" y="10" ox="0" oy="0" icon_no="353" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
     <object x="78" y="10" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="66" y="17" ox="0" oy="0" icon_no="361" layer="0" id="dragon" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="87" y="5" ox="0" oy="0" icon_no="133" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
-    <object x="88" y="9" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="80" y="6" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="36" y="17" ox="0" oy="0" icon_no="811" layer="0" id="stat1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="83" y="9" ox="0" oy="0" icon_no="287" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="64" y="16" ox="0" oy="0" icon_no="104" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="78" y="16" ox="0" oy="0" icon_no="107" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="78" y="4" ox="0" oy="0" icon_no="136" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
-    <object x="9" y="14" ox="0" oy="0" icon_no="508" layer="0" id="chest2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="81" y="8" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="65" y="15" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="18" ox="0" oy="0" icon_no="357" layer="0" id="skeletonmagician" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="72" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="36" y="18" ox="0" oy="0" icon_no="836" layer="0" id="stat2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="76" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="73" y="16" ox="0" oy="0" icon_no="388" layer="0" id="bluebalron" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
-    <object x="69" y="17" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="39" y="14" ox="0" oy="0" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="84" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="82" y="15" ox="0" oy="0" icon_no="378" layer="0" id="balron" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="5" y="13" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="10" y="15" ox="0" oy="0" icon_no="93" layer="0" id="lever" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_PULLPUSH" x="10" y="15"/>
+      </actions>
+    </object>
+    <object x="20" y="19" ox="0" oy="0" icon_no="123" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="85" y="8" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="38" y="19" ox="38" oy="19" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/troll.lua"/>
+    <object x="16" y="18" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="16" ox="0" oy="0" icon_no="508" layer="0" id="chest1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="76" y="8" ox="0" oy="0" icon_no="296" layer="0" id="wife" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="6" y="16" ox="0" oy="0" icon_no="223" layer="0" id="skeleton" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="85" y="16" ox="0" oy="0" icon_no="105" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="79" y="5" ox="0" oy="0" icon_no="127" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="68" y="16" ox="0" oy="0" icon_no="328" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="6" y="14" ox="6" oy="14" icon_no="235" layer="0" id="spider" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="following" type="monster" combat_script="bestiary/spider.lua"/>
+    <object x="20" y="17" ox="0" oy="0" icon_no="123" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="79" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="84" y="7" ox="0" oy="0" icon_no="286" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="12" y="17" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="33" y="19" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="71" y="16" ox="0" oy="0" icon_no="106" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="12" y="19" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="33" y="17" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
   <actions>
     <action type="ACT_ON_ENTER" x="3" y="2">
       <event type="EVENT_LEAVE_MAP"/>
-	  <event type="EVENT_PRINTCON">You feel as if you can breathe again...</event>
+      <event type="EVENT_PRINTCON">You feel as if you can breathe again...</event>
     </action>
   </actions>
 </map>

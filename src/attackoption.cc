@@ -111,7 +111,8 @@ void AttackOption::execute(Combat* combat)
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.
-				combat->add_to_bounty(opponent->weapon());
+				if (opponent->weapon() != NULL)
+					combat->add_to_bounty(opponent->weapon());
 
 				// Add monster's gold
 				int gold_coins = lua.call_fn<double>("get_gold");

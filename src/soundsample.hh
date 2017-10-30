@@ -74,11 +74,11 @@ protected:
 /// all long tracks use the same channel, so that only ever 1 song can play
 /// at most at a time.)
 
-class SoundSampleSong : public SoundSample
-{
-public:
-	SoundSampleSong();
-	SoundSampleSong(std::string);
-};
+//class SoundSampleSong : public SoundSample
+//{
+//public:
+//	SoundSampleSong();
+//	SoundSampleSong(std::string);
+//};
 
 #endif	/* SOUNDSAMPLE_HH */

@@ -395,7 +395,10 @@ int Combat::fight(std::vector<AttackOption*> attack_commands)
 
 void Combat::add_to_bounty(Item* i)
 {
-	_bounty_items.add(i);
+	if (i != NULL)
+		_bounty_items.add(i);
+	else
+		std::cout << "INFO: combat.cc: I just tried to add NULL to bounty. Did the attacker have a weapon? If so, this is an error. Otherwise it's OK.\n";
 }
 
 // Returns number of monsters left after a round of melee has taken
@@ -529,8 +532,11 @@ int Combat::foes_fight()
 			lua.push_fn_arg((double)foe->gold());
 			lua.call_void_fn("set_gold");
 
-			lua.push_fn_arg((std::string)foe->weapon()->name());
-			lua.call_void_fn("set_weapon");
+			// There are monsters, such as spiders, that don't have a weapon!
+			if (foe->weapon() != NULL) {
+				lua.push_fn_arg((std::string)foe->weapon()->name());
+				lua.call_void_fn("set_weapon");
+			}
 
 			lua.push_fn_arg((double)foe->luck());
 			lua.call_void_fn("set_luck");
@@ -742,8 +748,12 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 		monster->set_str(lua.call_fn<double>("get_strength"));
 		monster->set_luck(lua.call_fn<double>("get_luck"));
 		monster->set_gold(lua.call_fn<double>("get_gold"));
-		Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
-		monster->set_weapon(wep);
+
+		// If Lua-land returns empty string, then the monster has no weapon!
+		if (lua.call_fn<std::string>("get_weapon").length() > 0) {
+			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
+			monster->set_weapon(wep);
+		}
 
 		// Add monster to rooster of attackers
 		foes.add(monster);
