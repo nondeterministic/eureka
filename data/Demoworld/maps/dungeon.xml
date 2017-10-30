@@ -130,13 +130,13 @@
     <object x="83" y="9" ox="0" oy="0" icon_no="287" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
     <object x="80" y="6" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="88" y="9" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="66" y="17" ox="0" oy="0" icon_no="361" layer="0" id="dragon" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="66" y="17" ox="66" oy="17" icon_no="361" layer="0" id="dragon" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster"/>
     <object x="87" y="5" ox="0" oy="0" icon_no="133" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="86" y="6" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="85" y="10" ox="0" oy="0" icon_no="353" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
     <object x="78" y="10" ox="0" oy="0" icon_no="171" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="84" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="82" y="15" ox="0" oy="0" icon_no="378" layer="0" id="balron" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
+    <object x="82" y="15" ox="82" oy="15" icon_no="378" layer="0" id="balron" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster"/>
     <object x="5" y="13" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="15" ox="0" oy="0" icon_no="93" layer="0" id="lever" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
