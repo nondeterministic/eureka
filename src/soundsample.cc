@@ -138,10 +138,10 @@ void SoundSample::set_volume(int v)
 	_vol = std::max(0, std::min(128, v));
 }
 
-void SoundSample::set_channel(int c)
-{
-	_chan = c;
-}
+//void SoundSample::set_channel(int c)
+//{
+//	_chan = c;
+//}
 
 void SoundSample::set_loop(int loop)
 {
@@ -156,6 +156,7 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 		_audio_on = true;
 		_chan = Mix_PlayChannel(_chan, wav, loop);
 		Mix_Volume(_chan, _vol);
+		_chan = -1; // Reset channel so the next time, the next free channel is used.
 		// std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
 	}
 	else

@@ -64,7 +64,7 @@ protected:
 
   void play_chunk(Mix_Chunk*, int = 0);
   void play_music(Mix_Music*, int = -1);
-  void set_channel(int);
+  // void set_channel(int);
 };
 
 /// SoundSample is more or less meant to play short samples only.

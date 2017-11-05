@@ -17,6 +17,8 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
+#include <iostream>
+
 #include "attackoption.hh"
 #include "party.hh"
 #include "gamecontrol.hh"
@@ -36,9 +38,9 @@ extern "C"
 
 AttackOption::AttackOption(int pl, lua_State* ls)
 {
-	L = ls;
-	player = Party::Instance().get_player(pl);
-	target = -1;
+	_L = ls;
+	_player = Party::Instance().get_player(pl);
+	_target = -1;
 }
 
 AttackOption::~AttackOption()
@@ -48,21 +50,21 @@ AttackOption::~AttackOption()
 
 PlayerCharacter* AttackOption::attacking_player()
 {
-	return player;
+	return _player;
 }
 
 void AttackOption::set_target(int t)
 {
-	target = t;
+	_target = t;
 }
 
 void AttackOption::execute(Combat* combat)
 {
 	static SoundSample sample;
-	LuaWrapper lua(L);
+	LuaWrapper lua(_L);
 
 	// Choose weapon to attack with
-	Weapon* wep = player->weapon();
+	Weapon* wep = _player->weapon();
 
 	// Get the monster that is to be attacked this round
 	Creature* opponent = NULL;
@@ -70,7 +72,7 @@ void AttackOption::execute(Combat* combat)
 
 	int j = 1;
 	for (auto foe : *(combat->get_foes().count())) {
-		if (j == target) {
+		if (j == _target) {
 			int k = 0;
 			for (auto _foe = combat->get_foes().begin(); _foe != combat->get_foes().end(); _foe++, k++) {
 				if (foe.first == (*_foe)->name()) {
@@ -90,7 +92,7 @@ void AttackOption::execute(Combat* combat)
 
 	if (wep != NULL && opponent->distance() <= wep->range()) {
 		stringstream ss;
-		ss << player->name() + " swings the " + wep->name() + " at " << opponent->name();
+		ss << _player->name() + " swings the " + wep->name() + " at " << opponent->name();
 
 		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
 
@@ -107,7 +109,7 @@ void AttackOption::execute(Combat* combat)
 				combat->get_foes().remove(opponent_offset);
 
 				// Add experience points to player's balance
-				player->inc_ep(lua.call_fn<double>("get_ep"));
+				_player->inc_ep(lua.call_fn<double>("get_ep"));
 
 				// Now add monster's items to bounty items to be collected
 				// by party in case of battle victory.
@@ -130,13 +132,13 @@ void AttackOption::execute(Combat* combat)
 	}
 	else if (wep != NULL) {
 		stringstream ss;
-		ss << player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
+		ss << _player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
 		printcon(ss.str(), true);
 	}
 	// Attack with bare hands...
 	else {
 		stringstream ss;
-		ss << player->name() << " lands a futile punch at " << opponent->name() << " without any noticable effect.";
+		ss << _player->name() << " lands a futile punch at " << opponent->name() << " without any noticable effect.";
 		printcon(ss.str(), true);
 	}
 }

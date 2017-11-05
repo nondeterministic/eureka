@@ -253,6 +253,7 @@ std::vector<AttackOption*> Combat::attack_options()
 	for (int player_no = 0; player_no < party->party_size(); player_no++) {
 		PlayerCharacter* player = party->get_player(player_no);
 		std::string key_inputs = "adr";
+		attackOptions[player_no] = NULL; // Initialise to NULL, in case player is dead and nothing else is set.
 
 		if (player->condition() == DEAD)
 			continue;
@@ -386,8 +387,10 @@ int Combat::fight(std::vector<AttackOption*> attack_commands)
 	foes_fight();
 
 	for (auto ac: attack_commands) {
-		std::cout << "INFO: combat:cc: Deleting party attack/defend command for player " << ac->attacking_player()->name() << ".\n";
-		delete ac;
+		if (ac != NULL) { // Could be NULL in the array, if a party member is dead and has no attack_command set.
+			std::cout << "INFO: combat:cc: Deleting party attack/defend command for player " << ac->attacking_player()->name() << ".\n";
+			delete ac;
+		}
 	}
 
 	return 0;

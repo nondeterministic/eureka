@@ -52,27 +52,27 @@ SpellCastHelper::~SpellCastHelper()
 
 void SpellCastHelper::set_spell_path(std::string sp)
 {
-	spell = Spell::spell_from_file_path(sp, L);
+	spell = Spell::spell_from_file_path(sp, _L);
 
-	if (luaL_dofile(L, sp.c_str())) {
-		std::cerr << "ERROR: spellcasthelper.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << endl;
+	if (luaL_dofile(_L, sp.c_str())) {
+		std::cerr << "ERROR: spellcasthelper.cc: Couldn't execute Lua file: " << lua_tostring(_L, -1) << endl;
 		exit(1);
 	}
 }
 
 bool SpellCastHelper::enabled()
 {
-	if (!player->is_spell_caster()) {
-		GameControl::Instance().printcon(player->name() + " is not a magic user.");
+	if (!_player->is_spell_caster()) {
+		GameControl::Instance().printcon(_player->name() + " is not a magic user.");
 		return false;
 	}
 
-	if (player->sp() < spell.sp) {
-		GameControl::Instance().printcon(player->name() + " does not have enough spell points.");
+	if (_player->sp() < spell.sp) {
+		GameControl::Instance().printcon(_player->name() + " does not have enough spell points.");
 		return false;
 	}
 
-	if (player->condition() == DEAD) {
+	if (_player->condition() == DEAD) {
 		GameControl::Instance().printcon("Try that with an alive party member next time.");
 		return false;
 	}
@@ -82,7 +82,7 @@ bool SpellCastHelper::enabled()
 
 bool SpellCastHelper::is_attack_spell_only()
 {
-	LuaWrapper lua(L);
+	LuaWrapper lua(_L);
 
 	return lua.call_fn<bool>("is_attack_spell");
 }
@@ -92,7 +92,7 @@ bool SpellCastHelper::is_attack_spell_only()
 int SpellCastHelper::choose()
 {
 	NoChooseFunctionException noChooseFunction;
-	LuaWrapper lua(L);
+	LuaWrapper lua(_L);
 
 	if (!lua.call_fn<bool>("is_choose_function_defined"))
 		throw noChooseFunction;
@@ -107,9 +107,9 @@ int SpellCastHelper::choose()
 
 void SpellCastHelper::execute(Combat* combat)
 {
-	LuaWrapper lua(L);
+	LuaWrapper lua(_L);
 	lua.call_void_fn("cast");
-	player->set_sp(player->sp() - spell.sp);
+	_player->set_sp(_player->sp() - spell.sp);
 	ZtatsWin::Instance().update_player_list();
 }
 
@@ -118,15 +118,15 @@ void SpellCastHelper::execute(Combat* combat)
 void SpellCastHelper::init()
 {
 	SpellNotEnabledException notEnabled;
-	LuaWrapper lua(L);
+	LuaWrapper lua(_L);
 
 	if (!enabled())
 		throw notEnabled;
 
-	if (player == NULL)
+	if (_player == NULL)
 		std::cerr << "ERROR: spellcasthelper.cc: player == NULL. This is serious.\n";
 
-	lua.push_fn_arg(player->name());
+	lua.push_fn_arg(_player->name());
 	lua.call_void_fn("set_caster");
 
 	lua.call_void_fn("init");

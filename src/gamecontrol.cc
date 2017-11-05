@@ -2207,12 +2207,12 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			arena->moving(false);
 
 			// Check if poison, magic field, fire, etc. was entered and act accordingly.
-			bool somebody_hurt = false;
-			somebody_hurt = party->walk_through_magic_field(tile_props->_magical_force_field);
+			bool somebody_hurt = party->walk_through_magic_field(tile_props->_magical_force_field);
 			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
-				zwin.update_player_list();
 				_sample.play_predef(HIT);
+				zwin.update_player_list();
+				std::cout << "SOMEBODY HURT\n";
 			}
 
 			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";

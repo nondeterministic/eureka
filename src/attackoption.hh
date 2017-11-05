@@ -27,9 +27,9 @@ class Combat;
 class AttackOption
 {
 protected:
-	PlayerCharacter* player;
-	lua_State* L;
-	int target;
+	PlayerCharacter* _player;
+	lua_State* _L;
+	int _target;
 
 	int random(int,int);
 	void printcon(std::string, bool);

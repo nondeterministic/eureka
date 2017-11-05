@@ -114,8 +114,12 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 		if ((obj_x != new_coords.first || obj_y != new_coords.second) &&                       // If coordinates changed...
 				((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 		{
+			int icon = gc->get_arena()->get_map()->get_tile(new_coords.first, new_coords.second);
+			IconProps* icon_props = IndoorsIcons::Instance().get_props(icon);
+
 			// We need to check again for walkability, as other objects may have moved to this position in the same round...
 			if (// walkable(new_coords.first, new_coords.second) &&
+				icon_props->_magical_force_field == PropertyStrength::None &&
 					std::find(moved_objects_coords.begin(),
 							moved_objects_coords.end(),
 							std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())

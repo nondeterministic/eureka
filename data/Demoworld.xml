@@ -116,7 +116,7 @@
       <icon light_radius="4" no="104" trans="full" walk="slow" magic_force_field="full" next_anim="662">a green force field</icon>
       <icon light_radius="2" no="105" trans="full" walk="slow" magic_force_field="full" next_anim="661">a blue force field</icon>
       <icon light_radius="4" no="106" trans="full" walk="slow" magic_force_field="full" next_anim="664">a red force field</icon>
-      <icon light_radius="4" no="107" trans="full" walk="slow" magic_force_field="full" next_anim="685">a purple forc field</icon>
+      <icon light_radius="4" no="107" trans="full" walk="slow" magic_force_field="full" next_anim="685">a purple force field</icon>
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="full">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
@@ -132,8 +132,8 @@
       <icon no="120" trans="full" walk="slow">a bed</icon>
       <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.wav">a fireplace</icon>
       <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.wav">a fireplace</icon>
-      <icon light_radius="4" no="123" trans="full" walk="full" sound_effect="torch.wav" next_anim="124">a torch</icon>
-      <icon light_radius="4" no="124" trans="full" walk="full" sound_effect="torch.wav" next_anim="123">a torch</icon>
+      <icon light_radius="4" no="123" trans="full" walk="full" next_anim="124" sound_effect="torch.wav">a torch</icon>
+      <icon light_radius="4" no="124" trans="full" walk="full" next_anim="123" sound_effect="torch.wav">a torch</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">a guard</icon>
       <icon no="126" trans="full" walk="not" next_anim="125">a guard</icon>
       <icon no="127" trans="full" walk="not" next_anim="128">a person</icon>
@@ -181,9 +181,9 @@
       <icon no="169" trans="not" walk="not">a closed door</icon>
       <icon no="170" trans="full" walk="full">nothing special</icon>
       <icon no="171" trans="semi" walk="not">a closed door with iron bars</icon>
-      <icon light_radius="4" no="172" trans="full" walk="full" sound_effect="torch.wav" next_anim="174">a torch</icon>
+      <icon light_radius="4" no="172" trans="full" walk="full" next_anim="174" sound_effect="torch.wav">a torch</icon>
       <icon no="173" trans="full" walk="full">a toy</icon>
-      <icon light_radius="4" no="174" trans="full" walk="full" sound_effect="torch.wav" next_anim="172">a torch</icon>
+      <icon light_radius="4" no="174" trans="full" walk="full" next_anim="172" sound_effect="torch.wav">a torch</icon>
       <icon no="175" trans="full" walk="not">a bench</icon>
       <icon no="176" trans="full" walk="not">a bench</icon>
       <icon no="177" trans="full" walk="not">a bench</icon>
@@ -694,8 +694,8 @@
       <icon no="682" trans="full" walk="full">nothing special</icon>
       <icon no="683" trans="full" walk="full">nothing special</icon>
       <icon no="684" trans="full" walk="full">nothing special</icon>
-      <icon light_radius="1" no="685" trans="full" walk="slow" magic_force_field="full" next_anim="686">a purple forc field</icon>
-      <icon light_radius="1" no="686" trans="full" walk="slow" magic_force_field="full" next_anim="107">a purple forc field</icon>
+      <icon light_radius="1" no="685" trans="full" walk="slow" magic_force_field="full" next_anim="686">a purple force field</icon>
+      <icon light_radius="1" no="686" trans="full" walk="slow" magic_force_field="full" next_anim="107">a purple force field</icon>
       <icon no="687" trans="full" walk="full">nothing special</icon>
       <icon no="688" trans="full" walk="full">nothing special</icon>
       <icon no="689" trans="full" walk="full">nothing special</icon>
