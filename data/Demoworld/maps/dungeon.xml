@@ -119,7 +119,7 @@
     <object x="76" y="15" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="36" y="18" ox="0" oy="0" icon_no="836" layer="0" id="stat2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="72" y="17" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="18" y="18" ox="18" oy="18" icon_no="357" layer="0" id="skeletonmagician" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/skeleton.lua"/>
+    <object x="18" y="18" ox="18" oy="18" icon_no="357" layer="0" id="skeletonmagician" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/skeleton_lord.lua"/>
     <object x="65" y="15" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="81" y="8" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="9" y="14" ox="0" oy="0" icon_no="508" layer="0" id="chest2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>

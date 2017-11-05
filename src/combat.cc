@@ -505,7 +505,10 @@ int Combat::foes_fight()
 		beast_path /= "bestiary";
 		beast_path /= boost::algorithm::to_lower_copy(foe->name()) + (std::string)".lua";
 
-		if (luaL_dofile(_lua_state, beast_path.string().c_str())) {
+		std::string beast_path_string = beast_path.string();
+		boost::replace_all(beast_path_string, " ", "_"); // spaces in monster names will translate to _ in file names!
+
+		if (luaL_dofile(_lua_state, beast_path_string.c_str())) {
 			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
 			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
 

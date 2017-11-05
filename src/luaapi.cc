@@ -715,6 +715,14 @@ int l_get_level(lua_State* L)
   return 1;
 }
 
+int l_get_player_is_alive(lua_State* L)
+{
+	std::string player_name = (std::string)(lua_tostring(L, 1));
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+	lua_pushboolean(L, player->condition() != PlayerCondition::DEAD);
+	return 1;
+}
+
 int l_get_player_ac(lua_State* L)
 {
   std::string player_name = (std::string)(lua_tostring(L, 1));
@@ -1365,6 +1373,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_get_partysize);
   lua_setglobal(L, "simpl_get_partysize");
+
+  lua_pushcfunction(L, l_get_player_is_alive);
+  lua_setglobal(L, "simpl_get_player_is_alive");
 
   lua_pushcfunction(L, l_get_player_ac);
   lua_setglobal(L, "simpl_get_ac");
