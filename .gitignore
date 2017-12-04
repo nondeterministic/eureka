@@ -1,0 +1,7 @@
+**/src/**/*.o
+**/src/**/*.d
+Makefile.in
+*.log
+*~
+*.bak
+**/Makefile 
