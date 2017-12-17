@@ -47,8 +47,9 @@ public:
   bool stopped();
   std::string filename();
 
-  static int const sample_volume = 24;
-  static int const music_volume = 182;
+  static int const default_loop  = 0;
+  static int const sample_volume = 100;
+  static int const music_volume  = 182;
 
 protected:
   Mix_Music*  _music_ogg;
@@ -62,7 +63,7 @@ protected:
   int  _loop;
   bool _audio_on;
 
-  void play_chunk(Mix_Chunk*, int = 0);
+  void play_chunk(Mix_Chunk*, int = default_loop);
   void play_music(Mix_Music*, int = -1);
   // void set_channel(int);
 };

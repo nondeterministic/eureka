@@ -50,7 +50,7 @@ SoundSample::SoundSample(std::string filename)
 
 	_vol = sample_volume;
 	_audio_on = true;
-	_loop = 0;
+	_loop = default_loop;
 }
 
 SoundSample::~SoundSample()
@@ -154,10 +154,13 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 {
 	if (wav != NULL) {
 		_audio_on = true;
-		_chan = Mix_PlayChannel(_chan, wav, loop);
+		if (_loop != default_loop)
+			_chan = Mix_PlayChannel(-1, wav, _loop);
+		else
+			_chan = Mix_PlayChannel(-1, wav, loop);
 		Mix_Volume(_chan, _vol);
-		_chan = -1; // Reset channel so the next time, the next free channel is used.
-		// std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
+		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
+		// _chan = -1; // Reset channel so the next time, the next free channel is used.
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play file '" << _filename << "'.\n";
@@ -171,7 +174,6 @@ void SoundSample::play_music(Mix_Music* ogg, int loop)
 		_audio_on = true;
 		_chan = Mix_PlayMusic(ogg, loop);
 		Mix_Volume(_chan, _vol);
-		// std::cout << "INFO: soundsample.cc: Playing music: " << _filename << ".\n";
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play music file '" << _filename << "'.\n";

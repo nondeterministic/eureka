@@ -82,7 +82,6 @@ extern "C" {
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "soundsample.hh"
-#include "playlist.hh"
 #include "itemfactory.hh"
 #include "item.hh"
 #include "miscitem.hh"

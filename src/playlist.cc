@@ -38,10 +38,8 @@ Playlist& Playlist::Instance()
 
 void Playlist::add_wav(std::string filename, int volume)
 {
-	for (auto it = _list.begin(); it != _list.end(); it++) {
-		if ((*it)->filename() == filename)
-			return; // file already in playlist
-	}
+	if (has_sample(filename))
+		return;
 
 	std::shared_ptr<SoundSample> sample(new SoundSample(filename));
 	_list.push_front(sample);
@@ -65,6 +63,7 @@ void Playlist::stop_wav(std::string filename)
 			return;
 		}
 	}
+	std::cerr << "WARNING: playlist.cc: Tried to stop no longer needed sample " << filename << ", but failed.\n";
 }
 
 void Playlist::clear()
