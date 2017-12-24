@@ -88,6 +88,7 @@ public:
 	bool leave_map();
 	bool unlock_item();
 	void game_over();
+	bool has_forcefield(int, int);
 
 	void keypress_cast();
 	void keypress_talk();

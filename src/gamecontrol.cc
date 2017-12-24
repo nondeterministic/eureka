@@ -2084,6 +2084,31 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 	return icon_is_walkable;
 }
 
+bool GameControl::has_forcefield(int x, int y)
+{
+	if (is_arena_outdoors())
+		return false;
+
+	// Check icon
+	int tile = arena->get_map()->get_tile(x, y);
+	if (IndoorsIcons::Instance().get_props(tile)->_magical_force_field != PropertyStrength::None)
+		return true;
+
+	// Check objects
+	auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+	if (found_obj.first != found_obj.second) {
+		for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
+			MapObj& map_obj = curr_obj->second;
+			IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+
+			if (icon_props->_magical_force_field != PropertyStrength::None)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 /// Moves the party.
 /// If ignore_walkable is set, then the party is moved, even through unpassable terrain.
 /// @returns true, if party actually moved (instead of running into something, for example); false otherwise.

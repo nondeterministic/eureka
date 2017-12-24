@@ -100,7 +100,7 @@ do
    end
    
    function job()
-      simpl_printcon("I am the blacksmight in town. Are you interested in doing some business? (y/n)")
+      simpl_printcon("I am the blacksmith in town. Are you interested in doing some business? (y/n)")
       askforbusiness()
    end
 
