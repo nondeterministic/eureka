@@ -118,6 +118,7 @@ public:
 	void start_turns();
 	void stop_turns();
 	void do_turn(bool = false);
+	bool game_won();
 	int random(int, int);
 	void printcon(const std::string, bool = false);
 	bool walkable_for_party(int, int);

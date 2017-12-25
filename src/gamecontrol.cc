@@ -256,8 +256,25 @@ std::shared_ptr<Arena> GameControl::get_arena()
 	return arena;
 }
 
+bool GameControl::game_won()
+{
+	LuaWrapper lua(_lua_state);
+
+	if (!lua.is_defined("game_won")) {
+		if (luaL_dofile(_lua_state, (conf_world_path / "game_won.lua").c_str())) {
+			std::cerr << "WARNING: gamecontrol.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << ". Game not properly installed or incomplete?\n";
+			return false;
+		}
+	}
+
+	return lua.call_fn<bool>("game_won");
+}
+
 void GameControl::do_turn(bool resting)
 {
+	if (game_won())
+		exit(0);
+
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
 	_turns++;
@@ -1196,8 +1213,6 @@ void GameControl::keypress_use()
 
 	redraw_graphics_status(true);
 }
-
-// TODO: Do something more useful here...
 
 void GameControl::game_over()
 {

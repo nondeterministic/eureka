@@ -49,6 +49,8 @@ public:
 	std::vector<std::string> get_itemids_from_itemarray(std::string item_array);
 	void call_void_fn(std::string fn_name);
 	void call_fn_leave_ret_alone(std::string fn_name, int ret_vals = 1);
+	bool is_defined(std::string);
+
 };
 
 #endif

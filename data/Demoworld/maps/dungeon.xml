@@ -149,7 +149,7 @@
     <object x="38" y="19" ox="38" oy="19" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/troll.lua"/>
     <object x="9" y="16" ox="0" oy="0" icon_no="508" layer="0" id="chest1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="76" y="8" ox="0" oy="0" icon_no="296" layer="0" id="wife" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="76" y="8" ox="76" oy="8" icon_no="296" layer="0" id="wife" lua_name="" how_many="1" random_monster="no" personality="righteous" move_mode="roam" type="person" init_script="people/dungeon_evelyn.lua"/>
     <object x="6" y="16" ox="0" oy="0" icon_no="223" layer="0" id="skeleton" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="85" y="16" ox="0" oy="0" icon_no="105" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="79" y="5" ox="0" oy="0" icon_no="127" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>

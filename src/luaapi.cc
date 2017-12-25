@@ -1006,6 +1006,12 @@ int l_join(lua_State* L)
     return 1;
 }
 
+int l_party_is_outdoors(lua_State* L)
+{
+	lua_pushboolean(L, GameControl::Instance().is_arena_outdoors());
+	return 1;
+}
+
 // Item id is on the Lua stack at calling time.  Item will then be removed from the map,
 // because either it died in battle, joined the party, etc.  Map is usually indoors as outdoors,
 // we don't show detailed icon view.
@@ -1475,6 +1481,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_walk_through_fields);
   lua_setglobal(L, "simpl_walk_through_fields");
+
+  lua_pushcfunction(L, l_party_is_outdoors);
+  lua_setglobal(L, "simpl_party_is_outdoors");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

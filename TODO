@@ -1,15 +1,16 @@
 TODO
 =====
 
-- Fix SquareArena::is_illuminated: 
-  Illumination of icons doesn't work, e.g., when entering Lendom at 22:00, one can see it clearly.
-
 - NPCs & dogs (prio med, skill high)
 
 - Make game characters definable in Lua
 
 - Problem is: coord selection and other keyboard input sometimes seems sluggish.  It's not cause the game is slow, but because
   we only redraw when TICK event occurs.  Perhaps, update effects of keyboard input immediately?
+
+- Fix SquareArena::is_illuminated: 
+  Illumination of icons doesn't work, e.g., when entering Lendom at 22:00, one can see it clearly.
+  (Addendum: effect is not so bad and could even be explained somewhat in real-life. Think of fire in distance. You see the fire, but not space in between.)
 
 IN PROGRESS
 ============

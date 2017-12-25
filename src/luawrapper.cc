@@ -307,3 +307,16 @@ void LuaWrapper::handle_error()
 	std::cerr << "ERROR: luawrapper.cc: Quitting program now as a consequence.\n";
 	exit(0);
 }
+
+bool LuaWrapper::is_defined(std::string fn_name)
+{
+	bool global_function_is_defined = false;
+
+	lua_getglobal(l, fn_name.c_str());
+
+	if (lua_isfunction(l, lua_gettop(l)))
+		global_function_is_defined = true;
+	lua_pop(l, 1);
+
+	return global_function_is_defined;
+}
