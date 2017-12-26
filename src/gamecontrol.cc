@@ -707,7 +707,7 @@ std::string GameControl::select_spell(unsigned player_no)
 
 	mwin.save_texture();
 	mwin.clear();
-	mwin.println(0, "Cast spell", CENTERALIGN);
+	mwin.println(0, "Cast spell (SP: " + std::to_string(player->sp()) + "/" + std::to_string(player->spm()) + ")", CENTERALIGN);
 	mwin.println(1, "(Press space to cast selected spell, q to exit)");
 
 	std::vector<Spell> chosen_spells = zwin.execute(content_selection_provider.get(), SelectionMode::SingleItem);

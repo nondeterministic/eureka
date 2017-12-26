@@ -170,6 +170,11 @@ std::vector<pair<StringAlignmentTuple, Item*>> Inventory::create_content_page(In
 		}
 	}
 
+    auto sortRuleLambda = [] (const std::pair<StringAlignmentTuple, Item*>& s1, const std::pair<StringAlignmentTuple, Item*>& s2) -> bool {
+       return s1.second->name().compare(s2.second->name()) < 0;
+    };
+	std::sort(content_page.begin(), content_page.end(), sortRuleLambda);
+
 	return content_page;
 }
 

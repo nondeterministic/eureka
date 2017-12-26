@@ -20,6 +20,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <algorithm> // sort
 
 #include "gamecontrol.hh"  // TODO: This could be removed, only use it for random number generator.
 #include "playercharacter.hh"
@@ -179,10 +180,18 @@ std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> PlayerCharacter::create
 		std::map<std::string, int> spell_list;
 		std::map<std::string, std::string> spell_file_paths;
 
-		for (auto spell : *(World::Instance().get_spells()))
-			if (profession() == spell.profession && level() >= spell.level)
-				content_page.push_back(std::pair<StringAlignmentTuple, Spell>(StringAlignmentTuple(spell.name, Alignment::LEFTALIGN), spell));
+		for (auto spell : *(World::Instance().get_spells())) {
+			if (profession() == spell.profession && level() >= spell.level) {
+				std::string spell_name  = (char)(toupper(spell.name[0])) + spell.name.substr(1);
+				std::string spell_descr = spell_name + " (Lvl " + std::to_string(spell.level) + ", SP: " + std::to_string(spell.sp) + ")";
+				content_page.push_back(std::pair<StringAlignmentTuple, Spell>(StringAlignmentTuple(spell_descr, Alignment::LEFTALIGN), spell));
+			}
+		}
 
+	    auto sortRuleLambda = [] (const std::pair<StringAlignmentTuple, Spell>& s1, const std::pair<StringAlignmentTuple, Spell>& s2) -> bool {
+	       return s1.second.name.compare(s2.second.name) < 0;
+	    };
+		std::sort(content_page.begin(), content_page.end(), sortRuleLambda);
 		content_selection_provider->add_content_page(content_page);
 
 		if (content_page.size() > 0)
