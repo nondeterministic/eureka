@@ -272,8 +272,11 @@ bool GameControl::game_won()
 
 void GameControl::do_turn(bool resting)
 {
-	if (game_won())
-		exit(0);
+	if (game_won()) {
+		printcon("CONGRAULATIONS! YOU HAVE WON THE GAME. PRESS SPACE TO EXIT.");
+		em->get_key(" ");
+		exit(EXIT_SUCCESS);
+	}
 
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
@@ -1218,7 +1221,7 @@ void GameControl::game_over()
 {
 	printcon("GAME OVER. ALL ARE DEAD. PRESS SPACE TO EXIT.");
 	em->get_key(" ");
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 std::string GameControl::keypress_ready_item(unsigned selected_player)
@@ -1606,6 +1609,8 @@ void GameControl::create_random_monsters_in_dungeon()
 
 void GameControl::get_attacked()
 {
+	return;
+
 	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 		unsigned obj_x, obj_y;
@@ -2099,15 +2104,17 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 	return icon_is_walkable;
 }
 
-bool GameControl::has_forcefield(int x, int y)
+/// Return None, if there's no force field at x,y.  Otherwise, returns strength of force/magic field.
+
+PropertyStrength GameControl::get_forcefieldstrength(int x, int y)
 {
 	if (is_arena_outdoors())
-		return false;
+		return PropertyStrength::None;
 
 	// Check icon
 	int tile = arena->get_map()->get_tile(x, y);
 	if (IndoorsIcons::Instance().get_props(tile)->_magical_force_field != PropertyStrength::None)
-		return true;
+		return IndoorsIcons::Instance().get_props(tile)->_magical_force_field;
 
 	// Check objects
 	auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
@@ -2117,11 +2124,11 @@ bool GameControl::has_forcefield(int x, int y)
 			IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
 
 			if (icon_props->_magical_force_field != PropertyStrength::None)
-				return true;
+				return icon_props->_magical_force_field;
 		}
 	}
 
-	return false;
+	return PropertyStrength::None;
 }
 
 /// Moves the party.
@@ -2246,12 +2253,11 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			arena->moving(false);
 
 			// Check if poison, magic field, fire, etc. was entered and act accordingly.
-			bool somebody_hurt = party->walk_through_magic_field(tile_props->_magical_force_field);
+			bool somebody_hurt = party->walk_through_magic_field(get_forcefieldstrength(party->x + x_diff, party->y + y_diff));
 			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
 				_sample.play_predef(HIT);
 				zwin.update_player_list();
-				std::cout << "SOMEBODY HURT\n";
 			}
 
 			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";

@@ -125,7 +125,7 @@
     <object x="81" y="8" ox="0" oy="0" icon_no="172" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="64" y="16" ox="0" oy="0" icon_no="104" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="9" y="14" ox="0" oy="0" icon_no="508" layer="0" id="chest2" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="78" y="4" ox="0" oy="0" icon_no="136" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="78" y="4" ox="78" oy="4" icon_no="136" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="righteous" move_mode="roam" type="person" init_script="people/dungeon_samuel.lua"/>
     <object x="78" y="16" ox="0" oy="0" icon_no="107" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="83" y="9" ox="0" oy="0" icon_no="287" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
     <object x="36" y="17" ox="0" oy="0" icon_no="811" layer="0" id="stat1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
@@ -148,11 +148,18 @@
     <object x="16" y="18" ox="0" oy="0" icon_no="110" layer="0" id="altar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="38" y="19" ox="38" oy="19" icon_no="254" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="roam" type="monster" combat_script="bestiary/troll.lua"/>
     <object x="9" y="16" ox="0" oy="0" icon_no="508" layer="0" id="chest1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+    <description>"Rotten note"</description>
+      <actions>
+        <action type="ACT_ON_LOOK">
+          <event type="EVENT_PRINTCON">The rotten note reads: Attempted to find and rescue those taken. Have been trapped by enormous spider in here. Will probably not make it out alive. Revenge me and rescue those still locked up in here!</event>
+        </action>
+      </actions>
+    </object>
     <object x="76" y="8" ox="76" oy="8" icon_no="296" layer="0" id="wife" lua_name="" how_many="1" random_monster="no" personality="righteous" move_mode="roam" type="person" init_script="people/dungeon_evelyn.lua"/>
     <object x="6" y="16" ox="0" oy="0" icon_no="223" layer="0" id="skeleton" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
     <object x="85" y="16" ox="0" oy="0" icon_no="105" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="79" y="5" ox="0" oy="0" icon_no="127" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person"/>
+    <object x="79" y="5" ox="79" oy="5" icon_no="127" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="righteous" move_mode="roam" type="person" init_script="people/dungeon_franz.lua"/>
     <object x="68" y="16" ox="0" oy="0" icon_no="328" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="monster"/>
     <object x="6" y="14" ox="6" oy="14" icon_no="235" layer="0" id="spider" lua_name="" how_many="1" random_monster="no" personality="hostile" move_mode="following" type="monster" combat_script="bestiary/spider.lua"/>
     <object x="20" y="17" ox="0" oy="0" icon_no="123" layer="0" id="torch" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>

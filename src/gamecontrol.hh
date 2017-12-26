@@ -42,6 +42,7 @@
 #include "mapobj.hh"
 #include "spell.hh"
 #include "soundsample.hh"
+#include "iconprops.hh"
 
 typedef boost::uniform_int<> NumberDistribution; 
 typedef boost::mt19937       RandomNumberGenerator; 
@@ -88,7 +89,7 @@ public:
 	bool leave_map();
 	bool unlock_item();
 	void game_over();
-	bool has_forcefield(int, int);
+	PropertyStrength get_forcefieldstrength(int, int);
 
 	void keypress_cast();
 	void keypress_talk();

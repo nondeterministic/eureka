@@ -86,7 +86,7 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 				int icon = gc->get_arena()->get_map()->get_tile(obj_x + x_off, obj_y + y_off);
 				IconProps* icon_props = IndoorsIcons::Instance().get_props(icon);
 
-				if (!gc->has_forcefield(obj_x + x_off, obj_y + y_off) && icon_props->_poisonous == PropertyStrength::None) {
+				if (gc->get_forcefieldstrength(obj_x + x_off, obj_y + y_off) == PropertyStrength::None && icon_props->_poisonous == PropertyStrength::None) {
 					map_obj->set_coords(obj_x + x_off, obj_y + y_off);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 				}
@@ -117,7 +117,7 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 
 			// We need to check again for walkability, as other objects may have moved to this position in the same round...
 			if (gc->walkable(new_coords.first, new_coords.second) &&
-				!gc->has_forcefield(new_coords.first, new_coords.second) &&
+				gc->get_forcefieldstrength(new_coords.first, new_coords.second) == PropertyStrength::None &&
 				std::find(moved_objects_coords.begin(),
 						  moved_objects_coords.end(),
 						  std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
