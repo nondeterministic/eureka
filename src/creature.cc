@@ -31,21 +31,80 @@ Creature::Creature()
   _max_group = 0;
 }
 
-Creature::~Creature()
+Creature::Creature(const GameCharacter& gc)
 {
-  if (_image_surf != NULL) {
-    SDL_FreeSurface(_image_surf);
-    _image_surf = NULL;
-  }
+	_rh_item = gc._rh_item;
+	_lh_item = gc._lh_item;
+	_armour = gc._armour;
+	_head_armour = gc._head_armour;
+	_feet_armour = gc._feet_armour;
+	_hands_armour = gc._hands_armour;
+	_condition = gc._condition;
+	_att = gc._att;
+	_end = gc._end;
+	_char = gc._char;
+	_dxt = gc._dxt;
+	_sp_max = gc._sp_max;
+	_sp = gc._sp;
+	_hp = gc._hp;
+	_hp_max = gc._hp_max;
+	_sex = gc._sex;
+	_iq = gc._iq;
+	_wis = gc._wis;
+	_luck = gc._luck;
+	_str = gc._str;
+	_race = gc._race;
+	_gold = gc._gold;
+
+	_name = gc._name;
+	_plural_name = gc._plural_name;
+
+	_image_surf = NULL;
+	_image = "";
+	_distance = 0;
+	_max_group = 0;
 }
 
-Creature::Creature(const Creature& c)
+Creature::~Creature()
 {
-	_image_surf = c._image_surf;
-	_image = c._image;
-	_distance = c._distance;
-	_max_group = c._max_group;
-	std::cout << "CREATURE DEEP COPY MOTHERFUCK!\n";
+	if (_image_surf != NULL) {
+		SDL_FreeSurface(_image_surf);
+		_image_surf = NULL;
+	}
+}
+
+Creature::Creature(const Creature& gc)
+{
+	_rh_item = gc._rh_item;
+	_lh_item = gc._lh_item;
+	_armour = gc._armour;
+	_head_armour = gc._head_armour;
+	_feet_armour = gc._feet_armour;
+	_hands_armour = gc._hands_armour;
+	_condition = gc._condition;
+	_att = gc._att;
+	_end = gc._end;
+	_char = gc._char;
+	_dxt = gc._dxt;
+	_sp_max = gc._sp_max;
+	_sp = gc._sp;
+	_hp = gc._hp;
+	_hp_max = gc._hp_max;
+	_sex = gc._sex;
+	_iq = gc._iq;
+	_wis = gc._wis;
+	_luck = gc._luck;
+	_str = gc._str;
+	_race = gc._race;
+	_gold = gc._gold;
+
+	_name = gc._name;
+	_plural_name = gc._plural_name;
+
+	_image_surf = gc._image_surf;
+	_image = gc._image;
+	_distance = gc._distance;
+	_max_group = gc._max_group;
 }
 
 int Creature::distance()

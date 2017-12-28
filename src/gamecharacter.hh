@@ -28,6 +28,7 @@
 #include "armour.hh"
 #include "race.hh"
 #include "spellsbearer.hh"
+#include "creature.hh"
 
 using namespace std;
 
@@ -41,6 +42,8 @@ enum PlayerCondition {
 
 class GameCharacter : public SpellsBearer
 {
+friend class Creature;
+
 protected:
   int _hp, _hp_max;             // Hit points
   int _sp, _sp_max;             // Spell points

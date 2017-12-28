@@ -703,13 +703,13 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
     // Pop Lua stack!
     lua_pop(_lua_state, 1);
 
-    foes.count()->insert(std::make_pair(foe->name(), 1));
-    foes.add(std::static_pointer_cast<Creature>(foe));
+    // Turn GameCharacter, foe, into Creature, creature; that is, enrich foe with the missing informations.
+    Creature creature(*(foe.get()));
+    creature.set_img(lua.call_fn<std::string>("img_path"));
+	creature.set_distance(10);
 
-    // Set distance of foe to 10'
-    for (auto f: foes) {
-    	f->set_distance(10);
-    }
+    foes.count()->insert(std::make_pair(foe->name(), 1));
+    foes.add(std::make_shared<Creature>(creature));
 
 	return true;
 }

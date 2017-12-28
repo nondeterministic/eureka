@@ -200,11 +200,10 @@ std::string Attackers::to_string()
 	std::stringstream ss;
 	std::map<int, std::string> ordered_attackers;
 
-	// First sort output by the enemy that is closest to the one
-	// furthest away from party
+	// First sort output by the enemy that is closest to the one furthest away from party
 	for (auto itr = _enemies_count.begin(); itr != _enemies_count.end(); itr++) {
+		cout << "Computing distance of " << itr->first << ": " << get_distance(itr->first) << endl;
 		ordered_attackers.insert(make_pair(get_distance(itr->first), itr->first));
-		// cout << "Computed distance of " << itr->first << ": " << get_distance(itr->first) << endl;
 	}
 
 	// TODO: The following loop is for testing purposes only

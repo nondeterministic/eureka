@@ -765,7 +765,6 @@ int recreate_old_game_state()
 	// Now load referenced world data from disk
 	try {
 		cur_map = World::Instance().get_map(gstate->get_cur_map_name().c_str());
-		std::cout << "CURRENT MAP NAME: " << gstate->get_cur_map_name() << "\n";
 	}
 	catch (const MapNotFound& e) {
 		std::cerr << "ERROR: eureka.cc: Game world XML-file seems to have no initial map defined." << std::endl;
