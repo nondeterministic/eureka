@@ -3,18 +3,17 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Weapons["sling"]  = { 
-   name         = "sling", 
-   plural_name  = "slings", 
-   ammo         = "",
+Weapons["spear"]  = { 
+   name         = "spear", 
+   plural_name  = "spears", 
    hands        = 2, 
-   range        = 30,
-   damage_min   = 1,
-   damage_max   = 5,
+   range        = 10,
+   damage_min   = 2,
+   damage_max   = 7,
    damage_bonus = 0,
    weight       = 1,
-   icon         = 566,
-   gold         = 10,
+   icon         = 497,
+   gold         = 5,
    light_radius = 0,
    destroy_after = 0 
 }

@@ -51,6 +51,7 @@ public:
 	Item* get_item(int);
 	unsigned how_many_at(unsigned);
 	unsigned how_many_of(std::string item_name, std::string item_description);
+	bool contains_item_with_substr(std::string);
 	std::vector<Item*>* get(int);
 	std::map<std::string, int> list_wearables();
 	std::map<std::string, int> list_all();

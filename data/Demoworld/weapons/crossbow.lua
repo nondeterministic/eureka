@@ -6,6 +6,7 @@
 Weapons["crossbow"]  = { 
    name         = "crossbow", 
    plural_name  = "crossbows", 
+   ammo         = "bolt",
    hands        = 2, 
    range        = 30,
    damage_min   = 2,

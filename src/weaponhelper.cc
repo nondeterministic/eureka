@@ -39,6 +39,8 @@ Weapon* WeaponHelper::createFromLua(std::string array_name, lua_State* lua_state
 		w->plural_name(lua.get_item_prop<std::string>("Weapons", array_name, "plural_name"));
 		w->hands((int)(lua.get_item_prop<double>("Weapons", array_name, "hands")));
 		w->range((int)(lua.get_item_prop<double>("Weapons", array_name, "range")));
+		if (w->range() > 10)
+			w->ammo(lua.get_item_prop<std::string>("Weapons", array_name, "ammo"));
 		w->dmg_min((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_min")));
 		w->dmg_max((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_max")));
 		w->dmg_bonus((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_bonus")));

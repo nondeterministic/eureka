@@ -33,6 +33,7 @@ protected:
   int _dmg_bonus;
   int _light_radius;
   int _destroy_after;
+  std::string _ammo;
 
 public:
   Weapon();
@@ -62,6 +63,14 @@ public:
   void range(int);
 
   std::string get_lua_name();
+
+  std::string ammo() {
+	  return _ammo;
+  }
+
+  void ammo(std::string a) {
+	  _ammo = a;
+  }
 };
 
 #endif

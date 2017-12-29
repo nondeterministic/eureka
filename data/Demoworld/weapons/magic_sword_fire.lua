@@ -5,7 +5,8 @@
 
 Weapons["magic sword fire"]  = { 
    name         = "magic fire sword", 
-   plural_name  = "magic fire swords", 
+   plural_name  = "magic fire swords",
+   ammo         = "",
    hands        = 1, 
    range        = 20,
    damage_min   = 5,

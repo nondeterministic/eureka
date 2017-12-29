@@ -76,6 +76,17 @@ unsigned Inventory::how_many_at(unsigned n)
 	return 0;
 }
 
+/// Determines if inventory contains an item with substrint substr in either its name or description.
+/// Useful, e.g., to determine if there are still arrows or bolts left before firing a range weapon.
+
+bool Inventory::contains_item_with_substr(std::string substr)
+{
+	for (const std::pair<std::string, std::vector<Item*>>& item: _items)
+		if (item.first.find(substr) != std::string::npos)
+			return true;
+	return false;
+}
+
 unsigned Inventory::how_many_of(std::string item_name, std::string item_description)
 {
 	for (const std::pair<std::string, std::vector<Item*>>& item: _items)

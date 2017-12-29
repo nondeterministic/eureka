@@ -95,8 +95,20 @@ void AttackOption::execute(Combat* combat)
 		stringstream ss;
 		if (wep->range() <= 10)
 			ss << _player->name() << " swings the " << wep->name() <<  " at " << opponent->name();
-		else
-			ss << _player->name() << " attacks " << opponent->name() << " using a" << (Util::vowel(wep->name()[0])? "n " : " ") <<  wep->name() << " ";
+		else if (wep->range() > 10) {
+			if (wep->ammo() == "") // No ammo needed, such as magic sword or sling
+				ss << _player->name() << " attacks " << opponent->name() << " using a" << (Util::vowel(wep->name()[0])? "n " : " ") <<  wep->name() << " ";
+			else { // Ammo is needed, e.g., arrow or bolt
+				if (Party::Instance().inventory()->contains_item_with_substr(wep->ammo())) {
+					ss << _player->name() << " attacks " << opponent->name() << " using a" << (Util::vowel(wep->name()[0])? "n " : " ") <<  wep->name() << " ";
+					Party::Instance().inventory()->remove(wep->ammo(), "");
+				}
+				else { // No ammo for range weapon!!
+					printcon(_player->name() + " attempts to fire a" + (Util::vowel(wep->name()[0])? "n " : " ") + wep->name() + ", but has no " + wep->ammo() + ".", true);
+					return;
+				}
+			}
+		}
 
 		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
 
@@ -136,7 +148,7 @@ void AttackOption::execute(Combat* combat)
 	}
 	else if (wep != NULL) {
 		stringstream ss;
-		ss << _player->name() << " tries to attack " << opponent->name() << " but cannot reach.";
+		ss << _player->name() << " tries to attack " << opponent->name() << " but this opponent is out of reach.";
 		printcon(ss.str(), true);
 	}
 	// Attack with bare hands...

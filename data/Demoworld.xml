@@ -506,7 +506,7 @@
       <icon no="494" trans="full" walk="full">nothing special</icon>
       <icon no="495" trans="full" walk="full">nothing special</icon>
       <icon no="496" trans="full" walk="full">a red potion</icon>
-      <icon no="497" trans="full" walk="full">a spear</icon>
+      <icon no="497" trans="full" walk="full" default_lua_name="weapons::spear">a spear</icon>
       <icon no="498" trans="full" walk="full">rocks</icon>
       <icon no="499" trans="full" walk="full">nothing special</icon>
       <icon no="500" trans="full" walk="full">nothing special</icon>
@@ -525,14 +525,14 @@
       <icon no="513" trans="full" walk="not" next_anim="510">a magic chest</icon>
       <icon no="514" trans="full" walk="not" next_anim="515">a magically locked chest</icon>
       <icon no="515" trans="full" walk="not" next_anim="533">a magically locked chest</icon>
-      <icon no="516" trans="full" walk="full">an arrow</icon>
-      <icon no="517" trans="full" walk="full">an arrow</icon>
-      <icon no="518" trans="full" walk="full">an arrow</icon>
-      <icon no="519" trans="full" walk="full">an arrow</icon>
-      <icon no="520" trans="full" walk="full">an arrow</icon>
-      <icon no="521" trans="full" walk="full">an arrow</icon>
-      <icon no="522" trans="full" walk="full">an arrow</icon>
-      <icon no="523" trans="full" walk="full">an arrow</icon>
+      <icon no="516" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="517" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="518" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="519" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="520" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="521" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="522" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
+      <icon no="523" trans="full" walk="full" default_lua_name="miscitems::arrow">an arrow</icon>
       <icon no="524" trans="full" walk="full">nothing special</icon>
       <icon no="525" trans="full" walk="full">nothing special</icon>
       <icon no="526" trans="full" walk="full">nothing special</icon>
@@ -625,8 +625,8 @@
       <icon no="613" trans="full" walk="full">a door sign</icon>
       <icon no="614" trans="full" walk="full">a door sign</icon>
       <icon no="615" trans="full" walk="full" sound_effect="crowd-talking-2.wav">a door sign</icon>
-      <icon no="616" trans="full" walk="full">a magic sword</icon>
-      <icon no="617" trans="full" walk="full">a magic sword</icon>
+      <icon no="616" trans="full" walk="full" default_lua_name="weapons::magic broadsword blue">a magic broadsword</icon>
+      <icon no="617" trans="full" walk="full" default_lua_name="weapons::magic broadsword blue">a magic broadsword</icon>
       <icon no="618" trans="full" walk="full" default_lua_name="weapons::magic sword blue">a blue magic sword</icon>
       <icon no="619" trans="full" walk="full" default_lua_name="weapons::magic sword blue">a blue magic sword</icon>
       <icon no="620" trans="full" walk="full" default_lua_name="weapons::magic sword fire">a magic fire sword</icon>
@@ -656,8 +656,8 @@
       <icon no="644" trans="full" walk="full">a leather armour</icon>
       <icon no="645" trans="full" walk="full">a chainmail</icon>
       <icon no="646" trans="full" walk="full">a platemail</icon>
-      <icon no="647" trans="full" walk="full">a large wooden shield</icon>
-      <icon no="648" trans="full" walk="full">a large metal shield</icon>
+      <icon no="647" trans="full" walk="full" default_lua_name="shields::large wooden shield">a large wooden shield</icon>
+      <icon no="648" trans="full" walk="full" default_lua_name="shields::big metal shield">a large metal shield</icon>
       <icon no="649" trans="full" walk="full">nothing special</icon>
       <icon no="650" trans="full" walk="full">nothing special</icon>
       <icon no="651" trans="full" walk="full">nothing special</icon>
@@ -704,10 +704,10 @@
       <icon no="692" trans="full" walk="full">nothing special</icon>
       <icon no="693" trans="full" walk="full">nothing special</icon>
       <icon no="694" trans="full" walk="full">nothing special</icon>
-      <icon no="695" trans="full" walk="full">a bolt</icon>
-      <icon no="696" trans="full" walk="full">bolts</icon>
-      <icon no="697" trans="full" walk="full">a bolt</icon>
-      <icon no="698" trans="full" walk="full">bolts</icon>
+      <icon no="695" trans="full" walk="full" default_lua_name="miscitems::bolt">a bolt</icon>
+      <icon no="696" trans="full" walk="full" default_lua_name="miscitems::bolt">bolts</icon>
+      <icon no="697" trans="full" walk="full" default_lua_name="miscitems::bolt">a bolt</icon>
+      <icon no="698" trans="full" walk="full" default_lua_name="miscitems::bolt">bolts</icon>
       <icon no="699" trans="full" walk="full">nothing special</icon>
       <icon no="700" trans="full" walk="full">nothing special</icon>
       <icon no="701" trans="full" walk="full">nothing special</icon>

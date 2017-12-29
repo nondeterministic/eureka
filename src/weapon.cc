@@ -33,6 +33,7 @@ Weapon::Weapon()
 	icon = 0;
 	_dmg_max = 0;
 	_dmg_min = 0;
+	_ammo = "";
 }
 
 Weapon::Weapon(const Weapon& w): Item(w)
@@ -45,6 +46,7 @@ Weapon::Weapon(const Weapon& w): Item(w)
 	icon = w.icon;
 	_light_radius = w._light_radius;
 	_destroy_after = w._destroy_after;
+	_ammo = w._ammo;
 }
 
 // Weapon& Weapon::operator=(const Weapon& w)
