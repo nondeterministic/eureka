@@ -12,5 +12,5 @@ Armour["platemail"]  = {
    protection   = 4,
    weight       = 5,
    icon         = 646,
-   gold         = 5
+   gold         = 10
 }

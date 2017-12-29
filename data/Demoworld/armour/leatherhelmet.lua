@@ -3,14 +3,14 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Armour["small metal helmet"]  = { 
-   name         = "small metal helmet", 
-   plural_name  = "small metal helmets",
+Armour["leather helmet"]  = { 
+   name         = "leather helmet", 
+   plural_name  = "leather helmets",
    is_helmet    = true,
    is_gloves    = false,
    is_shoes     = false,
    protection   = 1,
    weight       = 1,
-   icon         = 643,
+   icon         = 641,
    gold         = 5
 }

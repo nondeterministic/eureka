@@ -652,10 +652,10 @@
       <icon no="640" trans="full" walk="full">a door sign</icon>
       <icon no="641" trans="full" walk="full">a leather helmet</icon>
       <icon no="642" trans="full" walk="full">a spiked helmet</icon>
-      <icon no="643" trans="full" walk="full">a helmet</icon>
-      <icon no="644" trans="full" walk="full">a leather armour</icon>
-      <icon no="645" trans="full" walk="full">a chainmail</icon>
-      <icon no="646" trans="full" walk="full">a platemail</icon>
+      <icon no="643" trans="full" walk="full" default_lua_name="armour::small metal helmet">a small helmet</icon>
+      <icon no="644" trans="full" walk="full" default_lua_name="armour::leather armour">a leather armour</icon>
+      <icon no="645" trans="full" walk="full" default_lua_name="armour::chainmail">a chainmail</icon>
+      <icon no="646" trans="full" walk="full" default_lua_name="armour::platemail">a platemail</icon>
       <icon no="647" trans="full" walk="full" default_lua_name="shields::large wooden shield">a large wooden shield</icon>
       <icon no="648" trans="full" walk="full" default_lua_name="shields::big metal shield">a large metal shield</icon>
       <icon no="649" trans="full" walk="full">nothing special</icon>
