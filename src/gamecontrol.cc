@@ -2272,7 +2272,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			arena->moving(false);
 
 			// Check if poison, magic field, fire, etc. was entered and act accordingly.
-			bool somebody_hurt = party->walk_through_magic_field(get_forcefieldstrength(party->x + x_diff, party->y + y_diff));
+			bool somebody_hurt = party->walk_through_magic_field(get_forcefieldstrength(party->x, party->y));
 			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
 				_sample.play_predef(HIT);
