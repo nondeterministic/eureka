@@ -28,7 +28,7 @@
 #include "armour.hh"
 #include "race.hh"
 #include "spellsbearer.hh"
-#include "creature.hh"
+// #include "creature.hh"
 
 using namespace std;
 

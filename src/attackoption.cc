@@ -27,6 +27,7 @@
 #include "miniwin.hh"
 #include "console.hh"
 #include "gold.hh"
+#include "creature.hh"
 
 extern "C"
 {
@@ -92,7 +93,10 @@ void AttackOption::execute(Combat* combat)
 
 	if (wep != NULL && opponent->distance() <= wep->range()) {
 		stringstream ss;
-		ss << _player->name() + " swings the " + wep->name() + " at " << opponent->name();
+		if (wep->range() <= 10)
+			ss << _player->name() << " swings the " << wep->name() <<  " at " << opponent->name();
+		else
+			ss << _player->name() << " attacks " << opponent->name() << " using a" << (Util::vowel(wep->name()[0])? "n " : " ") <<  wep->name() << " ";
 
 		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
 

@@ -1246,11 +1246,19 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 				std::string selected_item_name = selected_item->name();
 
 				if (WeaponHelper::existsInLua(selected_item_name, _lua_state)) {
-					if (player->weapon() != NULL)
-						party->inventory()->add(player->weapon());
-					// This first creates a new weapon by reserving memory for it
 					Weapon* weapon = WeaponHelper::createFromLua(selected_item_name, _lua_state);
-					player->set_weapon(weapon);
+
+					if (player->weapon() != NULL) {
+						printcon("Yielding " + player->weapon()->name());
+						party->inventory()->add(player->weapon());
+					}
+
+					if (weapon->hands() == 2 && player->shield() != NULL) {
+						printcon("Yielding " + player->shield()->name());
+						party->inventory()->add(player->shield());
+						player->set_shield(NULL);
+					}
+
 					// ...and now we are freeing memory for a weapon with the same name in the inventory.
 					// A tad bit complicated, perhaps, but not overly difficult to understand.
 					// Besides, it makes it very explicit what is going on, and I like that.
@@ -1258,13 +1266,24 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 					// which removes the weapon from the inventory list and returns its pointer so that the
 					// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
 					party->inventory()->remove(weapon->name(), weapon->description());
+					player->set_weapon(weapon);
 				}
 				else if (ShieldHelper::existsInLua(selected_item_name, _lua_state)) {
-					if (player->shield() != NULL)
-						party->inventory()->add(player->shield());
 					Shield* shield = ShieldHelper::createFromLua(selected_item_name, _lua_state);
-					player->set_shield(shield);
+
+					if (player->shield() != NULL) {
+						printcon("Yielding " + player->shield()->name());
+						party->inventory()->add(player->shield());
+					}
+
+					else if (player->weapon()->hands() == 2 && player->weapon() != NULL) {
+						printcon("Yielding " + player->weapon()->name());
+						party->inventory()->add(player->weapon());
+						player->set_weapon(NULL);
+					}
+
 					party->inventory()->remove(shield->name(), shield->description());
+					player->set_shield(shield);
 				}
 				else if (ArmourHelper::existsInLua(selected_item_name, _lua_state)) {
 					Armour* armour = ArmourHelper::createFromLua(selected_item_name, _lua_state);

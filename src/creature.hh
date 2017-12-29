@@ -20,9 +20,11 @@
 #ifndef __CREATURE_HH
 #define __CREATURE_HH
 
-#include "gamecharacter.hh"
 #include <string>
+
 #include <SDL2/SDL.h>
+
+#include "gamecharacter.hh"
 
 class Creature : public GameCharacter
 {
