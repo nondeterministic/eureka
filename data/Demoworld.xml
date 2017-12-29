@@ -575,8 +575,8 @@
       <icon no="563" trans="full" walk="full">nothing special</icon>
       <icon no="564" trans="full" walk="full">nothing special</icon>
       <icon no="565" trans="full" walk="full">nothing special</icon>
-      <icon no="566" trans="full" walk="full">a sling</icon>
-      <icon no="567" trans="full" walk="full">a arrow</icon>
+      <icon no="566" trans="full" walk="full" default_lua_name="weapons::axe">a sling</icon>
+      <icon no="567" trans="full" walk="full" default_lua_name="weapons::bow">a bow</icon>
       <icon no="568" trans="full" walk="full" default_lua_name="weapons::crossbow">a crossbow</icon>
       <icon no="569" trans="full" walk="full">a wand</icon>
       <icon no="570" trans="full" walk="full">a glasswand</icon>
@@ -631,7 +631,7 @@
       <icon no="619" trans="full" walk="full" default_lua_name="weapons::magic sword blue">a blue magic sword</icon>
       <icon no="620" trans="full" walk="full" default_lua_name="weapons::magic sword fire">a magic fire sword</icon>
       <icon no="621" trans="full" walk="full" default_lua_name="weapons::magic sword fire">a magic fire sword</icon>
-      <icon no="622" trans="full" walk="full">a horned helmet</icon>
+      <icon no="622" trans="full" walk="full" default_lua_name="armour::horned helmet">a horned helmet</icon>
       <icon no="623" trans="full" walk="full" default_lua_name="shields::small shield">a small shield</icon>
       <icon no="624" trans="full" walk="full">nothing special</icon>
       <icon no="625" trans="not" walk="not">a stone wall</icon>
@@ -650,8 +650,8 @@
       <icon no="638" trans="full" walk="full">a door sign</icon>
       <icon no="639" trans="full" walk="full">a door sign</icon>
       <icon no="640" trans="full" walk="full">a door sign</icon>
-      <icon no="641" trans="full" walk="full">a leather helmet</icon>
-      <icon no="642" trans="full" walk="full">a spiked helmet</icon>
+      <icon no="641" trans="full" walk="full" default_lua_name="armour::leather helmet">a leather helmet</icon>
+      <icon no="642" trans="full" walk="full" default_lua_name="armour::metal helmet">a helmet</icon>
       <icon no="643" trans="full" walk="full" default_lua_name="armour::small metal helmet">a small helmet</icon>
       <icon no="644" trans="full" walk="full" default_lua_name="armour::leather armour">a leather armour</icon>
       <icon no="645" trans="full" walk="full" default_lua_name="armour::chainmail">a chainmail</icon>

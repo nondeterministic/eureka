@@ -38,7 +38,7 @@ public:
 
 	MapObj get_obj();
 	void set_obj(MapObj);
-	std::string luaName();
+	std::string get_lua_name();
 	bool has_mapobj();
 };
 

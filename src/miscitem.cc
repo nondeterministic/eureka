@@ -38,7 +38,7 @@ MiscItem::MiscItem(const MiscItem& m): Item(m)
 	std::cout << "DEEP COPY OF MISCITEM\n";
 }
 
-std::string MiscItem::luaName()
+std::string MiscItem::get_lua_name()
 {
 	return "miscitems::" + name();
 }
