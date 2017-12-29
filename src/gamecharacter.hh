@@ -129,6 +129,7 @@ public:
   RACE race();
   void set_race(RACE);
   int armour_class();
+  int base_ac();
 };
 
 #endif

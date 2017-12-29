@@ -327,7 +327,7 @@ void GameCharacter::set_condition(PlayerCondition nc)
 	_condition = nc;
 }
 
-int GameCharacter::armour_class()
+int GameCharacter::base_ac()
 {
 	int ac = 0;
 
@@ -351,5 +351,10 @@ int GameCharacter::armour_class()
 		std::cerr << "Error: No armour class defined for " << race() << std::endl;
 	}
 
-	return GameRules::armour_class(ac, dxt(), shield(), armour());
+	return ac;
+}
+
+int GameCharacter::armour_class()
+{
+	return GameRules::armour_class(this);
 }
