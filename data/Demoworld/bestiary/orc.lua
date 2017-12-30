@@ -27,8 +27,7 @@ do
    local player_name = "" -- Name of party member who is attacked
 
    function create_instance()
-      hp_max   = 1
-      -- hp_max   = simpl_rand(5, 14) + 4
+      hp_max   = simpl_rand(5, 14)
       hp       = hp_max
       weapon   = Weapons.axe
       strength = simpl_rand(5, 14) + 4

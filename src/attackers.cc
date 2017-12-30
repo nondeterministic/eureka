@@ -52,7 +52,7 @@ Attackers::Attackers(const Attackers& a)
 		_enemies_count[ec.first] = ec.second;
     }
 
-	std::cout << "ATTACKERS DEEP COPY MOTHERFUCKER!\n";
+	std::cout << "ATTACKERS DEEP COPY OF " << a.size() << " MOTHERFUCKER!\n";
 }
 
 // Gets n-th enemy in the vector.

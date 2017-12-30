@@ -28,13 +28,16 @@ do
    local attacked_players = {} -- Names of party members who are attacked
 
    function create_instance()
-      hp_max   = 1
-      -- hp_max   = simpl_rand(5, 14) + 4
+      hp_max   = simpl_rand(5, 15) + 5
       hp       = hp_max
-      weapon   = Weapons.axe
-      strength = simpl_rand(5, 14) + 4
+      if (simpl_rand(1,2) == 2) then
+	 weapon   = Weapons["double-sided axe"]
+      else
+	 weapon   = Weapons["mace"]
+      end
+      strength = simpl_rand(5, 15) + 5
       luck     = simpl_rand(5, 12)
-      gold     = simpl_rand(1, 2)  -- An Orc may carry up to 2 gold coins
+      gold     = simpl_rand(5, 10)
    end
 
    function set_combat_ptr(ptr, number)

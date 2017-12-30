@@ -27,13 +27,12 @@ do
    local player_name = "" -- Name of party member who is attacked
 
    function create_instance()
-      hp_max   = 1
-      -- hp_max   = simpl_rand(5, 14) + 4
+      hp_max   = simpl_rand(5, 15) + 5
       hp       = hp_max
       weapon   = nil
       strength = simpl_rand(5, 14) + 4
       luck     = simpl_rand(5, 12)
-      gold     = simpl_rand(1, 2)  -- An Orc may carry up to 2 gold coins
+      gold     = 0
    end
 
    function set_combat_ptr(ptr, number)

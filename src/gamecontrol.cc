@@ -1721,6 +1721,7 @@ void GameControl::keypress_attack()
 					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
 						get_map()->pop_obj_animate(the_obj.get_coords());
 						redraw_graphics_status(true);
+						return;
 					}
 					return;
 				}
@@ -1730,20 +1731,8 @@ void GameControl::keypress_attack()
 				}
 			}
 			else if (the_obj.get_type() == MAPOBJ_MONSTER) {
-				// We initiate fresh combat
-				if (the_obj.get_combat_script_path().length() > 0) {
-					Combat combat;
-					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
-					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
-						get_map()->pop_obj_animate(the_obj.get_coords());
-						redraw_graphics_status(true);
-						return;
-					}
-					the_obj.set_foes(combat.get_foes());
-					return;
-				}
 				// We have foes from previous attack left, so do not initiate fresh combat
-				else if (the_obj.get_foes().size() > 0) {
+				if (the_obj.get_foes().size() > 0) {
 					Combat combat;
 					combat.set_foes(the_obj.get_foes());
 					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
@@ -1751,6 +1740,20 @@ void GameControl::keypress_attack()
 						redraw_graphics_status(true);
 						return;
 					}
+					// get_map()->get_objs(the_obj.get_coords())[0]->set_foes(combat.get_foes());
+					the_obj.set_foes(combat.get_foes());
+					return;
+				}
+				// We initiate fresh combat
+				else if (the_obj.get_combat_script_path().length() > 0) {
+					Combat combat;
+					combat.create_monsters_from_combat_path(the_obj.get_combat_script_path());
+					if (combat.initiate() == Combat_Return_Codes::VICTORY) {
+						get_map()->pop_obj_animate(the_obj.get_coords());
+						redraw_graphics_status(true);
+						return;
+					}
+					// get_map()->get_objs(the_obj.get_coords())[0]->set_foes(combat.get_foes());
 					the_obj.set_foes(combat.get_foes());
 					return;
 				}
