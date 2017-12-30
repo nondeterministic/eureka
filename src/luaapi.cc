@@ -725,14 +725,14 @@ int l_get_player_is_alive(lua_State* L)
 
 int l_get_player_ac(lua_State* L)
 {
-  std::string player_name = (std::string)(lua_tostring(L, 1));
-  PlayerCharacter* player = Party::Instance().get_player(player_name);
-  if (player == NULL) {
-    std::cerr << "ERROR: luaapi.cc: no player named " << player_name << " found.\n";
-    exit(EXIT_FAILURE);
-  }
-  lua_pushnumber(L, player->armour_class());
-  return 1;
+	std::string player_name = (std::string)(lua_tostring(L, 1));
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+	if (player == NULL) {
+		std::cerr << "ERROR: luaapi.cc: no player named " << player_name << " found.\n";
+		exit(EXIT_FAILURE);
+	}
+	lua_pushnumber(L, player->armour_class());
+	return 1;
 }
 
 int l_player_set_condition(lua_State* L)

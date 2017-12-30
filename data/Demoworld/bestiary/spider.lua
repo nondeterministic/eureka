@@ -133,8 +133,8 @@ do
 
    function attack()
       if (get_hp() < get_hp_max() / 100 * 20) then
-	 	flee()
-	 	return false
+	 flee()
+	 return false
       end
 
       player_name = simpl_rand_player(1) -- Get exactly 1 random player to be attacked
@@ -144,7 +144,7 @@ do
       
       if (attack_successful == false) then
       	 simpl_printcon(string.format("A %s tries to ram its venomous fangs into %s, but misses.", 
-      				                   get_name(), player_name), true)
+				       get_name(), player_name), true)
       end
 		     
       return attack_successful
@@ -159,7 +159,7 @@ do
 
       damage = simpl_rand(2, 5)
       simpl_printcon(string.format("A %s rams its venomous fangs into %s and hits for %d points of damage, poisoning %s.",
-    				                get_name(), player_name, damage, player_name), true)
+				   get_name(), player_name, damage, player_name), true)
     				                
       simpl_player_change_hp(player_name, -damage)
       simpl_set_player_condition(player_name, "POISONED")

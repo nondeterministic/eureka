@@ -333,19 +333,19 @@ int GameCharacter::base_ac()
 
 	switch (race()) {
 	case HUMAN:
-		ac = 13;
+		ac = 16;
 		break;
 	case ELF:
-		ac = 11;
+		ac = 14;
 		break;
 	case HOBBIT:
-		ac = 11;
+		ac = 14;
 		break;
 	case HALF_ELF:
-		ac = 11;
+		ac = 14;
 		break;
 	case DWARF:
-		ac = 14;
+		ac = 17;
 		break;
 	default:
 		std::cerr << "Error: No armour class defined for " << race() << std::endl;

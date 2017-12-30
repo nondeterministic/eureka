@@ -6,13 +6,13 @@
 int GameRules::bonus(int value)
 {
 	if (value >= 19)
-		return 4;
-	else if (value >= 17)
 		return 3;
-	else if (value >= 15)
+	else if (value >= 17)
 		return 2;
-	else if (value >= 12)
+	else if (value >= 15)
 		return 1;
+	else if (value >= 12)
+		return 0;
 	else if (value <= 3)
 		return -3;
 	else if (value <= 5)
