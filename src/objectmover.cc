@@ -24,11 +24,12 @@ void ObjectMover::move()
 		return;
 
 	std::vector<std::pair<int,int>> moved_objects_coords;
+	std::vector<std::pair<int,int>> blocked_locations;
 
 	// First calculate new positions for objects and store them in moved_objects_coords.
 	for (auto map_obj_pair = gc->get_arena()->get_map()->objs()->begin(); map_obj_pair != gc->get_arena()->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
-		do_actual_moving(map_obj, moved_objects_coords);
+		do_actual_moving(map_obj, moved_objects_coords, blocked_locations);
 	}
 
 	// Now do the actual moving of objects.
@@ -49,7 +50,7 @@ void ObjectMover::move()
  * maybe not so super nice, but ok for now, as method is private and only called once from here.
  */
 
-void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,int>>& moved_objects_coords)
+void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,int>>& moved_objects_coords, std::vector<std::pair<int,int>>& blocked_locations)
 {
 	int x_off = 0, y_off = 0;
 	unsigned obj_x, obj_y;
@@ -83,7 +84,8 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 		{
 			// Now check "walkability properties" of icon in detail...
 			if (gc->walkable(obj_x + x_off, obj_y + y_off) &&
-				std::find(moved_objects_coords.begin(), moved_objects_coords.end(), std::make_pair<int,int>(obj_x + x_off, obj_y + y_off)) == moved_objects_coords.end())
+				std::find(moved_objects_coords.begin(), moved_objects_coords.end(), std::make_pair<int,int>(obj_x + x_off, obj_y + y_off)) == moved_objects_coords.end() &&
+				std::find(blocked_locations.begin(), blocked_locations.end(), std::make_pair<int,int>(obj_x + x_off, obj_y + y_off)) == blocked_locations.end())
 			{
 				int icon = gc->get_arena()->get_map()->get_tile(obj_x + x_off, obj_y + y_off);
 				IconProps* icon_props = IndoorsIcons::Instance().get_props(icon);
@@ -91,6 +93,7 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 				if (gc->get_forcefieldstrength(obj_x + x_off, obj_y + y_off) == PropertyStrength::None && icon_props->_poisonous == PropertyStrength::None) {
 					map_obj->set_coords(obj_x + x_off, obj_y + y_off);
 					moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+					blocked_locations.push_back(std::make_pair(obj_x + x_off, obj_y + y_off));
 				}
 			}
 		}
@@ -114,15 +117,14 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 		if ((obj_x != new_coords.first || obj_y != new_coords.second) &&                       // If coordinates changed...
 				((int)new_coords.first != party->x || (int)new_coords.second != party->y))     // If new coordinates aren't those of the party...
 		{
-			int icon = gc->get_arena()->get_map()->get_tile(new_coords.first, new_coords.second);
-			// IconProps* icon_props = IndoorsIcons::Instance().get_props(icon);
-
 			// We need to check again for walkability, as other objects may have moved to this position in the same round...
 			if (gc->walkable(new_coords.first, new_coords.second) &&
 				gc->get_forcefieldstrength(new_coords.first, new_coords.second) == PropertyStrength::None &&
-				std::find(moved_objects_coords.begin(), moved_objects_coords.end(), std::make_pair((int)(obj_x), (int)(obj_y))) == moved_objects_coords.end())
+				std::find(blocked_locations.begin(), blocked_locations.end(), std::make_pair<int,int>(new_coords.first, new_coords.second)) == blocked_locations.end() &&
+				std::find(moved_objects_coords.begin(), moved_objects_coords.end(), std::make_pair<int,int>(new_coords.first, new_coords.second)) == moved_objects_coords.end())
 			{
 				moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
+				blocked_locations.push_back(std::make_pair(new_coords.first, new_coords.second));
 				map_obj->set_coords(new_coords.first, new_coords.second);
 			}
 		}
@@ -156,6 +158,7 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 			}
 		}
 
+		blocked_locations.push_back(std::make_pair((int)obj_x + best_x, (int)obj_y + best_y));
 		moved_objects_coords.push_back(std::make_pair(obj_x, obj_y));
 		map_obj->set_coords((int)obj_x + best_x, (int)obj_y + best_y);
 	}

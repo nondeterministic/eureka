@@ -201,7 +201,7 @@ do
 	       simpl_player_change_hp(k, -damage)
 	       simpl_notify_party_hit()
 	    else
-	       simpl_printcon(string.format("%s, who was targetted, managed to evade the attack.", k), true)
+	       simpl_printcon(string.format("%s, who was directly targetted, managed to evade the attack.", k), true)
 	    end
 	 end
       end

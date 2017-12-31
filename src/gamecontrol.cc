@@ -607,7 +607,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				// If there are hostile monsters next to the party, they may want to attack now...
 				get_attacked();
 
-				// Create random monsters in dungeons
+				// TODO: HACK: Create random monsters in dungeons
 				// create_random_monsters_in_dungeon();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
@@ -2095,22 +2095,20 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 
 		// But don't walk over monsters...
 		if (icon_is_walkable) {
-			auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
-			if (found_obj.first != found_obj.second) {
-				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
-					MapObj& map_obj = curr_obj->second;
-					IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+			auto found_objs = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
+				MapObj& map_obj = curr_obj->second;
+				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
 
-					if (icon_props->_is_walkable == PropertyStrength::None)
-						return false;
+				if (icon_props->_is_walkable == PropertyStrength::None)
+					return false;
 
-					if (map_obj.get_type() == MAPOBJ_MONSTER)
-						return false;
-					else if (map_obj.get_type() == MAPOBJ_ANIMAL)
-						return false;
-					else if (map_obj.get_type() == MAPOBJ_PERSON)
-						return false;
-				}
+				if (map_obj.get_type() == MAPOBJ_MONSTER)
+					return false;
+				else if (map_obj.get_type() == MAPOBJ_ANIMAL)
+					return false;
+				else if (map_obj.get_type() == MAPOBJ_PERSON)
+					return false;
 			}
 		}
 		else if (the_walker == Whole_Party) {

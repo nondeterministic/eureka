@@ -19,7 +19,7 @@ public:
 	void move();
 
 private:
-	void do_actual_moving(MapObj*, std::vector<std::pair<int,int>>&);
+	void do_actual_moving(MapObj*, std::vector<std::pair<int,int>>&, std::vector<std::pair<int,int>>&);
 };
 
 #endif
