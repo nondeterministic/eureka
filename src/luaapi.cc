@@ -1145,6 +1145,7 @@ int l_magic_attack(lua_State* L)
 
 	// Get Lua parameters; see attack spell script.
 	int  targets             = lua_tonumber(L, 1);
+	std::cout << "TARGETS: " << targets << "\n";
 	bool attack_whole_group  = lua_toboolean(L, 2);
 	int  resistance          = lua_tonumber(L, 3);
 	int  range               = lua_tonumber(L, 4);
@@ -1160,72 +1161,75 @@ int l_magic_attack(lua_State* L)
     PlayerCharacter* player = Party::Instance().get_player(caster);
 
 	// Get the monster that is to be attacked this round
-	Creature* opponent = NULL;
-	int opponent_offset = 0;
+	std::vector<std::pair<Creature*, int>> opponents;
+	// int opponent_offset = 0;
 
 	int j = 1;
-	for (auto foe : *(combat->get_foes().count())) {
+	for (auto foe_group : *(combat->get_foes().count())) {
 		if (j == targets) {
 			int k = 0;
-			for (auto _foe = combat->get_foes().begin(); _foe != combat->get_foes().end(); _foe++, k++) {
-				if (foe.first == (*_foe)->name()) {
-					opponent = _foe->get(); // Opponent now points to the monster to be attacked
-					opponent_offset = k;
-					break;
+			for (auto curr_foe = combat->get_foes().begin(); curr_foe != combat->get_foes().end(); curr_foe++, k++) {
+				if (foe_group.first == (*curr_foe)->name()) {
+					opponents.push_back(std::make_pair(curr_foe->get(), k)); // Opponent now points to the monster to be attacked
+					// opponent_offset = k;
+					if (!attack_whole_group)
+						break;
 				}
 			}
 		}
 		j++;
 	}
 
-	if (opponent == NULL) {
-		std::cerr << "ERROR: luaapi.cc: opponent == null (No monster to attack.)\n";
+	if (opponents.size() == 0) {
+		std::cerr << "ERROR: luaapi.cc: opponents.size() == 0. No monsters to attack.\n";
 		return 0;
 	}
 
-	if (opponent->distance() <= range) {
-		stringstream ss;
+	for (auto opponent: opponents) {
+		if (opponent.first->distance() <= range) {
+			stringstream ss;
 
-		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
+			int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
 
-		if (GameControl::Instance().random(1, 20) > temp_AC) {
-			LuaWrapper lua(L);
+			if (GameControl::Instance().random(1, 20) > temp_AC) {
+				LuaWrapper lua(L);
 
-			if (opponent->hp() - damage > 0) {
-				ss << player->name() << " casts a spell, causing the " << opponent->name() << " " << damage << " points of damage.";
-				opponent->set_hp(opponent->hp() - damage);
-				lua.push_fn_arg((double)(opponent->hp() - damage));
-				lua.call_void_fn("set_hp");
+				if (opponent.first->hp() - damage > 0) {
+					ss << player->name() << " casts a spell, causing the " << opponent.first->name() << " " << damage << " points of damage.";
+					opponent.first->set_hp(opponent.first->hp() - damage);
+					lua.push_fn_arg((double)(opponent.first->hp() - damage));
+					lua.call_void_fn("set_hp");
 
+					MiniWin::Instance().alarm();
+					sample.play_predef(FOE_HIT);
+				}
+				else {
+					ss << player->name() << " casts a spell, killing the " << opponent.first->name() << ".";
+					combat->get_foes().remove(opponent.second); // opponent_offset);
+
+					// Add experience points to player's balance
+					player->inc_ep(lua.call_fn<double>("get_ep"));
+
+					MiniWin::Instance().alarm();
+					sample.play_predef(FOE_HIT);
+
+					// Now add monster's items to bounty items to be collected
+					// by party in case of battle victory.
+					if (opponent.first->weapon() != NULL)
+						combat->add_to_bounty(opponent.first->weapon());
+
+					// Add monster's gold
+					int gold_coins = lua.call_fn<double>("get_gold");
+					for (int ii = 0; ii < gold_coins; ii++)
+						combat->add_to_bounty(new Gold());
+				}
+				GameControl::Instance().printcon(ss.str(), true);
 				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT);
 			}
 			else {
-				ss << player->name() << " casts a spell, killing the " << opponent->name() << ".";
-			    combat->get_foes().remove(opponent_offset);
-
-				// Add experience points to player's balance
-				player->inc_ep(lua.call_fn<double>("get_ep"));
-
-				MiniWin::Instance().alarm();
-				sample.play_predef(FOE_HIT);
-
-				// Now add monster's items to bounty items to be collected
-				// by party in case of battle victory.
-				if (opponent->weapon() != NULL)
-					combat->add_to_bounty(opponent->weapon());
-
-				// Add monster's gold
-				int gold_coins = lua.call_fn<double>("get_gold");
-				for (int ii = 0; ii < gold_coins; ii++)
-					combat->add_to_bounty(new Gold());
+				ss << player->name() << " casts a spell, but misses.";
+				GameControl::Instance().printcon(ss.str(), true);
 			}
-		    GameControl::Instance().printcon(ss.str(), true);
-			MiniWin::Instance().alarm();
-		}
-		else {
-			ss << player->name() << " casts a spell, but misses.";
-			GameControl::Instance().printcon(ss.str(), true);
 		}
 	}
 
