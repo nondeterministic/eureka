@@ -1145,7 +1145,7 @@ int l_magic_attack(lua_State* L)
 
 	// Get Lua parameters; see attack spell script.
 	int  targets             = lua_tonumber(L, 1);
-	bool attack_whole_group  = lua_tonumber(L, 2) == 1? true : false;
+	bool attack_whole_group  = lua_toboolean(L, 2);
 	int  resistance          = lua_tonumber(L, 3);
 	int  range               = lua_tonumber(L, 4);
 	int  damage              = lua_tonumber(L, 5);
