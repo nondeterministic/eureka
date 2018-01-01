@@ -1628,8 +1628,6 @@ void GameControl::create_random_monsters_in_dungeon()
 
 void GameControl::get_attacked()
 {
-	return;
-
 	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 		unsigned obj_x, obj_y;
