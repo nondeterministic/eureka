@@ -10,9 +10,9 @@ do
    local hp          = 0
    local hp_max      = 0
    local weapon
-   local strength    = 0
-   local luck        = 0
-   local dxt         = 0
+   local strength    = 12
+   local luck        = 6
+   local dxt         = 6
    local distance    = 0
    local gold        = 0
    local ep          = 10

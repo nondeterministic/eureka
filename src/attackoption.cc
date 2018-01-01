@@ -28,6 +28,7 @@
 #include "console.hh"
 #include "gold.hh"
 #include "creature.hh"
+#include "gamerules.hh"
 
 extern "C"
 {
@@ -110,9 +111,11 @@ void AttackOption::execute(Combat* combat)
 			}
 		}
 
-		int temp_AC = 10; // TODO: Replace this with the actual AC of opponent!  This AC needs to be computed from weapons, dex, etc.
+		// TODO: Check if this works, determining the opponents right AC, etc.!
+		int  enemy_ac     = GameRules::armour_class(opponent);
+		bool enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac;
 
-		if (random(1, 20) > temp_AC) {
+		if (enemy_is_hit) {
 			int damage = random(wep->dmg_min(), wep->dmg_max());
 			ss << " and hits for " << damage << " points of damage.";
 			if (opponent->hp() - damage > 0) {

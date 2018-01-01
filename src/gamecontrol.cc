@@ -607,8 +607,8 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				// If there are hostile monsters next to the party, they may want to attack now...
 				get_attacked();
 
-				// TODO: HACK: Create random monsters in dungeons
-				// create_random_monsters_in_dungeon();
+				// Create random monsters in dungeons
+				create_random_monsters_in_dungeon();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
 				arena->show_map(get_viewport().first, get_viewport().second);
@@ -1554,7 +1554,7 @@ void GameControl::create_random_monsters_in_dungeon()
 
 	std::cout << "RANDOM MONSTERS CURRENTLY: " << rand_monster_count << "\n";
 
-	if (rand_monster_count >= 3)
+	if (rand_monster_count >= 2)
 		return;
 
 	const int min_distance_to_party = 7; // Monsters should not directly pop up next to the party
@@ -1574,7 +1574,7 @@ void GameControl::create_random_monsters_in_dungeon()
 
 						// Determine type of monster using Lua
 						LuaWrapper lua(_lua_state);
-						lua.push_fn_arg((std::string)"plain"); // TODO: Replace with dungeon here and in Lua defs.lua file!!
+						lua.push_fn_arg(std::string("dungeon"));
 						lua.call_fn_leave_ret_alone("rand_encounter");
 
 						// Iterate through result table (see also combat.cc for where I originally copied this more or less from)

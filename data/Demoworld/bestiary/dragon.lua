@@ -10,13 +10,13 @@ do
    local hp          = 0
    local hp_max      = 0
    local weapon      = nil
-   local strength    = 0
-   local luck        = 0
-   local dxt         = 0
+   local strength    = 25
+   local luck        = 18
+   local dxt         = 15
    local distance    = 0
    local gold        = 10
    local ep          = 18
-   local sp          = 20
+   local sp          = 40
    
    local name        = "Dragon"
    local plural_name = "Dragons"

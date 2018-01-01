@@ -145,7 +145,9 @@
     <object x="8" y="15" ox="0" oy="0" icon_no="583" layer="0" id="scroll1" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
         <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
-          <event type="EVENT_PRINTCON">The rotten note reads: Attempted to find and rescue those taken. Have been trapped by enormous spider in here. Will probably not make it out alive. Revenge me and rescue those still locked up in here!</event>
+          <event type="EVENT_PRINTCON">
+	    The rotten note reads: Attempted to find and rescue those taken. Have been trapped by enormous spider in here. Will probably not make it out alive. To whom that reads this: I have hidden my holy weapon south of the stream in this cave. Without it, the battle will almost be impossible to win. May you find it well! Good luck and Godspeed!
+	  </event>
         </action>
       </actions>
     </object>
