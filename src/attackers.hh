@@ -43,6 +43,7 @@ public:
   ~Attackers();
   Attackers(const Attackers&);
   void remove(int);
+  void remove(std::vector<int>&);
   const std::vector<std::shared_ptr<Creature>>* get();
   Creature* get(int number);
   void add(std::shared_ptr<Creature>);

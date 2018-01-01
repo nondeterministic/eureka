@@ -64,8 +64,6 @@ do
    end
 
    function do_attack(param)
-      print("Targets3: " .. targets)      
-      print("Targets4: " .. param.targets)      
       simpl_magic_attack(param.targets,
 			 param.attack_whole_group, 
 			 param.resistance, 
@@ -95,7 +93,6 @@ do
       simpl_set_combat_ptr(combat_ptr)  -- This is crucial, if we want to know any attributes of our attackers!
       
       targets = simpl_choose_monster()
-      print("Targets: " .. targets)
       
       if (targets < 0) then
 	 simpl_printcon("Changed your mind then?")
@@ -113,7 +110,6 @@ do
 	 damage  = simpl_rand(2, 12)
 	 
 	 -- simpl_printcon(string.format("%s casts a magic arrow spell, causing the %s %d points of damage.", caster, name, damage), true)
-	 print("Targets2: " .. targets)
          
          do_attack{
 	    targets = targets,

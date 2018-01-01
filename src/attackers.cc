@@ -55,16 +55,15 @@ Attackers::Attackers(const Attackers& a)
 	std::cout << "ATTACKERS DEEP COPY OF " << a.size() << " MOTHERFUCKER!\n";
 }
 
-// Gets n-th enemy in the vector.
-// You will not like calling this, when n > _enemies.size().
+/// Gets n-th enemy in the vector.
+/// You will not like calling this, when n > _enemies.size().
 
 Creature* Attackers::get(int n)
 {
 	return _enemies[n].get();
 }
 
-// Returns pointer to creature at distance, distance, or NULL if no
-// creature is at distance, distance.
+/// Returns pointer to creature at distance, distance, or NULL if no creature is at distance, distance.
 
 Creature* Attackers::get_attacker(int distance)
 {
@@ -76,11 +75,11 @@ Creature* Attackers::get_attacker(int distance)
 	return NULL;
 }
 
-// Removes an enemy at position enemies_offset from the
-// _enemies-vector.  
-// 
-// This function as another very noticable SIDEFFECT: It also adjusts
-// the _enemies_count hash map.  Be mindful of that!
+/// Removes an enemy at position enemies_offset from the
+/// _enemies-vector.
+///
+/// This function as another very noticable SIDEFFECT: It also adjusts
+/// the _enemies_count hash map.  Be mindful of that!
 
 void Attackers::remove(int enemies_offset)
 {
@@ -104,7 +103,33 @@ void Attackers::remove(int enemies_offset)
 	}
 }
 
-// Returns the distance of monster with name single_name (e.g., "Orc")
+/// Like remove(int), but with a vector, so that multiple enemies can be removed at once.
+
+void Attackers::remove(std::vector<int>& enemies_offsets)
+{
+	std::sort(enemies_offsets.begin(), enemies_offsets.end());
+
+	for (int i = enemies_offsets.size() - 1; i >= 0; i--) {
+		std::string erased_name = _enemies.at(enemies_offsets[i])->name();
+
+		for (auto e = _enemies_count.begin(); e != _enemies_count.end(); e++) {
+			if (e->first == erased_name) {
+				if (e->second > 1) {
+					e->second--;
+					break;
+				}
+				else {
+					_enemies_count.erase(e);
+					break;
+				}
+			}
+		}
+
+		_enemies.erase(_enemies.begin() + enemies_offsets[i]);
+	}
+}
+
+/// Returns the distance of monster with name single_name (e.g., "Orc")
 
 int Attackers::get_distance(const string& single_name)
 {
@@ -114,12 +139,13 @@ int Attackers::get_distance(const string& single_name)
 			return c->distance();
 		}
 	}
+	std::cerr << "ERROR: attackers.cc: get_distance(" << single_name << ") failed. No such monster?!\n";
 	throw single_name + " cannot compute distance.";
 }
 
-// Example: single_name = Orc -> Orcs
-// 
-// TODO: This function is REALLY inefficient!
+/// Example: single_name = Orc -> Orcs
+///
+/// TODO: This function is REALLY inefficient!
 
 std::string Attackers::get_plural_name(const string& single_name)
 {
@@ -146,9 +172,9 @@ const std::vector< std::shared_ptr<Creature> >* Attackers::get()
 	return &_enemies;
 }
 
-// Returns a hash map that contains the distances of all monsters
-// groupwise.  E.g., if 5 Orks at 50" and 3 Trolls at 30" attack, then
-// the table will look like: < <50, Ork>, <30, Troll> >.
+/// Returns a hash map that contains the distances of all monsters
+/// groupwise.  E.g., if 5 Orks at 50" and 3 Trolls at 30" attack, then
+/// the table will look like: < <50, Ork>, <30, Troll> >.
 
 boost::unordered_map<int, std::string> Attackers::distances()
 {

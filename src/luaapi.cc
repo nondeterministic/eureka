@@ -1145,7 +1145,6 @@ int l_magic_attack(lua_State* L)
 
 	// Get Lua parameters; see attack spell script.
 	int  targets             = lua_tonumber(L, 1);
-	std::cout << "TARGETS: " << targets << "\n";
 	bool attack_whole_group  = lua_toboolean(L, 2);
 	int  resistance          = lua_tonumber(L, 3);
 	int  range               = lua_tonumber(L, 4);
@@ -1160,9 +1159,8 @@ int l_magic_attack(lua_State* L)
 
     PlayerCharacter* player = Party::Instance().get_player(caster);
 
-	// Get the monster that is to be attacked this round
+	// Get the monster that is to be attacked this round. Second position is specific opponent offset within a group of foes.
 	std::vector<std::pair<Creature*, int>> opponents;
-	// int opponent_offset = 0;
 
 	int j = 1;
 	for (auto foe_group : *(combat->get_foes().count())) {
@@ -1170,8 +1168,7 @@ int l_magic_attack(lua_State* L)
 			int k = 0;
 			for (auto curr_foe = combat->get_foes().begin(); curr_foe != combat->get_foes().end(); curr_foe++, k++) {
 				if (foe_group.first == (*curr_foe)->name()) {
-					opponents.push_back(std::make_pair(curr_foe->get(), k)); // Opponent now points to the monster to be attacked
-					// opponent_offset = k;
+					opponents.push_back(std::make_pair(curr_foe->get(), k)); // Opponent now points to the monster to be attacked. Also store opponent offset in second position!
 					if (!attack_whole_group)
 						break;
 				}
@@ -1185,6 +1182,10 @@ int l_magic_attack(lua_State* L)
 		return 0;
 	}
 
+	GameControl::Instance().printcon(player->name() + " casts a spell...", true);
+	bool spell_targetted_at_least_one_foe = false;
+	std::vector<int> offsets_of_killed_enemies;
+
 	for (auto opponent: opponents) {
 		if (opponent.first->distance() <= range) {
 			stringstream ss;
@@ -1193,9 +1194,10 @@ int l_magic_attack(lua_State* L)
 
 			if (GameControl::Instance().random(1, 20) > temp_AC) {
 				LuaWrapper lua(L);
+				spell_targetted_at_least_one_foe = true;
 
 				if (opponent.first->hp() - damage > 0) {
-					ss << player->name() << " casts a spell, causing the " << opponent.first->name() << " " << damage << " points of damage.";
+					ss << "...causing " << (Util::vowel(opponent.first->name()[0])? "an " : "a ") << opponent.first->name() << " " << damage << " points of damage.";
 					opponent.first->set_hp(opponent.first->hp() - damage);
 					lua.push_fn_arg((double)(opponent.first->hp() - damage));
 					lua.call_void_fn("set_hp");
@@ -1204,8 +1206,8 @@ int l_magic_attack(lua_State* L)
 					sample.play_predef(FOE_HIT);
 				}
 				else {
-					ss << player->name() << " casts a spell, killing the " << opponent.first->name() << ".";
-					combat->get_foes().remove(opponent.second); // opponent_offset);
+					ss << "...killing " << (Util::vowel(opponent.first->name()[0])? "an " : "a ") << opponent.first->name() << ".";
+					offsets_of_killed_enemies.push_back(opponent.second); // Remove specific opponent within a group of foes based on previously determined offset.
 
 					// Add experience points to player's balance
 					player->inc_ep(lua.call_fn<double>("get_ep"));
@@ -1213,8 +1215,7 @@ int l_magic_attack(lua_State* L)
 					MiniWin::Instance().alarm();
 					sample.play_predef(FOE_HIT);
 
-					// Now add monster's items to bounty items to be collected
-					// by party in case of battle victory.
+					// Now add monster's items to bounty items to be collected by party in case of battle victory.
 					if (opponent.first->weapon() != NULL)
 						combat->add_to_bounty(opponent.first->weapon());
 
@@ -1227,11 +1228,18 @@ int l_magic_attack(lua_State* L)
 				MiniWin::Instance().alarm();
 			}
 			else {
-				ss << player->name() << " casts a spell, but misses.";
+				spell_targetted_at_least_one_foe = true;
+				ss << "...but misses " << (Util::vowel(opponent.first->name()[0])? "an " : "a ") << opponent.first->name() << " by just a little bit.";
 				GameControl::Instance().printcon(ss.str(), true);
 			}
 		}
 	}
+
+	// Now remove the killed enemies in one go, so that offsets remain valid.
+	combat->get_foes().remove(offsets_of_killed_enemies);
+
+	if (!spell_targetted_at_least_one_foe)
+		GameControl::Instance().printcon("...but it had no noticeable effect.", true);
 
 	return 0;
 }
