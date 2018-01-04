@@ -1012,6 +1012,27 @@ int l_party_is_outdoors(lua_State* L)
 	return 1;
 }
 
+/// An oversimplifcation for "get time of day" to give bonus to monsters in night attackes,
+/// and bonus to the party in day, attacks for example.  If true is returned, it is day.
+/// If false is returned, it is time for the night bonus.  Not great, but sufficient for now.
+
+int l_is_day(lua_State* L)
+{
+	switch (GameControl::Instance().get_clock()->tod()) {
+	case EARLY_MORNING:
+	case MORNING:
+	case NOON:
+	case AFTERNOON:
+	case EVENING:
+		lua_pushboolean(L, true);
+		break;
+	default:
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 // Item id is on the Lua stack at calling time.  Item will then be removed from the map,
 // because either it died in battle, joined the party, etc.  Map is usually indoors as outdoors,
 // we don't show detailed icon view.
@@ -1496,6 +1517,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_party_is_outdoors);
   lua_setglobal(L, "simpl_party_is_outdoors");
+
+  lua_pushcfunction(L, l_is_day);
+  lua_setglobal(L, "simpl_is_day");
 
   // Lua 5.2 and newer:
   //  static const luaL_Reg methods[] = {

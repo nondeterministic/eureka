@@ -1,11 +1,23 @@
 function plain_encounter()
    -- 5% chance for an encounter in the plain terrain
-   return simpl_rand(1,100) <= 5
+   
+   day_bonus = 10
+   if (not(simpl_is_day())) then
+      day_bonus = 0 -- it is more likely to get attacked at night
+   end
+   
+   return simpl_rand(1,100) <= (15 - day_bonus)
 end
 
 function forest_encounter()
    -- 20% chance for an encounter in the forest terrain
-   return simpl_rand(1,100) <= 20
+
+   day_bonus = 10
+   if (not(simpl_is_day())) then
+      day_bonus = 0 -- it is more likely to get attacked at night
+   end
+   
+   return simpl_rand(1,100) <= (30 - day_bonus)
 end
 
 function water_encounter()
@@ -48,19 +60,26 @@ function rand_encounter(terrain)
    random = simpl_rand(1, 100)
 
    if (terrain == "plain" and plain_encounter()) then
-      if (random <= 100) then
-	 return { 
-	    { __name = "orc", 
-	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 5) },
+      return { 
+	 { __name = "orc", 
+	   __distance = simpl_rand(1, 4) * 10, 
+	   __number = simpl_rand(1, 5) },
 	 --    { __name = "Orc", 
 	 --      __distance = math.random(1, 4) * 10, 
 	 --      __number = math.random(1, 5) },
-	    { __name = "troll", 
-	      __distance = -1, 
-	      __number = math.random(0, 2) }
-	 }
-      end
+	 { __name = "troll", 
+	   __distance = -1, 
+	   __number = math.random(0, 2) }
+      }
+   elseif ((terrain == "forest" or terrain == "rocks") and forest_encounter()) then
+      return { 
+	 { __name = "orc", 
+	   __distance = simpl_rand(1, 4) * 10, 
+	   __number = simpl_rand(1, 5) },
+	 { __name = "troll", 
+	   __distance = -1, 
+	   __number = math.random(0, 2) }
+      }
    elseif (terrain == "dungeon" and dungeon_encounter()) then
       if (random <= 30) then
 	 return { 

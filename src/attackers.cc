@@ -26,6 +26,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -135,7 +136,7 @@ int Attackers::get_distance(const string& single_name)
 {
 	for (unsigned i = 0; i < _enemies.size(); i++) {
 		Creature* c = _enemies.at(i).get();
-		if (c->name() == single_name) {
+		if (boost::to_upper_copy(c->name()) == boost::to_upper_copy(single_name)) {
 			return c->distance();
 		}
 	}
@@ -151,7 +152,7 @@ std::string Attackers::get_plural_name(const string& single_name)
 {
 	for (unsigned i = 0; i < _enemies.size(); i++) {
 		Creature* c = _enemies.at(i).get();
-		if (c->name().compare(single_name) == 0)
+		if (boost::to_upper_copy(c->name()).compare(boost::to_upper_copy(single_name)) == 0)
 			return c->plural_name();
 	}
 	throw single_name + " not in group of attacking monsters.";

@@ -79,3 +79,16 @@ std::string Util::extract_name_from_ztats_list(std::string s)
 
 	return "";
 }
+
+std::string Util::capitalise_first_letter(std::string s)
+{
+	std::stringstream ss;
+
+	for (unsigned i = 0; i < s.length(); i++)
+		if (i == 0)
+			ss << (char)toupper(s[i]);
+		else
+			ss << s[i];
+
+	return ss.str();
+}

@@ -48,6 +48,8 @@
 #include "gamerules.hh"
 #include "spellcasthelper.hh"
 #include "attackers.hh"
+#include "outdoorsicons.hh"
+#include "indoorsicons.hh"
 #include "config.h"
 
 extern "C"
@@ -519,7 +521,7 @@ int Combat::foes_fight()
 				lua.call_fn<double>("fight");
 
 			// All of the party died of the attack?
-			if (Party::Instance().party_alive() == 0) {
+			if (party->party_alive() == 0) {
 				GameControl::Instance().game_over();
 				return 0;
 			}
@@ -567,7 +569,7 @@ int Combat::foes_fight()
 				lua.call_fn<double>("fight");
 
 			// All of the party died of the attack?
-			if (Party::Instance().party_alive() == 0) {
+			if (party->party_alive() == 0) {
 				GameControl::Instance().game_over();
 				return 0;
 			}
@@ -773,7 +775,17 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 bool Combat::create_random_monsters()
 {
 	LuaWrapper lua(_lua_state);
-	lua.push_fn_arg((std::string)"plain");
+	std::pair<int,int> coords = party->get_coords();
+	int icon_no = GameControl::Instance().get_arena()->get_map()->get_tile(coords.first, coords.second);
+	std::string icon_descr = "plain"; // Useless default icon description/name
+
+	if (GameControl::Instance().get_arena()->get_map()->is_outdoors())
+		icon_descr = OutdoorsIcons::Instance().get_props(icon_no)->get_name();
+	else
+		icon_descr = IndoorsIcons::Instance().get_props(icon_no)->get_name();
+
+	std::cout << "PUSHING: " << icon_descr << "\n";
+	lua.push_fn_arg(icon_descr); // The type of terrain the party is on...
 	lua.call_fn_leave_ret_alone("rand_encounter");
 
 	int __distance = -1;
@@ -804,7 +816,7 @@ bool Combat::create_random_monsters()
 			else if (__key == "__number") {
 				__number = lua_tonumber(_lua_state, -1);
 				if (__number > 0)
-					foes.count()->insert(std::make_pair(__name, __number));
+					foes.count()->insert(std::make_pair(Util::capitalise_first_letter(__name), __number));
 			}
 			else {
 				cerr << "ERROR: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
@@ -846,6 +858,8 @@ bool Combat::create_random_monsters()
 			monster->set_img(lua.call_fn<std::string>("img_path"));
 			monster->set_name(lua.call_fn<std::string>("get_name"));
 			monster->set_plural_name(lua.call_fn<std::string>("get_plural_name"));
+
+			// std::cout << "Created " << monster->name() << " at distance " << monster->distance() << "\n";
 
 			// Create lua instance of monster and set further params
 			lua.call_void_fn("create_instance");
