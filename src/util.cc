@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <cstddef>        // std::size_t
+#include <iostream>
 
 #include "util.hh"
 #include "eureka.hh"
@@ -87,6 +88,19 @@ std::string Util::capitalise_first_letter(std::string s)
 	for (unsigned i = 0; i < s.length(); i++)
 		if (i == 0)
 			ss << (char)toupper(s[i]);
+		else
+			ss << s[i];
+
+	return ss.str();
+}
+
+std::string Util::spaces_to_underscore(std::string s)
+{
+	std::stringstream ss;
+
+	for (unsigned i = 0; i < s.length(); i++)
+		if (s[i] == ' ')
+			ss << '_';
 		else
 			ss << s[i];
 

@@ -508,7 +508,7 @@ int Combat::foes_fight()
 
 		boost::filesystem::path beast_path(conf_world_path);
 		beast_path /= "bestiary";
-		beast_path /= boost::algorithm::to_lower_copy(foe->name()) + (std::string)".lua";
+		beast_path /= boost::algorithm::to_lower_copy(Util::spaces_to_underscore(foe->name())) + (std::string)".lua";
 
 		std::string beast_path_string = beast_path.string();
 		boost::replace_all(beast_path_string, " ", "_"); // spaces in monster names will translate to _ in file names!
@@ -843,7 +843,9 @@ bool Combat::create_random_monsters()
 
 			// Load corresponding Lua monster definition
 			boost::filesystem::path beast_path(conf_world_path / "bestiary");
-			beast_path /= boost::algorithm::to_lower_copy(__name) + (string)".lua";
+			std::string modified_file_name = boost::algorithm::to_lower_copy(Util::spaces_to_underscore(__name));
+			std::cout << "LOOO: " << modified_file_name << '\n';
+			beast_path /= modified_file_name + ".lua";
 			if (luaL_dofile(_lua_state, beast_path.c_str())) {
 				cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
 				exit(EXIT_FAILURE);

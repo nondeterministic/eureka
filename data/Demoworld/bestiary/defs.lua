@@ -36,14 +36,14 @@ end
 
 function get_default_icon(monster_name)
    icons = {}
-   icons["orc"] = 300 
-   icons["troll"] = 333 
-   icons["spider"] = 233
-   icons["skeleton"] = 304
-   icons["skeleton_lord"] = 357
+   icons["ORC"] = 300 
+   icons["TROLL"] = 333 
+   icons["SPIDER"] = 233
+   icons["SKELETON"] = 304
+   icons["SKELETON LORD"] = 357
    
-   if (icons[monster_name]) then
-      return icons[monster_name]
+   if (icons[string.upper(monster_name)]) then
+      return icons[string.upper(monster_name)]
    else
       print("bestiary/defs.lua problem! No default icon for" .. monster_name)
       return 0 -- This should never happen!
@@ -60,51 +60,51 @@ function rand_encounter(terrain)
    random = simpl_rand(1, 100)
 
    if (terrain == "plain" and plain_encounter()) then
-      return { 
-	 { __name = "orc", 
-	   __distance = simpl_rand(1, 4) * 10, 
+      return {
+	 { __name = "Orc",
+	   __distance = simpl_rand(1, 4) * 10,
 	   __number = simpl_rand(1, 5) },
 	 --    { __name = "Orc", 
 	 --      __distance = math.random(1, 4) * 10, 
 	 --      __number = math.random(1, 5) },
-	 { __name = "troll", 
-	   __distance = -1, 
+	 { __name = "Troll",
+	   __distance = -1,
 	   __number = math.random(0, 2) }
       }
    elseif ((terrain == "forest" or terrain == "rocks") and forest_encounter()) then
       return { 
-	 { __name = "orc", 
+	 { __name = "Orc", 
 	   __distance = simpl_rand(1, 4) * 10, 
 	   __number = simpl_rand(1, 5) },
-	 { __name = "troll", 
+	 { __name = "Troll", 
 	   __distance = -1, 
 	   __number = math.random(0, 2) }
       }
    elseif (terrain == "dungeon" and dungeon_encounter()) then
       if (random <= 30) then
-	 return { 
-	    { __name = "orc", 
-	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 5) },
-	    { __name = "troll", 
-	      __distance = -1, 
-	      __number = math.random(0, 2) }
-	 }
+         return {
+            { __name = "Orc",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(1, 5) },
+            { __name = "Troll",
+              __distance = -1,
+              __number = math.random(0, 2) }
+         }
       elseif (random <= 50) then
-	 return { 
-	    { __name = "skeleton", 
-	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 3) },
-	    { __name = "skeleton_lord", 
-	      __distance = -1, 
-	      __number = math.random(0, 2) * math.random(0, 1) }
-	 }
+         return {
+            { __name = "Skeleton",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(1, 3) },
+            { __name = "Skeleton Lord",
+              __distance = -1,
+              __number = math.random(0, 2) * math.random(0, 1) }
+         }
       else -- if (random <= 80) then
-	 return { 
-	    { __name = "spider", 
-	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 2) }
-	 }	       
+         return {
+            { __name = "Spider",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(1, 2) }
+         }             
       end
    else
       return {} -- { { "a", 1 }, { "b", 2 }, { "c", 3 } }

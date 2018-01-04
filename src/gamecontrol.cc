@@ -1594,7 +1594,7 @@ void GameControl::create_random_monsters_in_dungeon()
 										// ***********************************************************************************
 										// TODO: When switching to Boost 3, use boost::filesystem::relative instead!
 										// http://www.boost.org/doc/libs/1_61_0/libs/filesystem/doc/reference.html#op-relative
-										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(__name) + ".lua");
+										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(Util::spaces_to_underscore(__name)) + ".lua");
 										// ***********************************************************************************
 
 										monster.move_mode = FOLLOWING;

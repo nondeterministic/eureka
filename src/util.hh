@@ -22,6 +22,7 @@ namespace Util
   std::vector<StringAlignmentTuple> to_StringAlignmentTuples(std::map<std::string, int>&);
   std::string extract_name_from_ztats_list(std::string);
   std::string capitalise_first_letter(std::string);
+  std::string spaces_to_underscore(std::string);
 
   namespace Private {
   	  std::vector<std::string>& splitString2(std::string, std::string, std::vector<std::string>&);
