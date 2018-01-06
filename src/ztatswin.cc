@@ -84,8 +84,10 @@ ZtatsWin& ZtatsWin::Instance()
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
-	if (_tmp_texture != nullptr)
+	if (_tmp_texture != nullptr) {
+		std::cout << "_tmp_texture: " << _tmp_texture << "\n";
 		SDL_DestroyTexture(_tmp_texture);
+	}
 
 	// Store backup of texture
 	_tmp_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, get_dimensions().w, get_dimensions().h);

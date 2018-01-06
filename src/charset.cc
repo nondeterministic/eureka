@@ -56,6 +56,7 @@ int Charset::load_charset()
 	}
 
 	SDL_Renderer* renderer = SDLWindow::Instance().get_renderer();
+	SDLWindow::Instance().resetRenderer();
 	all_chars_texture = SDL_CreateTextureFromSurface(renderer, all_chars_surface);
 
 	if (SDL_SetTextureBlendMode(all_chars_texture, SDL_BLENDMODE_BLEND) < 0) {
