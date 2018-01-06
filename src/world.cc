@@ -189,11 +189,6 @@ void World::set_indoors_tile_size(unsigned new_ts)
     _indoors_tile_size = new_ts;
 }
 
-std::vector<Creature>* World::get_creatures()
-{
-    return &_creatures;
-}
-
 bool World::xml_load_world_data(const std::string filename)
 {
 	try {
@@ -499,6 +494,63 @@ void World::init_lua_arrays(lua_State* L)
 			}
 		}
 	}
+}
+
+/// Scan all monster definitions to get a mapping from monster- to file-name.
+/// Function is completley side-effect free as it uses a fresh Lua state.
+
+void World::scan_monster_definition_files()
+{
+	_bestiary_names_and_paths.clear();
+
+	for (boost::filesystem::directory_iterator itr((conf_world_path / "bestiary"));
+			itr != boost::filesystem::directory_iterator();
+			++itr)
+	{
+		lua_State* l = luaL_newstate();
+		luaL_openlibs(l);
+		LuaWrapper lua_wrapper(l);
+
+		if (itr->path().string().find(".lua") == std::string::npos)
+			continue;
+
+		if (luaL_dofile(l, itr->path().string().c_str())) {
+			std::cerr << "WARNING: world.cc: scan_monsters: Couldn't execute Lua file: " << lua_tostring(l, -1)
+					  << ". Game not properly installed or incomplete?\n";
+			continue;
+		}
+
+		if (!lua_wrapper.is_defined("get_name"))
+			continue;
+
+		std::string name = lua_wrapper.call_fn<std::string>("get_name");
+		std::pair<std::string,std::string> pair(name, itr->path().filename().string());
+		_bestiary_names_and_paths.insert(pair);
+
+		lua_close(l);
+	}
+}
+
+/// Get filename for a monster name
+
+std::string World::get_monster_filename(std::string monster_name)
+{
+	for (auto& pair: _bestiary_names_and_paths)
+		if (boost::algorithm::to_upper_copy(pair.first) == boost::algorithm::to_upper_copy(monster_name))
+			return pair.second;
+
+	throw std::runtime_error(monster_name + ": no such monster name known.");
+}
+
+/// Get monster name for a filename
+
+std::string World::get_monster_name(std::string monster_filename)
+{
+	for (auto& pair: _bestiary_names_and_paths)
+		if (boost::algorithm::to_upper_copy(pair.second) == boost::algorithm::to_upper_copy(monster_filename))
+			return pair.first;
+
+	throw std::runtime_error(monster_filename + ": no such monster filename known.");
 }
 
 std::vector<Spell> World::load_lua_spells(lua_State* L)

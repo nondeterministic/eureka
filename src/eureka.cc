@@ -485,6 +485,8 @@ int init_game_env(int res_w, int res_h)
 		exit(-1);
 	}
 
+	World::Instance().scan_monster_definition_files();
+
 	return 0;
 }
 

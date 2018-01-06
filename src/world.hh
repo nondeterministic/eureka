@@ -30,12 +30,12 @@
 #include <exception>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #include "boost/filesystem.hpp"
 #include "boost/filesystem/path.hpp"
 
 #include "map.hh"
-#include "creature.hh"
 #include "spell.hh"
 #include "iconprops.hh"
 
@@ -78,9 +78,11 @@ public:
   std::vector<Spell> load_lua_spells(lua_State*);
   void xml_write_world_data();
   void xml_write_world_data(boost::filesystem::path);
-  std::vector<Creature>* get_creatures();
   std::vector<Spell>* get_spells();
   void set_spells(std::vector<Spell>);
+  void scan_monster_definition_files();
+  std::string get_monster_filename(std::string);
+  std::string get_monster_name(std::string);
 
 protected:
   World();
@@ -91,8 +93,9 @@ protected:
 
   std::vector<std::shared_ptr<Map>> _maps;
   std::vector<std::string> _map_names;
-  std::vector<Creature> _creatures;
   std::vector<Spell> _spells;
+  std::unordered_map<std::string,std::string> _bestiary_names_and_paths;
+
   std::string _name;
   boost::filesystem::path _path;
   unsigned _indoors_tile_size, _outdoors_tile_size;
