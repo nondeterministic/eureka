@@ -787,7 +787,6 @@ bool Combat::create_random_monsters()
 	else
 		icon_descr = IndoorsIcons::Instance().get_props(icon_no)->get_name();
 
-	std::cout << "PUSHING: " << icon_descr << "\n";
 	lua.push_fn_arg(icon_descr); // The type of terrain the party is on...
 	lua.call_fn_leave_ret_alone("rand_encounter");
 

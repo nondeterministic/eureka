@@ -111,7 +111,7 @@ public:
 	void make_guards(PERSONALITY);
 	void get_attacked();
 	void set_game_music(SoundSample*);
-	std::string keypress_ready_item(unsigned);
+	std::string keypress_ready_item(int);
 	void keypress_yield_item(int);
 	std::pair<int, int> select_coords();
 	void set_map_name(const char*);

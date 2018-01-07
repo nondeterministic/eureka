@@ -1225,7 +1225,7 @@ void GameControl::game_over()
 	exit(EXIT_SUCCESS);
 }
 
-std::string GameControl::keypress_ready_item(unsigned selected_player)
+std::string GameControl::keypress_ready_item(int selected_player)
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();

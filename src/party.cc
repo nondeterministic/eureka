@@ -188,7 +188,6 @@ PlayerCharacter* Party::get_guard()
 	if (_guard >= 0 && _guard < party_size() && get_player(_guard)->condition() != DEAD)
 		return get_player(_guard);
 	else {
-		std::cerr << "WARNING: Trying to get player " << _guard << " as guard, but is either dead or out of bounds.\n";
 		return NULL;
 	}
 }
