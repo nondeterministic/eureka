@@ -32,7 +32,7 @@
 
 Type::Type() 
 {
-	// std::cout << "Type()\n";
+	std::cout << "Type()\n";
 
 	// Is true, when text on grey background is active, i.e., to display a cursor, etc.
 	_select = false;
@@ -43,7 +43,7 @@ Type::Type()
 
 Type::~Type()
 {
-	// std::cout << "~Type()\n";
+	std::cout << "~Type()\n";
 
 	for (std::map<int, SDL_Texture*>::iterator iter = _map_chars.begin(); iter != _map_chars.end(); iter++)
 		SDL_DestroyTexture(iter->second);
@@ -111,7 +111,7 @@ void Type::printch(SDL_Texture* texture, int c, int x, int y, SDL_Color* bgcol, 
 
 		SDL_RenderFillRect(renderer, &dstRect);
 		if (SDL_RenderCopy(renderer, charTexture, NULL, &dstRect) < 0) {
-			std::cerr << "ERROR: type.cc: printch: RenderCopy failed: " << IMG_GetError() << "." << std::endl;
+			std::cerr << "ERROR: type.cc: printch: RenderCopy failed for " << c << ": " << IMG_GetError() << "." << std::endl;
 			return;
 		}
 	}

@@ -26,6 +26,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "charset.hh"
+
 // typedef boost::signal<void (SDL_Event*)> key_event;
 // typedef boost::signal<void ()>           tick_event;
 // typedef boost::signals::connection       connection_t;
@@ -41,6 +43,7 @@ class EventManager
 {
 protected:
 	EventManager();
+	Charset* _normal_font;
 
 public:
 	static EventManager& Instance();

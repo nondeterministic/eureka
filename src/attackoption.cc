@@ -169,8 +169,7 @@ int AttackOption::random(int min, int max)
 
 void AttackOption::printcon(const std::string s, bool wait)
 {
-  Charset normal_font;
-  Console::Instance().print(&normal_font, s, wait);
+  Console::Instance().print(&Charset::Instance(), s, wait);
 }
 
 DefendOption::DefendOption(int pl) : AttackOption(pl, NULL)

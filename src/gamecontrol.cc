@@ -100,12 +100,13 @@ using namespace std;
 
 GameControl::GameControl()
 {
-	em = &EventManager::Instance();
-	party = &Party::Instance();
+	_normal_font = &Charset::Instance();
+
+	_em = &EventManager::Instance();
+	_party = &Party::Instance();
 	_turn_passed = 0;
 	_turns = 0;
-	input = "";
-	generator.seed(std::time(NULL)); // seed with the current time
+	_generator.seed(std::time(NULL)); // seed with the current time
 	_game_is_started = false;
 }
 
@@ -132,9 +133,9 @@ void GameControl::set_game_music(SoundSample* gm)
 
 int GameControl::set_party(int x, int y)
 {
-	party->set_coords(x, y);
-	arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
-	arena->show_party(screen_pos_party.first, screen_pos_party.second);
+	_party->set_coords(x, y);
+	_arena->map_to_screen(_party->x, _party->y, screen_pos_party.first, screen_pos_party.second);
+	_arena->show_party(screen_pos_party.first, screen_pos_party.second);
 	return 0;
 }
 
@@ -144,10 +145,10 @@ int GameControl::set_party(int x, int y)
 
 int GameControl::redraw_graphics_arena()
 {
-	if (arena != NULL && arena->get_map() != NULL) {
-		arena->show_map(get_viewport().first, get_viewport().second);
-		arena->show_party(screen_pos_party.first, screen_pos_party.second);
-		arena->blit();
+	if (_arena != NULL && _arena->get_map() != NULL) {
+		_arena->show_map(get_viewport().first, get_viewport().second);
+		_arena->show_party(screen_pos_party.first, screen_pos_party.second);
+		_arena->blit();
 	    return 0;
 	}
 
@@ -177,8 +178,8 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 
 	filename_old = filename;
 
-	ss << "Gold: " << party->gold();
-	ss << ", Food: " << party->food();
+	ss << "Gold: " << _party->gold();
+	ss << ", Food: " << _party->food();
 	ss << ", Time: ";
 	if (_clock.time().first < 10)
 		ss << "0" << _clock.time().first << ":";
@@ -224,7 +225,7 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 	if (update_status_image) {
 		boost::filesystem::path tmp_path = conf_world_path / "images";
 
-		if (party->indoors()) {
+		if (_party->indoors()) {
 			if (get_map()->is_dungeon)
 				filename = "dungeon.png";
 			else
@@ -247,13 +248,13 @@ void GameControl::redraw_graphics_status(bool update_status_image)
 
 int GameControl::set_arena(std::shared_ptr<Arena> new_arena)
 {
-	arena = new_arena;
+	_arena = new_arena;
 	return 0;
 }
 
 std::shared_ptr<Arena> GameControl::get_arena()
 {
-	return arena;
+	return _arena;
 }
 
 bool GameControl::game_won()
@@ -274,7 +275,7 @@ void GameControl::do_turn(bool resting)
 {
 	if (game_won()) {
 		printcon("CONGRAULATIONS! YOU HAVE WON THE GAME. PRESS SPACE TO EXIT.");
-		em->get_key(" ");
+		_em->get_key(" ");
 		exit(EXIT_SUCCESS);
 	}
 
@@ -450,9 +451,9 @@ void GameControl::do_turn(bool resting)
 
 int GameControl::tick_event_handler()
 {
-	Console::Instance().animate_cursor(&normal_font);
+	Console::Instance().animate_cursor(_normal_font);
 
-	if (!arena->is_moving())
+	if (!_arena->is_moving())
 		return redraw_graphics_arena();
 
 	return 0;
@@ -523,7 +524,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_c:
 					if (event.key.keysym.mod == KMOD_RCTRL || event.key.keysym.mod == KMOD_LCTRL)
-						std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+						std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
 					else
 						keypress_cast();
 					break;
@@ -532,7 +533,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_e: {
 					// Check if party is on enterable icon, i.e., if there is an enter-action associated to it.
-					std::vector<std::shared_ptr<Action>> acts = arena->get_map()->get_actions(party->x, party->y);
+					std::vector<std::shared_ptr<Action>> acts = _arena->get_map()->get_actions(_party->x, _party->y);
 
 					if (acts.size() > 0) {
 						bool entered = false;
@@ -611,8 +612,8 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				create_random_monsters_in_dungeon();
 
 				// After handling a key stroke it is almost certainly a good idea to update the screen
-				arena->show_map(get_viewport().first, get_viewport().second);
-				arena->show_party(screen_pos_party.first, screen_pos_party.second);
+				_arena->show_map(get_viewport().first, get_viewport().second);
+				_arena->show_party(screen_pos_party.first, screen_pos_party.second);
 
 			    if (SDLWindow::Instance().blit_all() < 0)
 			    	std::cerr << "WARNING: gamecontrol.cc: blit_all failed.\n";
@@ -630,7 +631,7 @@ void GameControl::keypress_cast()
 	int cplayer = zwin.select_player();
 
 	if (cplayer >= 0) {
-		PlayerCharacter* player = party->get_player(cplayer);
+		PlayerCharacter* player = _party->get_player(cplayer);
 
 		if (player->condition() == DEAD) {
 			printcon("Next time try picking an alive party member.");
@@ -657,7 +658,7 @@ void GameControl::keypress_cast()
 
 void GameControl::cast_spell(int player_no, Spell spell)
 {
-	PlayerCharacter* player = party->get_player(player_no);
+	PlayerCharacter* player = _party->get_player(player_no);
 
 	if (player->sp() < spell.sp)
 		printcon(player->name() + " does not have enough spell points.");
@@ -722,7 +723,7 @@ void GameControl::keypress_quit()
 	EventManager& em = EventManager::Instance();
 
 	// TODO: Enable save game indoors as well!!! Check GameState for missing functionality in this regard!
-	if (!party->indoors()) {
+	if (!_party->indoors()) {
 		printcon("Save game (y/n)?");
 		char save_game = em.get_key("yn");
 		printcon(std::string(1, save_game) + " ");
@@ -747,7 +748,7 @@ void GameControl::keypress_mix_reagents()
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
 	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> ztatswin_contentprovider =
-			party->inventory()->create_content_selection_provider(InventoryType::MagicHerbs);
+			_party->inventory()->create_content_selection_provider(InventoryType::MagicHerbs);
 
 	if (ztatswin_contentprovider->get_page().size() == 0) {
 		printcon("You have no reagents to mix.");
@@ -763,7 +764,7 @@ void GameControl::keypress_mix_reagents()
 		return;
 	}
 
-	if (!party->get_player(selected_player)->is_spell_caster()) {
+	if (!_party->get_player(selected_player)->is_spell_caster()) {
 		printcon("Chosen party member does not possess the required magic abilities.");
 		return;
 	}
@@ -789,7 +790,7 @@ void GameControl::keypress_mix_reagents()
 	bool success = false;
 	for (Potion* potion: all_potions) {
 		if (potion->consists_of(ingredient_names)) {
-			party->inventory()->add(potion);  // Adding potion to party inventory.
+			_party->inventory()->add(potion);  // Adding potion to party inventory.
 			printcon("Successfully mixed one " + potion->name() + ".");
 			success = true;
 
@@ -820,7 +821,7 @@ void GameControl::keypress_ztats()
 		mwin.println(0, "Ztats", CENTERALIGN);
 		mwin.println(1, "(Scroll up/down/left/right, press q to exit)", CENTERALIGN);
 
-		std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = party->create_party_content_provider();
+		std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = _party->create_party_content_provider();
 		zwin.execute(ztatswin_contentprovider.get(), selected_player);
 
 		mwin.display_last();
@@ -829,7 +830,7 @@ void GameControl::keypress_ztats()
 
 void GameControl::keypress_inventory()
 {
-	if (party->inventory()->size() == 0) {
+	if (_party->inventory()->size() == 0) {
 		printcon("Inventory is empty. You are presently not carrying any special items.");
 		return;
 	}
@@ -843,11 +844,11 @@ void GameControl::keypress_inventory()
 	mwin.clear();
 	mwin.println(0, "Inventory", CENTERALIGN);
 	std::stringstream ss;
-	ss << "Weight: " << party->inventory()->weight() << (party->inventory()->weight() == 1? " stone" : " stones");
-	ss << "   Max. capacity: " << party->max_carrying_capacity() << " stones";
+	ss << "Weight: " << _party->inventory()->weight() << (_party->inventory()->weight() == 1? " stone" : " stones");
+	ss << "   Max. capacity: " << _party->max_carrying_capacity() << " stones";
 	mwin.println(1, ss.str());
 
-	std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = party->inventory()->create_content_provider(InventoryType::Anything);
+	std::shared_ptr<ZtatsWinContentProvider> ztatswin_contentprovider = _party->inventory()->create_content_provider(InventoryType::Anything);
 	zwin.execute(ztatswin_contentprovider.get());
 
 	mwin.display_last();
@@ -861,7 +862,7 @@ void GameControl::keypress_yield_item(int selected_player)
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
 	if (selected_player >= 0) {
-		PlayerCharacter* player = party->get_player(selected_player);
+		PlayerCharacter* player = _party->get_player(selected_player);
 
 		mwin.save_texture();
 		mwin.clear();
@@ -918,12 +919,12 @@ void GameControl::keypress_yield_item(int selected_player)
 
 		if (dynamic_cast<Weapon*>(selected_item)) {
 			if (player->weapon())
-				party->inventory()->add(player->weapon());
+				_party->inventory()->add(player->weapon());
 			player->set_weapon(NULL);
 		}
 		else if (dynamic_cast<Shield*>(selected_item)) {
 			if (player->shield())
-				party->inventory()->add(player->shield());
+				_party->inventory()->add(player->shield());
 			player->set_shield(NULL);
 		}
 		else if (dynamic_cast<Armour*>(selected_item)) {
@@ -931,22 +932,22 @@ void GameControl::keypress_yield_item(int selected_player)
 
 			if (armour->is_gloves()) {
 				if (player->armour_hands())
-					party->inventory()->add(player->armour_hands());
+					_party->inventory()->add(player->armour_hands());
 				player->set_armour_hands(NULL);
 			}
 			else if (armour->is_helmet()) {
 				if (player->armour_head())
-					party->inventory()->add(player->armour_head());
+					_party->inventory()->add(player->armour_head());
 				player->set_armour_head(NULL);
 			}
 			else if (armour->is_shoes()) {
 				if (player->armour_feet())
-					party->inventory()->add(player->armour_feet());
+					_party->inventory()->add(player->armour_feet());
 				player->set_armour_feet(NULL);
 			}
 			else {
 				if (player->armour())
-					party->inventory()->add(player->armour());
+					_party->inventory()->add(player->armour());
 				player->set_armour(NULL);
 			}
 		}
@@ -972,7 +973,7 @@ void GameControl::keypress_hole_up()
 	mwin.clear();
 
 	printcon("Hole up and camp. For how many hours? (0-9)");
-	char chours = em->get_key("0123456789");
+	char chours = _em->get_key("0123456789");
 	int hours = atoi(&chours);
 	printcon(std::to_string(hours));
 
@@ -990,7 +991,7 @@ void GameControl::keypress_hole_up()
 	printcon("Do you want to set up a guard? (y/n)");
 	int selected_player = -1;
 
-	switch (em->get_key("yn")) {
+	switch (_em->get_key("yn")) {
 	case 'n':
 		printcon("n");
 		break;
@@ -1060,7 +1061,7 @@ void GameControl::keypress_open_act()
 	printcon("Open - in which direction?");
 	std::pair<int,int> coords = select_coords();
 
-	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 
 	// TODO: If there are more than one openable item in one place, all are opened in succession.
 	// However, I can't think of a scenario, where this would occur/be a problem.
@@ -1083,7 +1084,7 @@ void GameControl::keypress_open_act()
 						if (action != NULL) {
 							GameEventHandler gh;
 							for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-								gh.handle(*curr_ev, arena->get_map(), &the_obj);
+								gh.handle(*curr_ev, _arena->get_map(), &the_obj);
 							return;
 						}
 					}
@@ -1094,7 +1095,7 @@ void GameControl::keypress_open_act()
 			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("a closed door") != std::string::npos) {
 				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for doors triggered.\n";
 				GameEventHandler gh;
-				gh.handle_event_delete_object(arena->get_map(), &the_obj);
+				gh.handle_event_delete_object(_arena->get_map(), &the_obj);
 				return;
 			}
 			else if (IndoorsIcons::Instance().get_props(icon)->get_name().find("closed") != std::string::npos &&
@@ -1102,11 +1103,11 @@ void GameControl::keypress_open_act()
 			{
 				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for chests triggered.\n";
 				GameEventHandler gh;
-				gh.handle_event_delete_object(arena->get_map(), &the_obj);
+				gh.handle_event_delete_object(_arena->get_map(), &the_obj);
 				MapObj open_chest;
 				open_chest.set_icon(489);
 				open_chest.set_coords(coords.first, coords.second);
-				gh.handle_event_add_object(arena->get_map(), open_chest);
+				gh.handle_event_add_object(_arena->get_map(), open_chest);
 				return;
 			}
 		}
@@ -1118,7 +1119,7 @@ void GameControl::keypress_open_act()
 
 bool GameControl::unlock_item()
 {
-	if (!party->indoors()) {
+	if (!_party->indoors()) {
 		printcon("Unlock - nothing to unlock here.");
 		return false;
 	}
@@ -1134,7 +1135,7 @@ bool GameControl::unlock_item()
 		return false;
 	}
 
-	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
 			MapObj& the_obj = curr_obj->second;
@@ -1175,7 +1176,7 @@ void GameControl::keypress_use()
 	mwin.println(0, "Use item", CENTERALIGN);
 	mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> zwin_content_selection_provider = _party->inventory()->create_content_selection_provider(InventoryType::Anything);
 	std::vector<Item*> selected_items = zwin.execute(zwin_content_selection_provider.get(), SelectionMode::SingleItem);
 
 	// User can either select exactly one item, or will have aborted the dialogue.
@@ -1191,7 +1192,7 @@ void GameControl::keypress_use()
 			printcon("Try to (r)eady an armour instead.");
 		else if (selected_item->name() == "jimmy lock" || selected_item->name() == "key") {
 			if (unlock_item())
-				party->rm_jimmylock();
+				_party->rm_jimmylock();
 		}
 		else if (PotionsHelper::existsInLua(selected_item->name(), _lua_state)) {
 			PotionsHelper potions_helper;
@@ -1199,14 +1200,14 @@ void GameControl::keypress_use()
 			potions_helper.drink((Potion*)selected_item, _lua_state);
 
 			// Remove potion from inventory
-			party->inventory()->remove(selected_item->name(), selected_item->description());
+			_party->inventory()->remove(selected_item->name(), selected_item->description());
 		}
 		else if (EdiblesHelper::existsInLua(selected_item->name(), _lua_state)) {
 			EdiblesHelper edibles_helper;
 			edibles_helper.eat_party((Edible*)selected_item);
 
 			// Remove one such edible item from inventory
-			party->inventory()->remove(selected_item->name(), selected_item->description());
+			_party->inventory()->remove(selected_item->name(), selected_item->description());
 		}
 		else
 			printcon("You cannot use that.");
@@ -1220,7 +1221,7 @@ void GameControl::keypress_use()
 void GameControl::game_over()
 {
 	printcon("GAME OVER. ALL ARE DEAD. PRESS SPACE TO EXIT.");
-	em->get_key(" ");
+	_em->get_key(" ");
 	exit(EXIT_SUCCESS);
 }
 
@@ -1235,13 +1236,13 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 		mwin.println(0, "Ready item", CENTERALIGN);
 		mwin.println(1, "(Press space to select, q to exit)", CENTERALIGN);
 
-		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = party->inventory()->create_content_selection_provider(InventoryType::Wearables);
+		std::shared_ptr<ZtatsWinContentSelectionProvider<Item*>> content_provider_selection = _party->inventory()->create_content_selection_provider(InventoryType::Wearables);
 
 		if (content_provider_selection->get_page().size() > 0) {
 			std::vector<Item*> selected_items = zwin.execute(content_provider_selection.get(), SelectionMode::SingleItem);
 
 			if (selected_items.size() > 0) {
-				PlayerCharacter* player = party->get_player(selected_player);
+				PlayerCharacter* player = _party->get_player(selected_player);
 				Item* selected_item = selected_items[0];
 				std::string selected_item_name = selected_item->name();
 
@@ -1250,12 +1251,12 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 
 					if (player->weapon() != NULL) {
 						printcon("Yielding " + player->weapon()->name());
-						party->inventory()->add(player->weapon());
+						_party->inventory()->add(player->weapon());
 					}
 
 					if (weapon->hands() == 2 && player->shield() != NULL) {
 						printcon("Yielding " + player->shield()->name());
-						party->inventory()->add(player->shield());
+						_party->inventory()->add(player->shield());
 						player->set_shield(NULL);
 					}
 
@@ -1265,7 +1266,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 					// TODO: Alternatively, one could create a method Inventory::handOver(std::string weapon_name),
 					// which removes the weapon from the inventory list and returns its pointer so that the
 					// memory remains allocated and it can be passed on e.g. to a player or elsewhere.
-					party->inventory()->remove(weapon->name(), weapon->description());
+					_party->inventory()->remove(weapon->name(), weapon->description());
 					player->set_weapon(weapon);
 				}
 				else if (ShieldHelper::existsInLua(selected_item_name, _lua_state)) {
@@ -1273,16 +1274,16 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 
 					if (player->shield() != NULL) {
 						printcon("Yielding " + player->shield()->name());
-						party->inventory()->add(player->shield());
+						_party->inventory()->add(player->shield());
 					}
 
 					else if (player->weapon()->hands() == 2 && player->weapon() != NULL) {
 						printcon("Yielding " + player->weapon()->name());
-						party->inventory()->add(player->weapon());
+						_party->inventory()->add(player->weapon());
 						player->set_weapon(NULL);
 					}
 
-					party->inventory()->remove(shield->name(), shield->description());
+					_party->inventory()->remove(shield->name(), shield->description());
 					player->set_shield(shield);
 				}
 				else if (ArmourHelper::existsInLua(selected_item_name, _lua_state)) {
@@ -1290,26 +1291,26 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 
 					if (armour->is_gloves()) {
 						if (player->armour_hands() != NULL)
-							party->inventory()->add(player->armour());
+							_party->inventory()->add(player->armour());
 						player->set_armour_hands(armour);
 					}
 					else if (armour->is_helmet()) {
 						if (player->armour_head() != NULL)
-							party->inventory()->add(player->armour());
+							_party->inventory()->add(player->armour());
 						player->set_armour_head(armour);
 					}
 					else if (armour->is_shoes()) {
 						if (player->armour_feet() != NULL)
-							party->inventory()->add(player->armour());
+							_party->inventory()->add(player->armour());
 						player->set_armour_feet(armour);
 					}
 					else {
 						if (player->armour() != NULL)
-							party->inventory()->add(player->armour());
+							_party->inventory()->add(player->armour());
 						player->set_armour(armour);
 					}
 
-					party->inventory()->remove(armour->name(), armour->description());
+					_party->inventory()->remove(armour->name(), armour->description());
 				}
 				else
 					std::cerr << "WARNING: gamecontrol.cc: readying an item that cannot be recognised. This is serious business.\n";
@@ -1337,7 +1338,7 @@ std::string GameControl::keypress_ready_item(unsigned selected_player)
 std::pair<int, int> GameControl::select_coords()
 {
 	EventManager& em = EventManager::Instance();
-	const int CROSSHAIR_ICON = (party->indoors()? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS);
+	const int CROSSHAIR_ICON = (_party->indoors()? CROSSHAIR_ICON_INDOORS : CROSSHAIR_ICON_OUTDOORS);
 
 	std::list<SDL_Keycode> cursor_keys =
 		{ SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_RETURN, SDLK_q, SDLK_ESCAPE, SDLK_KP_4,
@@ -1346,8 +1347,8 @@ std::pair<int, int> GameControl::select_coords()
 	static int cx, cy;  // Cursor
 	int px, py;         // Party
 
-	arena->map_to_screen(party->x, party->y, px, py);
-	arena->screen_to_map(px, py, px, py);
+	_arena->map_to_screen(_party->x, _party->y, px, py);
+	_arena->screen_to_map(px, py, px, py);
 	cx = px;
 	cy = py;
 
@@ -1358,7 +1359,7 @@ std::pair<int, int> GameControl::select_coords()
 	crosshair_tmp_obj.lua_name = CROSSHAIR_ICON_LUA_NAME;
 	crosshair_tmp_obj.set_icon(CROSSHAIR_ICON);
 
-	arena->get_map()->push_obj(crosshair_tmp_obj);
+	_arena->get_map()->push_obj(crosshair_tmp_obj);
 
 	while (1) {
 	    // If frames were 30, wait 33 ms before running the loop again
@@ -1368,44 +1369,44 @@ std::pair<int, int> GameControl::select_coords()
 		switch (em.get_generic_key(cursor_keys)) {
 		case SDLK_LEFT:
 		case SDLK_KP_4:
-			if (arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
+			if (_arena->adjacent(cx - 1, cy, px, py) && cx - 1 > 0)
 				cx--;
 			break;
 		case SDLK_RIGHT:
 		case SDLK_KP_6:
-			if (arena->adjacent(cx + 1, cy, px, py) && cx + 1 <= (int)arena->get_map()->width() - 4)
+			if (_arena->adjacent(cx + 1, cy, px, py) && cx + 1 <= (int)_arena->get_map()->width() - 4)
 				cx++;
 			break;
 		case SDLK_UP:
 		case SDLK_KP_8:
-			if (party->indoors() && arena->adjacent(cx, cy - 1, px, py) && cy - 1 > 0)
+			if (_party->indoors() && _arena->adjacent(cx, cy - 1, px, py) && cy - 1 > 0)
 				cy--;
-			else if (!party->indoors() && arena->adjacent(cx, cy - 2, px, py) && cy - 2 > 0)
+			else if (!_party->indoors() && _arena->adjacent(cx, cy - 2, px, py) && cy - 2 > 0)
 				cy -= 2;
 			break;
 		case SDLK_DOWN:
 		case SDLK_KP_2:
-			if (party->indoors() && arena->adjacent(cx, cy + 1, px, py) &&
-					cy + 1 <= (int)arena->get_map()->height() - 4)
+			if (_party->indoors() && _arena->adjacent(cx, cy + 1, px, py) &&
+					cy + 1 <= (int)_arena->get_map()->height() - 4)
 				cy++;
-			else if (! party->indoors() && arena->adjacent(cx, cy + 2, px, py) &&
-					cy + 2 <= (int)arena->max_y_coordinate() - 2)
+			else if (! _party->indoors() && _arena->adjacent(cx, cy + 2, px, py) &&
+					cy + 2 <= (int)_arena->max_y_coordinate() - 2)
 				cy += 2;
 			break;
 		case SDLK_RETURN:
-			arena->get_map()->rm_obj(&crosshair_tmp_obj);
+			_arena->get_map()->rm_obj(&crosshair_tmp_obj);
 			return std::make_pair(cx, cy);
 		case SDLK_ESCAPE:
 		case SDLK_q:
-			arena->get_map()->rm_obj(&crosshair_tmp_obj);
+			_arena->get_map()->rm_obj(&crosshair_tmp_obj);
 			return std::make_pair(-1, -1);
 		default:
 			std::cout << "INFO: gamecontrol.cc: Pressed unhandled key.\n";
 		}
 
-		if (! party->indoors()) {
+		if (! _party->indoors()) {
 			if ( (cx % 2) == 0 && (cy % 2)  != 0 ) {
-				if (arena->adjacent(cx, cy - 1, px, py))
+				if (_arena->adjacent(cx, cy - 1, px, py))
 					cy--;
 				else {
 					cx = old_x;
@@ -1413,7 +1414,7 @@ std::pair<int, int> GameControl::select_coords()
 				}
 			}
 			else if ( (cx % 2) != 0 && (cy % 2)  == 0 ) {
-				if (arena->adjacent(cx, cy + 1, px, py))
+				if (_arena->adjacent(cx, cy + 1, px, py))
 					cy++;
 				else {
 					cx = old_x;
@@ -1422,16 +1423,16 @@ std::pair<int, int> GameControl::select_coords()
 			}
 		}
 
-		arena->get_map()->rm_obj(&crosshair_tmp_obj);
+		_arena->get_map()->rm_obj(&crosshair_tmp_obj);
 		crosshair_tmp_obj.set_coords(cx, cy);
-		arena->get_map()->push_obj(crosshair_tmp_obj);
+		_arena->get_map()->push_obj(crosshair_tmp_obj);
 		old_x = cx; old_y = cy;
 	}
 }
 
 void GameControl::keypress_drop_items()
 {
-	if (party->inventory()->size() == 0) {
+	if (_party->inventory()->size() == 0) {
 		printcon("Inventory is empty. You are presently not carrying any special items.");
 		return;
 	}
@@ -1446,13 +1447,13 @@ void GameControl::keypress_drop_items()
 	mwin.println(0, "Drop item", CENTERALIGN);
 	mwin.println(1, "(Press space to drop selected item, q to exit)");
 
-	auto zwin_content_selection_provider = party->inventory()->create_content_selection_provider(InventoryType::Anything);
+	auto zwin_content_selection_provider = _party->inventory()->create_content_selection_provider(InventoryType::Anything);
 	std::vector<Item*> selected_items = zwin.execute(zwin_content_selection_provider.get(), SelectionMode::SingleItem);
 
 	// User can either select exactly one item, or will have aborted the dialogue.
 	if (selected_items.size() == 1) {
 		Item* selected_item = selected_items[0];
-		unsigned selected_item_size = party->inventory()->how_many_of(selected_item->name(), selected_item->description());
+		unsigned selected_item_size = _party->inventory()->how_many_of(selected_item->name(), selected_item->description());
 		unsigned drop_how_many = 1;
 
 		if (selected_item_size > 1) {
@@ -1476,7 +1477,7 @@ void GameControl::keypress_drop_items()
 		}
 
 		// Create corresponding icon if party is indoors
-		if (party->indoors()) {
+		if (_party->indoors()) {
 			MapObj moTmp;
 
 			// Some MiscItems have a MapObj associated with them, e.g., nonmagicscroll.
@@ -1493,7 +1494,7 @@ void GameControl::keypress_drop_items()
 				}
 			}
 
-			moTmp.set_coords(party->x, party->y);
+			moTmp.set_coords(_party->x, _party->y);
 			moTmp.set_icon(selected_item->icon);
 			moTmp.set_description(selected_item->description());
 			if (moTmp.description().length() == 0)
@@ -1502,7 +1503,7 @@ void GameControl::keypress_drop_items()
 			moTmp.how_many = drop_how_many;
 
 			// Add dropped item to current map
-			arena->get_map()->push_obj(moTmp);
+			_arena->get_map()->push_obj(moTmp);
 		}
 
 		std::stringstream ss;
@@ -1513,7 +1514,7 @@ void GameControl::keypress_drop_items()
 		printcon(ss.str());
 
 		for (int i = 0; i < max((int)drop_how_many, 1); i++)
-			party->inventory()->remove(selected_item->name(), selected_item->description());
+			_party->inventory()->remove(selected_item->name(), selected_item->description());
 	}
 
 	mwin.display_last();
@@ -1523,7 +1524,7 @@ void GameControl::keypress_drop_items()
 
 void GameControl::make_guards(PERSONALITY pers)
 {
-	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+	for (auto map_obj_pair = _arena->get_map()->objs()->begin(); map_obj_pair != _arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 
 		// If MapObj ID contains the string "guard", it is a guard and will be set to hostile
@@ -1540,13 +1541,13 @@ void GameControl::make_guards(PERSONALITY pers)
 
 void GameControl::create_random_monsters_in_dungeon()
 {
-	if (!arena->get_map()->is_dungeon)
+	if (!_arena->get_map()->is_dungeon)
 		return;
 
 	int rand_monster_count = 0;
 
 	// If there are already too many random monsters, don't generate more!
-	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+	for (auto map_obj_pair = _arena->get_map()->objs()->begin(); map_obj_pair != _arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 		if (map_obj->is_random_monster)
 			rand_monster_count++;
@@ -1560,12 +1561,12 @@ void GameControl::create_random_monsters_in_dungeon()
 	const int min_distance_to_party = 7; // Monsters should not directly pop up next to the party
 	for (int xoff = -20; xoff < 20; xoff++) {
 		for (int yoff = -20; yoff < 20; yoff++) {
-			int monst_x = party->x + xoff;
-			int monst_y = party->y + yoff;
+			int monst_x = _party->x + xoff;
+			int monst_y = _party->y + yoff;
 
 			// X% chance of a new monster each turn
 			if (random(1,100) <= 30) {
-				if (abs(party->x - monst_x) >= min_distance_to_party || abs(party->y - monst_y) >= min_distance_to_party) {
+				if (abs(_party->x - monst_x) >= min_distance_to_party || abs(_party->y - monst_y) >= min_distance_to_party) {
 					if (walkable(monst_x, monst_y)) {
 						MapObj monster;
 						monster.set_origin(monst_x, monst_y);
@@ -1604,7 +1605,7 @@ void GameControl::create_random_monsters_in_dungeon()
 										lua.push_fn_arg(boost::to_lower_copy(__name));
 										monster.set_icon(lua.call_fn<double>("get_default_icon"));
 
-										arena->get_map()->push_obj(monster);
+										_arena->get_map()->push_obj(monster);
 
 										// TODO: Can we simply do lua_settop(L, 0); instead
 										// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
@@ -1628,13 +1629,13 @@ void GameControl::create_random_monsters_in_dungeon()
 
 void GameControl::get_attacked()
 {
-	for (auto map_obj_pair = arena->get_map()->objs()->begin(); map_obj_pair != arena->get_map()->objs()->end(); map_obj_pair++) {
+	for (auto map_obj_pair = _arena->get_map()->objs()->begin(); map_obj_pair != _arena->get_map()->objs()->end(); map_obj_pair++) {
 		MapObj* map_obj = &(map_obj_pair->second);
 		unsigned obj_x, obj_y;
 		map_obj->get_coords(obj_x, obj_y);
 
 		if (map_obj->personality == HOSTILE) {
-			if (abs(party->x - (int)obj_x) <= 1 && abs(party->y - (int)obj_y) <= 1) {
+			if (abs(_party->x - (int)obj_x) <= 1 && abs(_party->y - (int)obj_y) <= 1) {
 				if (map_obj->get_type() == MAPOBJ_PERSON) {
 					if (map_obj->get_init_script_path().length() > 0) {
 						Combat combat;
@@ -1686,7 +1687,7 @@ void GameControl::get_attacked()
 
 void GameControl::keypress_attack()
 {
-	if (!party->indoors()) {
+	if (!_party->indoors()) {
 		printcon("Attack - no one is around.");
 		return;
 	}
@@ -1694,7 +1695,7 @@ void GameControl::keypress_attack()
 	printcon("Attack - in which direction?");
 	std::pair<int,int> coords = select_coords();
 
-	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 
 	// Strictly speaking this loop should not be necessary as we don't want monsters/ppl to walk over
 	// objects, but in case we're changing our minds later, we're looking for them in a list of objects
@@ -1772,7 +1773,7 @@ void GameControl::keypress_attack()
 
 void GameControl::keypress_talk()
 {
-	if (!party->indoors()) {
+	if (!_party->indoors()) {
 		printcon("Talk - sorry, no one is around");
 		return;
 	}
@@ -1780,7 +1781,7 @@ void GameControl::keypress_talk()
 	printcon("Talk - in which direction?");
 	std::pair<int,int> coords = select_coords();
 
-	auto avail_objects = arena->get_map()->objs()->equal_range(coords);
+	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 
 	// Strictly speaking this loop should not be necessary as we don't want monsters/ppl to walk over
 	// objects, but in case we're changing our minds later, we're looking for them in a list of objects
@@ -1808,12 +1809,12 @@ void GameControl::keypress_talk()
 
 std::shared_ptr<Map> GameControl::get_map()
 {
-	return arena->get_map();
+	return _arena->get_map();
 }
 
 void GameControl::keypress_get_item()
 {
-	MapHelper map_helper(arena->get_map().get()); // Not sure, if MapHelper should also take a shared_ptr, so that references are kept alive?!
+	MapHelper map_helper(_arena->get_map().get()); // Not sure, if MapHelper should also take a shared_ptr, so that references are kept alive?!
 	printcon("Get - from which direction?");
 	std::pair<int, int> coords = select_coords();
 
@@ -1903,7 +1904,7 @@ void GameControl::keypress_get_item()
 			// Let's now create the n new items to be taken individually via a factory...
 			for (int i = 0; i < taking; i++) {
 				try {
-					party->inventory()->add(ItemFactory::create(picked_up_mapobj.lua_name, &picked_up_mapobj));
+					_party->inventory()->add(ItemFactory::create(picked_up_mapobj.lua_name, &picked_up_mapobj));
 				}
 				catch (std::exception const& e) {
 					std::cerr << "EXCEPTION: gamecontrol.cc: " << e.what() << "\n";
@@ -1915,7 +1916,7 @@ void GameControl::keypress_get_item()
 				for (auto action = picked_up_mapobj.actions()->begin(); action != picked_up_mapobj.actions()->end(); action++) {
 					if ((*action)->name() == "ACT_ON_TAKE") {
 						for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-							gh.handle(*curr_ev, arena->get_map());
+							gh.handle(*curr_ev, _arena->get_map());
 					}
 				}
 			}
@@ -1923,30 +1924,30 @@ void GameControl::keypress_get_item()
 
 			// See if some items are leftover after taking...
 			if (picked_up_mapobj.how_many - taking == 0)
-				arena->get_map()->rm_obj(&picked_up_mapobj);
+				_arena->get_map()->rm_obj(&picked_up_mapobj);
 				//				arena->get_map()->pop_obj(coords.first, coords.second, picked_up_mapobj.lua_name);
 			else {
-				arena->get_map()->rm_obj(&picked_up_mapobj);
+				_arena->get_map()->rm_obj(&picked_up_mapobj);
 				// ...then decrease the how_many counter...
 				picked_up_mapobj.how_many -= taking;
 				// ...and finally add it again with decreased how_many_counter
-				arena->get_map()->push_obj(picked_up_mapobj);
+				_arena->get_map()->push_obj(picked_up_mapobj);
 			}
 		}
 		// Picking up exactly 1 item
 		else {
 			printcon("Taking " + picked_up_item->name());
-			party->inventory()->add(picked_up_item);
+			_party->inventory()->add(picked_up_item);
 
 			// Perform action events
 			for (auto action = picked_up_mapobj.actions()->begin(); action != picked_up_mapobj.actions()->end(); action++) {
 				if ((*action)->name() == "ACT_ON_TAKE") {
 					for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-						gh.handle(*curr_ev, arena->get_map());
+						gh.handle(*curr_ev, _arena->get_map());
 				}
 			}
 
-			arena->get_map()->rm_obj(&picked_up_mapobj);
+			_arena->get_map()->rm_obj(&picked_up_mapobj);
 		}
 	}
 	else {
@@ -1960,14 +1961,14 @@ void GameControl::keypress_look()
 	GameEventHandler gh;
 	printcon("Look - which direction?");
 	std::pair<int, int> coords = select_coords();
-	int icon_no = arena->get_map()->get_tile(coords.first, coords.second);
+	int icon_no = _arena->get_map()->get_tile(coords.first, coords.second);
 
 	// Check out of map bounds
 	if (icon_no >= 0) {
 		std::stringstream lookstr;
 		lookstr << "You see ";
 
-		if (arena->get_map()->is_outdoors()) {
+		if (_arena->get_map()->is_outdoors()) {
 			lookstr << OutdoorsIcons::Instance().get_props(icon_no)->get_name();
 			printcon(lookstr.str());
 			return;
@@ -1977,7 +1978,7 @@ void GameControl::keypress_look()
 		printcon(lookstr.str());
 
 		// Return range of found objects at given location
-		auto found_obj = arena->get_map()->objs()->equal_range(coords);
+		auto found_obj = _arena->get_map()->objs()->equal_range(coords);
 
 		if (found_obj.first != found_obj.second) {
 			std::stringstream ss;
@@ -2033,17 +2034,17 @@ void GameControl::keypress_look()
 				for (auto action = map_obj.actions()->begin(); action != map_obj.actions()->end(); action++) {
 					if ((*action)->name() == "ACT_ON_LOOK") {
 						for (auto curr_ev = (*action)->events_begin(); curr_ev != (*action)->events_end(); curr_ev++)
-							gh.handle(*curr_ev, arena->get_map());
+							gh.handle(*curr_ev, _arena->get_map());
 					}
 				}
 			}
 		}
 
 		// Perform look actions that are associated with the given coordinates rather than objects
-		for (auto action : arena->get_map()->get_actions(coords.first, coords.second)) {
+		for (auto action : _arena->get_map()->get_actions(coords.first, coords.second)) {
 			if (action->name() == "ACT_ON_LOOK") {
 				for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-					gh.handle(*curr_ev, arena->get_map());
+					gh.handle(*curr_ev, _arena->get_map());
 			}
 		}
 	}
@@ -2057,7 +2058,7 @@ void GameControl::keypress_look()
 
 bool GameControl::is_arena_outdoors()
 {
-  return std::dynamic_pointer_cast<HexArena>(arena) != NULL;
+  return std::dynamic_pointer_cast<HexArena>(_arena) != NULL;
 }
 
 bool GameControl::walkable(int x, int y)
@@ -2077,23 +2078,23 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 {
 	// TODO: These bounds only work indoors, as outdoors we have a jump of 2 between hex.  Do we need to check the boundaries outdoors at all?
 	if (!is_arena_outdoors()) {
-		if (x >= (int)(arena->get_map()->width()) || x < 0)
+		if (x >= (int)(_arena->get_map()->width()) || x < 0)
 			return false;
-		if (y >= (int)(arena->get_map()->height()) || y < 0)
+		if (y >= (int)(_arena->get_map()->height()) || y < 0)
 			return false;
 	}
 
 	bool icon_is_walkable = false;
 
 	if (is_arena_outdoors())
-		icon_is_walkable = OutdoorsIcons::Instance().get_props(arena->get_map()->get_tile(x, y))->_is_walkable != PropertyStrength::None;
+		icon_is_walkable = OutdoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->_is_walkable != PropertyStrength::None;
 	else {
-		int tile = arena->get_map()->get_tile(x, y);
+		int tile = _arena->get_map()->get_tile(x, y);
 		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != PropertyStrength::None;
 
 		// But don't walk over monsters...
 		if (icon_is_walkable) {
-			auto found_objs = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+			auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
 				MapObj& map_obj = curr_obj->second;
 				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
@@ -2111,7 +2112,7 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker)
 		}
 		else if (the_walker == Whole_Party) {
 			// Spells may get the party to be able to walk over water, through fire, etc.
-			vector<int> additional_walkable_icons = party->get_additional_walkable_icons();
+			vector<int> additional_walkable_icons = _party->get_additional_walkable_icons();
 
 			// If the tile in question is in the list of additionally walkable icons...
 			if (std::find(additional_walkable_icons.begin(), additional_walkable_icons.end(), tile) != additional_walkable_icons.end())
@@ -2130,12 +2131,12 @@ PropertyStrength GameControl::get_forcefieldstrength(int x, int y)
 		return PropertyStrength::None;
 
 	// Check icon
-	int tile = arena->get_map()->get_tile(x, y);
+	int tile = _arena->get_map()->get_tile(x, y);
 	if (IndoorsIcons::Instance().get_props(tile)->_magical_force_field != PropertyStrength::None)
 		return IndoorsIcons::Instance().get_props(tile)->_magical_force_field;
 
 	// Check objects
-	auto found_obj = arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+	auto found_obj = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 	if (found_obj.first != found_obj.second) {
 		for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
 			MapObj& map_obj = curr_obj->second;
@@ -2161,13 +2162,13 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 	// Determine center of arena
 	int screen_center_x, screen_center_y;
-	arena->get_center_coords(screen_center_x, screen_center_y);
+	_arena->get_center_coords(screen_center_x, screen_center_y);
 
 	switch (dir) {
 	case DIR_LEFT:
 		if (is_arena_outdoors()) {
 			x_diff = -1;
-			y_diff = party->x % 2 == 0? 1 : -1;
+			y_diff = _party->x % 2 == 0? 1 : -1;
 		}
 		else
 			x_diff = -1;
@@ -2175,7 +2176,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 	case DIR_RIGHT:
 		if (is_arena_outdoors()) {
 			x_diff = 1;
-			y_diff = party->x % 2 == 0? 1 : -1;
+			y_diff = _party->x % 2 == 0? 1 : -1;
 		}
 		else
 			x_diff = 1;
@@ -2217,26 +2218,26 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			break;
 		}
 	default:
-		std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+		std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
 		return false;
 	}
 
-	int tile = arena->get_map()->get_tile(party->x + x_diff, party->y + y_diff);
+	int tile = _arena->get_map()->get_tile(_party->x + x_diff, _party->y + y_diff);
 
 	// Indoors
 	if (!is_arena_outdoors()) {
 		// Check if exiting map!
-		if (!arena->get_map()->is_within_visible_bounds(party->x + x_diff, party->y + y_diff)) {
+		if (!_arena->get_map()->is_within_visible_bounds(_party->x + x_diff, _party->y + y_diff)) {
 			if (leave_map())
 				redraw_graphics_status(true);
 			return false;
 		}
 
-		if (!ignore_walkable && !walkable_for_party(party->x + x_diff, party->y + y_diff))
+		if (!ignore_walkable && !walkable_for_party(_party->x + x_diff, _party->y + y_diff))
 			return false;
 
 		// If we're ignoring walkability, or we don't and the map is walkable, do it!
-		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
+		if (ignore_walkable || walkable_for_party(_party->x + x_diff, _party->y + y_diff)) {
 			IconProps* tile_props = IndoorsIcons::Instance().get_props(tile);
 
 			// Slow walking means to drop every third step.
@@ -2254,31 +2255,31 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 					every_third_step = 0;
 			}
 
-			arena->moving(true);
+			_arena->moving(true);
 
 			if (screen_pos_party.first  + x_diff < screen_center_x)
-				arena->move(DIR_LEFT);
+				_arena->move(DIR_LEFT);
 			if (screen_pos_party.first  + x_diff > screen_center_x)
-				arena->move(DIR_RIGHT);
+				_arena->move(DIR_RIGHT);
 			if (screen_pos_party.second + y_diff > screen_center_y)
-				arena->move(DIR_DOWN);
+				_arena->move(DIR_DOWN);
 			if (screen_pos_party.second + y_diff < screen_center_y)
-				arena->move(DIR_UP);
+				_arena->move(DIR_UP);
 
-			set_party(party->x + x_diff, party->y + y_diff);
-			arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
+			set_party(_party->x + x_diff, _party->y + y_diff);
+			_arena->map_to_screen(_party->x, _party->y, screen_pos_party.first, screen_pos_party.second);
 
-			arena->moving(false);
+			_arena->moving(false);
 
 			// Check if poison, magic field, fire, etc. was entered and act accordingly.
-			bool somebody_hurt = party->walk_through_magic_field(get_forcefieldstrength(party->x, party->y));
-			somebody_hurt = somebody_hurt || party->walk_through_poison_field(tile_props->_poisonous);
+			bool somebody_hurt = _party->walk_through_magic_field(get_forcefieldstrength(_party->x, _party->y));
+			somebody_hurt = somebody_hurt || _party->walk_through_poison_field(tile_props->_poisonous);
 			if (somebody_hurt) {
 				_sample.play_predef(HIT);
 				zwin.update_player_list();
 			}
 
-			std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
 			return true;
 		}
 	}
@@ -2288,7 +2289,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 		// In theory, what's here could move into the above switch stmt., but if we ever want a more generic
 		// handling of outdoor movements, then it would be nice to load it off right here, instead of blowing
 		// up that switch statement, which handles both indoors and outdoors coordinate changes.
-		if (ignore_walkable || walkable_for_party(party->x + x_diff, party->y + y_diff)) {
+		if (ignore_walkable || walkable_for_party(_party->x + x_diff, _party->y + y_diff)) {
 			IconProps* tile_props = OutdoorsIcons::Instance().get_props(tile);
 
 			// Slow walking means to drop every third step.
@@ -2309,60 +2310,60 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 			switch (dir) {
 			case DIR_LEFT:
 				if (screen_pos_party.first < screen_center_x) {
-					arena->move(DIR_LEFT);
-					arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
 				}
 				break;
 			case DIR_RIGHT:
 				if (screen_pos_party.first > screen_center_x) {
-					arena->move(DIR_RIGHT);
-					arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
 				}
 				break;
 			case DIR_DOWN:
 				if (screen_pos_party.second > screen_center_y)
-					arena->move(DIR_DOWN);
+					_arena->move(DIR_DOWN);
 				break;
 			case DIR_UP:
 				if (screen_pos_party.second < screen_center_y)
-					arena->move(DIR_UP);
+					_arena->move(DIR_UP);
 				break;
 			case DIR_RDOWN:
 				if (screen_pos_party.first > screen_center_x) {
-					arena->move(DIR_RIGHT);
-					arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
 				}
 				if (screen_pos_party.second > screen_center_y)
-					arena->move(DIR_DOWN);
+					_arena->move(DIR_DOWN);
 				break;
 			case DIR_RUP:
 				if (screen_pos_party.first > screen_center_x) {
-					arena->move(DIR_RIGHT);
-					arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
+					_arena->move(DIR_RIGHT);
 				}
 				if (screen_pos_party.second < screen_center_y)
-					arena->move(DIR_UP);
+					_arena->move(DIR_UP);
 				break;
 			case DIR_LUP:
 				if (screen_pos_party.first < screen_center_x) {
-					arena->move(DIR_LEFT);
-					arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
 				}
 				if (screen_pos_party.second < screen_center_y)
-					arena->move(DIR_UP);
+					_arena->move(DIR_UP);
 				break;
 			default: // case DIR_LDOWN:
 				if (screen_pos_party.first < screen_center_x) {
-					arena->move(DIR_LEFT);
-					arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
+					_arena->move(DIR_LEFT);
 				}
 				if (screen_pos_party.second > screen_center_y)
-					arena->move(DIR_DOWN);
+					_arena->move(DIR_DOWN);
 				break;
 			}
 
-			party->set_coords(party->x + x_diff, party->y + y_diff);
-			arena->map_to_screen(party->x, party->y, screen_pos_party.first, screen_pos_party.second);
+			_party->set_coords(_party->x + x_diff, _party->y + y_diff);
+			_arena->map_to_screen(_party->x, _party->y, screen_pos_party.first, screen_pos_party.second);
 			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
 			return true;
 		}
@@ -2407,8 +2408,8 @@ std::pair<int, int> GameControl::get_viewport()
 {
 	int x = 0; // Default: maximum viewport, bright as day!
 
-	if (arena->get_map()->is_dungeon) {
-		int rad = max(2, party->light_radius());
+	if (_arena->get_map()->is_dungeon) {
+		int rad = max(2, _party->light_radius());
 		return std::make_pair(rad,rad);
 	}
 
@@ -2433,8 +2434,8 @@ std::pair<int, int> GameControl::get_viewport()
 	}
 
 	// Reflect light sources indoors
-	if (!arena->get_map()->is_outdoors())
-		x = max(x, party->light_radius());
+	if (!_arena->get_map()->is_outdoors())
+		x = max(x, _party->light_radius());
 
 	// It's a square view!
 	return std::make_pair(x,x);
@@ -2447,19 +2448,19 @@ void GameControl::keypress_pull_push()
 
 	// First go through objects which may have a pull/push action
 	bool has_paction = false;
-	for (auto obj: arena->get_map()->get_objs(coords.first, coords.second)) {
+	for (auto obj: _arena->get_map()->get_objs(coords.first, coords.second)) {
 		for (auto act: *(obj->actions())) {
 			if (std::dynamic_pointer_cast<ActionPullPush>(act)) {
 				GameEventHandler gh;
 				has_paction = true;
 				for (auto curr_ev = act->events_begin(); curr_ev != act->events_end(); curr_ev++)
-					gh.handle(*curr_ev, arena->get_map());
+					gh.handle(*curr_ev, _arena->get_map());
 			}
 		}
 	}
 
 	// Now go through map actions which are not associated with an object
-	std::vector<std::shared_ptr<Action>> acts = arena->get_map()->get_actions(coords.first, coords.second);
+	std::vector<std::shared_ptr<Action>> acts = _arena->get_map()->get_actions(coords.first, coords.second);
 	if (acts.size() == 0 && !has_paction) {
 		printcon("Nothing to pull or push here");
 		return;
@@ -2471,7 +2472,7 @@ void GameControl::keypress_pull_push()
 			GameEventHandler gh;
 			has_paction = true;
 			for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-				gh.handle(*curr_ev, arena->get_map());
+				gh.handle(*curr_ev, _arena->get_map());
 		}
 	}
 
@@ -2484,7 +2485,7 @@ void GameControl::action_on_enter(std::shared_ptr<ActionOnEnter> action)
 	GameEventHandler gh;
 
 	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-		gh.handle(*curr_ev, arena->get_map());
+		gh.handle(*curr_ev, _arena->get_map());
 }
 
 // TODO: THIS CAN ONLY EVER BE CALLED FROM LEVEL-0 (I.E. GROUND FLOOR) INDOORS MAPS!
@@ -2495,14 +2496,14 @@ bool GameControl::leave_map()
 {
 	printcon("Do you wish to leave? (y/n)");
 
-	switch (em->get_key("yn")) {
+	switch (_em->get_key("yn")) {
 	case 'y': {
 		GameEventHandler gh;
 		std::shared_ptr<EventLeaveMap> leave_event(new EventLeaveMap());
 
-		leave_event->set_map_name(arena->get_map()->get_name().c_str());
-		leave_event->set_old_map_name(party->map_name().c_str());
-		gh.handle_event_leave_map(leave_event, arena->get_map());
+		leave_event->set_map_name(_arena->get_map()->get_name().c_str());
+		leave_event->set_old_map_name(_party->map_name().c_str());
+		gh.handle_event_leave_map(leave_event, _arena->get_map());
 
 		return true;
 	}
@@ -2521,24 +2522,24 @@ int GameControl::close_win()
 
 void GameControl::set_outdoors(bool mode)
 {
-	party->set_indoors(!mode);
+	_party->set_indoors(!mode);
 }
 
 void GameControl::set_map_name(const char* new_name)
 {
-	party->set_map_name(new_name);
+	_party->set_map_name(new_name);
 }
 
 int GameControl::random(int min, int max)
 {
 	NumberDistribution distribution(min, max);
-	Generator numberGenerator(generator, distribution);
+	Generator numberGenerator(_generator, distribution);
 	return numberGenerator();
 }
 
 void GameControl::printcon(const std::string s, bool wait)
 {
-	Console::Instance().print(&normal_font, s, wait);
+	Console::Instance().print(_normal_font, s, wait);
 }
 
 Clock* GameControl::get_clock()

@@ -85,7 +85,6 @@ ZtatsWin& ZtatsWin::Instance()
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
 	if (_tmp_texture != nullptr) {
-		std::cout << "_tmp_texture: " << _tmp_texture << "\n";
 		SDL_DestroyTexture(_tmp_texture);
 	}
 
@@ -130,7 +129,7 @@ void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 void ZtatsWin::change_bg_colour(int from_top, int to_bottom, SDL_Color to_color, SDL_Color from_color)
 {
 	// How many text lines are displayed in the ztats window?
-	int lines = get_dimensions().h / _font.char_height();
+	int lines = get_dimensions().h / _font->char_height();
 
 	// Replace entire window's colors, not just single lines...
 	if (from_top < 0 || to_bottom + 1 > lines || to_bottom < 0) {
@@ -141,8 +140,8 @@ void ZtatsWin::change_bg_colour(int from_top, int to_bottom, SDL_Color to_color,
 	else {
 		SDL_Rect rect;
 		rect.x = 0;
-		rect.y = from_top * _font.char_height() + _inter_line_padding * from_top + _y_frame_offset;
-		rect.h = (to_bottom - from_top) * _font.char_height() + _inter_line_padding;
+		rect.y = from_top * _font->char_height() + _inter_line_padding * from_top + _y_frame_offset;
+		rect.h = (to_bottom - from_top) * _font->char_height() + _inter_line_padding;
 		rect.w = get_dimensions().w;
 		SDLTricks::Instance().replace_color(_renderer, _texture, to_color, from_color, &rect);
 		// SDLTricks::Instance().replace_bg_color(_renderer, _texture, to_color, &rect);

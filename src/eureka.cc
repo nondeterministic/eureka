@@ -283,10 +283,9 @@ int main(int argc, char *argv[])
 
 	// Character creation?!
 	EventManager* em = &EventManager::Instance();
-	Charset normalFont;
 	bool choice_is_made = false;
 	while (!choice_is_made) {
-		Console::Instance().print(&normalFont,
+		Console::Instance().print(&Charset::Instance(),
 				"Current game world loaded is " + conf_world_name + ". Would you like to\n" +
 				"(J)ourney onward\n" +
 				"(C)reate a new game character, or\n" +
@@ -300,13 +299,13 @@ int main(int argc, char *argv[])
 		case 'q':
 			exit(EXIT_SUCCESS);
 		case 'c':
-			Console::Instance().print(&normalFont, "Creating new game character.\n", false);
+			Console::Instance().print(&Charset::Instance(), "Creating new game character.\n", false);
 			choice_is_made = true;
 			create_fresh_game_state(create_character());
 			break;
 		case 'j':
 			if (!boost::filesystem::exists(conf_savegame_path / "party.xml"))
-				Console::Instance().print(&normalFont, "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
+				Console::Instance().print(&Charset::Instance(), "You don't seem to have a previously saved game in " + conf_savegame_path.string() + ".\n", false);
 			else {
 				choice_is_made = true;
 				recreate_old_game_state();
@@ -411,7 +410,6 @@ int init_game_env(int res_w, int res_h)
 	// Important, not to initialise at top, as the renderer of SDLWindow needs to be initialised in above init method.
 	// Perhaps, fix that later! TODO?
 	EventManager* em = &EventManager::Instance();
-	Charset normalFont;
 
 	// 20 x 24 is the IDEAL arena dimension for the wilderness when the
 	// resolution of the game is 1024x768.  Since the resolution is kept
@@ -451,7 +449,7 @@ int init_game_env(int res_w, int res_h)
 	// SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	Console::Instance().clear();
 	Console::Instance().
-			print(&normalFont,
+			print(&Charset::Instance(),
 					"Welcome to " + (std::string)PACKAGE_NAME +
 					"!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
 					false);
@@ -495,9 +493,9 @@ PlayerCharacter create_character()
 	Party* party     = &Party::Instance();
 	GameControl* gc  = &GameControl::Instance();
 	EventManager* em = &EventManager::Instance();
-	Charset normalFont;
 	Console* cons = &Console::Instance();
 	PlayerCharacter player;
+	Charset& normalFont = Charset::Instance();
 
 	bool cont = false;
 	while (!cont) {
@@ -847,10 +845,10 @@ int create_fresh_game_state(PlayerCharacter player)
 
 int start_game()
 {
-	SDLWindow*     win = &SDLWindow::Instance();
-	GameControl*    gc = &GameControl::Instance();
-	Party*       party = &Party::Instance();
-	Charset normalFont;
+	SDLWindow*     win  = &SDLWindow::Instance();
+	GameControl*    gc  = &GameControl::Instance();
+	Party*       party  = &Party::Instance();
+	Charset& normalFont = Charset::Instance();
 	unsigned int initial_x = party->x;
 	unsigned int initial_y = party->y;
 

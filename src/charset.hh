@@ -30,11 +30,12 @@ using namespace std;
 class Charset : public Type 
 {
 private:
+	  Charset();
 	  int load_charset();
+
 public:
 	  static Charset& Instance();
-	  ~Charset();
-	  Charset();
+	  virtual ~Charset();
 };
 
 #endif

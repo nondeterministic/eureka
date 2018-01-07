@@ -159,7 +159,7 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 		else
 			_chan = Mix_PlayChannel(-1, wav, loop);
 		Mix_Volume(_chan, _vol);
-		std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
+		// std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
 		// _chan = -1; // Reset channel so the next time, the next free channel is used.
 	}
 	else

@@ -30,6 +30,9 @@
 
 SDLWindowRegion::SDLWindowRegion()
 {
+
+	_font = &Charset::Instance();
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	rmask = 0xff000000;
 	gmask = 0x00ff0000;
@@ -199,25 +202,25 @@ int SDLWindowRegion::blit()
 
 void SDLWindowRegion::printch(int x_pos, int y_pos, int c)
 {
-	_font.printch(get_texture(), c, x_pos + _x_frame_offset, y_pos + _y_frame_offset);
+	_font->printch(get_texture(), c, x_pos + _x_frame_offset, y_pos + _y_frame_offset);
 }
 
 void SDLWindowRegion::print_noblit(int x_pos, int y_pos, const std::string s, Alignment align)
 {
 	for (unsigned i = 0, j = 0; i < s.length(); i++, j++) {
 		if (align == LEFTALIGN)
-			_font.printch(get_texture(), s[i], x_pos + _x_frame_offset + j * _font.char_width(), y_pos + _y_frame_offset);
+			_font->printch(get_texture(), s[i], x_pos + _x_frame_offset + j * _font->char_width(), y_pos + _y_frame_offset);
 		else if (align == RIGHTALIGN)
-			print_noblit(_dimensions.w - s.length() * _font.char_width() - _x_frame_offset, y_pos, s);
+			print_noblit(_dimensions.w - s.length() * _font->char_width() - _x_frame_offset, y_pos, s);
 		else
-			print_noblit((int)((_dimensions.w - s.length() * _font.char_width()) / 2), y_pos, s);
+			print_noblit((int)((_dimensions.w - s.length() * _font->char_width()) / 2), y_pos, s);
 	}
 }
 
 void SDLWindowRegion::println_noblit(int line, const std::string s, Alignment align)
 {
-	if (line < _dimensions.h / _font.char_height())
-		print_noblit(0, line * _font.char_height() + _inter_line_padding * line, s, align);
+	if (line < _dimensions.h / _font->char_height())
+		print_noblit(0, line * _font->char_height() + _inter_line_padding * line, s, align);
 }
 
 void SDLWindowRegion::print(int x_pos, int y_pos, const std::string s, Alignment align)

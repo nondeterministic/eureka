@@ -37,9 +37,15 @@ Charset::Charset()
 	load_charset();
 }
 
+Charset& Charset::Instance()
+{
+	static Charset _inst;
+	return _inst;
+}
+
 Charset::~Charset()
 {
-	// std::cout << "~Charset()\n";
+	std::cout << "~Charset()\n";
 }
 
 int Charset::load_charset()
@@ -57,7 +63,11 @@ int Charset::load_charset()
 
 	SDL_Renderer* renderer = SDLWindow::Instance().get_renderer();
 	SDLWindow::Instance().resetRenderer();
-	all_chars_texture = SDL_CreateTextureFromSurface(renderer, all_chars_surface);
+
+	if ((all_chars_texture = SDL_CreateTextureFromSurface(renderer, all_chars_surface)) == NULL) {
+		std::cerr << "ERROR: charset.cc: create texture from surface not working: " << IMG_GetError() << "\n";
+		return -1;
+	}
 
 	if (SDL_SetTextureBlendMode(all_chars_texture, SDL_BLENDMODE_BLEND) < 0) {
 		std::cerr << "ERROR: charset.cc: setting blend mode (1) not working: " << IMG_GetError() << "\n";
@@ -81,6 +91,11 @@ int Charset::load_charset()
 
 			SDL_Texture* single_char_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, _w, _h);
 
+			if (single_char_texture == NULL) {
+				std::cerr << "ERROR: charset.cc: create texture not working: " << IMG_GetError() << "\n";
+				exit(EXIT_FAILURE);
+			}
+
 			if (SDL_SetTextureBlendMode(single_char_texture, SDL_BLENDMODE_BLEND) < 0) {
 				std::cerr << "ERROR: charset.cc: setting blend mode (2) not working: " << IMG_GetError() << "\n";
 				continue;
@@ -88,7 +103,7 @@ int Charset::load_charset()
 
 			if (SDL_SetRenderTarget(renderer, single_char_texture) < 0) {
 				std::cerr << "ERROR: charset.cc: setting rendering target not working: " << IMG_GetError() << "\n";
-				exit(-1);
+				exit(EXIT_FAILURE);
 			}
 
 			// see above, and also link!
@@ -220,7 +235,12 @@ int Charset::load_charset()
 			}
 
 			// Insert in maps.
-			_map_chars.insert(std::make_pair(ascii, single_char_texture));
+			if (single_char_texture != NULL) {
+				std::pair<int, SDL_Texture*> pair = std::make_pair(ascii, single_char_texture);
+				_map_chars.insert(pair);
+			}
+			else
+				std::cerr << "WARNING: charset.cc: single_char_texture == NULL.\n";
 		}
 	}
 

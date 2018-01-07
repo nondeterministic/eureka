@@ -84,6 +84,5 @@ void Conversation::initiate()
 
 void Conversation::printcon(const std::string s, bool wait)
 {
-	Charset normal_font;
-	Console::Instance().print(&normal_font, s, wait);
+	Console::Instance().print(&Charset::Instance(), s, wait);
 }

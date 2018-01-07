@@ -171,7 +171,7 @@ int Console::scroll(int amount, int delay)
 
 std::string Console::gets()
 {
-	Charset normal_font;
+	Charset& normal_font = Charset::Instance();
 	EventManager* em = &(EventManager::Instance());
 	std::string input = "";
 

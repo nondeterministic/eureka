@@ -54,14 +54,13 @@ public:
 	enum Walking { Whole_Party, Individual_Game_Character };
 
 protected:
-	RandomNumberGenerator generator;
-	EventManager* em;
-	Party* party;
+	RandomNumberGenerator _generator;
+	EventManager* _em;
+	Party* _party;
 	int _turn_passed;
 	std::pair<int, int> screen_pos_party;
-	std::shared_ptr<Arena> arena;
-	Charset normal_font;
-	std::string input;
+	std::shared_ptr<Arena> _arena;
+	Charset* _normal_font;
 	unsigned _turns;
 	Clock _clock;
 	SoundSample* _game_music;

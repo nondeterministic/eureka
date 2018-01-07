@@ -32,7 +32,7 @@
 class SDLWindowRegion
 {
 protected:
-	Charset _font;
+	Charset* _font;
 	SDL_Rect _dimensions;
 	SDL_Texture* _texture;
 	SDL_Texture* _texture_last;
