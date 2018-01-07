@@ -7,5 +7,6 @@ MiscItems["bolt"]  = {
    name                   = "bolt",
    plural_name            = "bolts",
    description            = "",
+   gold                   = "1",
    icon                   = 695
 }

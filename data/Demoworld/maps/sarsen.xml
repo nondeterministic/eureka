@@ -49,7 +49,22 @@
     <object x="6" y="10" ox="0" oy="0" icon_no="1034" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="6" y="9" ox="0" oy="0" icon_no="1034" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="21" y="14" ox="0" oy="0" icon_no="489" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="12" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="12" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+    <actions>
+        <action type="ACT_ON_LOOK">
+          <event type="EVENT_PRINTCON">The chest is not locked.</event>
+        </action>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="15" y="12" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="15" y="12" ox="0" oy="0" icon_no="988" layer="0" id="potion of healing" lua_name="potions::healing potion" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+        </action>
+      </actions>
+    </object>
     <object x="10" y="12" ox="10" oy="12" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="13" y="10" ox="13" oy="10" icon_no="52" layer="0" id="ignaz" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/sarsen_ignaz.lua"/>
     <object x="14" y="16" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
@@ -60,7 +75,22 @@
     <object x="12" y="15" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="6" y="8" ox="0" oy="0" icon_no="1034" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="20" y="17" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="15" y="11" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="15" y="11" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+    <actions>
+        <action type="ACT_ON_LOOK">
+          <event type="EVENT_PRINTCON">The chest is not locked.</event>
+        </action>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="15" y="11" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="15" y="11" ox="0" oy="0" icon_no="594" layer="0" id="double sided axe" lua_name="weapons::double-sided axe" how_many="1" type="item"/>
+          </event>
+        </action>
+      </actions>
+    </object>
     <object x="10" y="15" ox="0" oy="0" icon_no="885" layer="0" id="" lua_name="edibles::thuja" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="7" y="11" ox="0" oy="0" icon_no="169" layer="0" id="door" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="12" y="25" ox="0" oy="0" icon_no="1059" layer="0" id="" lua_name="edibles::magic mushroom" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>

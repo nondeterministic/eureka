@@ -53,7 +53,7 @@ do
    end
    
    function job()
-      simpl_printcon("I used to be the jester in town, but ever since the invasion on that fateful day, it seems that people no longer are so interested in my tricks and jokes...")
+      simpl_printcon("My duties are to rule this town, alas! it is a depressive task since the devastation.")
    end
    
    function join()
@@ -84,11 +84,16 @@ do
 			"I will arrange for the guards to open the gate to what is left of our armoury. In it, you will find " ..
 			   "some magical items, which shall help you in your quest. But you must not loose any more time! " ..
 			   "You must find her, and return her to safety! It may be that Ignaz of Sarsen may be able to assist you. " ..
-			   "Sarsen is north east of here, tell him that I sent you, and he might join you. He fought hard in the battle.")
+			   "Sarsen lies east of here beyond the great river and in the mountains near the coast. " ..
+			   "Tell him that I sent you, and he might join you. He fought hard in the battle.")
 	 simpl_play_sound("55820__sergenious__bridge.wav")
 	 simpl_change_icon(12, 19, 71, 72)
       elseif (item == "enemy") then
 	 simpl_printcon("He is still out there. Be careful!")
+      elseif (item == "devastation") then
+	 simpl_printcon("The enemy spared almost none, and I blame myself.")
+      elseif (item == "blame") then
+	 simpl_printcon("I should have been able to protect this city better...")
       else	
 	 simpl_printcon("I am sorry, I cannot help you with that.")
       end

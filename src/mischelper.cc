@@ -72,5 +72,5 @@ MiscItem* MiscHelper::createFromLua(std::string array_name, lua_State* lua_state
 bool MiscHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry("Misc", item_name);
+	return lua.hasEntry("MiscItems", item_name);
 }

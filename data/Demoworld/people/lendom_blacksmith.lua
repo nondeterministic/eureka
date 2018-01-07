@@ -43,6 +43,17 @@ do
    items[0] = Shields["small shield"]
    items[1] = Weapons["axe"]
    items[2] = Weapons["sword"]
+   items[3] = Weapons["bow"]
+   items[4] = Weapons["dagger"]
+   items[5] = Weapons["crossbow"]
+   items[6] = Weapons["mace"]
+   items[7] = Weapons["helbeard"]
+   items[8] = Armour["leather helmet"]
+   items[9] = Armour["leather armour"]
+   items[10] = Armour["metal helmet"]
+   items[11] = Armour["platemail"]
+   items[12] = MiscItems["arrow"]
+   items[13] = MiscItems["bolt"]
 
    function description()
       simpl_printcon("You see big, sooty blacksmith with sweat running down his forehead.")
@@ -88,7 +99,7 @@ do
       end
       
       simpl_printcon("Dost thou seek to buy more of my time (y/n)?")
-      job2()
+      askforbusiness()
    end
 
    function sell()
