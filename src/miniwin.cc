@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2016  Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2018 Andreas Bauer <baueran@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-
 
 #include <iostream>
 #include <string>
