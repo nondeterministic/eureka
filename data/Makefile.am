@@ -1,6 +1,6 @@
-EXTRA_DIST = intro.png charset.png frame.png intro.ogg main.ogg Mittelerde.xml Demoworld.xml COPYRIGHT
+EXTRA_DIST = intro.png charset.png frame.png intro.ogg main.ogg Demoworld.xml COPYRIGHT # Mittelerde.xml
 
-SUBDIRS = Demoworld Mittelerde leibniz
+SUBDIRS = Demoworld leibniz # Mittelerde
 
 eurekadatadir = $(datadir)/eureka/data
 
