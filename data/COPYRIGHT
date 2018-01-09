@@ -29,8 +29,19 @@ SAMPLES:
 IMAGERY:
 --------
 
-- charset.png and frame.png are both taken from the GPL'ed game Nazghul
+- charset.png and frame.png are both mostly taken from the GPL'ed game Nazghul
   https://sourceforge.net/projects/nazghul/
+  
+  Some more icons were added from 
+  https://ayene-chan.deviantart.com/
+  and can be used freely with giving credit.  However, the icons currently do not appear
+  in any game provided with eureka.
+
+  And, finally, some further icons are added from
+  https://telles0808.deviantart.com/art/RPG-Maker-VX-RTP-Tileset-159218223
+  and can be used freely so long as the game is not commercial.  Again, these icons
+  currently do not appear in any of the provided games with eureka, so are here
+  mainly in the case that someone else feels like using them.
 
 - The small bestiary pictures are composed with graphics taken from the GPL'ed game
   Battle for Wesnoth.
