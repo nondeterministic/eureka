@@ -71,7 +71,8 @@ AC_SUBST([LUA_LIBS])
 # 		      [Path to sound samples.])
 
 AC_CONFIG_FILES([Makefile \
-	         src/Makefile 
+	         src/Makefile
+		 src/Doxyfile
 		 src/leibniz/Makefile 
 		 m4/Makefile 
 		 data/Makefile

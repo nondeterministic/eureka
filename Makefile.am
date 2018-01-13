@@ -8,7 +8,11 @@ EXTRA_DIST = ltmain.sh
 
 ACLOCAL_AMFLAGS = -I m4
 
-@MAINT@alldist: 
+@MAINT@doxygen:
+@MAINT@	cd $(top_srcdir)/src ;\
+@MAINT@	${MAKE} doxygen
+
+@MAINT@alldist: doxygen
 @MAINT@	${MAKE} distcheck
 @MAINT@	${MAKE} dist-zip
 

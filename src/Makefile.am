@@ -14,6 +14,9 @@ AUTOMAKE_OPTIONS = no-dependencies
 
 CLEANFILES = $(wildcard *.d)
 
+@MAINT@doxygen: Doxyfile
+@MAINT@	doxygen Doxyfile
+
 LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_SIGNALS_LIBS@ @BOOST_REGEX_LIBS@ \
 	@LUA_LIBS@ @LIBS@
