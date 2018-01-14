@@ -94,4 +94,14 @@
     <object x="26" y="23" ox="0" oy="0" icon_no="635" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
   </objects>
+  <actions>
+    <action type="ACT_ON_ENTER" x="39" y="15">
+      <event type="EVENT_ENTER_MAP">
+	<x>8</x>
+	<y>46</y>
+	<target_map>tunnel</target_map>
+      </event>
+      <event type="EVENT_PRINTCON">A dark feeling engulfs you...</event>
+    </action>
+  </actions>
 </map>
