@@ -252,70 +252,70 @@ std::string Party::to_xml()
 	xmlpp::Element* partyNd = xml_doc.create_root_node("party");
 
 	// Add general party stuff
-	partyNd->add_child("x")->add_child_text(std::to_string(x));
-	partyNd->add_child("y")->add_child_text(std::to_string(y));
-	partyNd->add_child("map")->add_child_text(map_name());
-	partyNd->add_child("indoors")->add_child_text(indoors()? "1":"0");
-	partyNd->add_child("gold")->add_child_text(std::to_string(gold()));
-	partyNd->add_child("jimmylocks")->add_child_text(std::to_string(jimmylock_count()));
-	partyNd->add_child("food")->add_child_text(std::to_string(food()));
+	partyNd->add_child_element("x")->add_child_text(std::to_string(x));
+	partyNd->add_child_element("y")->add_child_text(std::to_string(y));
+	partyNd->add_child_element("map")->add_child_text(map_name());
+	partyNd->add_child_element("indoors")->add_child_text(indoors()? "1":"0");
+	partyNd->add_child_element("gold")->add_child_text(std::to_string(gold()));
+	partyNd->add_child_element("jimmylocks")->add_child_text(std::to_string(jimmylock_count()));
+	partyNd->add_child_element("food")->add_child_text(std::to_string(food()));
 
 	// Add players
-	xmlpp::Element* playersEl = partyNd->add_child("players");
+	xmlpp::Element* playersEl = partyNd->add_child_element("players");
 	for (auto &player: _players) {
-		xmlpp::Element* playerEl(playersEl->add_child("player"));
+		xmlpp::Element* playerEl(playersEl->add_child_element("player"));
 		playerEl->set_attribute("name", player.name());
 
-		playerEl->add_child("profession")->add_child_text(professionToString.at(player.profession()));
-		playerEl->add_child("ep")->add_child_text(std::to_string(player.ep()));
-		playerEl->add_child("hp")->add_child_text(std::to_string(player.hp()));
-		playerEl->add_child("hpm")->add_child_text(std::to_string(player.hpm()));
-		playerEl->add_child("sp")->add_child_text(std::to_string(player.sp()));
-		playerEl->add_child("spm")->add_child_text(std::to_string(player.spm()));
-		playerEl->add_child("str")->add_child_text(std::to_string(player.str()));
-		playerEl->add_child("luck")->add_child_text(std::to_string(player.luck()));
-		playerEl->add_child("dxt")->add_child_text(std::to_string(player.dxt()));
-		playerEl->add_child("wis")->add_child_text(std::to_string(player.wis()));
-		playerEl->add_child("charr")->add_child_text(std::to_string(player.charr()));
-		playerEl->add_child("iq")->add_child_text(std::to_string(player.iq()));
-		playerEl->add_child("end")->add_child_text(std::to_string(player.end()));
-		playerEl->add_child("sex")->add_child_text(player.sex()? "1":"0");
-		playerEl->add_child("race")->add_child_text(std::to_string(player.race()));
-		playerEl->add_child("level")->add_child_text(std::to_string(player.level()));
+		playerEl->add_child_element("profession")->add_child_text(professionToString.at(player.profession()));
+		playerEl->add_child_element("ep")->add_child_text(std::to_string(player.ep()));
+		playerEl->add_child_element("hp")->add_child_text(std::to_string(player.hp()));
+		playerEl->add_child_element("hpm")->add_child_text(std::to_string(player.hpm()));
+		playerEl->add_child_element("sp")->add_child_text(std::to_string(player.sp()));
+		playerEl->add_child_element("spm")->add_child_text(std::to_string(player.spm()));
+		playerEl->add_child_element("str")->add_child_text(std::to_string(player.str()));
+		playerEl->add_child_element("luck")->add_child_text(std::to_string(player.luck()));
+		playerEl->add_child_element("dxt")->add_child_text(std::to_string(player.dxt()));
+		playerEl->add_child_element("wis")->add_child_text(std::to_string(player.wis()));
+		playerEl->add_child_element("charr")->add_child_text(std::to_string(player.charr()));
+		playerEl->add_child_element("iq")->add_child_text(std::to_string(player.iq()));
+		playerEl->add_child_element("end")->add_child_text(std::to_string(player.end()));
+		playerEl->add_child_element("sex")->add_child_text(player.sex()? "1":"0");
+		playerEl->add_child_element("race")->add_child_text(std::to_string(player.race()));
+		playerEl->add_child_element("level")->add_child_text(std::to_string(player.level()));
 
 		if (player.weapon() != NULL)
-			playerEl->add_child("weapon")->add_child_text(player.weapon()->get_lua_name());
+			playerEl->add_child_element("weapon")->add_child_text(player.weapon()->get_lua_name());
 		else
-			playerEl->add_child("weapon");
+			playerEl->add_child_element("weapon");
 
 		if (player.shield() != NULL)
-			playerEl->add_child("shield")->add_child_text(player.shield()->get_lua_name());
+			playerEl->add_child_element("shield")->add_child_text(player.shield()->get_lua_name());
 		else
-			playerEl->add_child("shield");
+			playerEl->add_child_element("shield");
 
 		if (player.armour() != NULL)
-			playerEl->add_child("armour")->add_child_text(player.armour()->get_lua_name());
+			playerEl->add_child_element("armour")->add_child_text(player.armour()->get_lua_name());
 		else
-			playerEl->add_child("armour");
+			playerEl->add_child_element("armour");
 
 		if (player.armour_hands() != NULL)
-			playerEl->add_child("gloves")->add_child_text(player.armour_hands()->get_lua_name());
+			playerEl->add_child_element("gloves")->add_child_text(player.armour_hands()->get_lua_name());
 		else
-			playerEl->add_child("gloves");
+			playerEl->add_child_element("gloves");
 
 		if (player.armour_feet() != NULL)
-			playerEl->add_child("shoes")->add_child_text(player.armour_feet()->get_lua_name());
+			playerEl->add_child_element("shoes")->add_child_text(player.armour_feet()->get_lua_name());
 		else
-			playerEl->add_child("shoes");
+			playerEl->add_child_element("shoes");
 
 		if (player.armour_head() != NULL)
-			playerEl->add_child("helmet")->add_child_text(player.armour_head()->get_lua_name());
+			playerEl->add_child_element("helmet")->add_child_text(player.armour_head()->get_lua_name());
 		else
-			playerEl->add_child("helmet");
+			playerEl->add_child_element("helmet");
 	}
 
 	// Add inventory
-	xmlpp::Element* invEl = partyNd->add_child("inventory");
+	xmlpp::Element* invEl = partyNd->add_child_element("inventory");
 	for (unsigned i = 0; i < Party::Instance().inventory()->size(); i++) {
 		Item* item = inventory()->get_item(i);
 
@@ -325,7 +325,7 @@ std::string Party::to_xml()
 		if (item->name() == l.name())
 			continue;
 
-		xmlpp::Element* itemEl(invEl->add_child("item"));
+		xmlpp::Element* itemEl(invEl->add_child_element("item"));
 
 		itemEl->set_attribute("how_many", std::to_string(Party::Instance().inventory()->how_many_at(i)));
 		itemEl->add_child_text(item->get_lua_name());
