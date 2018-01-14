@@ -345,12 +345,12 @@ void World::xml_write_world_data(boost::filesystem::path path)
 
 		// Add name
 		_main_world_xml_root = _main_world_xml_file->create_root_node("world");
-		xmlpp::Element* xml_world_name = _main_world_xml_root->add_child("name");
+		xmlpp::Element* xml_world_name = _main_world_xml_root->add_child_element("name");
 		xml_world_name->add_child_text(_name);
 
 		// Add map information
 		for (auto curr_map = _maps.begin(); curr_map != _maps.end(); curr_map++) {
-			xmlpp::Element* map_node = _main_world_xml_root->add_child("map");
+			xmlpp::Element* map_node = _main_world_xml_root->add_child_element("map");
 			map_node->set_attribute("href", "./" + _name + "/maps/" + (*curr_map)->get_name() + ".xml");
 			map_node->set_attribute("type", ((*curr_map)->is_outdoors() ? "outdoors" : "indoors"));
 			if ((*curr_map)->initial)
@@ -359,12 +359,12 @@ void World::xml_write_world_data(boost::filesystem::path path)
 		}
 
 		// Add icon data
-		xmlpp::Element* iconprops_node = _main_world_xml_root->add_child("iconprops");
+		xmlpp::Element* iconprops_node = _main_world_xml_root->add_child_element("iconprops");
 
 		// Indoors
-		xmlpp::Element* indoorsicons_node = iconprops_node->add_child("indoors");
+		xmlpp::Element* indoorsicons_node = iconprops_node->add_child_element("indoors");
 		for (unsigned i = 0; i < IndoorsIcons::Instance().number_of_icons(); i++) {
-			xmlpp::Element* icon_node = indoorsicons_node->add_child("icon");
+			xmlpp::Element* icon_node = indoorsicons_node->add_child_element("icon");
 			std::stringstream icon_no_str;
 			icon_no_str << i;
 
@@ -399,9 +399,9 @@ void World::xml_write_world_data(boost::filesystem::path path)
 		}
 
 		// Outdoors
-		xmlpp::Element* outdoorsicons_node = iconprops_node->add_child("outdoors");
+		xmlpp::Element* outdoorsicons_node = iconprops_node->add_child_element("outdoors");
 		for (unsigned i = 0; i < OutdoorsIcons::Instance().number_of_icons(); i++) {
-			xmlpp::Element* icon_node = outdoorsicons_node->add_child("icon");
+			xmlpp::Element* icon_node = outdoorsicons_node->add_child_element("icon");
 			std::stringstream icon_no_str;
 			icon_no_str << i;
 			icon_node->set_attribute("no", icon_no_str.str());

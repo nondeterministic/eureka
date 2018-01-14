@@ -411,13 +411,16 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 {
 	MapObj new_obj;
 	int x = 0, y = 0, ox = 0, oy = 0;
-	const xmlpp::Element::AttributeList& attributes = objElement->get_attributes();
+	// const xmlpp::Element::AttributeList& attributes = objElement->get_attributes();
+	auto attributes = objElement->get_attributes();
 
 	// Could be empty, if object doesn't have an actions tag
-	xmlpp::Node::NodeList actions_node = objElement->get_children("actions");
+	// xmlpp::Node::NodeList actions_node = objElement->get_children("actions");
+	auto actions_node = objElement->get_children("actions");
 
 	// Could be empty, if object doesn't have a description tag
-	xmlpp::Node::NodeList description_node = objElement->get_children("description");
+	// xmlpp::Node::NodeList description_node = objElement->get_children("description");
+	auto description_node = objElement->get_children("description");
 
 	// Iterate through attributes of object node
 	for (auto iter = attributes.begin(); iter != attributes.end(); ++iter) {
@@ -501,7 +504,8 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 	if (description_node.size() > 0) {
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(description_node.front());
 		if (nodeElement) {
-			new_obj.set_description(nodeElement->get_child_text()->get_content());
+			// new_obj.set_description(nodeElement->get_child_text()->get_content());
+			new_obj.set_description(nodeElement->get_first_child_text()->get_content());
 			// std::cout << "DESCRIPTION READ: " << new_obj.description() << "\n";
 		}
 		else
@@ -521,8 +525,8 @@ MapObj Map::return_object_node(const xmlpp::Element* objElement)
 
 void Map::parse_objects_node(const xmlpp::Node* node)
 {
-	xmlpp::Node::NodeList list = node->get_children();
-	for (xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+	auto list = node->get_children();
+	for (auto iter = list.begin(); iter != list.end(); ++iter) {
 		const xmlpp::Element* objectElement = dynamic_cast<const xmlpp::Element*>(*iter);
 		if (objectElement) {
 			MapObj new_obj = return_object_node(objectElement);
@@ -537,7 +541,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 	std::vector<std::shared_ptr<Action>> parsed_actions;
 
 	// Get all action nodes
-	xmlpp::Node::NodeList actions = node->get_children();
+	auto actions = node->get_children();
 	for (auto action = actions.begin(); action != actions.end(); ++action) {
 		const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(*action);
 
@@ -578,7 +582,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 			}
 
 			// Get all the event nodes for an action
-			xmlpp::Node::NodeList events = (*action)->get_children();
+			auto events = (*action)->get_children();
 			for (auto event = events.begin(); event != events.end(); ++event) {
 				const xmlpp::Element* eventElement = dynamic_cast<const xmlpp::Element*>(*event);
 
@@ -594,7 +598,10 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						// If they are, add the event...
 						if (event_target_map) {
 							std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
-							new_ev->set_map_name(event_target_map->get_child_text()->get_content().c_str());
+
+							new_ev->set_x((unsigned)atoi(event_x->get_first_child_text()->get_content().c_str()));
+							new_ev->set_y((unsigned)atoi(event_y->get_first_child_text()->get_content().c_str()));
+							new_ev->set_map_name(event_target_map->get_first_child_text()->get_content().c_str());
 
 							// You can omit coordinates though (in which case by default the handler will try to
 							// use the map's own initial coordinates, see gameevent.cc.)
@@ -639,7 +646,7 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						if (vol_string.length() > 0)
 							volume = atoi(vol_string.c_str());
 
-						std::string filename = eventElement->get_child_text()->get_content().c_str();
+						std::string filename = eventElement->get_first_child_text()->get_content().c_str();
 						boost::algorithm::trim(filename);
 						if (event_type_s == "EVENT_PLAY_SOUND") {
 							std::shared_ptr<EventPlaySound> new_ev(new EventPlaySound(filename, loop, volume));
@@ -668,13 +675,13 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 					}
 					else if (event_type_s == "EVENT_PRINTCON") {
 						std::shared_ptr<EventPrintcon> new_ev(new EventPrintcon());
-						new_ev->text = eventElement->get_child_text()->get_content().c_str();
+						new_ev->text = eventElement->get_first_child_text()->get_content().c_str();
 						boost::algorithm::trim(new_ev->text);
 						_act->add_event(new_ev);
 					}
 					else if (event_type_s == "EVENT_LUA_SCRIPT") {
 						std::shared_ptr<EventLuaScript> new_ev(new EventLuaScript());
-						new_ev->file_name = eventElement->get_child_text()->get_content().c_str();
+						new_ev->file_name = eventElement->get_first_child_text()->get_content().c_str();
 						boost::algorithm::trim(new_ev->file_name);
 						_act->add_event(new_ev);
 					}
@@ -692,14 +699,12 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 
 void Map::parse_data_node(const xmlpp::Node* node)
 {
-	xmlpp::Node::NodeList list = node->get_children();
-	for (xmlpp::Node::NodeList::iterator iter = list.begin();
-			iter != list.end(); ++iter) {
-		const xmlpp::Element* nodeElement =
-				dynamic_cast<const xmlpp::Element*>(*iter);
+	auto list = node->get_children();
+	for (auto iter = list.begin(); iter != list.end(); ++iter) {
+		const xmlpp::Element* nodeElement =	dynamic_cast<const xmlpp::Element*>(*iter);
 
 		if (nodeElement) {
-			const xmlpp::TextNode* row_data = nodeElement->get_child_text();
+			auto row_data = nodeElement->get_first_child_text();
 			std::vector<std::string> row_string_values;
 			std::string row_string = row_data->get_content();
 			boost::algorithm::split(row_string_values,
@@ -726,17 +731,17 @@ void Map::parse_node(const xmlpp::Node* node)
 
 	if (nodeElement) {
 		if (nodeElement->get_name().uppercase() == "NAME")
-			_name = nodeElement->get_child_text()->get_content();
+			_name = nodeElement->get_first_child_text()->get_content();
 		else if (nodeElement->get_name().uppercase() == "LONGNAME")
-			_longname = nodeElement->get_child_text()->get_content();
+			_longname = nodeElement->get_first_child_text()->get_content();
 		else if (nodeElement->get_name().uppercase() == "DUNGEON")
-			is_dungeon = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
+			is_dungeon = nodeElement->get_first_child_text()->get_content().uppercase() == "TRUE"? true : false;
 		else if (nodeElement->get_name().uppercase() == "GUARDED_CITY")
-			guarded_city = nodeElement->get_child_text()->get_content().uppercase() == "TRUE"? true : false;
+			guarded_city = nodeElement->get_first_child_text()->get_content().uppercase() == "TRUE"? true : false;
 		else if (nodeElement->get_name().uppercase() == "INITIAL_X")
-			initial_x = std::stoi(nodeElement->get_child_text()->get_content().c_str());
+			initial_x = std::stoi(nodeElement->get_first_child_text()->get_content().c_str());
 		else if (nodeElement->get_name().uppercase() == "INITIAL_Y")
-			initial_y = std::stoi(nodeElement->get_child_text()->get_content().c_str());
+			initial_y = std::stoi(nodeElement->get_first_child_text()->get_content().c_str());
 		else if (nodeElement->get_name().uppercase() == "OBJECTS")
 			parse_objects_node(node);
 		else if (nodeElement->get_name().uppercase() == "DATA")
@@ -749,9 +754,8 @@ void Map::parse_node(const xmlpp::Node* node)
 	}
 
 	if (!nodeContent) {
-		xmlpp::Node::NodeList list = node->get_children();
-		for (xmlpp::Node::NodeList::iterator iter = list.begin();
-				iter != list.end(); ++iter)
+		auto list = node->get_children();
+		for (auto iter = list.begin(); iter != list.end(); ++iter)
 			parse_node(*iter);
 	}
 }
@@ -837,15 +841,15 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 
 	// Add event nodes if there are any
 	for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++) {
-		xmlpp::Element* ev_node = node->add_child("event");
+		xmlpp::Element* ev_node = node->add_child_element("event");
 
 		if (std::dynamic_pointer_cast<EventEnterMap>(*curr_ev)) {
 			std::shared_ptr<EventEnterMap> event_enter_map = std::dynamic_pointer_cast<EventEnterMap>(*curr_ev);
 
 			ev_node->set_attribute("type", "EVENT_ENTER_MAP");
-			ev_node->add_child("x")->add_child_text(std::to_string(event_enter_map->get_x()));
-			ev_node->add_child("y")->add_child_text(std::to_string(event_enter_map->get_y()));
-			ev_node->add_child("target_map")->add_child_text(event_enter_map->get_map_name());
+			ev_node->add_child_element("x")->add_child_text(std::to_string(event_enter_map->get_x()));
+			ev_node->add_child_element("y")->add_child_text(std::to_string(event_enter_map->get_y()));
+			ev_node->add_child_element("target_map")->add_child_text(event_enter_map->get_map_name());
 		}
 		else if (std::dynamic_pointer_cast<EventLeaveMap>(*curr_ev)) {
 			ev_node->set_attribute("type", "EVENT_LEAVE_MAP");
@@ -854,7 +858,7 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 			std::shared_ptr<EventChangeIcon> event_change_icon = std::dynamic_pointer_cast<EventChangeIcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_CHANGE_ICON");
 
-			xmlpp::Element* change_icon_el = ev_node->add_child("change_icon");
+			xmlpp::Element* change_icon_el = ev_node->add_child_element("change_icon");
 			change_icon_el->set_attribute("x", std::to_string(event_change_icon->x));
 			change_icon_el->set_attribute("y", std::to_string(event_change_icon->y));
 			change_icon_el->set_attribute("icon_now", std::to_string(event_change_icon->icon_now));
@@ -866,19 +870,19 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		else if (std::dynamic_pointer_cast<EventAddObject>(*curr_ev)) {
 			std::shared_ptr<EventAddObject> ev_obj = std::dynamic_pointer_cast<EventAddObject>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_ADD_OBJECT");
-			xmlpp::Element* object_node = ev_node->add_child("object");
+			xmlpp::Element* object_node = ev_node->add_child_element("object");
 			MapObj mapObj = ev_obj->get_obj();
 			write_obj_xml_node(mapObj, object_node);
 		}
 		else if (std::dynamic_pointer_cast<EventPrintcon>(*curr_ev)) {
 			std::shared_ptr<EventPrintcon> event_printcon = std::dynamic_pointer_cast<EventPrintcon>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PRINTCON");
-			ev_node->set_child_text(event_printcon->text);
+			ev_node->set_first_child_text(event_printcon->text);
 		}
 		else if (std::dynamic_pointer_cast<EventPlaySound>(*curr_ev)) {
 			std::shared_ptr<EventPlaySound> event_playsound = std::dynamic_pointer_cast<EventPlaySound>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PLAY_SOUND");
-			ev_node->set_child_text(event_playsound->filename);
+			ev_node->set_first_child_text(event_playsound->filename);
 
 			if (event_playsound->loop != 0)
 				ev_node->set_attribute("loop", std::to_string(event_playsound->loop));
@@ -888,7 +892,7 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		else if (std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev)) {
 			std::shared_ptr<EventPlayMusic> event_playmusic = std::dynamic_pointer_cast<EventPlayMusic>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_PLAY_MUSIC");
-			ev_node->set_child_text(event_playmusic->filename);
+			ev_node->set_first_child_text(event_playmusic->filename);
 
 			if (event_playmusic->loop != -1)
 				ev_node->set_attribute("loop", std::to_string(event_playmusic->loop));
@@ -898,7 +902,7 @@ void Map::write_action_node(xmlpp::Element* node, Action* action)
 		else if (std::dynamic_pointer_cast<EventLuaScript>(*curr_ev)) {
 			std::shared_ptr<EventLuaScript> event_lua_script = std::dynamic_pointer_cast<EventLuaScript>(*curr_ev);
 			ev_node->set_attribute("type", "EVENT_LUA_SCRIPT");
-			ev_node->set_child_text(event_lua_script->file_name);
+			ev_node->set_first_child_text(event_lua_script->file_name);
 		}
 		else if (std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev)) {
 			std::shared_ptr<EventDeleteObject> event_printcon= std::dynamic_pointer_cast<EventDeleteObject>(*curr_ev);
@@ -978,10 +982,10 @@ bool Map::write_obj_xml_node(MapObj mapObj, xmlpp::Element* object_node)
 
 	// Write object actions, if there are any
 	if (mapObj.actions()->size() > 0) {
-		xmlpp::Element* actions_node = object_node->add_child("actions");
+		xmlpp::Element* actions_node = object_node->add_child_element("actions");
 
 		for (auto curr_act = mapObj.actions()->begin(); curr_act != mapObj.actions()->end(); curr_act++) {
-			xmlpp::Element* action_node = actions_node->add_child("action");
+			xmlpp::Element* action_node = actions_node->add_child_element("action");
 			write_action_node(action_node, curr_act->get());
 		}
 	}
@@ -992,24 +996,25 @@ bool Map::write_obj_xml_node(MapObj mapObj, xmlpp::Element* object_node)
 bool Map::xml_write_map_data(boost::filesystem::path path)
 {
 	xmlpp::Document* _main_map_xml_file;
-	xmlpp::Node* _main_map_xml_root;
+	// xmlpp::Node* _main_map_xml_root;
+	xmlpp::Element* _main_map_xml_root;
 
 	try {
 		_main_map_xml_file = new xmlpp::Document();
 
 		// TODO: Check if _main_map_xml_root needs to be deleted again.
 		_main_map_xml_root = _main_map_xml_file->create_root_node("map");
-		_main_map_xml_root->add_child("name")->add_child_text(_name);
+		_main_map_xml_root->add_child_element("name")->add_child_text(_name);
 		if (_longname.length() > 0)
-			_main_map_xml_root->add_child("longname")->add_child_text(_longname);
-		_main_map_xml_root->add_child("outdoors")->add_child_text((is_outdoors()? "true" : "false"));
-		_main_map_xml_root->add_child("dungeon")->add_child_text((is_dungeon? "true" : "false"));
-		_main_map_xml_root->add_child("guarded_city")->add_child_text((guarded_city? "true" : "false"));
+			_main_map_xml_root->add_child_element("longname")->add_child_text(_longname);
+		_main_map_xml_root->add_child_element("outdoors")->add_child_text((is_outdoors()? "true" : "false"));
+		_main_map_xml_root->add_child_element("dungeon")->add_child_text((is_dungeon? "true" : "false"));
+		_main_map_xml_root->add_child_element("guarded_city")->add_child_text((guarded_city? "true" : "false"));
 		if (initial_x >= 0 && initial_y >= 0) {
-			_main_map_xml_root->add_child("initial_x")->add_child_text(std::to_string(initial_x));
-			_main_map_xml_root->add_child("initial_y")->add_child_text(std::to_string(initial_y));
+			_main_map_xml_root->add_child_element("initial_x")->add_child_text(std::to_string(initial_x));
+			_main_map_xml_root->add_child_element("initial_y")->add_child_text(std::to_string(initial_y));
 		}
-		xmlpp::Element* data_entry = _main_map_xml_root->add_child("data");
+		xmlpp::Element* data_entry = _main_map_xml_root->add_child_element("data");
 		std::ostringstream curr_row;
 
 		// Write map data
@@ -1017,16 +1022,16 @@ bool Map::xml_write_map_data(boost::filesystem::path path)
 			for (unsigned x = 0; x < width(); x++)
 				curr_row << (_data[y])[x] << ((x < width() - 1)? " " : "");
 
-			data_entry->add_child("row")->add_child_text(curr_row.str());
+			data_entry->add_child_element("row")->add_child_text(curr_row.str());
 			curr_row.str("");
 		}
 
 		// Write objects
 		if (_map_objects.size() > 0) {
-			xmlpp::Element* objects_node = _main_map_xml_root->add_child("objects");
+			xmlpp::Element* objects_node = _main_map_xml_root->add_child_element("objects");
 
 			for (auto curr_obj = _map_objects.begin(); curr_obj != _map_objects.end(); curr_obj++) {
-				xmlpp::Element* object_node = objects_node->add_child("object");
+				xmlpp::Element* object_node = objects_node->add_child_element("object");
 				MapObj mapObj = curr_obj->second;
 				write_obj_xml_node(mapObj, object_node);
 			}
@@ -1034,10 +1039,10 @@ bool Map::xml_write_map_data(boost::filesystem::path path)
 
 		// Write global map actions (& events)
 		if (_actions.size() > 0) {
-			xmlpp::Element* actions_node = _main_map_xml_root->add_child("actions");
+			xmlpp::Element* actions_node = _main_map_xml_root->add_child_element("actions");
 
 			for (auto curr_act = _actions.begin(); curr_act != _actions.end(); curr_act++) {
-				xmlpp::Element* action_node = actions_node->add_child("action");
+				xmlpp::Element* action_node = actions_node->add_child_element("action");
 				write_action_node(action_node, curr_act->get());
 			}
 		}

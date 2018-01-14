@@ -123,7 +123,7 @@ bool GameState::save_misc(boost::filesystem::path fullFilePath)
 	// Create XML
 	xmlpp::Document xml_doc;
 	xmlpp::Element* partyNd = xml_doc.create_root_node("misc");
-	xmlpp::Element* tod = partyNd->add_child("timeofday");
+	xmlpp::Element* tod = partyNd->add_child_element("timeofday");
 	tod->set_attribute("hour", std::to_string(GameControl::Instance().get_clock()->time().first));
 	tod->set_attribute("minute", std::to_string(GameControl::Instance().get_clock()->time().second));
 
@@ -213,7 +213,8 @@ bool GameState::load_party(lua_State* lua_state)
 	std::cout << "INFO: gamestate.cc: Loading game data from file " << (conf_savegame_path / "party.xml").string() << std::endl;
 
 	while (reader.read()) {
-		if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+		// if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+		if (reader.get_node_type() != xmlpp::TextReader::NodeType::EndElement && !reader.is_empty_element()) {
 			if (reader.get_name() == "x")
 				_x = std::stoi(reader.read_string());
 			else if (reader.get_name() == "y")
@@ -231,7 +232,7 @@ bool GameState::load_party(lua_State* lua_state)
 			// Inventory
 			else if (reader.get_name() == "inventory") {
 				while (reader.read() && reader.get_name() != "inventory") {
-					if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+					if (reader.get_node_type() != xmlpp::TextReader::NodeType::EndElement && !reader.is_empty_element()) {
 						if (reader.get_name() == "item") {
 							reader.move_to_next_attribute();
 							int how_many = std::atoi(reader.get_value().c_str());
@@ -262,7 +263,7 @@ bool GameState::load_party(lua_State* lua_state)
 
 						// Parse properties of player until </player> tag is found
 						while (reader.read() && reader.get_name() != "player") {
-							if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement && !reader.is_empty_element()) {
+							if (reader.get_node_type() != xmlpp::TextReader::NodeType::EndElement && !reader.is_empty_element()) {
 								if (reader.get_name() == "profession") {
 									std::string prof = reader.read_string();
 									player.set_profession(stringToProfession.at(prof));
@@ -361,7 +362,7 @@ bool GameState::load_misc(lua_State* lua_state)
 	std::cout << "INFO: gamestate.cc: Loading misc. game data from file " << (conf_savegame_path / "misc.xml").string() << std::endl;
 
 	while (reader.read()) {
-		if (reader.get_node_type() != xmlpp::TextReader::xmlNodeType::EndElement) {
+		if (reader.get_node_type() != xmlpp::TextReader::NodeType::EndElement) {
 			if (reader.get_name() == "timeofday") {
 				int hour   = std::atoi(reader.get_attribute("hour").c_str());
 				int minute = std::atoi(reader.get_attribute("minute").c_str());
