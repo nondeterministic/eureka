@@ -9,31 +9,30 @@ require "math"
 do
    local hp          = 0
    local hp_max      = 0
-   local weapon      = nil
-   local strength    = 25
-   local luck        = 18
-   local dxt         = 15
+   local weapon
+   local strength    = 20
+   local luck        = 8
+   local dxt         = 7
    local distance    = 0
-   local gold        = 10
-   local ep          = 18
-   local sp          = 40
-   
-   local name        = "Dragon"
-   local plural_name = "Dragons"
+   local gold        = 0
+   local ep          = 15
+
+   local name        = "Ettin"
+   local plural_name = "Ettins"
    local distance    = 0
    
    local combat      = ""
    local nth_foe     = 0
 
-   local attacked_players = {} -- Names of party members who are attacked
+   local player_name = "" -- Name of party member who is attacked
 
    function create_instance()
-      hp_max   = simpl_rand(30, 40) + 5
+      hp_max   = simpl_rand(5, 15) + 5
       hp       = hp_max
-      weapon   = nil
+      weapon   = Weapons.axe
       strength = simpl_rand(5, 15) + 5
       luck     = simpl_rand(5, 12)
-      gold     = simpl_rand(50, 100)
+      gold     = simpl_rand(2, 12)
    end
 
    function set_combat_ptr(ptr, number)
@@ -71,7 +70,7 @@ do
    end
 
    function img_path()
-      return simpl_datapath() .. "/bestiary/dragon.png"
+      return simpl_datapath() .. "/bestiary/ettin.png"
    end
    
    function get_hp()
@@ -111,7 +110,7 @@ do
    end
 
    function get_weapon()
-      return ""
+      return weapon.name
    end
 
    function set_weapon(name)
@@ -124,7 +123,7 @@ do
    -- weapon or with a magic spell, etc.
 
    function advance()
-      return false
+      return true
    end
 
    function flee()
@@ -133,48 +132,38 @@ do
 
    function attack()
       if (get_hp() < get_hp_max() / 100 * 20) then
-	 flee()
-	 return false
+	 	flee()
+	 	return false
       end
 
-      attacked_players = {}
-      number_of_attacked_players = 0
-      
-      -- Determine who gets potentially attacked by, say, an odem spell.
-      for i=1,(simpl_get_partysize() - 1) do
-	 if (simpl_rand(1,10) < 6 and simpl_get_player_is_alive(simpl_get_player_name(i))) then
-	    -- -10 is a magic bonus by the skeleton lord to make the spell more effective
-	    random = simpl_rand(1,20) + simpl_bonus(get_luck()) - 10
-	    if (random < simpl_get_ac(simpl_get_player_name(i))) then
-	       attacked_players[simpl_get_player_name(i)] = true
-	       number_of_attacked_players = number_of_attacked_players + 1
-	    end
-	 end
-      end
+      player_name = simpl_rand_player(1) -- Get exactly 1 random player to be attacked
 
-      if (number_of_attacked_players == 0) then
-	 simpl_printcon(string.format("A %s throws fire odem at you, but misses.", get_name()), true)
-      end
+      r = simpl_rand(1, 20) - simpl_bonus(get_luck()) - simpl_bonus(get_dxt())
+      attack_successful = r < simpl_get_ac(player_name)
       
-      return (number_of_attacked_players > 0)
+      if (attack_successful == false) then
+      	 simpl_printcon(string.format("A %s swings his %s at %s but misses.", 
+      				      get_name(), get_weapon(), player_name), true)
+      end
+		     
+      return attack_successful
    end
 
    function fight()
-      simpl_printcon(string.format("A %s throws fire odem at you...", get_name()), true)
-      sp = sp - 5
-      for k, v in pairs(attacked_players) do
-	 r = simpl_rand(1, 20) - 10
-	 attack_successful = r < simpl_get_ac(k)
-	 
-	 if (attack_successful == true) then
-	    damage = simpl_rand(3, 18)
-	    simpl_printcon(string.format("...and %s takes %d points of damage.", k, damage), true)
-	    simpl_player_change_hp(k, -damage)
-	    simpl_notify_party_hit()
-	 else
-	    simpl_printcon(string.format("...and %s, who was directly targetted, managed to evade the attack.", k), true)
-	 end
+      wep = Weapons[get_weapon()]
+
+      if (distance > 10) then
+      	 simpl_printcon(string.format("A %s swings his %s at %s but cannot reach.",
+      				      get_name(), wep.name, player_name), true)
+      	 return
       end
+
+      damage = simpl_rand(wep.damage_min, wep.damage_max)
+      simpl_printcon(string.format("A %s swings his %s and hits %s for %d points of damage.",
+				   get_name(), wep.name, player_name, damage), true)
+    				                
+      simpl_player_change_hp(player_name, -damage)
+      simpl_notify_party_hit()
    end
-   
+      
 end

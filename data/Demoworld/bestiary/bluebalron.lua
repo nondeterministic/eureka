@@ -18,8 +18,8 @@ do
    local ep          = 18
    local sp          = 40
    
-   local name        = "Dragon"
-   local plural_name = "Dragons"
+   local name        = "Blue Balron"
+   local plural_name = "Blue Balrons"
    local distance    = 0
    
    local combat      = ""
@@ -71,7 +71,7 @@ do
    end
 
    function img_path()
-      return simpl_datapath() .. "/bestiary/dragon.png"
+      return simpl_datapath() .. "/bestiary/balron.png"
    end
    
    function get_hp()
@@ -153,14 +153,14 @@ do
       end
 
       if (number_of_attacked_players == 0) then
-	 simpl_printcon(string.format("A %s throws fire odem at you, but misses.", get_name()), true)
+	 simpl_printcon(string.format("A %s attempts to lash at you, but misses.", get_name()), true)
       end
       
       return (number_of_attacked_players > 0)
    end
 
    function fight()
-      simpl_printcon(string.format("A %s throws fire odem at you...", get_name()), true)
+      simpl_printcon(string.format("A %s attempts to lash at you...", get_name()), true)
       sp = sp - 5
       for k, v in pairs(attacked_players) do
 	 r = simpl_rand(1, 20) - 10

@@ -10,16 +10,16 @@ do
    local hp          = 0
    local hp_max      = 0
    local weapon      = nil
-   local strength    = 25
-   local luck        = 18
-   local dxt         = 15
+   local strength    = 16
+   local luck        = 7
+   local dxt         = 8
    local distance    = 0
    local gold        = 10
    local ep          = 18
-   local sp          = 40
+   local sp          = 20
    
-   local name        = "Dragon"
-   local plural_name = "Dragons"
+   local name        = "Evil Wizard"
+   local plural_name = "Evil Wizards"
    local distance    = 0
    
    local combat      = ""
@@ -28,12 +28,16 @@ do
    local attacked_players = {} -- Names of party members who are attacked
 
    function create_instance()
-      hp_max   = simpl_rand(30, 40) + 5
+      hp_max   = simpl_rand(5, 15) + 5
       hp       = hp_max
-      weapon   = nil
+      if (simpl_rand(1,2) == 2) then
+	 weapon   = Weapons["spear"]
+      else
+	 weapon   = Weapons["dagger"]
+      end
       strength = simpl_rand(5, 15) + 5
       luck     = simpl_rand(5, 12)
-      gold     = simpl_rand(50, 100)
+      gold     = simpl_rand(5, 10)
    end
 
    function set_combat_ptr(ptr, number)
@@ -71,7 +75,7 @@ do
    end
 
    function img_path()
-      return simpl_datapath() .. "/bestiary/dragon.png"
+      return simpl_datapath() .. "/bestiary/magician.png"
    end
    
    function get_hp()
@@ -111,7 +115,7 @@ do
    end
 
    function get_weapon()
-      return ""
+      return weapon.name
    end
 
    function set_weapon(name)
@@ -145,7 +149,7 @@ do
 	 if (simpl_rand(1,10) < 6 and simpl_get_player_is_alive(simpl_get_player_name(i))) then
 	    -- -10 is a magic bonus by the skeleton lord to make the spell more effective
 	    random = simpl_rand(1,20) + simpl_bonus(get_luck()) - 10
-	    if (random < simpl_get_ac(simpl_get_player_name(i))) then
+	    if (random < simpl_get_ac(simpl_get_player_name(i))) then -- TODO: add magic-protection bonus for player!
 	       attacked_players[simpl_get_player_name(i)] = true
 	       number_of_attacked_players = number_of_attacked_players + 1
 	    end
@@ -153,26 +157,52 @@ do
       end
 
       if (number_of_attacked_players == 0) then
-	 simpl_printcon(string.format("A %s throws fire odem at you, but misses.", get_name()), true)
+	 simpl_printcon(string.format("A %s casts a spell, but nothing happens.", get_name()), true)
       end
       
       return (number_of_attacked_players > 0)
    end
 
    function fight()
-      simpl_printcon(string.format("A %s throws fire odem at you...", get_name()), true)
-      sp = sp - 5
-      for k, v in pairs(attacked_players) do
-	 r = simpl_rand(1, 20) - 10
-	 attack_successful = r < simpl_get_ac(k)
-	 
-	 if (attack_successful == true) then
-	    damage = simpl_rand(3, 18)
-	    simpl_printcon(string.format("...and %s takes %d points of damage.", k, damage), true)
-	    simpl_player_change_hp(k, -damage)
-	    simpl_notify_party_hit()
+      if (sp < 5) then -- Fight with weapon, if spell points are low
+	 wep = Weapons[get_weapon()]
+
+	 if (distance > 10) then
+	    simpl_printcon(string.format("A %s tries to attack with an %s, but cannot reach.",
+					 get_name(), wep.name), true)
+	    return
 	 else
-	    simpl_printcon(string.format("...and %s, who was directly targetted, managed to evade the attack.", k), true)
+	    player_name = simpl_rand_player(1)
+
+	    r = simpl_rand(1, 20) - simpl_bonus(get_luck()) - simpl_bonus(get_dxt())
+	    attack_successful = r < simpl_get_ac(player_name)
+	    
+	    if (attack_successful == true) then
+	       damage = simpl_rand(wep.damage_min, wep.damage_max)
+	       simpl_printcon(string.format("A %s swings his %s and hits %s for %d points of damage.",
+					    get_name(), wep.name, player_name, damage), true)
+	       simpl_player_change_hp(player_name, -damage)
+	       simpl_notify_party_hit()
+	    else
+	       simpl_printcon(string.format("A %s swings his %s at %s but missed.",
+					    get_name(), wep.name, player_name), true)	       
+	    end	    
+	 end
+      else -- Cast spell
+	 simpl_printcon(string.format("A %s casts a magic arrows spell...", get_name()), true)
+	 sp = sp - 5
+	 for k, v in pairs(attacked_players) do
+	    r = simpl_rand(1, 20) - 10
+	    attack_successful = r < simpl_get_ac(k)
+	    
+	    if (attack_successful == true) then
+	       damage = simpl_rand(1, 8)
+	       simpl_printcon(string.format("%s takes %d points of damage.", k, damage), true)
+	       simpl_player_change_hp(k, -damage)
+	       simpl_notify_party_hit()
+	    else
+	       simpl_printcon(string.format("%s, who was directly targetted, managed to evade the attack.", k), true)
+	    end
 	 end
       end
    end
