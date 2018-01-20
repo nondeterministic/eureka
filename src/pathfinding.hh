@@ -20,25 +20,29 @@
 #ifndef SRC_PATHFINDING_H_
 #define SRC_PATHFINDING_H_
 
-#include <iostream>
 #include <utility>
-#include <memory>
-#include <cstdlib>
 
 #include "map.hh"
+#include "gamecontrol.hh"
+#include "map.hh"
+
+class GameControl;
+
+typedef struct {
+	int x, y, dist;
+} NodeDist;
 
 class PathFinding
 {
 private:
-	int _width, _height;
-	int**  _all_paths;
-	bool** _visited;
+	unsigned _width, _height;
+	Map* _map;
+	GameControl& _gc;
 
-	int all_paths(int, int);
+	void destroy(bool**);
 
 public:
 	PathFinding(Map*);
-	~PathFinding();
 	std::pair<unsigned,unsigned> follow_party(unsigned , unsigned , unsigned , unsigned );
 	int shortest_path(int, int, unsigned, unsigned);
 };

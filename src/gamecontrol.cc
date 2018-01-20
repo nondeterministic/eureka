@@ -2056,17 +2056,17 @@ void GameControl::keypress_look()
  *  Returns true if the current arena is an outdoors arena, false otherwise.
  */
 
-bool GameControl::is_arena_outdoors()
+bool GameControl::is_arena_outdoors() const
 {
   return std::dynamic_pointer_cast<HexArena>(_arena) != NULL;
 }
 
-bool GameControl::walkable(int x, int y)
+bool GameControl::walkable(int x, int y) const
 {
 	return check_walkable(x, y, Individual_Game_Character);
 }
 
-bool GameControl::walkable_for_party(int x, int y)
+bool GameControl::walkable_for_party(int x, int y) const
 {
 	return check_walkable(x, y, Whole_Party);
 }
@@ -2074,7 +2074,7 @@ bool GameControl::walkable_for_party(int x, int y)
 // Internal method, that checks whether a field can be walked upon either by the party or some other, ordinary game character.
 // Call from the outside instead walkable() or walkable_for_party().
 
-bool GameControl::check_walkable(int x, int y, Walking the_walker)
+bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 {
 	// TODO: These bounds only work indoors, as outdoors we have a jump of 2 between hex.  Do we need to check the boundaries outdoors at all?
 	if (!is_arena_outdoors()) {
@@ -2156,7 +2156,6 @@ PropertyStrength GameControl::get_forcefieldstrength(int x, int y)
 
 bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 {
-	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	int x_diff = 0, y_diff = 0;
 

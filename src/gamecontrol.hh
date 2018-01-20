@@ -65,12 +65,12 @@ protected:
 	SoundSample* _game_music;
 	SoundSample _sample;
 	bool _game_is_started;
-	bool check_walkable(int, int, Walking);
+	bool check_walkable(int, int, Walking) const;
 	GameControl();
 
 public:
 	static GameControl& Instance();
-	bool is_arena_outdoors();
+	bool is_arena_outdoors() const;
 	bool move_party(LDIR, bool = false);
 	void move_objects();
 	void redraw_graphics_status(bool = true);
@@ -120,8 +120,8 @@ public:
 	bool game_won();
 	int random(int, int);
 	void printcon(const std::string, bool = false);
-	bool walkable_for_party(int, int);
-	bool walkable(int, int);
+	bool walkable_for_party(int, int) const;
+	bool walkable(int, int) const;
 	std::shared_ptr<Map> get_map();
 	Clock* get_clock();
 	std::pair<int,int> get_viewport();

@@ -24,64 +24,23 @@
 #include <utility>
 #include <memory>
 #include <cstdlib>
+#include <queue>
 
-PathFinding::PathFinding(Map* map)
+PathFinding::PathFinding(Map* map) :  _gc(GameControl::Instance()), _map(map)
 {
-	// TODO: This offset of 10 is necessary, because the algorithm progresses by assigning x and y offsets to tiles
+	// TODO: This offset of 100 is necessary, because the algorithm progresses by assigning x and y offsets to tiles
 	// which might then refer to coordinates that are outside of the map area.  If this isn't added, then the destructor
 	// crashes.  Alternatively, I could simply have paid more attention inside the algorithm.
 	// But this whole algorithm/file is a hack and needs replacing some day...  :-(
-	_width = map->width() + 10;
-	_height = map->height() + 10;
 
-	_all_paths = new int*[_height];
-	for (int i = 0; i < _height; i++) {
-		_all_paths[i] = new int[_width];
-
-		for (int j = 0; j < _width; j++)
-			_all_paths[i][j] = 300000000;
-	}
-
-	_visited= new bool*[_height];
-	for (int i = 0; i < _height; i++) {
-		_visited[i] = new bool[_width];
-
-		for (int j = 0; j < _width; j++)
-			_visited[i][j] = false;
-	}
-}
-
-PathFinding::~PathFinding()
-{
-	for(int i = 0; i < _height; i++) {
-		if (_visited[i] != NULL) {
-			delete [] _visited[i];
-			_visited[i] = NULL;
-		}
-	}
-	if (_visited != NULL) {
-		delete [] _visited;
-		_visited = NULL;
-	}
-
-	for(int i = 0; i < _height; i++) {
-		if (_all_paths[i] != NULL) {
-			delete [] _all_paths[i];
-			_all_paths[i] = NULL;
-		}
-	}
-	if (_all_paths != NULL) {
-		delete [] _all_paths;
-		_all_paths = NULL;
-	}
+	_width = _map->width() + 100;
+	_height = _map->height() + 100;
 }
 
 // TODO: We pass Map too in case we want to put this in a separate class later...
 
 std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy, unsigned px, unsigned py)
 {
-	GameControl& gc = GameControl::Instance();
-
 	int curr_sp = 0;
 	int prev_sp = -2;
 	unsigned new_x = ox;
@@ -89,7 +48,7 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 
 	for (int xoff = -1; xoff < 2; xoff++) {
 		for (int yoff = -1; yoff < 2; yoff++) {
-			if (gc.walkable(ox + xoff, oy + yoff)) {
+			if (_gc.walkable(ox + xoff, oy + yoff)) {
 				curr_sp = shortest_path(ox + xoff, oy + yoff, px, py);
 				if (prev_sp == -2) // If it's the initial path, initialise prev_sp
 					prev_sp = curr_sp + 1;
@@ -107,47 +66,116 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 	return std::make_pair(ox, oy);
 }
 
-// TODO: More of a safety net around _all_paths for avoiding out of bounds errors. Possibly not needed?!
-
-int PathFinding::all_paths(int x, int y)
-{
-	if (x >=0 && x <= _width && y >=0 && y <= _height)
-		return _all_paths[x][y];
-	else {
-		std::cerr << "ERROR: pathfinding.cc: Trying to access _all_paths out of bounds: " << x << ", " << y << "\n";
-		exit(-1);
-	}
-}
-
 int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 {
-	if (ox >= _width - 1 || oy >= _height - 1 || ox <= 0 || oy <= 0)
-		return -1;
+	int max_length = 3000000;  // This is returned, when no plan is found, i.e. return an "infinitely"/unattractively long path.
 
-	if (abs(ox - (int)px) == 1 && abs(oy - (int)py) == 1)
-		return 1;
+	if (px >= _width || py >= _height)
+		return max_length;
 
-	if (ox == (int)px && oy == (int)py)
-		return 0;
+	std::queue<NodeDist> queue;
+	bool** visited;
 
-	GameControl& gc = GameControl::Instance();
-	std::vector<int> paths;
+	// Setup
+	visited = new bool*[_height];
+	for (unsigned i = 0; i < _height; i++) {
+		visited[i] = new bool[_width];
 
-	_visited[ox][oy] = true;
+		for (unsigned j = 0; j < _width; j++)
+			visited[i][j] = false;
+	}
 
-	for (int xoff = -1; xoff < 2; xoff++) {
-		for (int yoff = -1; yoff < 2; yoff++) {
-			if (gc.walkable(ox + xoff, oy + yoff)) {
-				if (_visited[ox + xoff][oy + yoff])
-					paths.push_back(1 + all_paths(ox + xoff,oy + yoff));
-				else
-					paths.push_back(1 + shortest_path(ox + xoff, oy + yoff, px, py));
+	NodeDist startNode;
+	startNode.x = ox;
+	startNode.y = oy;
+	startNode.dist = 0;
+
+	queue.push(startNode);
+	visited[ox][oy] = true;
+
+	while (queue.size() > 0) {
+		NodeDist node = queue.front();
+		queue.pop();
+
+		if (abs(node.x - (int)px) == 1 && abs(node.y - (int)py) == 1) {
+			destroy(visited);
+			return node.dist + 1;
+		}
+
+		if (node.x == (int)px && node.y == (int)py) {
+			destroy(visited);
+			return node.dist;
+		}
+
+		for (int xoff = -1; xoff < 2; xoff++) {
+			for (int yoff = -1; yoff < 2; yoff++) {
+				// No diagonal movement!
+
+				if (visited[node.x + xoff][node.y + yoff])
+					continue;
+
+				if (!_gc.walkable(node.x + xoff, node.y + yoff))
+					continue;
+
+				NodeDist newNode;
+				newNode.x = node.x + xoff;
+				newNode.y = node.y + yoff;
+				newNode.dist = 1 + node.dist;
+
+				queue.push(newNode);
+				visited[newNode.x][newNode.y] = true;
 			}
 		}
 	}
 
-	if (paths.size() > 0)
-		_all_paths[ox][oy] = *std::min_element(paths.begin(), paths.end());
-
-	return all_paths(ox,oy);
+	destroy(visited);
+	return max_length;
 }
+
+void PathFinding::destroy(bool** visited)
+{
+	for(unsigned i = 0; i < _height; i++) {
+		if (visited[i] != NULL) {
+			delete [] visited[i];
+			visited[i] = NULL;
+		}
+	}
+	if (visited != NULL) {
+		delete [] visited;
+		visited = NULL;
+	}
+}
+
+//int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py) const
+//{
+//	if (ox >= _width - 1 || oy >= _height - 1 || ox <= 0 || oy <= 0)
+//		return -1;
+//
+//	if (abs(ox - (int)px) == 1 && abs(oy - (int)py) == 1)
+//		return 1;
+//
+//	if (ox == (int)px && oy == (int)py)
+//		return 0;
+//
+//	_visited[ox][oy] = true;
+//
+//	for (int xoff = -1; xoff < 2; xoff++) {
+//		for (int yoff = -1; yoff < 2; yoff++) {
+//			// No diagonal movement!
+//			if ((xoff == -1 && yoff == 1) || (xoff == -1 && yoff == -1) || (xoff == 1 && yoff == -1) || (xoff == 1 && yoff == 1))
+//				continue;
+//
+//			if (_gc.walkable(ox + xoff, oy + yoff)) {
+//				if (_visited[ox + xoff][oy + yoff])
+//					paths.push_back(1 + all_paths(ox + xoff,oy + yoff));
+//				else
+//					paths.push_back(1 + shortest_path(ox + xoff, oy + yoff, px, py));
+//			}
+//		}
+//	}
+//
+//	if (paths.size() > 0)
+//		_all_paths[ox][oy] = *std::min_element(paths.begin(), paths.end());
+//
+//	return all_paths(ox,oy);
+//}
