@@ -97,8 +97,8 @@
   <actions>
     <action type="ACT_ON_ENTER" x="39" y="15">
       <event type="EVENT_ENTER_MAP">
-	<x>8</x>
-	<y>46</y>
+	<x>3</x>
+	<y>2</y>
 	<target_map>tunnel</target_map>
       </event>
       <event type="EVENT_PRINTCON">A dark feeling engulfs you...</event>
