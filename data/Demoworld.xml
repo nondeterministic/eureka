@@ -421,8 +421,8 @@
       <icon no="408" trans="full" walk="full">nothing special</icon>
       <icon no="409" trans="full" walk="full">a key</icon>
       <icon no="410" trans="full" walk="full">nothing special</icon>
-      <icon no="411" trans="full" walk="full">a shovel</icon>
-      <icon no="412" trans="full" walk="full">a pick</icon>
+      <icon no="411" trans="full" walk="full" default_lua_name="weapons::shovel">a shovel</icon>
+      <icon no="412" trans="full" walk="full" default_lua_name="weapons::pick">a pick</icon>
       <icon no="413" trans="full" walk="full">a sextant</icon>
       <icon no="414" trans="full" walk="full">nothing special</icon>
       <icon no="415" trans="full" walk="not" next_anim="433">a clock</icon>
