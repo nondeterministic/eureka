@@ -39,8 +39,6 @@ private:
 	const Map* _map;
 	const unsigned _width, _height;
 
-	void destroy(bool**);
-
 public:
 	PathFinding(Map*);
 	std::pair<unsigned,unsigned> follow_party(unsigned , unsigned , unsigned , unsigned);

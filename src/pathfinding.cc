@@ -79,16 +79,12 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 		return INT_MAX;
 
 	std::queue<NodeDist> queue;
-	bool** visited;
+	bool visited[_width][_height];
 
 	// Initialize
-	visited = new bool*[_height];
-	for (unsigned i = 0; i < _height; i++) {
-		visited[i] = new bool[_width];
-
-		for (unsigned j = 0; j < _width; j++)
+	for (unsigned i = 0; i < _width; i++)
+		for (unsigned j = 0; j < _height; j++)
 			visited[i][j] = false;
-	}
 
 	NodeDist startNode;
 	startNode.x = ox;
@@ -102,15 +98,11 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 		NodeDist node = queue.front();
 		queue.pop();
 
-		if (abs(node.x - (int)px) == 1 && abs(node.y - (int)py) == 1) {
-			destroy(visited);
+		if (abs(node.x - (int)px) == 1 && abs(node.y - (int)py) == 1)
 			return node.dist + 1;
-		}
 
-		if (node.x == (int)px && node.y == (int)py) {
-			destroy(visited);
+		if (node.x == (int)px && node.y == (int)py)
 			return node.dist;
-		}
 
 		for (int xoff = -1; xoff < 2; xoff++) {
 			for (int yoff = -1; yoff < 2; yoff++) {
@@ -135,20 +127,5 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 		}
 	}
 
-	destroy(visited);
 	return INT_MAX;
-}
-
-void PathFinding::destroy(bool** visited)
-{
-	for(unsigned i = 0; i < _height; i++) {
-		if (visited[i] != NULL) {
-			delete [] visited[i];
-			visited[i] = NULL;
-		}
-	}
-	if (visited != NULL) {
-		delete [] visited;
-		visited = NULL;
-	}
 }
