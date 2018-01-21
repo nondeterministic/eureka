@@ -35,15 +35,15 @@ typedef struct {
 class PathFinding
 {
 private:
-	unsigned _width, _height;
-	Map* _map;
-	GameControl& _gc;
+	const GameControl& _gc;
+	const Map* _map;
+	const unsigned _width, _height;
 
 	void destroy(bool**);
 
 public:
 	PathFinding(Map*);
-	std::pair<unsigned,unsigned> follow_party(unsigned , unsigned , unsigned , unsigned );
+	std::pair<unsigned,unsigned> follow_party(unsigned , unsigned , unsigned , unsigned);
 	int shortest_path(int, int, unsigned, unsigned);
 };
 

@@ -25,19 +25,18 @@
 #include <memory>
 #include <cstdlib>
 #include <queue>
+#include <climits>
 
-PathFinding::PathFinding(Map* map) :  _gc(GameControl::Instance()), _map(map)
-{
-	// TODO: This offset of 100 is necessary, because the algorithm progresses by assigning x and y offsets to tiles
-	// which might then refer to coordinates that are outside of the map area.  If this isn't added, then the destructor
-	// crashes.  Alternatively, I could simply have paid more attention inside the algorithm.
-	// But this whole algorithm/file is a hack and needs replacing some day...  :-(
+// TODO: This offset of 100 is necessary, because the algorithm progresses by assigning x and y offsets to tiles
+// which might then refer to coordinates that are outside of the map area.  If this isn't added, then the destructor
+// crashes.  Alternatively, I could simply have paid more attention inside the algorithm.
+// But this whole algorithm/file is a hack and needs replacing some day...  :-(
 
-	_width = _map->width() + 100;
-	_height = _map->height() + 100;
-}
-
-// TODO: We pass Map too in case we want to put this in a separate class later...
+PathFinding::PathFinding(Map* map) :  _gc(GameControl::Instance()),
+									  _map(map),
+									  _width(_map->width() + 100),
+									  _height(_map->height() + 100)
+{}
 
 std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy, unsigned px, unsigned py)
 {
@@ -50,6 +49,10 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 		for (int yoff = -1; yoff < 2; yoff++) {
 			if (_gc.walkable(ox + xoff, oy + yoff)) {
 				curr_sp = shortest_path(ox + xoff, oy + yoff, px, py);
+
+				if (curr_sp == INT_MAX)
+					continue;
+
 				if (prev_sp == -2) // If it's the initial path, initialise prev_sp
 					prev_sp = curr_sp + 1;
 				if (curr_sp <= prev_sp && curr_sp >= 0) {
@@ -66,17 +69,19 @@ std::pair<unsigned,unsigned> PathFinding::follow_party(unsigned ox, unsigned oy,
 	return std::make_pair(ox, oy);
 }
 
+/**
+ * Return shortest path from ox,oy to px,py.  If no such path can be found, INT_MAX is returned.
+ */
+
 int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 {
-	int max_length = 3000000;  // This is returned, when no plan is found, i.e. return an "infinitely"/unattractively long path.
-
-	if (px >= _width || py >= _height)
-		return max_length;
+	if (px >= _width || py >= _height || ox < 0 || oy < 0)
+		return INT_MAX;
 
 	std::queue<NodeDist> queue;
 	bool** visited;
 
-	// Setup
+	// Initialize
 	visited = new bool*[_height];
 	for (unsigned i = 0; i < _height; i++) {
 		visited[i] = new bool[_width];
@@ -110,6 +115,8 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 		for (int xoff = -1; xoff < 2; xoff++) {
 			for (int yoff = -1; yoff < 2; yoff++) {
 				// No diagonal movement!
+				if (xoff != 0 && yoff != 0)
+					continue;
 
 				if (visited[node.x + xoff][node.y + yoff])
 					continue;
@@ -129,7 +136,7 @@ int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py)
 	}
 
 	destroy(visited);
-	return max_length;
+	return INT_MAX;
 }
 
 void PathFinding::destroy(bool** visited)
@@ -145,37 +152,3 @@ void PathFinding::destroy(bool** visited)
 		visited = NULL;
 	}
 }
-
-//int PathFinding::shortest_path(int ox, int oy, unsigned px, unsigned py) const
-//{
-//	if (ox >= _width - 1 || oy >= _height - 1 || ox <= 0 || oy <= 0)
-//		return -1;
-//
-//	if (abs(ox - (int)px) == 1 && abs(oy - (int)py) == 1)
-//		return 1;
-//
-//	if (ox == (int)px && oy == (int)py)
-//		return 0;
-//
-//	_visited[ox][oy] = true;
-//
-//	for (int xoff = -1; xoff < 2; xoff++) {
-//		for (int yoff = -1; yoff < 2; yoff++) {
-//			// No diagonal movement!
-//			if ((xoff == -1 && yoff == 1) || (xoff == -1 && yoff == -1) || (xoff == 1 && yoff == -1) || (xoff == 1 && yoff == 1))
-//				continue;
-//
-//			if (_gc.walkable(ox + xoff, oy + yoff)) {
-//				if (_visited[ox + xoff][oy + yoff])
-//					paths.push_back(1 + all_paths(ox + xoff,oy + yoff));
-//				else
-//					paths.push_back(1 + shortest_path(ox + xoff, oy + yoff, px, py));
-//			}
-//		}
-//	}
-//
-//	if (paths.size() > 0)
-//		_all_paths[ox][oy] = *std::min_element(paths.begin(), paths.end());
-//
-//	return all_paths(ox,oy);
-//}

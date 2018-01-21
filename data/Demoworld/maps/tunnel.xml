@@ -55,6 +55,7 @@
 	<target_map>lendom</target_map>
       </event>
       <event type="EVENT_PRINTCON">You feel as if you can breathe again...</event>
+      <event type="EVENT_PLAY_MUSIC">town.ogg</event>
     </action>
   </actions>
 </map>
