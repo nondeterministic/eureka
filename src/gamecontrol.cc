@@ -475,8 +475,8 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 	SDL_Event event;
 
 	while (true) {
-		SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
-	    SDL_RenderPresent(SDLWindow::Instance().get_renderer());
+		// SDL_Delay(1000/25); // If frames were 30, wait 33 ms before running the loop again
+	    // SDL_RenderPresent(SDLWindow::Instance().get_renderer());
 
 	    if (SDL_WaitEvent(&event)) {
 			if (event.type == SDL_USEREVENT) {
@@ -485,7 +485,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					tick_event_turn_handler();
 				}
 			}
-			else if (event.type == SDL_KEYDOWN) {
+			else if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
 				switch (event.key.keysym.sym) {
 				case SDLK_LEFT:
 				case SDLK_KP_4:

@@ -182,7 +182,7 @@ void get_opts (int argc, char* argv[])
       	  case 'v':
       	  case 4:
       		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
-      		  std::cout << "Copyright (c) 2007 - 2017  Andreas Bauer <baueran@gmail.com>\n\n";
+      		  std::cout << "Copyright (c) 2007 - 2018  Andreas Bauer <baueran@gmail.com>\n\n";
       		  std::cout << "This is free software; see the source for copying conditions.\n"
       				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
               _getops_exit_after_print = true;
@@ -913,7 +913,7 @@ int start_game()
 	Console::Instance().
 			print(&normalFont,
 					"\nRemember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
-					"(d)rop item, (e)nter, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
+					"(d)rop item, (e)nter, (g)et, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
 					"(t)alk, (u)se item, (y)ield item, (z)tats.\n");
 
 	// Set "start game" flag
