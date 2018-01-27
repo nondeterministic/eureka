@@ -5,7 +5,7 @@ It comes with one demo game that can already be played.
 ## Disclaimer
 I am of the opinion that CRPGs in the truest sense of the word have more or less disappeared after the late 1980s. 
 What followed then was a wave of action adventures, wrongly labelled as CRPGs, that lacked depth and traded immersive game play for hollywood-like
-graphics and sound effects, and complex, immersive models of a world for boring, linear story telling.
+graphics and sound effects, and complex, multi-dimenstional models of a gaming world for some boring, linear story telling.
 
 So, no, I won't update the graphics (much), and what you see below is not a bug.
 If you don't like that, do us both a favour and get back to your Playstation before you contact me about it.
