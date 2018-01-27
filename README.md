@@ -34,12 +34,16 @@ Beware of bugs though!
 
 ## Screenshots
 
+Exploring the vast outdoors landscapes
 ![Wilderness](docs/img/out.gif)
 
+Wandering around a town
 ![Indoors](docs/img/lendom.gif)
 
+Engaged in a battle in some dark, deep dungeon
 ![Battle](docs/img/battle.gif)
 
+Conversations with town folks
 ![Conversation](docs/img/talk.gif)
 
 ## Copyright
