@@ -28,7 +28,7 @@ After you did a 'make install', you can play the demo game by invoking
 
     eureka Demoworld
 
-on your terminal, where demoworld is simply the name of the demo game.
+on your terminal, where Demoworld is simply the name of the demo game.
 
 Beware of bugs though!
 
