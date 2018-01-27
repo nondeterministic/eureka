@@ -1,4 +1,4 @@
-## Eureka - party like it's 1985!
+# Eureka - party like it's 1985!
 Eureka is an old-school computer roleplaying-game (CRPG) engine as well as work
 in progress and has been for almost 10 years - on and off.  It comes with one
 demo game that can already be played.
