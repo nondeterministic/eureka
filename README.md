@@ -20,7 +20,7 @@ Eureka's approach appealing to you.
 
 ## Installation and starting
 Right now, there is no release. You can pull the C++ sources from here, and
-call autgen.sh to create a configure script and Makefile for you.  You will
+call autogen.sh to create a configure script and Makefile for you.  You will
 need to have SDL2, Boost >= 1.58, GTKMM-3.x, libxml++2.6 and Lua5.1 installed
 in order to build it.
 
