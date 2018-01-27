@@ -16,7 +16,7 @@ However, if at this point, you're still reading, then perhaps you will find Eure
 Right now, there is no release. You can pull the C++ sources from here, and call autgen.sh to create a configure script and Makefile for you.
 You will need to have SDL2, Boost >= 1.58, GTKMM-3.x, libxml++2.6 and Lua5.1 installed in order to build it.
 
-After you did a 'make install', you can play the demo game by envoking
+After you did a 'make install', you can play the demo game by invoking
 
     eureka Demoworld
 
