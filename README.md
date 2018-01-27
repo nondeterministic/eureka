@@ -6,8 +6,9 @@ It comes with one demo game that can already be played.
 I am of the opinion that CRPGs in the truest sense of the word have more or less disappeared after the late 1980s. 
 What followed then was a wave of action adventures, wrongly labelled as CRPGs, that lacked depth and traded immersive game play for hollywood-like
 graphics and sound effects, and complex, multi-dimensional models of a gaming world for some boring, linear story telling.
+And don't get me started on online multiplayer...
 
-So, no, I won't update the graphics (much), and what you see below is not a bug.
+So, no, I won't update the graphics (much), and what you see below is not a bug. It is, what you get.
 If you don't like that, do us both a favour and get back to your Playstation before you contact me about it.
 
 However, if at this point, you're still reading, then perhaps you will find Eureka's approach appealing to you.
