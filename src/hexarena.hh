@@ -67,6 +67,7 @@ protected:
   Offsets offsets();
   bool in_los(int, int, int, int);
   int corner_tile_uneven_offset(void) const;
+  const int _x_shift;
 
   // only used inside los:
   void swap(int&, int&);

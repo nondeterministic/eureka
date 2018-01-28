@@ -322,8 +322,8 @@ int SDLWindow::blit_arena()
 	SDL_Rect dstRect;
 	dstRect.x = _frame_icon_size - 2;
 	dstRect.y = _frame_icon_size - 2;
-	dstRect.w = _arena_w + 1;
-	dstRect.h = _arena_h + 1;
+	dstRect.w = _arena_w;
+	dstRect.h = _arena_h;
 
 	if (SDL_SetRenderTarget(_renderer, _texture_entire_window) == 0 && SDL_RenderCopy(_renderer, _texture_arena, NULL, &dstRect) == 0)
 		return blit_entire_window_texture();

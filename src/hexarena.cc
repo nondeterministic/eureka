@@ -30,7 +30,7 @@
 #include "outdoorsicons.hh"
 #include "eureka.hh"
 
-HexArena::HexArena(std::shared_ptr<Map> map)
+HexArena::HexArena(std::shared_ptr<Map> map) : _x_shift(10)
 {
 	_map = map;
 	_top_hidden = 0;
@@ -61,14 +61,14 @@ HexArena::~HexArena(void)
 
 int HexArena::put_tile_hex(int hex_x, int hex_y, SDL_Texture* brush)
 {
-  return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
+	return put_tile(get_screen_x(hex_x), get_screen_y(hex_y), brush);
 }
 
 /// Converts a x-hex coordinate to a screen coordinate
 
 int HexArena::get_screen_x(int hex_x) const
 {
-  return (hex_x - corner_tile_uneven_offset()) * (tile_size() - 10);
+	return hex_x * (tile_size() - _x_shift);
 }
 
 /// Converts a y-hex coordinate to a screen coordinate
@@ -78,7 +78,7 @@ int HexArena::get_screen_y(int hex_y) const
   if (hex_y%2 == 0)
     return hex_y/2 * (tile_size() - 1);
   else
-    return tile_size()/2 - 1 + hex_y/2 * (tile_size() - 1);
+    return (hex_y - 1)/2 * (tile_size() - 1) + tile_size()/2 - 1;
 }
 
 /// Gets the absolute coordinates in pixels for a tile on (x, y)
@@ -91,7 +91,7 @@ SDL_Rect HexArena::get_tile_coords(int x, int y) const
   SDL_Rect rect;
   rect.x = x;
   rect.w = tile_size();
-  rect.h = tile_size();
+  rect.h = tile_size() - 1;
   rect.y = y;
   return rect;
 }
@@ -110,20 +110,20 @@ Offsets HexArena::move(int dir)
 
 	switch (dir) {
 	case DIR_UP:
-		if (_top_hidden >= (tile_size()-1))
-			adjust_offsets(-(tile_size()-1), (tile_size()-1), 0, 0);
+		if (_top_hidden >= tile_size())
+			adjust_offsets(-tile_size(), tile_size(), 0, 0);
 		break;
 	case DIR_DOWN:
-		if (_bot_hidden >= (tile_size()-1))
-			adjust_offsets((tile_size()-1), -(tile_size()-1), 0, 0);
+		if (_bot_hidden >= tile_size())
+			adjust_offsets(tile_size(), -tile_size(), 0, 0);
 		break;
 	case DIR_LEFT:
-		if (_left_hidden >= (tile_size()-10))
-			adjust_offsets(0, 0, -(tile_size()-10), (tile_size()-10));
+		if (_left_hidden >= (tile_size()-_x_shift))
+			adjust_offsets(0, 0, -(tile_size()-_x_shift), (tile_size()-_x_shift));
 		break;
 	case DIR_RIGHT:
-		if (_right_hidden >= (tile_size()-10))
-			adjust_offsets(0, 0, (tile_size()-10), -(tile_size()-10));
+		if (_right_hidden >= (tile_size()-_x_shift))
+			adjust_offsets(0, 0, (tile_size()-_x_shift), -(tile_size()-_x_shift));
 		break;
 		// case DIR_RDOWN:
 			//   if (_right_hidden >= (tile_size()-10))
@@ -150,9 +150,9 @@ Offsets HexArena::determine_offsets()
 
 	// Determining the exact width of the hex map in pixels is a bit of
 	// a bitch...
-	unsigned map_width  = (get_map()->width())*(tile_size()-10) + 9;
+	unsigned map_width  = get_map()->width()*(tile_size()-_x_shift);//  + 9;
 	// ...height is easy though...
-	unsigned map_height = get_map()->height()*(tile_size()-1);
+	unsigned map_height = get_map()->height()*(tile_size() - 0);
 
 	// Does the map height fit into the window height?
 	if (map_height <= screen_height) {
@@ -190,14 +190,14 @@ Offsets HexArena::determine_offsets()
 
 int HexArena::corner_tile_uneven_offset(void) const
 {
-  return ((_left_hidden/(tile_size()-10))%2 == 0? 0 : 1);
+  return ((_left_hidden/(tile_size()-_x_shift))%2 == 0? 0 : 1);
 }
 
 /// Convert the relative screen hex coordinates to the absolute map hex coordinates.
 
 void HexArena::screen_to_map(int sx, int sy, int& mx, int& my)
 {
-	mx = _left_hidden/(tile_size()-10) + sx; // - corner_tile_uneven_offset();
+	mx = _left_hidden/(tile_size()-_x_shift) + sx; // - corner_tile_uneven_offset();
 	// my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 	my = _top_hidden/(tile_size()-1)*2 + sy; // - ((sx%2 == 0)? 1 : 0);
 
@@ -217,9 +217,9 @@ void HexArena::map_to_screen(int mx, int my, int& sx, int& sy)
 {
 	sx = -1; sy = -1;
 
-	if (mx >= (int)(_left_hidden/(tile_size()-10)) &&
-			mx <= (int)(get_map()->width() - _right_hidden/(tile_size()-10)))
-		sx = mx - _left_hidden/(tile_size()-10); // + corner_tile_uneven_offset();
+	if (mx >= (int)(_left_hidden/(tile_size()-_x_shift)) &&
+			mx <= (int)(get_map()->width() - _right_hidden/(tile_size()-_x_shift)))
+		sx = mx - _left_hidden/(tile_size()-_x_shift); // + corner_tile_uneven_offset();
 
 	if (my >= (int)(_top_hidden/(tile_size()-1)*2) &&
 			my <= (int)(get_map()->height()*2 - _bot_hidden/(tile_size()-1)))
@@ -437,9 +437,9 @@ void HexArena::show_map(int x_width, int y_width)
 	// Recall: x and y are absolute map coordinates on the hex!  x2 and
 	// y2 are the relative coordinates to draw hexes on the screen.
 
-	for (unsigned x = _left_hidden / (tile_size() - 10),
+	for (unsigned x = _left_hidden / (tile_size() - _x_shift),
 			x2 = corner_tile_uneven_offset();
-			x < _map->width()-_right_hidden / (tile_size() - 10);
+			x < _map->width()-_right_hidden / (tile_size() - _x_shift);
 			x++, x2++)
 	{
 		for (unsigned y = _top_hidden/(tile_size() - 1) * 2 + ((x2%2 == 0)? 0 : 1),
@@ -475,8 +475,9 @@ void HexArena::show_map(int x_width, int y_width)
 						std::cerr << "ERROR: hexarena.cc: put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
 				}
 				else {
-					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(10))) != 0)
-						std::cerr << "ERROR: hexarena.cc: put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
+					;
+//					if ((puttile_errno = put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(10))) != 0)
+//						std::cerr << "ERROR: hexarena.cc: put_tile() returned " <<  puttile_errno << " in HexArena::show_map()." << std::endl;
 				}
 			}
 
@@ -515,8 +516,8 @@ void HexArena::get_center_coords(int& x, int& y)
 	int w, h;
 	SDL_QueryTexture(_texture, NULL, NULL, &w, &h);
 
-	x = w / 2 / (tile_size() - 11);
-	y = h / tile_size() + corner_tile_uneven_offset();
+	x = w / 2 / (tile_size() - _x_shift);
+	y = h / (tile_size() - 0) + corner_tile_uneven_offset();
 	// std::cout << "Center: " << x << ", " << y << std::endl;
 }
 
