@@ -5,5 +5,4 @@
 
 if (Services == nil) then
    Services = {}
-   print("lua: defs.lua: Created Services table")
 end

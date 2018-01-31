@@ -5,5 +5,4 @@
 
 if (Potions == nil) then
    Potions = {}
-   print("lua: defs.lua: Created Potions table")
 end

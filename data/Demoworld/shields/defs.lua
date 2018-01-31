@@ -5,5 +5,4 @@
 
 if (Shields == nil) then
    Shields = {}
-   print("lua: defs.lua: Created Shields table")
 end

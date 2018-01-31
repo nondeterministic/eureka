@@ -5,5 +5,4 @@
 
 if (Weapons == nil) then
    Weapons = {}
-   print("lua: defs.lua: Created Weapons table")
 end

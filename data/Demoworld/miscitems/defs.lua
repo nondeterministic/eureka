@@ -5,5 +5,4 @@
 
 if (MiscItems == nil) then
    MiscItems = {}
-   print("lua: defs.lua: Created MiscItems table")
 end

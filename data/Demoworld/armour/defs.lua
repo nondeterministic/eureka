@@ -5,5 +5,4 @@
 
 if (Armour == nil) then
    Armour = {}
-   print("lua: defs.lua: Created Armour table")
 end

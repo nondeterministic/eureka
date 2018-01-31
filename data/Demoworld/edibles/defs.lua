@@ -5,5 +5,4 @@
 
 if (Edibles == nil) then
    Edibles = {}
-   print("lua: defs.lua: Created Edibles table")
 end
