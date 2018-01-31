@@ -22,6 +22,7 @@
 #include "map.hh"
 #include "world.hh"
 #include "party.hh"
+#include "gamecharacter.hh"
 #include "gamecontrol.hh"
 #include "ztatswin.hh"
 #include "itemfactory.hh"
@@ -260,6 +261,10 @@ bool GameState::load_party(lua_State* lua_state)
 								if (reader.get_name() == "profession") {
 									std::string prof = reader.read_string();
 									player.set_profession(stringToProfession.at(prof));
+								}
+								else if (reader.get_name() == "condition") {
+									std::string cond = reader.read_string();
+									player.set_condition(stringToPlayerCondition.at(cond));
 								}
 								else if (reader.get_name() == "ep")
 									player.inc_ep(std::atoi(reader.read_string().c_str()));

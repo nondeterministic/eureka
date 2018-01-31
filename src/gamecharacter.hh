@@ -52,6 +52,7 @@ const boost::unordered_map<std::string, PlayerCondition> stringToPlayerCondition
         boost::assign::map_list_of
         ("GOOD", GOOD)
         ("POISONED", POISONED)
+        ("POISON", POISONED) // For good measure
         ("DEAD", DEAD);
 
 class GameCharacter : public SpellsBearer

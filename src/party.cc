@@ -39,6 +39,7 @@ extern "C"
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "ztatswincontentprovider.hh"
+#include "gamecharacter.hh"
 
 void Party::set_coords(int x, int y)
 {
@@ -266,6 +267,7 @@ std::string Party::to_xml()
 		xmlpp::Element* playerEl(playersEl->add_child("player"));
 		playerEl->set_attribute("name", player.name());
 
+		playerEl->add_child("condition")->add_child_text(playerConditionToString.at(player.condition()));
 		playerEl->add_child("profession")->add_child_text(professionToString.at(player.profession()));
 		playerEl->add_child("ep")->add_child_text(std::to_string(player.ep()));
 		playerEl->add_child("hp")->add_child_text(std::to_string(player.hp()));
