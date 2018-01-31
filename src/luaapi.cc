@@ -37,6 +37,7 @@
 #include "creature.hh"
 #include "combat.hh"
 #include "util.hh"
+#include "gamecharacter.hh"
 #include "playercharacter.hh"
 #include "party.hh"
 #include "console.hh"
@@ -752,6 +753,14 @@ int l_player_set_condition(lua_State* L)
 	return 0;
 }
 
+int l_player_get_condition(lua_State* L)
+{
+	std::string player_name = (std::string)(lua_tostring(L, 1));
+	PlayerCharacter* player = Party::Instance().get_player(player_name);
+	lua_pushstring(L, playerConditionToString.at(player->condition()).c_str());
+	return 1;
+}
+
 int l_player_change_hp(lua_State* L)
 {
 	std::string player_name = (std::string)(lua_tostring(L, 1));
@@ -1421,6 +1430,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_player_set_condition);
   lua_setglobal(L, "simpl_set_player_condition");
+
+  lua_pushcfunction(L, l_player_get_condition);
+  lua_setglobal(L, "simpl_get_player_condition");
 
   lua_pushcfunction(L, l_player_change_hp);
   lua_setglobal(L, "simpl_player_change_hp");

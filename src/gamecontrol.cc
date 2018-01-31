@@ -1553,8 +1553,6 @@ void GameControl::create_random_monsters_in_dungeon()
 			rand_monster_count++;
 	}
 
-	std::cout << "RANDOM MONSTERS CURRENTLY: " << rand_monster_count << "\n";
-
 	if (rand_monster_count >= 2)
 		return;
 

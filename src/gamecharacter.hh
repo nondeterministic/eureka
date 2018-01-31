@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include <boost/assign/list_of.hpp>
+
 #include "item.hh"
 #include "weapon.hh"
 #include "shield.hh"
@@ -39,6 +41,18 @@ enum ATTITUDE {
 enum PlayerCondition {
   GOOD, POISONED, DEAD
 };
+
+const boost::unordered_map<PlayerCondition, std::string> playerConditionToString =
+        boost::assign::map_list_of
+        (GOOD, "GOOD")
+        (POISONED, "POISONED")
+        (DEAD, "DEAD");
+
+const boost::unordered_map<std::string, PlayerCondition> stringToPlayerCondition =
+        boost::assign::map_list_of
+        ("GOOD", GOOD)
+        ("POISONED", POISONED)
+        ("DEAD", DEAD);
 
 class GameCharacter : public SpellsBearer
 {
