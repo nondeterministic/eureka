@@ -38,7 +38,7 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.7.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.15.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
 }
@@ -83,8 +83,8 @@ do
 	echo "Running autoheader..."
 	autoheader
       fi
-      echo "Running automake --gnu  $am_opt ..."
-      automake  --gnu --copy --add-missing $am_opt
+      echo "Running automake $am_opt ..."
+      automake --copy --add-missing $am_opt
       echo "Running autoconf ..."
       autoconf
     )

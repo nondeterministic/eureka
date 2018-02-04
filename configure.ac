@@ -1,3 +1,4 @@
+AC_PREREQ([2.69])
 AC_INIT([eureka], [0.0.1], [baueran@gmail.com]) 
 
 AC_CONFIG_SRCDIR([src/eureka.cc])
@@ -8,7 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 LT_INIT
 AC_PROG_LIBTOOL
 
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_MAINTAINER_MODE
 
 # Checks for programs:
@@ -65,32 +66,27 @@ AC_MSG_RESULT($LUA_LIBS)
 AC_SUBST([LUA_CFLAGS])
 AC_SUBST([LUA_LIBS])
 
-# AC_DEFINE(WORLD_NAME, "Mittelerde", 
-# 		      [Name of the game world. Do not change!])
-# AC_DEFINE_UNQUOTED([SAMPLES_PATH], ["$PACKAGE/data/Mittelerde/sound/"],
-# 		      [Path to sound samples.])
-
 AC_CONFIG_FILES([Makefile \
-	         src/Makefile
-		 src/Doxyfile
-		 src/leibniz/Makefile 
-		 m4/Makefile 
-		 data/Makefile
-		 data/leibniz/Makefile
-		 data/Demoworld/Makefile
-		 data/Demoworld/images/Makefile
-		 data/Demoworld/maps/Makefile
-		 data/Demoworld/sound/Makefile
-		 data/Demoworld/services/Makefile
-		 data/Demoworld/weapons/Makefile
-		 data/Demoworld/armour/Makefile
-		 data/Demoworld/shields/Makefile
-		 data/Demoworld/bestiary/Makefile
-		 data/Demoworld/miscitems/Makefile
-		 data/Demoworld/edibles/Makefile
-		 data/Demoworld/people/Makefile
-		 data/Demoworld/spells/Makefile
-		 data/Demoworld/potions/Makefile
+	         src/Makefile \
+		 src/Doxyfile \
+		 src/leibniz/Makefile \
+		 m4/Makefile \
+		 data/Makefile \
+		 data/leibniz/Makefile \
+		 data/Demoworld/Makefile \
+		 data/Demoworld/images/Makefile \
+		 data/Demoworld/maps/Makefile \
+		 data/Demoworld/sound/Makefile \
+		 data/Demoworld/services/Makefile \
+		 data/Demoworld/weapons/Makefile \
+		 data/Demoworld/armour/Makefile \
+		 data/Demoworld/shields/Makefile \
+		 data/Demoworld/bestiary/Makefile \
+		 data/Demoworld/miscitems/Makefile \
+		 data/Demoworld/edibles/Makefile \
+		 data/Demoworld/people/Makefile \
+		 data/Demoworld/spells/Makefile \
+		 data/Demoworld/potions/Makefile \
 		 data/Demoworld/spells/mage/Makefile])
 AC_OUTPUT
 
