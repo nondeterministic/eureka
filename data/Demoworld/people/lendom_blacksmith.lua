@@ -97,10 +97,11 @@ do
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
 	 buyResult = simpl_buyitem(selected_item)
+
 	 if (buyResult == -1) then
-	    simpl_printcon("You don't have enough gold.")
-	 elseif (buyResult == -2) then
 	    simpl_printcon("You can't carry any more.")
+	 elseif (buyResult == -2) then
+	    simpl_printcon("You don't have enough gold.")
 	 end
       else
 	 simpl_printcon("So, you changed your mind then?")

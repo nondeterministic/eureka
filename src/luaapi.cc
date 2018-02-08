@@ -513,12 +513,12 @@ int l_buyitem(lua_State* L)
 			}
 			else {
 				delete item;
-		    	lua_pushnumber(L, -2);
+		    	lua_pushnumber(L, -2); // Can't afford...
 			}
 		}
 		else {
 			delete item;
-	    	lua_pushnumber(L, -1);
+	    	lua_pushnumber(L, -1); // Can't carry anymore...
 		}
 
 	}
