@@ -593,13 +593,17 @@ std::vector<std::shared_ptr<Action>> Map::parse_actions_node(const xmlpp::Node* 
 						const xmlpp::Element* event_y = (xmlpp::Element*)(*event)->get_children("y").front();
 						const xmlpp::Element* event_target_map = (xmlpp::Element*)(*event)->get_children("target_map").front();
 
-						// If they are, add the event.
-						if (event_x && event_y && event_target_map) {
+						// If they are, add the event...
+						if (event_target_map) {
 							std::shared_ptr<EventEnterMap> new_ev(new EventEnterMap());
-
-							new_ev->set_x((unsigned)atoi(event_x->get_child_text()->get_content().c_str()));
-							new_ev->set_y((unsigned)atoi(event_y->get_child_text()->get_content().c_str()));
 							new_ev->set_map_name(event_target_map->get_child_text()->get_content().c_str());
+
+							// You can omit coordinates though (in which case by default the handler will try to
+							// use the map's own initial coordinates, see gameevent.cc.)
+							if (event_x && event_y) {
+								new_ev->set_x(atoi(event_x->get_child_text()->get_content().c_str()));
+								new_ev->set_y(atoi(event_y->get_child_text()->get_content().c_str()));
+							}
 
 							_act->add_event(new_ev);
 						}

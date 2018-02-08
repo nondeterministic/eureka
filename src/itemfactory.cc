@@ -101,26 +101,47 @@ Item* ItemFactory::create_plain_name(std::string item_name)
 	luaL_openlibs(lua_state);
 	World::Instance().init_lua_arrays(lua_state);
 
-	if (WeaponHelper::existsInLua(item_name, lua_state))
-		return WeaponHelper::createFromLua(item_name, lua_state);
-	else if (ShieldHelper::existsInLua(item_name, lua_state))
-		return ShieldHelper::createFromLua(item_name, lua_state);
-	else if (ArmourHelper::existsInLua(item_name, lua_state))
-		return ArmourHelper::createFromLua(item_name, lua_state);
-	else if (EdiblesHelper::existsInLua(item_name, lua_state))
-		return EdiblesHelper::createFromLua(item_name, lua_state);
-	else if (ServicesHelper::existsInLua(item_name, lua_state))
-		return ServicesHelper::createFromLua(item_name, lua_state);
-	else if (PotionsHelper::existsInLua(item_name, lua_state))
-		return PotionsHelper::createFromLua(item_name, lua_state);
-	else if (MiscHelper::existsInLua(item_name, lua_state))
-		return MiscHelper::createFromLua(item_name, lua_state);
+	if (WeaponHelper::existsInLua(item_name, lua_state)) {
+		auto ret = WeaponHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (ShieldHelper::existsInLua(item_name, lua_state)) {
+		auto ret = ShieldHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (ArmourHelper::existsInLua(item_name, lua_state)) {
+		auto ret = ArmourHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (EdiblesHelper::existsInLua(item_name, lua_state)) {
+		auto ret = EdiblesHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (ServicesHelper::existsInLua(item_name, lua_state)) {
+		auto ret = ServicesHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (PotionsHelper::existsInLua(item_name, lua_state)) {
+		auto ret = PotionsHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
+	else if (MiscHelper::existsInLua(item_name, lua_state)) {
+		auto ret = MiscHelper::createFromLua(item_name, lua_state);
+		lua_close(lua_state);
+		return ret;
+	}
 	else {
 		// We didn't know which item to create. Should not happen.
 		// TODO: Maybe throw exception?
 		std::cerr << "ERROR: itemfactory.cc: Don't know what to create in create_plain_name(): " << item_name << "." << std::endl;
-		return NULL;
 	}
 
 	lua_close(lua_state);
+	return NULL;
 }

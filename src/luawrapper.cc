@@ -203,7 +203,7 @@ bool LuaWrapper::hasEntry(std::string array_name, std::string name)
     	lua_pop(l, 1);
     }
 
-    lua_pop(l, 2);
+    lua_pop(l, 1);
     return found;
 }
 

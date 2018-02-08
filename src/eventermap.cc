@@ -21,18 +21,20 @@
 
 EventEnterMap::EventEnterMap()
 {
+	_x = -1;
+	_y = -1;
 }
 
 EventEnterMap::~EventEnterMap()
 {
 }
 
-void EventEnterMap::set_x(unsigned x)
+void EventEnterMap::set_x(int x)
 {
   _x = x;
 }
 
-void EventEnterMap::set_y(unsigned y)
+void EventEnterMap::set_y(int y)
 {
   _y = y;
 }
@@ -42,12 +44,12 @@ void EventEnterMap::set_map_name(const char* name)
   _map_name = name;
 }
 
-unsigned EventEnterMap::get_x(void)
+int EventEnterMap::get_x(void)
 {
   return _x;
 }
 
-unsigned EventEnterMap::get_y(void)
+int EventEnterMap::get_y(void)
 {
   return _y;
 }

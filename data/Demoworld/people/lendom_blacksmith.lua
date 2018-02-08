@@ -35,6 +35,11 @@ do
       return conv_over
    end
 
+   -- Convenience function to sort items alphabetically
+   function sort_items(item1, item2)
+      return item1.name < item2.name
+   end
+   
    -- -----------------------------------------------
    -- Standard terms
    -- -----------------------------------------------
@@ -54,7 +59,8 @@ do
    items[11] = Armour["platemail"]
    items[12] = MiscItems["arrow"]
    items[13] = MiscItems["bolt"]
-
+   table.sort(items, sort_items)
+   
    function description()
       simpl_printcon("You see big, sooty blacksmith with sweat running down his forehead.")
    end
@@ -93,6 +99,8 @@ do
 	 buyResult = simpl_buyitem(selected_item)
 	 if (buyResult == -1) then
 	    simpl_printcon("You don't have enough gold.")
+	 elseif (buyResult == -2) then
+	    simpl_printcon("You can't carry any more.")
 	 end
       else
 	 simpl_printcon("So, you changed your mind then?")

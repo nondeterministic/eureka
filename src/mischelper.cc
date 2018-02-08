@@ -52,6 +52,7 @@ MiscItem* MiscHelper::createFromLua(std::string array_name, lua_State* lua_state
 	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
 	w->plural_name(lua.get_item_prop<std::string>(globArrayName, array_name, "plural_name"));
 	w->icon = (int)(lua.get_item_prop<double>(globArrayName, array_name, "icon"));
+	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
 
 	// If an object was passed, use its description.
 	if (mo != NULL)

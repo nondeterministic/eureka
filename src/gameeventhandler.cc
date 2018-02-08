@@ -397,27 +397,20 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	gc->get_arena()->set_SDLWindow_object(&(SDLWindow::Instance()));
 	gc->get_arena()->determine_offsets();
 
-//	// Change miniwin image...
-//	boost::filesystem::path tmp_path;
-//	tmp_path /= tmp_path / (std::string)DATADIR / (std::string)PACKAGE_NAME / "data" / World::Instance().get_name() / "images";
-//	if (gc->get_arena()->get_map()->is_dungeon)
-//		tmp_path /= "dungeon.png";
-//	else
-//		tmp_path /= "indoors_city.png";
-//	mw->surface_from_file(tmp_path.string());
+	int new_x = event->get_x() >= 0? event->get_x() : gc->get_arena()->get_map()->get_initial_coords().first;
+	int new_y = event->get_y() >= 0? event->get_y() : gc->get_arena()->get_map()->get_initial_coords().second;
 
 	// The following is somewhat yucky code around the fact that you cannot place the party
 	// just inside an arbitrary location in the map. So I put it on (1,1) and then use move
 	// commands in quick succession to the actual location the party should be in.
 
 	party->set_indoors(true);
-	// gc->get_arena()->show_map();
-	gc->set_party(event->get_x(), event->get_y());
+	gc->set_party(new_x, new_y);
 	gc->set_party(1, 1);
 
-	for (unsigned x = 1; x < event->get_x(); x++)
+	for (int x = 1; x < new_x; x++)
 		gc->move_party(DIR_RIGHT, true);
-	for (unsigned y = 1; y < event->get_y(); y++)
+	for (int y = 1; y < new_y; y++)
 		gc->move_party(DIR_DOWN, true);
 
 	gc->redraw_graphics_status(true);
