@@ -420,15 +420,17 @@ void GameControl::do_turn(bool resting)
 			printcon("Your party feels somehow less protected again...");
 
 	// Check poisoned status
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
-		PlayerCharacter* pl = Party::Instance().get_player(i);
+	if (_turns % 2 == 0 && random(1,2) == 2) {
+		for (int i = 0; i < Party::Instance().party_size(); i++) {
+			PlayerCharacter* pl = Party::Instance().get_player(i);
 
-		if (pl->condition() == POISONED) {
-			pl->set_hp(max(0, pl->hp() - 1));
-			if (pl->hp() == 0)
-				pl->set_condition(DEAD);
-			_sample.play_predef(HIT);
-			zwin.update_player_list();
+			if (pl->condition() == POISONED) {
+				pl->set_hp(max(0, pl->hp() - 1));
+				if (pl->hp() == 0)
+					pl->set_condition(DEAD);
+				_sample.play_predef(HIT);
+				zwin.update_player_list();
+			}
 		}
 	}
 
