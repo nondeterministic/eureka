@@ -51,6 +51,8 @@ public:
   void add_event(std::shared_ptr<GameEvent>);
   std::vector<std::shared_ptr<GameEvent>>::iterator events_begin();
   std::vector<std::shared_ptr<GameEvent>>::iterator events_end();
+  int get_number_of_events();
+  const std::vector<std::shared_ptr<GameEvent>>& get_events() const;
 
 protected:
   unsigned _x, _y;     // Map coordinates where the action sits

@@ -1065,6 +1065,23 @@ void GameControl::keypress_open_act()
 
 	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 
+	// If the <actions> block of the_obj has an open-action defined, execute it and return true!
+	// Otherwise, this Lambda returns false.
+	auto execute_object_actions = [](MapObj& the_obj, std::shared_ptr<Arena> arena) {
+		for (auto curr_act = the_obj.actions()->begin(); curr_act != the_obj.actions()->end(); curr_act++) {
+			ActionOpened* action_opened = dynamic_cast<ActionOpened*>((*curr_act).get());
+
+			if (action_opened != NULL) {
+				GameEventHandler gh;
+				for (auto curr_ev: action_opened->get_events())
+					gh.handle(curr_ev, arena->get_map(), &the_obj);
+				return true; // Handled openeing-action successfully.
+			}
+		}
+		return false; // No opening-action found.
+	};
+
+
 	// TODO: If there are more than one openable item in one place, all are opened in succession.
 	// However, I can't think of a scenario, where this would occur/be a problem.
 
@@ -1073,23 +1090,14 @@ void GameControl::keypress_open_act()
 			MapObj& the_obj = curr_obj->second;
 			int icon = the_obj.get_icon();
 
+			// If the object has the "locked" property defined...
 			if (the_obj.openable) {
 				if (the_obj.lock_type == NORMAL_LOCK || the_obj.lock_type == MAGIC_LOCK) {
 					printcon("You try, but it seems locked.");
 					return;
 				}
 				else {
-					for (auto act = the_obj.actions()->begin(); act != the_obj.actions()->end(); act++) {
-						std::shared_ptr<Action> tmp_act = (*act);
-						ActionOpened* action = dynamic_cast<ActionOpened*>(tmp_act.get());
-
-						if (action != NULL) {
-							GameEventHandler gh;
-							for (auto curr_ev = action->events_begin(); curr_ev != action->events_end(); curr_ev++)
-								gh.handle(*curr_ev, _arena->get_map(), &the_obj);
-							return;
-						}
-					}
+					execute_object_actions(the_obj, _arena);
 				}
 			}
 			// We implement some default behaviour for doors here: if they're not explicitly set in their object
@@ -1104,12 +1112,16 @@ void GameControl::keypress_open_act()
 						IndoorsIcons::Instance().get_props(icon)->get_name().find("chest") != std::string::npos)
 			{
 				std::cout << "INFO: gamecontrol.cc: Default object-delete-event for chests triggered.\n";
-				GameEventHandler gh;
-				gh.handle_event_delete_object(_arena->get_map(), &the_obj);
-				MapObj open_chest;
-				open_chest.set_icon(489);
-				open_chest.set_coords(coords.first, coords.second);
-				gh.handle_event_add_object(_arena->get_map(), open_chest);
+
+				// Either do the map-defined actions (see Lambda above!) or default-delete chest icon and add opened chest icon...
+				if (execute_object_actions(the_obj, _arena) == false) {
+					GameEventHandler gh;
+					gh.handle_event_delete_object(_arena->get_map(), &the_obj);
+					MapObj open_chest;
+					open_chest.set_icon(489);
+					open_chest.set_coords(coords.first, coords.second);
+					gh.handle_event_add_object(_arena->get_map(), open_chest);
+				}
 				return;
 			}
 		}

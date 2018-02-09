@@ -1,6 +1,6 @@
 bin_PROGRAMS = leibniz
 
-AM_CXXFLAGS = -g -Wall -O0 -fdiagnostics-color=auto -std=c++11 \
+AM_CXXFLAGS = -g -Wall -O0 -fdiagnostics-color=auto -std=c++14 \
 	    $(GTKMM_CFLAGS) \
 	    $(LIBXMLPP_CFLAGS) \
 	    $(SDL_CFLAGS) \

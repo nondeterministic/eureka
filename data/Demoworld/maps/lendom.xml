@@ -61,7 +61,22 @@
   </data>
   <objects>
     <object x="37" y="17" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="16" y="23" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="16" y="23" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_ADD_OBJECT">
+            <object x="16" y="23" ox="0" oy="0" icon_no="489" layer="0" id="chest_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+	    <object x="16" y="23" ox="0" oy="0" icon_no="1102" layer="0" id="some_food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="16" y="23" ox="0" oy="0" icon_no="567" layer="0" id="some_bow" lua_name="weapons::bow" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_DELETE_OBJECT"/>
+        </action>
+      </actions>
+    </object>
     <object x="26" y="23" ox="0" oy="0" icon_no="635" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="29" y="23" ox="29" oy="23" icon_no="271" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_jester.lua"/>
     <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>

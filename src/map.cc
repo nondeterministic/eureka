@@ -244,11 +244,11 @@ unsigned Map::how_many_mapobj_at(unsigned x, unsigned y)
 
 void Map::rm_obj(MapObj* map_obj)
 {
-	if (map_obj->lua_name.length() == 0 && map_obj->id.length() == 0) {
-		std::cerr << "ERROR: map.cc: Cannot pop MapObj without Lua-name and ID in pop_ob(MapObj*). "
-				  << "Perhaps use pop(x,y) instead, but then make sure, there is EXACTLY one MapObj on the coordinates x, y!\n";
-		return;
-	}
+//	if (map_obj->lua_name.length() == 0 && map_obj->id.length() == 0) {
+//		std::cerr << "ERROR: map.cc: Cannot pop MapObj without Lua-name and ID in pop_ob(MapObj*). "
+//				  << "Perhaps use pop(x,y) instead, but then make sure, there is EXACTLY one MapObj on the coordinates x, y!\n";
+//		return;
+//	}
 
 	unsigned x, y;
 	map_obj->get_coords(x, y);
@@ -259,9 +259,7 @@ void Map::rm_obj(MapObj* map_obj)
 
 	for (auto ptr = found_objs.first; ptr != found_objs.second; ptr++) {
 		MapObj& curr_obj = ptr->second;
-//		if (ptr->lua_name == map_obj->lua_name &&
-//				curr_obj->id == map_obj->id &&
-//				curr_obj->description() == map_obj->description())
+
 		if (curr_obj == *map_obj) {
 			_map_objects.erase(ptr);
 			_modified = true;

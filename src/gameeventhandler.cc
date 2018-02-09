@@ -93,13 +93,16 @@ bool GameEventHandler::handle_event_delete_object(std::shared_ptr<Map> map, MapO
 		return false;
 	}
 
-	if (obj->lua_name.size() == 0) {
-		unsigned x, y;
-		obj->get_coords(x, y);
-		map->pop_obj(x, y);
-	}
-	else
+// TODO: Due to the == operator in MapObj, I don't think, we need pop any longer. True?
+//	if (obj->lua_name.size() == 0) {
+//		std::cout << "##" << obj->lua_name.size() << "++\n";
+//		unsigned x, y;
+//		obj->get_coords(x, y);
+//		map->pop_obj(x, y);
+//	}
+//	else {
 		map->rm_obj(obj);
+//	}
 
 	return true;
 }

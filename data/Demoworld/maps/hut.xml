@@ -57,13 +57,13 @@
           <event type="EVENT_PRINTCON">The chest is not locked.</event>
         </action>
         <action type="ACT_ON_OPENED">
-          <event type="EVENT_DELETE_OBJECT"/>
           <event type="EVENT_ADD_OBJECT">
             <object x="13" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_lounge_room_opened" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_ADD_OBJECT">
             <object x="13" y="9" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::gold coin" how_many="100"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
+          <event type="EVENT_DELETE_OBJECT"/>
         </action>
       </actions>
     </object>
@@ -98,7 +98,6 @@
           <event type="EVENT_PRINTCON">The chest is not locked.</event>
         </action>
         <action type="ACT_ON_OPENED">
-          <event type="EVENT_DELETE_OBJECT"/>
           <event type="EVENT_ADD_OBJECT">
             <object x="17" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
@@ -108,6 +107,7 @@
           <event type="EVENT_ADD_OBJECT">
             <object x="17" y="9" ox="0" oy="0" icon_no="409" layer="0" id="" lua_name="miscitems::key" how_many="1" type="item"/>
           </event>
+          <event type="EVENT_DELETE_OBJECT"/>
         </action>
       </actions>
     </object>

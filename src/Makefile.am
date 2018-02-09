@@ -2,7 +2,7 @@ bin_PROGRAMS = eureka
 
 SUBDIRS = leibniz
 
-AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++11 -MD -MP \
+AM_CXXFLAGS = -fdiagnostics-color=auto -g -O0 -Wall -std=c++14 -MD -MP \
 	$(LIBXMLPP_CFLAGS) \
 	$(SDL_CFLAGS) \
 	$(BOOST_CPPFLAGS) \
