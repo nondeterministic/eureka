@@ -153,7 +153,7 @@ std::vector<std::string> LuaWrapper::get_strings_from_subtable(std::string item_
 
 		lua_pop(l, 1); // Remove value, keep key for next iteration.
 	}
-    lua_pop(l, 2); // Pop table
+    lua_pop(l, 1); // Pop table
 
     return ingredients;
 }
