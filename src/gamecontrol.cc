@@ -1097,7 +1097,9 @@ void GameControl::keypress_open_act()
 					return;
 				}
 				else {
+					std::cout << "INFO: gamecontrol.cc: Executing actions for opening an item...\n";
 					execute_object_actions(the_obj, _arena);
+					return;
 				}
 			}
 			// We implement some default behaviour for doors here: if they're not explicitly set in their object
