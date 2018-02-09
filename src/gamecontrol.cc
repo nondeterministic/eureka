@@ -2446,9 +2446,7 @@ std::pair<int, int> GameControl::get_viewport()
 		break;
 	}
 
-	// Reflect light sources indoors
-	if (!_arena->get_map()->is_outdoors())
-		x = max(x, _party->light_radius());
+	x = max(x, _party->light_radius() + 2);
 
 	// It's a square view!
 	return std::make_pair(x,x);
