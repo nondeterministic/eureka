@@ -4,11 +4,11 @@ dist: trusty
 
 install:
  - export CXX="g++-7"
-- if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+ - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       wget http://libsdl.org/release/SDL2-2.0.7.tar.gz
       && tar -xzvf SDL2-2.0.7.tar.gz
       && pushd SDL2-2.0.7 && ./configure --prefix=/usr && make && sudo make install && popd;
-  fi
+   fi
  - ./autogen.sh
 
 before_install:
