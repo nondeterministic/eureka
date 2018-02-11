@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_video.h>
 #include <SDL2/SDL_image.h>
 
 #include "../world.hh"
@@ -159,10 +160,6 @@ void SDLEditor::open_display(Gtk::EventBox* event_box, unsigned width, unsigned 
 		std::cerr << "ERROR: sdleditor.cc: Failed to create the SDL window.\n";
 		exit(EXIT_FAILURE);
 	}
-//	std::cout << "aa\n";
-//	SDL_DestroyWindow(_sdl_window);
-//	std::cout << "bb\n";
-//	exit(EXIT_SUCCESS);
 
 	SDL_SetWindowResizable(_sdl_window, SDL_TRUE);
 
@@ -175,7 +172,7 @@ void SDLEditor::open_display(Gtk::EventBox* event_box, unsigned width, unsigned 
 		exit(EXIT_FAILURE);
 	}
 
-	if (convert_icons_to_textures(_renderer) < 0) {
+	if (convert_icons_to_textures(_renderer) == false) {
 		std::cerr << "ERROR: sdleditor.cc: Failed to convert icons.\n";
 		exit(EXIT_FAILURE);
 	}
