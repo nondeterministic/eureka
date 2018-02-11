@@ -16,8 +16,8 @@ AM_MAINTAINER_MODE
 AC_PROG_CC
 AC_PROG_CXX
 
-# Check for SDL and SDL features, i.e. -lSDL
-SDL_VERSION=2.0.2
+# Check for SDL and SDL features, i.e. -lSDL2
+SDL_VERSION=2.0.5
 AM_PATH_SDL2($SDL_VERSION, 
             [], 
             [AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])]) 
