@@ -11,7 +11,7 @@ install:
 
       wget ftp://ftp-osl.osuosl.org/pub/libpng/src/libpng16/libpng-1.6.34.tar.gz
       && tar xzf libpng-1.6.34.tar.gz
-      && pushd libpng-1.6.34 && && ./configure --prefix=/usr && make && sudo make install && popd;
+      && pushd libpng-1.6.34 && ./configure --prefix=/usr && make && sudo make install && popd;
 
       wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz
       && tar -xzvf SDL2_image-2.0.2.tar.gz
