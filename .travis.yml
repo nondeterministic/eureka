@@ -6,5 +6,10 @@ before_install:
 install:
  - sudo apt-get install -qq doxygen
  - sudo apt-get install -qq ncompress
+ - sudo apt-get install -qq libsdl2-dev
+ - sudo apt-get install -qq libgtkmm-3.0-dev
+ - sudo apt-get install -qq libxml++2.6-dev
+ - sudo apt-get install -qq libsdl2-image-dev
+ - sudo apt-get install -qq libsdl2-mixer-dev
  
 script: make
