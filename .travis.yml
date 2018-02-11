@@ -1,7 +1,16 @@
 language: cpp
 compiler: g++
-dist: zesty
+dist: trusty
 
+addons:
+  apt:
+    sources:
+    - zesty
+    packages:
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-mixer-dev
+    
 install:
  - export CXX="g++-7"
  - ./autogen.sh
@@ -13,13 +22,10 @@ before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq g++-7
  - sudo apt-get install -qq libegl1-mesa-dev
- - sudo apt-get install -y libsdl2-dev
  - sudo apt-get install -qq doxygen
  - sudo apt-get install -qq ncompress
  - sudo apt-get install -qq libgtkmm-3.0-dev
  - sudo apt-get install -qq libxml++2.6-dev
- - sudo apt-get install -qq libsdl2-image-dev
- - sudo apt-get install -qq libsdl2-mixer-dev
  - sudo apt-get install -y libboost-all-dev
  - sudo apt-get install -qq lua5.1
  - sudo apt-get install -qq liblua5.1-0-dev
