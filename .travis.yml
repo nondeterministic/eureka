@@ -4,10 +4,7 @@ dist: trusty
 
 install:
  - export CXX="g++-7"
- - wget ftp://ftp-osl.osuosl.org/pub/libpng/src/libpng16/libpng-1.6.34.tar.gz && tar xzf libpng-1.6.34.tar.gz && pushd libpng-1.6.34 && ./configure --prefix=/usr && make && sudo make install && popd;
- - wget http://libsdl.org/release/SDL2-2.0.7.tar.gz && tar -xzvf SDL2-2.0.7.tar.gz && pushd SDL2-2.0.7 && ./configure --prefix=/usr && make && sudo make install && popd;
- - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz && tar -xzvf SDL2_image-2.0.2.tar.gz && pushd SDL2_image-2.0.2 && ./configure --prefix=/usr && make && sudo make install && popd;
- - wget https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.tar.gz && tar -xzvf SDL2_mixer-2.0.2.tar.gz && pushd SDL2_mixer-2.0.2 && ./configure --prefix=/usr && make && sudo make install && popd;
+ - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz && tar -xzvf SDL2-2.0.7.tar.gz && pushd SDL2-2.0.7 && ./configure --prefix=/usr && make && sudo make install && popd;
 
 before_install:
  - sudo add-apt-repository -y ppa:team-xbmc/ppa
