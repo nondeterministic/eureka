@@ -45,7 +45,7 @@ Charset& Charset::Instance()
 
 Charset::~Charset()
 {
-	std::cout << "~Charset()\n";
+	// std::cout << "~Charset()\n";
 }
 
 int Charset::load_charset()

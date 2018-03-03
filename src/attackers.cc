@@ -52,8 +52,6 @@ Attackers::Attackers(const Attackers& a)
 	BOOST_FOREACH(auto ec, a._enemies_count) {
 		_enemies_count[ec.first] = ec.second;
     }
-
-	std::cout << "ATTACKERS DEEP COPY OF " << a.size() << " MOTHERFUCKER!\n";
 }
 
 /// Gets n-th enemy in the vector.
@@ -229,7 +227,6 @@ std::string Attackers::to_string()
 
 	// First sort output by the enemy that is closest to the one furthest away from party
 	for (auto itr = _enemies_count.begin(); itr != _enemies_count.end(); itr++) {
-		cout << "Computing distance of " << itr->first << ": " << get_distance(itr->first) << endl;
 		ordered_attackers.insert(make_pair(get_distance(itr->first), itr->first));
 	}
 

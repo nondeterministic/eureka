@@ -55,8 +55,6 @@ SoundSample::SoundSample(std::string filename)
 
 SoundSample::~SoundSample()
 {
-	std::cout << "~Sample() for " << _filename << "\n";
-
 	if (_chan != -1) // Otherwise ALL channels are halted for -1!
 		Mix_HaltChannel(_chan);
 

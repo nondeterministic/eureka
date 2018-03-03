@@ -57,7 +57,7 @@ GameCharacter::GameCharacter()
 
 GameCharacter::~GameCharacter()
 {
-	std::cout << "~GameCharacter\n";
+	// std::cout << "~GameCharacter\n";
 	// if (_rh_item != NULL)
 	//   delete _rh_item;
 	// if (_lh_item != NULL)

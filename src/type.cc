@@ -32,8 +32,6 @@
 
 Type::Type() 
 {
-	std::cout << "Type()\n";
-
 	// Is true, when text on grey background is active, i.e., to display a cursor, etc.
 	_select = false;
 
@@ -43,8 +41,6 @@ Type::Type()
 
 Type::~Type()
 {
-	std::cout << "~Type()\n";
-
 	for (std::map<int, SDL_Texture*>::iterator iter = _map_chars.begin(); iter != _map_chars.end(); iter++)
 		SDL_DestroyTexture(iter->second);
 	_map_chars.clear();
