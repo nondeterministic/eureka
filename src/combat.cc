@@ -870,8 +870,12 @@ bool Combat::create_random_monsters()
 			monster->set_str(lua.call_fn<double>("get_strength"));
 			monster->set_luck(lua.call_fn<double>("get_luck"));
 			monster->set_gold(lua.call_fn<double>("get_gold"));
-			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
-			monster->set_weapon(wep);
+
+			// If Lua-land returns empty string, then the monster has no weapon!
+			if (lua.call_fn<std::string>("get_weapon").length() > 0) {
+				Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
+				monster->set_weapon(wep);
+			}
 
 			// Add monster to rooster of attackers
 			foes.add(monster);
