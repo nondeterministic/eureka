@@ -335,10 +335,10 @@
       <icon no="322" trans="full" walk="full">nothing special</icon>
       <icon no="323" trans="full" walk="full">nothing special</icon>
       <icon no="324" trans="full" walk="full">nothing special</icon>
-      <icon no="325" trans="full" walk="full">nothing special</icon>
-      <icon no="326" trans="full" walk="full">nothing special</icon>
-      <icon no="327" trans="full" walk="full">nothing special</icon>
-      <icon no="328" trans="full" walk="full">nothing special</icon>
+      <icon no="325" trans="full" walk="full" next_anim="326">an Ettin</icon>
+      <icon no="326" trans="full" walk="full" next_anim="327">an Ettin</icon>
+      <icon no="327" trans="full" walk="full" next_anim="328">an Ettin</icon>
+      <icon no="328" trans="full" walk="full" next_anim="326">an Ettin</icon>
       <icon no="329" trans="full" walk="full">nothing special</icon>
       <icon no="330" trans="full" walk="full">nothing special</icon>
       <icon no="331" trans="full" walk="full">nothing special</icon>
@@ -376,10 +376,10 @@
       <icon no="363" trans="full" walk="full">nothing special</icon>
       <icon no="364" trans="full" walk="full">nothing special</icon>
       <icon no="365" trans="full" walk="full">nothing special</icon>
-      <icon no="366" trans="full" walk="full">nothing special</icon>
-      <icon no="367" trans="full" walk="full">nothing special</icon>
-      <icon no="368" trans="full" walk="full">nothing special</icon>
-      <icon no="369" trans="full" walk="full">nothing special</icon>
+      <icon no="366" trans="full" walk="full" next_anim="367">a wolf</icon>
+      <icon no="367" trans="full" walk="full" next_anim="368">a wolf</icon>
+      <icon no="368" trans="full" walk="full" next_anim="369">a wolf</icon>
+      <icon no="369" trans="full" walk="full" next_anim="366">a wolf</icon>
       <icon no="370" trans="full" walk="full">nothing special</icon>
       <icon no="371" trans="full" walk="full">nothing special</icon>
       <icon no="372" trans="full" walk="full">nothing special</icon>
@@ -1534,7 +1534,7 @@
       <icon no="19" trans="full" walk="full">nothing special</icon>
       <icon no="20" trans="full" walk="full">nothing special</icon>
       <icon no="21" trans="full" walk="full">nothing special</icon>
-      <icon no="22" trans="full" walk="slow">trees</icon>
+      <icon no="22" trans="full" walk="slow">forest</icon>
       <icon no="23" trans="full" walk="full">plain</icon>
       <icon no="24" trans="full" walk="full">nothing special</icon>
       <icon no="25" trans="full" walk="full">nothing special</icon>
