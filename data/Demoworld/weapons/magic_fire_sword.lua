@@ -3,7 +3,7 @@
 -- Copyright (c) Andreas Bauer <baueran@gmail.com>
 -- -----------------------------------------------
 
-Weapons["magic sword fire"]  = { 
+Weapons["magic fire sword"]  = { 
    name         = "magic fire sword", 
    plural_name  = "magic fire swords",
    ammo         = "",

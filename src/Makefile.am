@@ -21,6 +21,12 @@ LIBS = @LIBXMLPP_LIBS@ @SDL_LIBS@ \
 	@BOOST_SYSTEM_LIBS@ @BOOST_FILESYSTEM_LIBS@ @BOOST_SIGNALS_LIBS@ @BOOST_REGEX_LIBS@ \
 	@LUA_LIBS@ @LIBS@
 
+CPPCHECK = cppcheck
+CHECKFLAGS = -q --error-exitcode=1
+CPPCHECK_DIRS = "$(top_srcdir)/src"
+cppcheck:
+	$(CPPCHECK) --enable=all $(CPPCHECK_DIRS)
+
 eureka_SOURCES = \
         eureka.hh eureka.cc \
 	sdl_shared.hh  \
