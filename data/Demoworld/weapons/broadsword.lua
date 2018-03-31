@@ -6,7 +6,6 @@
 Weapons["broadsword"]  = { 
    name         = "broadsword", 
    plural_name  = "broadswords", 
-   ammo         = "",
    hands        = 2, 
    range        = 10,
    damage_min   = 2,
