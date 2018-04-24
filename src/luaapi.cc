@@ -1005,8 +1005,6 @@ int l_join(lua_State* L)
 
 	std::shared_ptr<PlayerCharacter> player = create_character_values_from_lua(L);
 
-	// TODO: Nothing.  Delete this comment.  :-)
-
 	Party::Instance().add_player(*(player.get()));
     ZtatsWin::Instance().update_player_list();
 

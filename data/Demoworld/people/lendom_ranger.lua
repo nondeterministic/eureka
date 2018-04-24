@@ -54,20 +54,23 @@ do
    function join()
       highest_level = 0
       
-      for i=0,simpl_get_partysize() do
-	 if (simpl_get_level(i) > highest_level) then
-	    highest_level = simpl_get_level(i)
-	 end
+      for i=0,(simpl_get_partysize() - 1) do
+         if (simpl_get_level(i) > highest_level) then
+            highest_level = simpl_get_level(i)
+         end
       end
 
-      if (highest_level >= 3) then
-	 simpl_printcon("You appear to be serious in your undertaking. I shall be honoured to join thee!")
-	 return true
+      if (highest_level >= 3 and simpl_partysize() < 6) then
+         simpl_printcon("You appear to be serious in your undertaking. I shall be honoured to join thee!")
+         simpl_join(c_values)
+         simpl_remove_from_current_map("alvar")
+         conv_over = true
+         return true
       else
-	 simpl_printcon("A lot of people pass through and ask for help, but they do not know what they are getting themselves into. " ..
-			"Become more experienced, and ask me in the future. I may or not help thee in thy quest then. Until then, be careful " ..
-			"as the enemy has not been defeated. He merely sleeps...")
-	 return false
+         simpl_printcon("A lot of people pass through and ask for help, but they do not know what they are getting themselves into. " ..
+                        "Become more experienced, and ask me in the future. I may or not help thee in thy quest then. Until then, be careful " ..
+                           "as the enemy has not been defeated. He merely sleeps...")
+         return false
       end
    end
   

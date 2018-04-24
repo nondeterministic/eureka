@@ -734,7 +734,7 @@ void GameControl::keypress_quit()
 			GameState::Instance().save();
 	}
 	else
-		printcon("Cannot save game, when indoors.");
+		printcon("Cannot save game when indoors.");
 
 	printcon("Quit game (y/n)?");
 	char really_quit = em.get_key("yn");

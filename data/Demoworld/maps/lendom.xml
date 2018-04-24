@@ -91,7 +91,7 @@
     <object x="28" y="29" ox="28" oy="29" icon_no="311" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger2.lua"/>
     <object x="35" y="15" ox="0" oy="0" icon_no="1139" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="21" y="30" ox="0" oy="0" icon_no="476" layer="0" id="statue" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="33" y="21" ox="33" oy="21" icon_no="62" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger.lua"/>
+    <object x="33" y="21" ox="33" oy="21" icon_no="62" layer="0" id="alvar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger.lua"/>
     <object x="29" y="16" ox="29" oy="16" icon_no="128" layer="0" id="Bartender" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_bartender.lua"/>
     <object x="26" y="22" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="37" ox="0" oy="0" icon_no="637" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
