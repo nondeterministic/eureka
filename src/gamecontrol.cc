@@ -1263,9 +1263,7 @@ std::string GameControl::keypress_ready_item(int selected_player)
 				std::string selected_item_name = selected_item->name();
 
 				if (WeaponHelper::existsInLua(selected_item_name, _lua_state)) {
-					std::cout << "BBB\n";
 					Weapon* weapon = WeaponHelper::createFromLua(selected_item_name, _lua_state);
-					std::cout << "CCC\n";
 
 					if (player->weapon() != NULL) {
 						printcon("Yielding " + player->weapon()->name());
