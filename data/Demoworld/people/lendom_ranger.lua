@@ -10,7 +10,8 @@ do
 
    c_values = { 
       name = "Alvar", race = "HUMAN", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
-      iq = 15, endd = 7, sex = "MALE", profession = "MAGE", weapon = Weapons["axe"], shield = Shields["small shield"] 
+      iq = 15, endd = 7, sex = "MALE", profession = "PALADIN", weapon = Weapons["sword"], shield = Shields["big metal shield"],
+      armour = Armour["chainmail"]
    } 
 
    conv_over = false
@@ -20,11 +21,27 @@ do
    -- -----------------------------------------------
 
    function get_weapon()
-      return c_values["weapon"].name
+      if (c_values["weapon"] ~= nil) then
+         return c_values["weapon"].name
+      else
+         return ""
+      end
    end
 
    function get_shield()
-      return c_values["shield"].name
+      if (c_values["shield"] ~= nil) then
+         return c_values["shield"].name
+      else
+         return ""
+      end
+   end
+
+   function get_armour()
+      if (c_values["armour"] ~= nil) then
+         return c_values["armour"].name
+      else
+         return ""
+      end
    end
 
    function load_generic_fight_file(name)

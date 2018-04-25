@@ -55,8 +55,8 @@ private:
 
 	void get_item_prop_getter(std::string item_array, std::string item_id, std::string prop);
 	void get_item_prop_cleaner();
-	void make_fn_call(int arguments, int return_values, int error = 0);
-	void handle_error();
+	void make_fn_call(std::string fn_name, int arguments, int return_values, int error = 0);
+	void handle_error(std::string);
 
 public:
 	LuaWrapper(lua_State* state);

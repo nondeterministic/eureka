@@ -47,6 +47,7 @@
 #include "itemfactory.hh"
 #include "weaponhelper.hh"
 #include "shieldhelper.hh"
+#include "armourhelper.hh"
 #include "serviceshelper.hh"
 #include "race.hh"
 #include "luawrapper.hh"
@@ -965,7 +966,7 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_pushstring(L, "sex");
 	lua_gettable(L, -2);
 	std::string sex_str = lua_tostring(L, -1);
-	bool sex = false;
+	bool sex = false; // sex == false == female. (SJWs, please do not hurt me!)
 	if (boost::to_upper_copy(sex_str) == "MALE")
 		sex = true;
 	player->set_sex(sex);
@@ -986,6 +987,8 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 		player->set_weapon(WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), L));
 	if (lua.call_fn<std::string>("get_shield").length() > 0)
 		player->set_shield(ShieldHelper::createFromLua(lua.call_fn<std::string>("get_shield"), L));
+	if (lua.call_fn<std::string>("get_armour").length() > 0)
+		player->set_armour(ArmourHelper::createFromLua(lua.call_fn<std::string>("get_armour"), L));
 
     return player;
 }

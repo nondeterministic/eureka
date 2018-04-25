@@ -226,7 +226,7 @@ std::string LuaWrapper::call_fn(std::string fn_name, unsigned ret_vals, bool han
 	// Push arguments, if any, on stack
 	for (auto itr = args.begin(); itr != args.end(); itr++)
 		boost::apply_visitor(vis, *itr);
-	make_fn_call(args.size(), ret_vals);
+	make_fn_call(fn_name, args.size(), ret_vals);
 	args.clear();
 
 	if (ret_vals > 0 && handle_return) {
@@ -250,7 +250,7 @@ double LuaWrapper::call_fn(std::string fn_name, unsigned ret_vals, bool handle_r
 	// Push arguments, if any, on stack
 	for (auto itr = args.begin(); itr != args.end(); itr++)
 		boost::apply_visitor(vis, *itr);
-	make_fn_call(args.size(), ret_vals);
+	make_fn_call(fn_name, args.size(), ret_vals);
 	args.clear();
 
 	if (ret_vals > 0 && handle_return) {
@@ -273,7 +273,7 @@ bool LuaWrapper::call_fn(std::string fn_name, unsigned ret_vals, bool handle_ret
 	// Push arguments, if any, on stack
 	for (auto itr = args.begin(); itr != args.end(); itr++)
 		boost::apply_visitor(vis, *itr);
-	make_fn_call(args.size(), ret_vals);
+	make_fn_call(fn_name, args.size(), ret_vals);
 	args.clear();
 
 	if (ret_vals > 0 && handle_return) {
@@ -295,15 +295,16 @@ void LuaWrapper::call_fn_leave_ret_alone(std::string fn_name, int ret_vals)
 	call_fn<std::string>(fn_name, ret_vals, false);
 }
 
-void LuaWrapper::make_fn_call(int arguments, int return_values, int error)
+void LuaWrapper::make_fn_call(std::string fn_name, int arguments, int return_values, int error)
 {
 	if (lua_pcall(l, arguments, return_values, error) != 0)
-		handle_error();
+		handle_error(fn_name);
 }
 
-void LuaWrapper::handle_error()
+void LuaWrapper::handle_error(std::string fn_name)
 {
-	std::cerr << "ERROR: luawrapper.cc: Lua: '" << lua_tostring(l, -1) << "'. Perhaps a function was called that is not defined in the script?!" << std::endl;
+	std::cerr << "ERROR: luawrapper.cc: Lua: '" << lua_tostring(l, -1) << "'. Perhaps the function '" + fn_name +
+				"' that was called is not defined in the corresponding script?!" << std::endl;
 	std::cerr << "ERROR: luawrapper.cc: Quitting program now as a consequence.\n";
 	exit(0);
 }
