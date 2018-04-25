@@ -175,14 +175,13 @@ std::string Console::gets()
 	EventManager* em = &(EventManager::Instance());
 	std::string input = "";
 
-	// print(&normal_font, input, false);
-
 	while (1) {
 		char key = em->get_key();
 		switch (tolower(key)) {
 		case SDLK_RETURN:
 			cursor_x = 0;
 			cursor_y = 0;
+			print_line(&normal_font, input + " ");
 			return input;
 		case SDLK_BACKSPACE:
 			if (input.length() >= 1)

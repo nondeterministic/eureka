@@ -60,7 +60,6 @@ SDL_TimerID EventManager::add_event(Uint32 interval, SDL_TimerCallback callback_
 
 char EventManager::get_key(const char* valid_inputs)
 {
-//	Charset normal_font;
 	SDL_Event ev;
 	char input = '_';  // To shut up GCC: any default char will do here.
 	std::string valid_inputs_str = "";

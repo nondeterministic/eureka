@@ -651,10 +651,13 @@ PlayerCharacter create_character()
 	}
 
 	cons->print(&normalFont, "You are almost done. Now choose a name for your player:\n", false);
-	player.set_name(cons->gets());
+	std::string player_name = cons->gets();
+	player_name[0] = std::toupper(player_name[0]);
+	player.set_name(player_name);
 
-	cons->print(&normalFont, "\nCharacter generation complete. Press any key to start game!\n", false);
+	cons->print(&normalFont, "\nCharacter generation complete. Press any key to start game!", false);
 	em->get_key();
+	cons->print(&normalFont, "  ");
 
 	party->set_food(300);
 	party->set_gold(25);

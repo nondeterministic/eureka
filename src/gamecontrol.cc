@@ -2431,11 +2431,9 @@ std::pair<int, int> GameControl::get_viewport()
 		x = 8 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
 		break;
 	case MORNING:
-		x = 16 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
-		break;
 	case NOON:
-		break;
 	case AFTERNOON:
+		x = 16 + (_clock.time().first%2 == 0? _clock.time().first : _clock.time().first + 1);
 		break;
 	case EVENING:
 	case NIGHT:
