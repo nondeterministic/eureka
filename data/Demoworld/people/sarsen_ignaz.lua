@@ -76,39 +76,39 @@ do
    
    function otherwise(item)
       if (item == "daughter" or item == "inge") then
-	 simpl_printcon("She must be around here somewhere, possibly in the stables, milking the cows...")
+         simpl_printcon("She must be around here somewhere, possibly in the stables, milking the cows...")
       elseif (item == "melnior" or string.find(item, "sent")) then
-	 simpl_printcon("Melnior and I go a long way back. I tried to help him defend Velnebras, but the enemies were too many. They left behind " ..
-			"a great devastation and many deaths. Now I also remember, why you seem familiar to me: I fought side by side with your " ..
-			"brave wife Evelyn until...")
-      elseif (string.find(item, "until")) then
-	 simpl_printcon("Until Edvard got killed. She then returned to her home, and I have not seen her since. Have you seen her there? (y/n)")
-	 answer = simpl_getkey("yn")
-	 simpl_printcon(string.format("%s ", answer))
-      
-	 if (answer == "y") then
-	    simpl_printcon("I am glad to know she is alive.")
-	 else
-	    simpl_printcon("That is what I feared: she may be out to avenge Edvard on her own. Together we may be able to find her, before it is too late. Dost thou accept my services to your quest? (y/n)")
-	    answer = simpl_getkey("yn")
-	    simpl_printcon(string.format("%s ", answer))
-	    
-	    if (answer == "y") then
-	       join()
-	    else
-	       simpl_printcon("As you wish, but do come by my house again at any time, should you ever change your mind. Attempting this huge task alone is suicide.")
-	    end
-	 end
+         simpl_printcon("Melnior and I go a long way back. I tried to help him defend Velnebras, but the enemies were too many. They left behind " ..
+                           "a great devastation and many deaths. Now I also remember, why you seem familiar to me: I fought side by side with your " ..
+                        "brave wife Evelyn until...")
+      elseif (string.find(item, "until") or item == "evelyn" or item == "wife") then
+         simpl_printcon("...until Edvard got killed. She then returned to her home, and I have not seen her since. Have you seen her there? (y/n)")
+         answer = simpl_getkey("yn")
+         simpl_printcon(string.format("%s ", answer))
+         
+         if (answer == "y") then
+            simpl_printcon("I am glad to know she is alive.")
+         else
+            simpl_printcon("That is what I feared: she may be out to avenge Edvard on her own. Together we may be able to find her, before it is too late. Dost thou accept my services to your quest? (y/n)")
+            answer = simpl_getkey("yn")
+            simpl_printcon(string.format("%s ", answer))
+            
+            if (answer == "y") then
+               join()
+            else
+               simpl_printcon("As you wish, but do come by my house again at any time, should you ever change your mind. Attempting this huge task alone is suicide.")
+            end
+         end
       elseif (item == "enemy") then
-	 simpl_printcon("The enemy must not be underestimated!")
+         simpl_printcon("The enemy must not be underestimated!")
       elseif (item == "velnebras") then
-	 simpl_printcon("It is... was a once proud city west of here.")
+         simpl_printcon("It is... was a once proud city west of here.")
       elseif (item == "fight" or item == "choice") then
-	 simpl_printcon("Velnebras did not leave me a choice - I had to fight.")
+         simpl_printcon("Velnebras did not leave me a choice - I had to fight.")
       elseif (item == "dog") then
-	 simpl_printcon("The dog's name is Emma. She is the best and very protective of Inge.")
+         simpl_printcon("The dog's name is Emma. She is the best and very protective of Inge.")
       else	
-	 simpl_printcon("Not sure, what this means.")
+         simpl_printcon("Not sure, what this means.")
       end
    end
 end

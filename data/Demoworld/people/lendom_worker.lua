@@ -65,7 +65,7 @@ do
    function otherwise(item)
       if (item == "store" or item == "destroyed" or item == "lendom") then
 	 simpl_printcon("It was a fierce battle, but by sticking together, we have defeated the enemy. Many were lost, but we have to rebuild Lendom anyway.")
-      elseif (item == "lost" or item == "battle") then
+      elseif (item == "enemy" or item == "lost" or item == "battle") then
 	 simpl_printcon("I rather not recall events. Some say that some people survived and have been brought by the enemy into a dark dungeon, where they now live to serve them. People have tried to find them, but never returned back home. So who knows?")
       elseif (item == "dungeon" or item == "survived") then
 	 simpl_printcon("I cannot tell you where this dungeon might be. But I know for a fact it must be outside town, because they have dug long tunnels from afar into Lendom. Where these tunnels start, we do not know...")

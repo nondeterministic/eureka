@@ -56,34 +56,34 @@ do
    
    function join()
       simpl_printcon("Of course I shall join you, and although I am weak, I will need a weapon to defend myself and arms to protect myself from these monsters down here." ..
-			"And before we save ourselves, we must make sure to free the others who were locked up with me down here. Do you promise not to leave without them (y/n)?")
+                        "And before we save ourselves, we must make sure to free the others who were locked up with me down here. Do you promise not to leave without them (y/n)?")
       answer = simpl_getkey("yn")
       simpl_printcon(string.format("%s ", answer))
-	 
+      
       if (answer == "y") then
-	 simpl_printcon("I knew you had a good heart and would not let the others down. I shall join thee in that fight and way back to the surface.")
-	 join_successful = simpl_join(c_values)
-	 simpl_remove_from_current_map("wife")
-	 conv_over = true
-	 return true
+         simpl_printcon("I knew you had a good heart and would not let the others down. I shall join thee in that fight and way back to the surface.")
+         join_successful = simpl_join(c_values)
+         simpl_remove_from_current_map("wife")
+         conv_over = true
+         return true
       else
-	 simpl_printcon("Then, I am afraid, I rather die down here alone than cowardly make away without those that are in desperate need of my help. Your quest was in vain. Farewell, dear husband.")
-	 conv_over = true
-	 return false
+         simpl_printcon("Then, I am afraid, I rather die down here alone than cowardly make away without those that are in desperate need of my help. Your quest was in vain. Farewell, dear husband.")
+         conv_over = true
+         return false
       end
    end
-  
+   
    function bye()
       simpl_printcon("You cannot just leave me here! I am your wife!")
    end
    
    function otherwise(item)
       if (string.find(item, "son") and not(string.find(item, "prison")) or string.find(item, "edvard")) then
-	 simpl_printcon("There was nothing more I could do for him... If prison would not have broken me already, his fate would have.")
+         simpl_printcon("There was nothing more I could do for him... If prison would not have broken me already, his fate would have.")
       elseif (item == "surface" or item == "prison") then
-	 simpl_printcon("I have been locked up here for too long. I do not even remember what the outside world looks like anymore... We must haste and find our way out of here!")
+         simpl_printcon("I have been locked up here for too long. I do not even remember what the outside world looks like anymore... We must haste and find our way out of here!")
       else
-	 simpl_printcon("Let us concern ourselves with how to get out of here instead!")
+         simpl_printcon("Let us concern ourselves with how to get out of here instead!")
       end
    end
 end

@@ -65,15 +65,15 @@ do
    
    function otherwise(item)
       if (item == "parents" or item == "attacks") then
-	 simpl_printcon("When the dust has settled, they simply never came back. Have you lost someone in the attacks, too? (y/n)")
-	 answer = simpl_getkey("yn")
-	 if (answer == "y") then
-	    simpl_printcon("Then you know, how it feels, I guess.")
-	 else
-	    simpl_printcon("Lucky, you.")
-	 end
+         simpl_printcon("When the dust has settled, they simply never came back. Have you lost someone in the attacks, too? (y/n)")
+         answer = simpl_getkey("yn")
+         if (answer == "y") then
+            simpl_printcon("Then you know, how it feels, I guess.")
+         else
+            simpl_printcon("Lucky, you.")
+         end
       else
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end

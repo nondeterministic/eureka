@@ -62,17 +62,17 @@ do
    
    function otherwise(item)
       if (item == "magic") then
-	 simpl_printcon("Magic was one of the prime defences, we had against the enemy.")
+         simpl_printcon("Magic was one of the prime defences, we had against the enemy.")
       elseif (item == "enemy" or string.find(item, "defenc")) then
-	 simpl_printcon("The enemies were many, but they did not expect such strong magical abilities of a seemingly insignificant town as ours. I have cast many a spells to destroy the enemy.")
+         simpl_printcon("The enemies were many, but they did not expect such strong magical abilities of a seemingly insignificant town as ours. I have cast many a spells to destroy the enemy.")
       elseif (string.find(item, "spell")) then
-	 simpl_printcon("I have cast both attack and healing spells as far as my abilities allowed. In the end, the enemy has retreated, but some people say, he merely sleeps...")
+         simpl_printcon("I have cast both attack and healing spells as far as my abilities allowed. In the end, the enemy has retreated, but some people say, he merely sleeps...")
       elseif (string.find(item, "sleep")) then
-	 simpl_printcon("Some people hear noises under the soil at night, and believe the enemy is still at large.")
+         simpl_printcon("Some people hear noises under the soil at night, and believe the enemy is still at large.")
       elseif (string.find(item, "noise") or string.find(item, "noise")) then
-	 simpl_printcon("You're best to ask around town for this phenomenon. I have never heard it, but people who slept in the room in the pub swear that they have...  I am not sure, what to make of it.")
+         simpl_printcon("You're best to ask around town for this phenomenon. I have never heard it, but people who slept in the room in the pub swear that they have...  I am not sure, what to make of it.")
       else
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end

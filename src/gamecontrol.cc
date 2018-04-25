@@ -1579,7 +1579,7 @@ void GameControl::create_random_monsters_in_dungeon()
 			int monst_y = _party->y + yoff;
 
 			// X% chance of a new monster each turn
-			if (random(1,100) <= 30) {
+			if (random(1,100) <= 10) {
 				if (abs(_party->x - monst_x) >= min_distance_to_party || abs(_party->y - monst_y) >= min_distance_to_party) {
 					if (walkable(monst_x, monst_y)) {
 						MapObj monster;

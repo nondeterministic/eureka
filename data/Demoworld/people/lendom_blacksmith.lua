@@ -74,19 +74,19 @@ do
       answer = simpl_getkey("yn")
       simpl_printcon(string.format("%s ", answer))
       if (answer == "y") then
-	 simpl_printcon("Would you like to buy or sell? (b/s)")
-	 buyorsell = simpl_getkey("bs")
-
-	 simpl_ztatssave()
-	 if (buyorsell == "b") then
-	    buy()
-	 else
-	    sell()
-	 end
-	 
-	 simpl_ztatsrestore()
+         simpl_printcon("Would you like to buy or sell? (b/s)")
+         buyorsell = simpl_getkey("bs")
+         
+         simpl_ztatssave()
+         if (buyorsell == "b") then
+            buy()
+         else
+            sell()
+         end
+         
+         simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. What else do you want to know?")
+         simpl_printcon("Perhaps another time then. What else do you want to know?")
       end
    end
    
@@ -96,26 +96,26 @@ do
 
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyitem(selected_item)
-
-	 if (buyResult == -1) then
-	    simpl_printcon("You can't carry any more.")
-	 elseif (buyResult == -2) then
-	    simpl_printcon("You don't have enough gold.")
-	 end
+         buyResult = simpl_buyitem(selected_item)
+         
+         if (buyResult == -1) then
+            simpl_printcon("You can't carry any more.")
+         elseif (buyResult == -2) then
+            simpl_printcon("You don't have enough gold.")
+         end
       else
-	 simpl_printcon("So, you changed your mind then?")
+         simpl_printcon("So, you changed your mind then?")
       end
       
-      simpl_printcon("Dost thou seek to buy more of my time (y/n)?")
+      simpl_printcon("Dost thou seek to buy more of my time? (y/n)")
       askforbusiness()
    end
-
+   
    function sell()
       price_reduction = 25
       simpl_ztatssellarmsfrominventory(price_reduction)
       
-      simpl_printcon("Dost thou seek to undertake further business (y/n)?")
+      simpl_printcon("Dost thou seek to undertake further business? (y/n)")
       askforbusiness()
    end
    

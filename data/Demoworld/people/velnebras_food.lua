@@ -50,45 +50,45 @@ do
 
    function name()
       simpl_printcon("They call me " .. c_values["name"] .. ", I supply Velnebras with the essentials. Dost thou seek to " ..
-		     "do some business with me? (y/n)")
-
+                     "do some business with me? (y/n)")
+      
       answer = simpl_getkey("yn")
       simpl_printcon(string.format("%s ", answer))
       if (answer == "y") then
-	 simpl_ztatssave()
-	 buy()
-	 simpl_ztatsrestore()
+         simpl_ztatssave()
+         buy()
+         simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. What else do you want to know?")
+         simpl_printcon("Perhaps another time then. What else do you want to know?")
       end
    end
-
+   
    function buy()
       -- Pass items for displaying and choice in ztats-window
       selected_item = simpl_ztatsshopinteraction(items)
       
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyitem(selected_item)
-	 if (buyResult == -1) then
-	    simpl_printcon("It seems, you already carry too much.")
-	 elseif (buyResult == -2) then
-	    simpl_printcon("You don't have enough gold.")
-	 elseif (buyResult == 0) then
-	    simpl_printcon("I am sure it will guide you well.")
-	 else
-	    simpl_printcon("Hmmm... This transaction failed.")
-	 end
+         buyResult = simpl_buyitem(selected_item)
+         if (buyResult == -1) then
+            simpl_printcon("It seems, you already carry too much.")
+         elseif (buyResult == -2) then
+            simpl_printcon("You don't have enough gold.")
+         elseif (buyResult == 0) then
+            simpl_printcon("I am sure it will guide you well.")
+         else
+            simpl_printcon("Hmmm... This transaction failed.")
+         end
       else
-	 simpl_printcon("Changed your mind then, eh?")
+         simpl_printcon("Changed your mind then, eh?")
       end
       
-      simpl_printcon("Dost thou seek to undertake further business (y/n)?")
+      simpl_printcon("Dost thou seek to undertake further business? (y/n)")
       job2()
    end
 
    function job()
-      simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)?")
+      simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)")
       job2()
    end
    
@@ -97,11 +97,11 @@ do
       simpl_printcon(string.format("%s ", answer))
       
       if (answer == "y") then
-	 simpl_ztatssave()
-	 buy()
-	 simpl_ztatsrestore()
+         simpl_ztatssave()
+         buy()
+         simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. What else do you want to know?")
+         simpl_printcon("Perhaps another time then. What else do you want to know?")
       end
    end
    
@@ -116,15 +116,15 @@ do
    
    function otherwise(item)
       if (item == "edvard") then
-	 simpl_printcon("I do remember him, but I have not seen him since the battle. Perhaps ask Melnior the grand wizard about his whereabouts.")
+         simpl_printcon("I do remember him, but I have not seen him since the battle. Perhaps ask Melnior the grand wizard about his whereabouts.")
       elseif (item == "battle") then
-	 simpl_printcon("It is best, you try and ask Melnior about what happened.")
+         simpl_printcon("It is best, you try and ask Melnior about what happened.")
       elseif (item == "melnior") then
-	 simpl_printcon("He is the great wizard of Velnibras. You can find him in the tower in the south east.")	 
+         simpl_printcon("He is the great wizard of Velnebras. You can find him in the tower in the south east.")	 
       elseif (item == "buy") then
-	 job()
+         job()
       else	
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end

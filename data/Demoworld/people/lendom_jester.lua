@@ -68,17 +68,17 @@ do
    
    function otherwise(item)
       if (item == "bard") then
-	 simpl_printcon("There used to be many of us. But many were not prepared for such a fierce battle. We travel the lands and bring song about what is going on...")
+         simpl_printcon("There used to be many of us. But many were not prepared for such a fierce battle. We travel the lands and bring song about what is going on...")
       elseif (item == "battle" or item == "news") then
-	 simpl_printcon("The people around here seem so confident that the enemy is defeated. But I tell you, he merely sleeps. He is still there. " ..
-			   "For instance, they have dug tunnels to get through the once existing city walls. No one knows what became of them. Some people swear, they can still hear noises " ..
-			   "down below. I think, these people are right. The enemy is still closer than we think.")
+         simpl_printcon("The people around here seem so confident that the enemy is defeated. But I tell you, he merely sleeps. He is still there. " ..
+                           "For instance, they have dug tunnels to get through the once existing city walls. No one knows what became of them. Some people swear, they can still hear noises " ..
+                           "down below. I think, these people are right. The enemy is still closer than we think.")
       elseif (item == "enemy" or item == "noises") then
-	 simpl_printcon("There is talk, the tunnels under the town still exist. The enemy is still in there, regaining strength...")
+         simpl_printcon("There is talk, the tunnels under the town still exist. The enemy is still in there, regaining strength...")
       elseif (item == "tunnel" or item == "tunnels") then
-	 simpl_printcon("It was a tactic of the enemy: to dig a tunnel under our city walls and then attack us from the inside and outside.")
+         simpl_printcon("It was a tactic of the enemy: to dig a tunnel under our city walls and then attack us from the inside and outside.")
       else
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end

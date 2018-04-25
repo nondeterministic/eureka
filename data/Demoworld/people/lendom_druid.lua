@@ -50,42 +50,42 @@ do
 
    function name()
       simpl_printcon("My name is " .. c_values["name"] .. ", I am a healer. " ..
-		     "Are you in need of healing? (y/n)")
-
+                        "Are you in need of healing? (y/n)")
+      
       answer = simpl_getkey("yn")
       simpl_printcon(string.format("%s ", answer))
       if (answer == "y") then
-	 simpl_ztatssave()
-	 buy()
-	 simpl_ztatsrestore()
+         simpl_ztatssave()
+         buy()
+         simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. What else do you want to know?")
+         simpl_printcon("Perhaps another time then. What else do you want to know?")
       end
    end
-
+   
    function buy()
       -- First choose player
       selected_player = simpl_choose_player()
       if (selected_player < 0) then
-	 simpl_printcon("So, you changed your mind then?")
-	 return
+         simpl_printcon("So, you changed your mind then?")
+         return
       end
       simpl_printcon(simpl_get_player_name(selected_player))
-
+      
       -- Pass items for displaying and choice in ztats-window
       selected_item = simpl_ztatsshopinteraction(items)
-
+      
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyservice(selected_player, selected_item)
-	 if (buyResult == -1) then
-	    simpl_printcon("You don't have enough gold.")
-	 end
+         buyResult = simpl_buyservice(selected_player, selected_item)
+         if (buyResult == -1) then
+            simpl_printcon("You don't have enough gold.")
+         end
       else
-	 simpl_printcon("So, you changed your mind then?")
+         simpl_printcon("So, you changed your mind then?")
       end
       
-      simpl_printcon("Dost thou seek to buy more of my time (y/n)?")
+      simpl_printcon("Dost thou seek to buy more of my time? (y/n)")
       job2()
    end
 
@@ -99,11 +99,11 @@ do
       simpl_printcon(string.format("%s ", answer))
       
       if (answer == "y") then
-	 simpl_ztatssave()
-	 buy()
-	 simpl_ztatsrestore()
+         simpl_ztatssave()
+         buy()
+         simpl_ztatsrestore()
       else
-	 simpl_printcon("Perhaps another time then. What else do you want to know?")
+         simpl_printcon("Perhaps another time then. What else do you want to know?")
       end
    end
    
@@ -111,16 +111,16 @@ do
       simpl_printcon("I cannot join thee, my responsibilities are with this town.")
       return false
    end
-  
+   
    function bye()
       simpl_printcon("Good bye, traveller!")
    end
    
    function otherwise(item)
       if (item == "buy") then
-	 job()
+         job()
       else	
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end

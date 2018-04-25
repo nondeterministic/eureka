@@ -83,12 +83,12 @@ do
 	 simpl_printcon("Changed your mind then, eh?")
       end
       
-      simpl_printcon("Dost thou seek to undertake further business (y/n)?")
+      simpl_printcon("Dost thou seek to undertake further business? (y/n)")
       job2()
    end
 
    function job()
-      simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)?")
+      simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)")
       job2()
    end
    

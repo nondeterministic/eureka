@@ -68,7 +68,7 @@ do
       elseif (item == "ranger") then
 	 simpl_printcon("We roam the forests, keep an eye out for enemies, and were much needed during the attack.")
       elseif (item == "tunnel" or item == "tunnels") then
-	 simpl_printcon("I have personally helped to close them, but one can never be sure if all have been found.")
+	 simpl_printcon("I have personally helped to close them, but one can never be sure if all have been found...")
       else
 	 simpl_printcon("I am sorry, I cannot help you with that.")
       end

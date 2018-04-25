@@ -64,15 +64,15 @@ do
    
    function otherwise(item)
       if (item == "father" or item == "property" or item == "farm") then
-	 simpl_printcon("Father's property is what feeds us and when he was away, I had to make sure it would last.")
+         simpl_printcon("Father's property is what feeds us and when he was away, I had to make sure it would last.")
       elseif (item == "away") then
-	 simpl_printcon("Father fought in Velnebras against the enemy hordes. It is best you ask him about it. I dare not think let alone speak of it.")
+         simpl_printcon("Father fought in Velnebras against the enemy hordes. It is best you ask him about it. I dare not think let alone speak of it.")
       elseif (string.find(item, "enemy")) then
-	 simpl_printcon("They were many and invaded at night. I am glad father is still alive. But ever since he returned, he is not the same. Something is on his mind...")
+         simpl_printcon("They were many and invaded at night. I am glad father is still alive. But ever since he returned, he is not the same. Something is on his mind...")
       elseif (item == "mind") then
-	 simpl_printcon("It is best, you talk to him yourself. He is in, preparing dinner, I would think.")
+         simpl_printcon("It is best, you talk to him yourself. He is in, preparing dinner, I would think.")
       else	
-	 simpl_printcon("I am sorry, I cannot help you with that.")
+         simpl_printcon("I am sorry, I cannot help you with that.")
       end
    end
 end
