@@ -172,8 +172,13 @@ bool GameState::save()
 	// Save time of day and other misc. information, related to the current game state
 	save_misc(dir);
 
+	// TODO: I believe it was a mistake to try and clear here. What good should this do?
+	// The effect is rather that if we clear, the ref count of the map is still positive
+	// and next time we enter, we reload the map (as _maps is clear), and double all items
+	// in the map.  So, see if this reasoning is correct, and remove it all for good!
+	//
 	// Clear map state again
-	_maps.clear();
+	// _maps.clear();
 
 	// Save world map
  	boost::filesystem::path world_file = dir / (World::Instance().get_name() + ".xml");
