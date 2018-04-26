@@ -726,7 +726,7 @@ void GameControl::keypress_quit()
 
 	// TODO: Enable save game indoors as well!!! Check GameState for missing functionality in this regard!
 	if (!_party->indoors()) {
-		printcon("Save game (y/n)?");
+		printcon("Save game? (y/n)");
 		char save_game = em.get_key("yn");
 		printcon(std::string(1, save_game) + " ");
 
@@ -736,7 +736,7 @@ void GameControl::keypress_quit()
 	else
 		printcon("Cannot save game when indoors.");
 
-	printcon("Quit game (y/n)?");
+	printcon("Quit game? (y/n)");
 	char really_quit = em.get_key("yn");
 	printcon(std::string(1, really_quit) + " ");
 
