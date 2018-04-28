@@ -198,6 +198,17 @@ std::string Console::gets()
 	}
 }
 
+// Copied this basically from animate_cursor(). Seems to do the trick, but not tested much!
+
+void Console::remove_cursor(Type* font, int x, int y, int offset)
+{
+	int blank_icon = 423; // see charset.cc
+	font->printch(get_texture(), blank_icon,
+				  (pre_cursor_x * font->char_width()) + (offset),
+				  (pre_cursor_y * (font->char_height() + offset)) + (get_size().second - font->char_height() - offset));
+	blit();
+}
+
 void Console::animate_cursor(Type* font, int x, int y, int offset)
 {
 	// Only change cursor position, if one was explicitly set; -1 is default value.

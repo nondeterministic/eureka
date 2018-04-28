@@ -37,6 +37,7 @@ public:
 
   SDL_Texture* get_texture();
   std::pair<int,int> get_size();
+  void remove_cursor(Type*, int x = -1, int y = -1, int offset = 2);
   void animate_cursor(Type*, int x = -1, int y = -1, int offset = 2);
   void pause(int = 30);
   void alarm();
