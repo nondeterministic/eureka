@@ -713,7 +713,7 @@
       <icon no="700" trans="full" walk="full">nothing special</icon>
       <icon no="701" trans="full" walk="full">nothing special</icon>
       <icon no="702" trans="full" walk="full" default_lua_name="potions::heal-poison potion">a heal-poison potion</icon>
-      <icon no="703" trans="full" walk="full">nothing special</icon>
+      <icon no="703" trans="full" walk="full" default_lua_name="potions::improve-magic potion">nothing special</icon>
       <icon no="704" trans="full" walk="full">nothing special</icon>
       <icon no="705" trans="full" walk="full" default_lua_name="potions::healing potion">a healing potion</icon>
       <icon no="706" trans="full" walk="full" default_lua_name="potions::potion of invincibility">a potion of invincibility</icon>
@@ -894,7 +894,7 @@
       <icon no="881" trans="full" walk="full">nothing special</icon>
       <icon no="882" trans="full" walk="full">nothing special</icon>
       <icon no="883" trans="full" walk="full">nothing special</icon>
-      <icon no="884" trans="full" walk="full">nothing special</icon>
+      <icon no="884" trans="full" walk="full" default_lua_name="edibles::chamomilla">a chamomilla plant</icon>
       <icon no="885" trans="full" walk="full" default_lua_name="edibles::thuja">a thuja plant</icon>
       <icon no="886" trans="full" walk="not">a barrel</icon>
       <icon no="887" trans="full" walk="full">nothing special</icon>
@@ -919,7 +919,7 @@
       <icon no="906" trans="full" walk="full">nothing special</icon>
       <icon no="907" trans="full" walk="full">nothing special</icon>
       <icon no="908" trans="full" walk="full">nothing special</icon>
-      <icon no="909" trans="full" walk="full">nothing special</icon>
+      <icon no="909" trans="full" walk="full" default_lua_name="edibles::morbilinium">a morbilinium plant</icon>
       <icon no="910" trans="full" walk="full" default_lua_name="edibles::arnica">an arnica plant</icon>
       <icon no="911" trans="full" walk="full">nothing special</icon>
       <icon no="912" trans="full" walk="full">nothing special</icon>
@@ -994,7 +994,7 @@
       <icon no="981" trans="full" walk="full">nothing special</icon>
       <icon no="982" trans="full" walk="full">nothing special</icon>
       <icon no="983" trans="full" walk="full">nothing special</icon>
-      <icon no="984" trans="full" walk="full">nothing special</icon>
+      <icon no="984" trans="full" walk="full" default_lua_name="edibles::sunflower">a sun flower</icon>
       <icon no="985" trans="full" walk="full">nothing special</icon>
       <icon no="986" trans="full" walk="full">nothing special</icon>
       <icon no="987" trans="full" walk="full">nothing special</icon>
@@ -1044,7 +1044,7 @@
       <icon no="1031" trans="full" walk="full">nothing special</icon>
       <icon no="1032" trans="full" walk="full">a platemail</icon>
       <icon no="1033" trans="full" walk="full">a golden platemail</icon>
-      <icon no="1034" trans="full" walk="full" default_lua_name="edibles::gelsemium">A Gelsemium flower</icon>
+      <icon no="1034" trans="full" walk="full" default_lua_name="edibles::gelsemium">a Gelsemium flower</icon>
       <icon no="1035" trans="full" walk="full">nothing special</icon>
       <icon no="1036" trans="full" walk="full">nothing special</icon>
       <icon no="1037" trans="full" walk="full">nothing special</icon>

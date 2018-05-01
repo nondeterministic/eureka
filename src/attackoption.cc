@@ -116,7 +116,8 @@ void AttackOption::execute(Combat* combat)
 		bool enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac;
 
 		if (enemy_is_hit) {
-			int damage = random(wep->dmg_min(), wep->dmg_max());
+			int damage = std::max(1, random(wep->dmg_min(), wep->dmg_max())  +  GameRules::bonus(_player->str())); // Cannot hit with NO damage at all!
+
 			ss << " and hits for " << damage << " points of damage.";
 			if (opponent->hp() - damage > 0) {
 				opponent->set_hp(opponent->hp() - damage);

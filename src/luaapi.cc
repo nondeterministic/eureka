@@ -1055,6 +1055,39 @@ int l_remove_from_current_map(lua_State* L)
 }
 
 // Gets two arguments on Lua stack:
+// 1. number of party member, 2. a number that is to be added to member's sp
+// (if that number is negative, subtraction actually occurs, naturally).
+
+int l_add_sp(lua_State* L)
+{
+	int player_no = lua_tonumber(L, 1);
+	int value     = lua_tonumber(L, 2);
+
+	PlayerCharacter* player = Party::Instance().get_player(player_no);
+
+	if (!player->is_spell_caster()) {
+	    GameControl::Instance().printcon("But " + player->name() + " does not possess any magical abilities.");
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	// We cannot up the HP of a dead player
+	if (player->condition() == DEAD) {
+	    GameControl::Instance().printcon("But " + player->name() + " is dead.");
+		return 1;
+	}
+
+	if (value > 0) {
+		player->set_sp(player->sp() + value); // This means, we can get more SP than SPM allows! This is the power of the potion and intended!
+		lua_pushboolean(L, true);
+	}
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
+}
+
+// Gets two arguments on Lua stack:
 // 1. number of party member, 2. a number that is to be added to member's hp
 // (if that number is negative, subtraction actually occurs, naturally).
 
@@ -1069,7 +1102,8 @@ int l_add_hp(lua_State* L)
 	// We cannot up the HP of a dead player
 	if (player->condition() == DEAD) {
 	    GameControl::Instance().printcon("But " + player->name() + " is dead.");
-		return 0;
+		lua_pushboolean(L, false);
+		return 1;
 	}
 
 	if (value >= 0)
@@ -1478,6 +1512,9 @@ void publicize_api(lua_State* L)
 
   lua_pushcfunction(L, l_add_hp);
   lua_setglobal(L, "simpl_add_hp");
+
+  lua_pushcfunction(L, l_add_sp);
+  lua_setglobal(L, "simpl_add_sp");
 
   lua_pushcfunction(L, l_is_dead);
   lua_setglobal(L, "simpl_is_dead");

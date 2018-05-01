@@ -40,9 +40,14 @@ do
    -- -----------------------------------------------
 
    items = {}
-   items[0] = Edibles["iron ration"]
-   items[1] = Edibles["standard ration"]
+   items[0] = Edibles["chamomilla"]
+   items[1] = Edibles["arnica"]
    items[2] = Edibles["magic mushroom"]
+   items[3] = Edibles["garlic"]
+   items[4] = Edibles["gelsemium"]
+   items[5] = Edibles["sulphur"]
+   items[6] = Edibles["thuja"]
+   items[7] = Edibles["morbilinium"]
 
    function description()
       simpl_printcon("You see pretty woman wearing an unorderly, old dress.")
@@ -69,24 +74,24 @@ do
       
       -- Try to add item to player inventory, if something was selected
       if (string.len(selected_item) > 0) then
-	 buyResult = simpl_buyitem(selected_item)
-	 if (buyResult == -1) then
-	    simpl_printcon("It seems, you already carry too much.")
-	 elseif (buyResult == -2) then
-	    simpl_printcon("You don't have enough gold.")
-	 elseif (buyResult == 0) then
-	    simpl_printcon("I am sure it will guide you well.")
-	 else
-	    simpl_printcon("Hmmm... This transaction failed.")
-	 end
+         buyResult = simpl_buyitem(selected_item)
+         if (buyResult == -1) then
+            simpl_printcon("It seems, you already carry too much.")
+         elseif (buyResult == -2) then
+            simpl_printcon("You don't have enough gold.")
+         elseif (buyResult == 0) then
+            simpl_printcon("I am sure it will guide you well.")
+         else
+            simpl_printcon("Hmmm... This transaction failed.")
+         end
       else
-	 simpl_printcon("Changed your mind then, eh?")
+         simpl_printcon("Changed your mind then, eh?")
       end
       
       simpl_printcon("Dost thou seek to undertake further business? (y/n)")
       job2()
    end
-
+   
    function job()
       simpl_printcon("I supply the folks around here with the essentials. Dost thou need some? (y/n)")
       job2()

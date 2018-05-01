@@ -31,10 +31,10 @@
     <row>4 6 4 4 5 82 4 5 4 198 89 89 89 89 89 89 89 190 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 89 89 89 89 198 4 4 4 6 5 4 4 4 7 4 4</row>
     <row>4 6 6 6 4 4 5 5 4 190 89 89 89 89 89 89 89 168 4 4 4 4 4 4 4 4 168 89 89 89 89 89 89 89 89 89 89 89 190 4 4 4 4 5 4 4 4 7 7 4</row>
     <row>4 6 6 6 4 5 5 4 4 198 89 89 89 89 89 89 89 190 6 4 4 4 4 4 4 5 190 89 89 89 89 89 89 89 89 89 89 89 198 4 4 4 4 5 6 6 6 7 7 4</row>
-    <row>4 6 6 6 6 4 4 4 4 190 89 89 89 89 89 89 89 190 4 4 4 1059 4 5 4 82 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 4 4 5 6 4 4 6 7 4</row>
+    <row>4 6 6 6 6 4 4 4 4 190 89 89 89 89 89 89 89 190 4 4 4 4 4 5 4 82 190 89 89 89 89 89 89 89 89 89 89 89 190 4 4 4 4 5 6 4 4 6 7 4</row>
     <row>4 6 4 4 5 4 4 4 82 190 190 190 190 190 190 190 190 190 4 6 4 82 4 5 4 4 190 190 190 198 190 190 198 190 190 198 190 190 190 4 4 4 5 5 6 6 4 6 7 4</row>
     <row>4 4 4 4 5 5 5 4 4 4 6 4 4 6 6 6 6 6 6 6 6 6 6 6 6 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 5 5 4 4 6 6 7 7</row>
-    <row>4 4 4 4 4 4 4 5 4 6 6 6 6 1059 6 6 6 6 4 4 4 4 4 4 6 6 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 4 4 4 4 4 4 6 7 4</row>
+    <row>4 4 4 4 4 4 4 5 4 6 6 6 6 4 6 6 6 6 4 4 4 4 4 4 6 6 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 4 4 4 4 4 4 6 7 4</row>
     <row>4 5 5 4 4 4 5 4 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 4 4 4 4 82 4 6 4 4</row>
     <row>4 5 4 4 5 5 5 4 4 4 4 4 4 4 4 4 4 4 4 2 2 1034 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 5 4 5 4 4 4 4 4 6 4</row>
     <row>4 5 6 4 4 5 5 4 4 4 4 4 4 4 4 4 4 4 2 2 1034 4 1034 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 4 4 4 4 82 4 6 4</row>
@@ -43,7 +43,7 @@
     <row>4 4 4 4 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 5 5 5 4 4 4 6 4 4</row>
     <row>4 5 82 82 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 190 190 190 198 190 190 190 190 198 190 190 190 4 4 4 4 5 5 4 4 6 6 6 4</row>
     <row>4 4 4 5 4 4 4 4 4 190 147 192 147 192 147 192 190 4 4 4 4 4 4 4 4 4 198 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 5 4 4 6 6 4 6 4</row>
-    <row>4 4 5 5 4 5 4 4 4 190 90 90 90 90 90 90 190 4 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 4 5 4 4 4 4 6 4</row>
+    <row>4 4 5 5 4 5 4 4 4 190 90 90 90 90 90 90 190 4 4 4 4 4 4 4 4 4 190 89 89 187 185 185 185 185 186 89 89 190 4 4 4 5 4 5 4 4 4 4 6 4</row>
     <row>4 4 4 4 82 5 4 4 4 190 90 90 90 90 90 90 190 4 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 4 4 4 4 82 4 6 4</row>
     <row>4 6 5 5 4 5 4 4 4 190 90 90 90 90 90 90 168 4 4 4 4 4 4 4 4 4 168 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 4 4 4 4 82 4 6 4</row>
     <row>4 6 4 5 4 4 4 4 4 190 90 90 90 90 90 90 190 4 4 4 4 4 4 4 4 4 190 89 89 89 89 89 89 89 89 89 89 190 4 4 4 5 5 4 4 4 4 4 6 4</row>
@@ -60,6 +60,7 @@
     <row>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 0</row>
   </data>
   <objects>
+    <object x="32" y="41" ox="0" oy="0" icon_no="703" layer="0" id="" lua_name="potions::improve-magic potion" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="37" y="17" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="16" y="23" ox="0" oy="0" icon_no="508" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
       <actions>
@@ -68,7 +69,7 @@
             <object x="16" y="23" ox="0" oy="0" icon_no="489" layer="0" id="chest_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_ADD_OBJECT">
-	    <object x="16" y="23" ox="0" oy="0" icon_no="1102" layer="0" id="some_food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+            <object x="16" y="23" ox="0" oy="0" icon_no="1102" layer="0" id="some_food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_ADD_OBJECT">
             <object x="16" y="23" ox="0" oy="0" icon_no="567" layer="0" id="some_bow" lua_name="weapons::bow" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
@@ -78,48 +79,63 @@
       </actions>
     </object>
     <object x="26" y="23" ox="0" oy="0" icon_no="635" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="5" y="24" ox="0" oy="0" icon_no="988" layer="0" id="" lua_name="edibles::nightshade" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="29" y="23" ox="29" oy="23" icon_no="271" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_jester.lua"/>
-    <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="31" y="36" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="12" y="19" ox="12" oy="19" icon_no="58" layer="0" id="Tinker" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_blacksmith.lua"/>
     <object x="34" y="5" ox="34" oy="5" icon_no="999" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
-    <object x="16" y="32" ox="16" oy="32" icon_no="53" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_worker.lua"/>
-    <object x="4" y="39" ox="4" oy="39" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="39" ox="0" oy="0" icon_no="110" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="4" y="39" ox="4" oy="39" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="16" y="32" ox="16" oy="32" icon_no="53" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_worker.lua"/>
+    <object x="21" y="30" ox="0" oy="0" icon_no="476" layer="0" id="statue" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="10" ox="0" oy="0" icon_no="638" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="19" y="27" ox="0" oy="0" icon_no="988" layer="0" id="" lua_name="edibles::nightshade" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="36" y="40" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="11" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="12" y="19" ox="12" oy="19" icon_no="58" layer="0" id="Tinker" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_blacksmith.lua"/>
-    <object x="28" y="29" ox="28" oy="29" icon_no="311" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger2.lua"/>
     <object x="35" y="15" ox="0" oy="0" icon_no="1139" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="21" y="30" ox="0" oy="0" icon_no="476" layer="0" id="statue" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="28" y="29" ox="28" oy="29" icon_no="311" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger2.lua"/>
     <object x="33" y="21" ox="33" oy="21" icon_no="62" layer="0" id="alvar" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_ranger.lua"/>
     <object x="29" y="16" ox="29" oy="16" icon_no="128" layer="0" id="Bartender" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_bartender.lua"/>
     <object x="26" y="22" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="26" y="37" ox="0" oy="0" icon_no="637" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="26" y="21" ox="0" oy="0" icon_no="615" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="36" y="36" ox="0" oy="0" icon_no="123" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="20" y="23" ox="20" oy="23" icon_no="51" layer="0" id="Aconite" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_magician.lua"/>
-    <object x="10" y="37" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="26" y="21" ox="0" oy="0" icon_no="615" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="17" y="21" ox="0" oy="0" icon_no="612" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="17" y="23" ox="0" oy="0" icon_no="610" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="26" y="38" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="10" y="37" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="20" y="23" ox="20" oy="23" icon_no="51" layer="0" id="Aconite" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_magician.lua"/>
     <object x="12" y="9" ox="12" oy="9" icon_no="64" layer="0" id="druid" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_druid.lua"/>
+    <object x="26" y="38" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="17" y="23" ox="0" oy="0" icon_no="610" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="29" y="38" ox="29" oy="38" icon_no="139" layer="0" id="mayor" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_mayor.lua"/>
     <object x="17" y="22" ox="0" oy="0" icon_no="169" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="6" y="45" ox="6" oy="45" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="11" y="38" ox="11" oy="38" icon_no="64" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_priest.lua"/>
+    <object x="6" y="45" ox="6" oy="45" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="34" y="16" ox="0" oy="0" icon_no="169" layer="0" id="hotelroomdoor" lua_name="" how_many="1" random_monster="no" locked="normal" personality="neutral" move_mode="static" type="item"/>
     <object x="37" y="27" ox="37" oy="27" icon_no="998" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
     <object x="31" y="45" ox="31" oy="45" icon_no="136" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_jimmy.lua"/>
   </objects>
   <actions>
+    <action type="ACT_ON_OPENED">
+      <event type="EVENT_ADD_OBJECT">
+        <object x="16" y="23" ox="0" oy="0" icon_no="489" layer="0" id="chest_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+      </event>
+      <event type="EVENT_ADD_OBJECT">
+        <object x="16" y="23" ox="0" oy="0" icon_no="1102" layer="0" id="some_food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+      </event>
+      <event type="EVENT_ADD_OBJECT">
+        <object x="16" y="23" ox="0" oy="0" icon_no="567" layer="0" id="some_bow" lua_name="weapons::bow" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+      </event>
+      <event type="EVENT_DELETE_OBJECT"/>
+    </action>
     <action type="ACT_ON_ENTER" x="39" y="15">
-      <event type="EVENT_PLAY_MUSIC">dungeon.ogg</event>
       <event type="EVENT_ENTER_MAP">
         <x>3</x>
         <y>2</y>
         <target_map>tunnel</target_map>
       </event>
       <event type="EVENT_PRINTCON">A dark feeling engulfs you...</event>
+      <event type="EVENT_PLAY_MUSIC">dungeon.ogg</event>
     </action>
   </actions>
 </map>

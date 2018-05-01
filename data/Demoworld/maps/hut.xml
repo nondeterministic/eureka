@@ -42,78 +42,86 @@
     <row>4 4 4 4 4 4 5 5 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</row>
   </data>
   <objects>
-    <object x="23" y="26" ox="23" oy="26" icon_no="998" layer="0" id="dog" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="roam" type="animal">
+    <object x="3" y="17" ox="0" oy="0" icon_no="885" layer="0" id="" lua_name="edibles::thuja" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="6" y="28" ox="0" oy="0" icon_no="885" layer="0" id="" lua_name="edibles::thuja" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="25" y="27" ox="0" oy="0" icon_no="910" layer="0" id="" lua_name="edibles::arnica" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="7" y="12" ox="0" oy="0" icon_no="172" layer="0" id="torch2" lua_name="weapons::torch" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="14" ox="0" oy="0" icon_no="910" layer="0" id="" lua_name="edibles::arnica" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="16" y="28" ox="0" oy="0" icon_no="910" layer="0" id="" lua_name="edibles::arnica" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="5" ox="0" oy="0" icon_no="169" layer="0" id="frontdoor" lua_name="" how_many="1" random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
       <actions>
-        <action type="ACT_ON_LOOK">
-          <event type="EVENT_PRINTCON">Your trusted old friend Jep looks at you with keen playful eyes.</event>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
         </action>
       </actions>
     </object>
-    <object x="10" y="20" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="weapons::axe" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="17" y="11" ox="0" oy="0" icon_no="123" layer="0" id="torch3" lua_name="weapons::torch" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="13" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_lounge_room" lua_name="" how_many="1"   random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
+    <object x="7" y="9" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="weapons::torch" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::gold coin" how_many="25" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="9" y="19" ox="0" oy="0" icon_no="171" layer="0" id="sheddoor" lua_name="" how_many="1" random_monster="no" locked="normal" personality="neutral" move_mode="static" type="item">
       <actions>
-        <action type="ACT_ON_LOOK">
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_DELETE_OBJECT"/>
+        </action>
+      </actions>
+    </object>
+    <object x="17" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_bed_room" lua_name="" how_many="1" random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
           <event type="EVENT_PRINTCON">The chest is not locked.</event>
         </action>
         <action type="ACT_ON_OPENED">
-          <event type="EVENT_ADD_OBJECT">
-            <object x="13" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_lounge_room_opened" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-          </event>
-          <event type="EVENT_ADD_OBJECT">
-            <object x="13" y="9" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::gold coin" how_many="100"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-          </event>
-          <event type="EVENT_DELETE_OBJECT"/>
-        </action>
-      </actions>
-    </object>
-    <object x="11" y="10" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="edibles::iron ration" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="9" y="19" ox="0" oy="0" icon_no="171" layer="0" id="sheddoor" lua_name="" how_many="1"   random_monster="no" locked="normal" personality="neutral" move_mode="static" type="item">
-      <actions>
-        <action type="ACT_ON_OPENED">
-          <event type="EVENT_DELETE_OBJECT"/>
-        </action>
-      </actions>
-    </object>
-    <object x="7" y="9" ox="0" oy="0" icon_no="172" layer="0" id="torch" lua_name="weapons::torch" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="10" y="21" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="miscitems::ordinary scroll" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item">
-      <description>"Journal page"</description>
-      <actions>
-        <action type="ACT_ON_LOOK">
-          <event type="EVENT_PRINTCON">The obviously torn out page from a journal reads: March, 3, 445. I pray every night that father will come back to us. Not sure, how much longer we will remain unseen from the enemy hordes. Mother said, if they find us, we will try to escape north to the wizard's castle Velnebras to seek protection. He is crazy but apparently powerful. I hope there will be time. God help us!</event>
-        </action>
-      </actions>
-    </object>
-    <object x="11" y="5" ox="0" oy="0" icon_no="169" layer="0" id="frontdoor" lua_name="" how_many="1"   random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
-      <actions>
-        <action type="ACT_ON_OPENED">
-          <event type="EVENT_DELETE_OBJECT"/>
-        </action>
-      </actions>
-    </object>
-    <object x="9" y="10" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::gold coin" how_many="25"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-    <object x="17" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_bed_room" locked="unlocked" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item">
-      <actions>
-        <action type="ACT_ON_LOOK">
-          <event type="EVENT_PRINTCON">The chest is not locked.</event>
-        </action>
-        <action type="ACT_ON_OPENED">
-          <event type="EVENT_ADD_OBJECT">
-            <object x="17" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
-          </event>
           <event type="EVENT_ADD_OBJECT">
             <object x="17" y="9" ox="0" oy="0" icon_no="706" layer="0" id="potion of invincibility" lua_name="potions::potion of invincibility" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_ADD_OBJECT">
-            <object x="17" y="9" ox="0" oy="0" icon_no="409" layer="0" id="" lua_name="miscitems::key" how_many="1" type="item"/>
+            <object x="17" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_bed_room_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="17" y="9" ox="0" oy="0" icon_no="409" layer="0" id="" lua_name="miscitems::key" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
           </event>
           <event type="EVENT_DELETE_OBJECT"/>
         </action>
       </actions>
     </object>
-    <object x="7" y="12" ox="0" oy="0" icon_no="172" layer="0" id="torch2" lua_name="weapons::torch" how_many="1"   random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="26" y="14" ox="0" oy="0" icon_no="885" layer="0" id="" lua_name="edibles::thuja" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="11" y="10" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="13" y="9" ox="0" oy="0" icon_no="508" layer="0" id="chest_lounge_room" lua_name="" how_many="1" random_monster="no" locked="unlocked" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
+          <event type="EVENT_PRINTCON">The chest is not locked.</event>
+        </action>
+        <action type="ACT_ON_OPENED">
+          <event type="EVENT_ADD_OBJECT">
+            <object x="13" y="9" ox="0" oy="0" icon_no="489" layer="0" id="chest_lounge_room_opened" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_ADD_OBJECT">
+            <object x="13" y="9" ox="0" oy="0" icon_no="535" layer="0" id="gold" lua_name="miscitems::gold coin" how_many="100" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+          </event>
+          <event type="EVENT_DELETE_OBJECT"/>
+        </action>
+      </actions>
+    </object>
+    <object x="10" y="21" ox="0" oy="0" icon_no="583" layer="0" id="scroll" lua_name="miscitems::ordinary scroll" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item">
+      <actions>
+        <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
+          <event type="EVENT_PRINTCON">The obviously torn out page from a journal reads: March, 3, 445. I pray every night that father will come back to us. Not sure, how much longer we will remain unseen from the enemy hordes. Mother said, if they find us, we will try to escape north to the wizard's castle Velnebras to seek protection. He is crazy but apparently powerful. I hope there will be time. God help us!</event>
+        </action>
+      </actions>
+    </object>
+    <object x="17" y="11" ox="0" oy="0" icon_no="123" layer="0" id="torch3" lua_name="weapons::torch" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="10" y="20" ox="0" oy="0" icon_no="571" layer="0" id="axe" lua_name="weapons::axe" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
+    <object x="23" y="26" ox="23" oy="26" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal">
+      <actions>
+        <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
+          <event type="EVENT_PRINTCON">Your trusted old friend Jep looks at you with keen playful eyes.</event>
+        </action>
+      </actions>
+    </object>
   </objects>
   <actions>
+    <action type="ACT_ON_LOOK" x="4294967295" y="4294967295">
+      <event type="EVENT_PRINTCON">Your trusted old friend Jep looks at you with keen playful eyes.</event>
+    </action>
     <action type="ACT_ON_LOOK" x="22" y="16">
       <event type="EVENT_PRINTCON">A once well looked after grave is in front of you. Its tombstone reads: Edward 437 - 445. It makes you feel sad and also very angry...</event>
     </action>

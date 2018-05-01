@@ -53,6 +53,9 @@ protected:
   int scroll(int, int = 10);
   void blit();
   SDL_Renderer* get_renderer();
+
+  // See charset.cc
+  const int _BLANK_ICON = 423;
 };
 
 #endif

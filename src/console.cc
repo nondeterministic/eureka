@@ -198,13 +198,13 @@ std::string Console::gets()
 	}
 }
 
-// Copied this basically from animate_cursor(). Seems to do the trick, but not tested much!
+// Copied this basically from animate_cursor(). Seems, we only care for offset.
 
-void Console::remove_cursor(Type* font, int x, int y, int offset)
+void Console::remove_cursor(Type* font, __attribute__((unused)) int x, __attribute__((unused)) int y, int offset)
 {
-	int blank_icon = 423; // see charset.cc
-	font->printch(get_texture(), blank_icon,
-				  (pre_cursor_x * font->char_width()) + (offset),
+	font->printch(get_texture(),
+				  _BLANK_ICON,
+				  (pre_cursor_x * font->char_width()) + offset,
 				  (pre_cursor_y * (font->char_height() + offset)) + (get_size().second - font->char_height() - offset));
 	blit();
 }
@@ -216,10 +216,10 @@ void Console::animate_cursor(Type* font, int x, int y, int offset)
 	if (y != -1) cursor_y = y;
 
 	// If cursor is in new position, black out the old one
-	int blank_icon = 423; // see charset.cc
 	if (pre_cursor_x != cursor_x || pre_cursor_y != cursor_y) {
-		font->printch(get_texture(), blank_icon,
-					  (pre_cursor_x * font->char_width()) + (offset),
+		font->printch(get_texture(),
+					  _BLANK_ICON,
+					  (pre_cursor_x * font->char_width()) + offset,
 					  (pre_cursor_y * (font->char_height() + offset)) + (get_size().second - font->char_height() - offset));
 	}
 
