@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([eureka], [0.0.1], [baueran@gmail.com]) 
+AC_INIT([eureka], [0.0.2], [a@pspace.org]) 
 
 AC_CONFIG_SRCDIR([src/eureka.cc])
 AC_CONFIG_HEADERS([src/config.h])

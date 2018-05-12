@@ -1,6 +1,6 @@
 -- -----------------------------------------------
 -- Definition file for eureka
--- Copyright (c) Andreas Bauer <baueran@gmail.com>
+-- Copyright (c) Andreas Bauer <a@pspace.org>
 -- -----------------------------------------------
 
 Weapons["shovel"]  = { 

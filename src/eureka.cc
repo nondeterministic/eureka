@@ -1,6 +1,6 @@
 // This source file is part of eureka
 //
-// Copyright (c) 2007-2018 Andreas Bauer <baueran@gmail.com>
+// Copyright (c) 2007-2018 Andreas Bauer <a@pspace.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ void get_opts (int argc, char* argv[])
               std::cout << "Display this help information\n";
               std::cout << "  -v,       --version            ";
               std::cout << "Show version information\n\n";
-              std::cout << "Report bugs to <baueran@gmail.com>.\n";
+              std::cout << "Report bugs to <a@pspace.org>.\n";
               _getops_exit_after_print = true;
               break;
       	  case 'x':
@@ -182,7 +182,7 @@ void get_opts (int argc, char* argv[])
       	  case 'v':
       	  case 4:
       		  std::cout << PACKAGE_NAME << " " << PACKAGE_VERSION << std::endl << std::endl;
-      		  std::cout << "Copyright (c) 2007 - 2018  Andreas Bauer <baueran@gmail.com>\n\n";
+      		  std::cout << "Copyright (c) 2007 - 2018  Andreas Bauer <a@pspace.org>\n\n";
       		  std::cout << "This is free software; see the source for copying conditions.\n"
       				    << "There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
               _getops_exit_after_print = true;
@@ -451,7 +451,7 @@ int init_game_env(int res_w, int res_h)
 	Console::Instance().
 			print(&Charset::Instance(),
 					"Welcome to " + (std::string)PACKAGE_NAME +
-					"!\nA game engine (c) Copyright by Andreas Bauer.\nComments to baueran@gmail.com. Thanks!\n\n",
+					"!\nA game engine (c) Copyright by Andreas Bauer.\nComments to a@pspace.org. Thanks!\n\n",
 					false);
 
 	// Activate event handling
