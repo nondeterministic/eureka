@@ -50,7 +50,7 @@ Conversations with town folks
 
 ## Copyright
 
-Eureka is copyrighted by Andreas Bauer, baueran@gmail.com.
+Eureka is copyrighted by Andreas Bauer, a@pspace.org.
 
 It is free of charge and released under the terms of the GPL 3.
 
