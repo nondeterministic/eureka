@@ -253,8 +253,9 @@ bool World::xml_load_world_data(const std::string filename)
                         IconProps new_props;
                         new_props.set_name(reader.read_string().c_str());
                         do {
-                            if (reader.get_name() == "no")
+                            if (reader.get_name() == "no") {
                                 new_props.set_icon(atoi(reader.get_value().c_str()));
+                            }
                             else if (reader.get_name() == "sound_effect") {
                                 if (reader.get_value().length() > 0)
                                     new_props.set_sound_effect(reader.get_value().c_str());
@@ -285,6 +286,10 @@ bool World::xml_load_world_data(const std::string filename)
                                 	new_props._is_walkable = PropertyStrength::Some;
                                 else if (reader.get_value() == "not")
                                 	new_props._is_walkable = PropertyStrength::None;
+                            }
+                            else if (reader.get_name() == "enterable") {
+                                if (reader.get_value() == "yes")
+                                	new_props._is_enterable = true;
                             }
                             else if (reader.get_name() == "poison") {
                                 if (reader.get_value() == "full")
@@ -445,6 +450,9 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, IconProps* prop)
         icon_node->set_attribute("walk", "slow");
     else
     	icon_node->set_attribute("walk", "not");
+
+	if (prop ->_is_enterable)
+    	icon_node->set_attribute("enterable", "yes");
 
 	if (prop ->_poisonous == PropertyStrength::Full)
         icon_node->set_attribute("poison", "full");

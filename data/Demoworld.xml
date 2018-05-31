@@ -35,10 +35,10 @@
       <icon no="22" trans="full" walk="not">a horse</icon>
       <icon no="23" trans="full" walk="full">nothing special</icon>
       <icon no="24" trans="full" walk="full">nothing special</icon>
-      <icon no="25" trans="full" walk="full">nothing special</icon>
-      <icon no="26" trans="full" walk="full">nothing special</icon>
-      <icon no="27" trans="full" walk="full">nothing special</icon>
-      <icon no="28" trans="full" walk="full">nothing special</icon>
+      <icon no="25" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="26" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="27" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="28" trans="full" walk="full" enterable="yes">a ship</icon>
       <icon no="29" trans="full" walk="not">a horse</icon>
       <icon no="30" trans="full" walk="not">a horse</icon>
       <icon no="31" trans="full" walk="full">nothing special</icon>
@@ -51,10 +51,10 @@
       <icon no="38" trans="full" walk="full">nothing special</icon>
       <icon no="39" trans="full" walk="full">nothing special</icon>
       <icon no="40" trans="full" walk="full">nothing special</icon>
-      <icon no="41" trans="full" walk="full">nothing special</icon>
-      <icon no="42" trans="full" walk="full">nothing special</icon>
-      <icon no="43" trans="full" walk="full">nothing special</icon>
-      <icon no="44" trans="full" walk="full">nothing special</icon>
+      <icon no="41" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="42" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="43" trans="full" walk="full" enterable="yes">a ship</icon>
+      <icon no="44" trans="full" walk="full" enterable="yes">a ship</icon>
       <icon no="45" trans="full" walk="not">a spider</icon>
       <icon no="46" trans="full" walk="not">a spider</icon>
       <icon no="47" trans="full" walk="full">nothing special</icon>

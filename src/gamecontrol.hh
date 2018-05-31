@@ -100,6 +100,8 @@ public:
 	void keypress_ztats();
 	void keypress_drop_items();
 	void keypress_inventory();
+	void keypress_enter();
+	void keypress_xit();
 	void keypress_pull_push();
 	void keypress_look();
 	void keypress_get_item();

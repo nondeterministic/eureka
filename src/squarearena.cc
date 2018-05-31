@@ -551,6 +551,15 @@ void SquareArena::get_center_coords(int& x, int& y)
 
 std::pair<int, int> SquareArena::show_party(int x, int y)
 {
+	// Right now, if party has entered an object, e.g., a ship, don't draw
+	// the icon, only the object.
+	if (Party::Instance().is_entered()) {
+		std::pair<int, int> new_coords;
+		new_coords.first = x;
+		new_coords.second = y;
+		return new_coords;
+	}
+
 	// Draw party in the middle on default values
 	if (x == -1 && y == -1)
 		get_center_coords(x, y);

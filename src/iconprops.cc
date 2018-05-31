@@ -28,6 +28,7 @@ IconProps::IconProps()
 	_next_anim = -1;
 	_trans = PropertyStrength::Full;
 	_is_walkable = PropertyStrength::Full;
+	_is_enterable = false;
 	_poisonous = PropertyStrength::None;
 	_magical_force_field = PropertyStrength::None;
 	_name = "nothing special";
@@ -62,6 +63,11 @@ void IconProps::set_light_radius(int r)
 std::string IconProps::get_name(void)
 {
 	return _name;
+}
+
+bool IconProps::is_enterable()
+{
+	return _is_enterable;
 }
 
 void IconProps::set_name(const char* newname)

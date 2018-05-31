@@ -55,6 +55,7 @@ public:
   int rounds_intoxicated;
   bool is_resting;
   bool is_in_combat;
+  int  _entered; // Positive, if entered an object, e.g., a ship or balloon.
 
   // >0 if, e.g., torch is carried and lit.
   // int light_radius;
@@ -68,6 +69,9 @@ public:
   std::vector<PlayerCharacter>::iterator end();
   int party_size();
   unsigned party_alive();
+  bool is_entered();
+  int get_entered_icon();
+  void set_entered(int);
   void set_guard(int);
   PlayerCharacter* get_guard();
   void set_guard(PlayerCharacter*);

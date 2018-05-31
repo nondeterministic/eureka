@@ -51,11 +51,13 @@ public:
   bool is_walkable();
   std::string default_lua_name();
   void set_default_lua_name(std::string);
+  bool is_enterable();
 
   PropertyStrength _trans;
   PropertyStrength _is_walkable;
   PropertyStrength _poisonous;
   PropertyStrength _magical_force_field;
+  bool             _is_enterable;
   
 protected:
   unsigned _icon;

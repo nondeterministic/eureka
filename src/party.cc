@@ -74,6 +74,7 @@ Party::Party()
 	_magic_light_radius = 0;
 	prev_x = -1;
 	prev_y = -1;
+	_entered = -1;
 }
 
 Party& Party::Instance()
@@ -85,6 +86,24 @@ Party& Party::Instance()
 int Party::jimmylock_count()
 {
 	return _jlocks;
+}
+
+bool Party::is_entered()
+{
+	return _entered >= 0;
+}
+
+int Party::get_entered_icon()
+{
+	return _entered;
+}
+
+/// -1 for not having entered any object. 0 or greater for having entered
+/// an icon with icon number entered_icon_no.
+
+void Party::set_entered(int entered_icon_no)
+{
+	_entered = entered_icon_no;
 }
 
 void Party::add_jimmylock()

@@ -533,26 +533,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 				case SDLK_d:
 					keypress_drop_items();
 					break;
-				case SDLK_e: {
-					// Check if party is on enterable icon, i.e., if there is an enter-action associated to it.
-					std::vector<std::shared_ptr<Action>> acts = _arena->get_map()->get_actions(_party->x, _party->y);
-
-					if (acts.size() > 0) {
-						bool entered = false;
-						for (auto act : acts) {
-							if (std::dynamic_pointer_cast<ActionOnEnter>(act)) {
-								action_on_enter(std::dynamic_pointer_cast<ActionOnEnter>(act));
-								entered = true;
-							}
-						}
-						if (!entered)
-							printcon("Nothing to enter");
-					}
-					else
-						printcon("Nothing to enter");
-
+				case SDLK_e:
+					keypress_enter();
 					break;
-				}
 				case SDLK_g:
 					keypress_get_item();
 					break;
@@ -590,6 +573,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_u:
 					keypress_use();
+					break;
+				case SDLK_x:
+					keypress_xit();
 					break;
 				case SDLK_y: // yield / unready item
 					printcon("Yield (let go of) item - select player");
@@ -828,6 +814,54 @@ void GameControl::keypress_ztats()
 
 		mwin.display_last();
 	}
+}
+
+void GameControl::keypress_xit()
+{
+	if (!_party->is_entered()) {
+		printcon("Nothing to exit from.");
+		return;
+	}
+
+	std::cout <<_party->get_entered_icon() <<"\n";
+	IconProps* icon_props = IndoorsIcons::Instance().get_props(_party->get_entered_icon());
+	printcon("Leaving " + icon_props->get_name());
+	_party->set_entered(-1);
+}
+
+void GameControl::keypress_enter()
+{
+	// Check if party is on an enterable object, e.g., a ship
+	auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(_party->x,_party->y));
+	for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
+		MapObj& map_obj = curr_obj->second;
+		IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+
+		if (icon_props->is_enterable()) {
+			printcon("Entering " + icon_props->get_name());
+			_party->set_entered(icon_props->get_icon());
+			return;
+		}
+	}
+
+	// Check if party is on enterable map icon, i.e., if there is an enter-action associated to it.
+	std::vector<std::shared_ptr<Action>> acts = _arena->get_map()->get_actions(_party->x, _party->y);
+
+	if (acts.size() > 0) {
+		bool entered = false;
+		for (auto act : acts) {
+			if (std::dynamic_pointer_cast<ActionOnEnter>(act)) {
+				action_on_enter(std::dynamic_pointer_cast<ActionOnEnter>(act));
+				entered = true;
+			}
+		}
+		if (!entered) {
+			printcon("Nothing to enter");
+			return;
+		}
+	}
+
+	printcon("Nothing to enter");
 }
 
 void GameControl::keypress_inventory()
@@ -2107,8 +2141,8 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != PropertyStrength::None;
 
 		// But don't walk over monsters...
+		auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 		if (icon_is_walkable) {
-			auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
 			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
 				MapObj& map_obj = curr_obj->second;
 				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
@@ -2131,6 +2165,15 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 			// If the tile in question is in the list of additionally walkable icons...
 			if (std::find(additional_walkable_icons.begin(), additional_walkable_icons.end(), tile) != additional_walkable_icons.end())
 				return true;
+
+			// The opposite of the above case: if the background icon is non-walkable, but there
+			// is a walkable object, e.g., a ship in the water, then we can walk on that icon.
+			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
+				MapObj& map_obj = curr_obj->second;
+				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+				if (icon_props->_is_walkable != PropertyStrength::None)
+					return true;
+			}
 		}
 	}
 
@@ -2170,6 +2213,13 @@ PropertyStrength GameControl::get_forcefieldstrength(int x, int y)
 
 bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 {
+	// Right now, when party has entered an object, e.g., a ship, it can't move.
+	if (_party->is_entered()) {
+		printcon("You do not know how to move this thing.");
+		std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
+		return false;
+	}
+
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	int x_diff = 0, y_diff = 0;
 
