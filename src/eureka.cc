@@ -916,8 +916,8 @@ int start_game()
 	Console::Instance().
 			print(&normalFont,
 					"\nRemember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
-					"(d)rop item, (e)nter, (g)et, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit, (r)eady item, "
-					"(t)alk, (u)se item, (y)ield item, (z)tats.\n");
+					"(d)rop item, (e)nter, (g)et, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit & save, "
+					"(r)eady item, (t)alk, (u)se item, (y)ield item, e(x)it oject, (z)tats.\n");
 
 	// Set "start game" flag
 	gc->set_game_started(true);

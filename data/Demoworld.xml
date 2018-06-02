@@ -11,7 +11,7 @@
   <iconprops>
     <indoors>
       <icon no="0" trans="full" walk="not">deep water</icon>
-      <icon no="1" trans="full" walk="not">water</icon>
+      <icon no="1" trans="full" walk="not" next_anim="586">water</icon>
       <icon no="2" trans="full" walk="not" next_anim="587" sound_effect="shallow_water.wav">shallow water</icon>
       <icon no="3" trans="full" walk="full">nothing special</icon>
       <icon no="4" trans="full" walk="full">nothing special</icon>
@@ -595,12 +595,12 @@
       <icon no="582" trans="full" walk="full">nothing special</icon>
       <icon no="583" trans="full" walk="full" default_lua_name="miscitems::ordinary scroll">a scroll</icon>
       <icon no="584" trans="full" walk="full">nothing special</icon>
-      <icon no="585" trans="full" walk="full">nothing special</icon>
-      <icon no="586" trans="full" walk="full">nothing special</icon>
-      <icon no="587" trans="full" walk="not" next_anim="590" sound_effect="shallow_water.wav">water</icon>
-      <icon no="588" trans="full" walk="full">nothing special</icon>
-      <icon no="589" trans="full" walk="full">nothing special</icon>
-      <icon no="590" trans="full" walk="not" next_anim="2" sound_effect="shallow_water.wav">water</icon>
+      <icon no="585" trans="full" walk="full">deep water</icon>
+      <icon no="586" trans="full" walk="full" next_anim="589" sound_effect="shallow_water.wav">water</icon>
+      <icon no="587" trans="full" walk="not" next_anim="590" sound_effect="shallow_water.wav">shallow water</icon>
+      <icon no="588" trans="full" walk="full" sound_effect="shallow_water.wav">deep water</icon>
+      <icon no="589" trans="full" walk="full" sound_effect="shallow_water.wav" next_anim="1">water</icon>
+      <icon no="590" trans="full" walk="not" next_anim="2" sound_effect="shallow_water.wav">shallow water</icon>
       <icon no="591" trans="full" walk="full" default_lua_name="weapons::dagger">a dagger</icon>
       <icon no="592" trans="full" walk="full" default_lua_name="weapons::mace">a mace</icon>
       <icon no="593" trans="full" walk="full" default_lua_name="weapons::sword">a sword</icon>
