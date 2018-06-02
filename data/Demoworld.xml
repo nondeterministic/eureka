@@ -101,10 +101,10 @@
       <icon no="88" trans="full" walk="full">nothing special</icon>
       <icon no="89" trans="full" walk="full">nothing special</icon>
       <icon no="90" trans="full" walk="full">nothing special</icon>
-      <icon no="91" trans="full" walk="full">a lever</icon>
-      <icon no="92" trans="full" walk="full">a lever</icon>
-      <icon no="93" trans="not" walk="full">a lever</icon>
-      <icon no="94" trans="full" walk="full">a lever</icon>
+      <icon no="91" trans="full" walk="not">a lever</icon>
+      <icon no="92" trans="full" walk="not">a lever</icon>
+      <icon no="93" trans="not" walk="not">a lever</icon>
+      <icon no="94" trans="full" walk="not">a lever</icon>
       <icon no="95" trans="full" walk="full">nothing special</icon>
       <icon no="96" trans="full" walk="full">nothing special</icon>
       <icon no="97" trans="full" walk="full">nothing special</icon>
