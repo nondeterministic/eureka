@@ -121,7 +121,7 @@
       <icon no="108" trans="full" walk="full">nothing special</icon>
       <icon no="109" trans="not" walk="full">a wall with something odd about it</icon>
       <icon no="110" trans="full" walk="full">nothing special</icon>
-      <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.wav">a fireplace</icon>
+      <icon no="111" trans="full" walk="slow" next_anim="121" sound_effect="torch.wav" magic_force_field="semi">a fireplace</icon>
       <icon no="112" trans="full" walk="slow">fire</icon>
       <icon no="113" trans="full" walk="full">nothing special</icon>
       <icon no="114" trans="full" walk="full">nothing special</icon>
@@ -131,8 +131,8 @@
       <icon no="118" trans="full" walk="full">nothing special</icon>
       <icon no="119" trans="full" walk="full">nothing special</icon>
       <icon no="120" trans="full" walk="slow">a bed</icon>
-      <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.wav">a fireplace</icon>
-      <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.wav">a fireplace</icon>
+      <icon no="121" trans="full" walk="slow" next_anim="122" sound_effect="torch.wav" magic_force_field="semi">a fireplace</icon>
+      <icon no="122" trans="full" walk="slow" next_anim="111" sound_effect="torch.wav" magic_force_field="semi">a fireplace</icon>
       <icon light_radius="4" no="123" trans="full" walk="full" next_anim="124" sound_effect="torch.wav">a torch</icon>
       <icon light_radius="4" no="124" trans="full" walk="full" next_anim="123" sound_effect="torch.wav">a torch</icon>
       <icon no="125" trans="full" walk="not" next_anim="126">a guard</icon>
