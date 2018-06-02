@@ -2167,11 +2167,12 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 				return true;
 
 			// The opposite of the above case: if the background icon is non-walkable, but there
-			// is a walkable object, e.g., a ship in the water, then we can walk on that icon.
+			// is a walkable AND ENTERABLE object, e.g., a ship in the water, then we can walk on
+			// that icon.
 			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
 				MapObj& map_obj = curr_obj->second;
 				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
-				if (icon_props->_is_walkable != PropertyStrength::None)
+				if (icon_props->_is_walkable != PropertyStrength::None && icon_props->is_enterable())
 					return true;
 			}
 		}
