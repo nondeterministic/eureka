@@ -501,36 +501,15 @@ int Combat::foes_fight()
 	boost::unordered_set<std::string> moved;
 
 	for (int i = 0; i < foes.size(); i++) {
-		Creature* foe = foes.get()->at(i).get();
-
-		// Load corresponding Lua monster definition.
-		//
-		// Indoors map defined monster (e.g., town folk)
-
 		boost::filesystem::path beast_path(conf_world_path);
 		beast_path /= "bestiary";
-		beast_path /= World::Instance().get_monster_filename(foe->name());
 
-// 		beast_path /= boost::algorithm::to_lower_copy(Util::spaces_to_underscore(foe->name())) + (std::string)".lua";
-//		std::string beast_path_string = beast_path.string();
-//		boost::replace_all(beast_path_string, " ", "_"); // spaces in monster names will translate to _ in file names!
-//		if (luaL_dofile(_lua_state, beast_path_string.c_str())) {
+		try {
+			Creature* foe = foes.get()->at(i).get();
+			// This can throw an exception (see below!) If it doesn't, it means
+			// we're dealing with a monster from bestiary/.  (Otherwise, town folk.)
+			beast_path /= World::Instance().get_monster_filename(foe->name());
 
-		if (luaL_dofile(_lua_state, beast_path.c_str())) {
-			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
-			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
-
-			if (lua.call_fn<bool>("attack") && !fled)
-				lua.call_fn<double>("fight");
-
-			// All of the party died of the attack?
-			if (party->party_alive() == 0) {
-				GameControl::Instance().game_over();
-				return 0;
-			}
-		}
-		// Fight against ordinary monster, defined in monster definition file.
-		else {
 			// Convert the this-pointer to string and push it to Lua-Land
 			// along with i, such that Lua knows which monster is referred
 			// to.  (I know, this is very crazy code, but life is crazy.)
@@ -580,6 +559,18 @@ int Combat::foes_fight()
 			if (fled)
 				i--;
 			fled = false;
+		} catch (...) {
+			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
+
+			if (lua.call_fn<bool>("attack") && !fled)
+				lua.call_fn<double>("fight");
+
+			// All of the party died of the attack?
+			if (party->party_alive() == 0) {
+				GameControl::Instance().game_over();
+				return 0;
+			}
 		}
 
 		ZtatsWin::Instance().update_player_list();
