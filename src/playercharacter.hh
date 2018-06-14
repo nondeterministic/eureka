@@ -48,6 +48,7 @@ private:
   PROFESSION  _prof;
   int         _ep;
   int         _level;
+  bool 	      _is_npc;
   boost::unordered_map<std::string, int> _active_spells;
 
 public:
@@ -67,6 +68,8 @@ public:
   int potential_level();
   bool is_spell_caster();
   std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> create_spells_content_selection_provider();
+  bool is_npc();
+  void set_npc();
 };
 
 #endif

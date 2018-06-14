@@ -41,6 +41,6 @@ void publicize_api(lua_State*);
 std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L);
 
 
-extern lua_State* _lua_state;
+extern lua_State* global_lua_state;
 
 #endif

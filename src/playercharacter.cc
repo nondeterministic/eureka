@@ -35,10 +35,8 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
-PlayerCharacter::PlayerCharacter()
+PlayerCharacter::PlayerCharacter(): _is_npc(false), _ep(0), _level(1)
 {
-	_level = 1;
-	_ep = 0;
 	_condition = GOOD;
 }
 
@@ -316,4 +314,14 @@ int PlayerCharacter::potential_level()
 	}
 
 	return lev;
+}
+
+bool PlayerCharacter::is_npc()
+{
+	return _is_npc;
+}
+
+void PlayerCharacter::set_npc()
+{
+	_is_npc = true;
 }

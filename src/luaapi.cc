@@ -878,6 +878,10 @@ int l_party_size(lua_State* L)
 // THIS METHOD IS NOT VISIBLE TO LUA.  IT IS USED INTERNALLY ONLY, e.g., by l_join().
 // Basically extracts the c_values field from a city person or the like and creates an
 // according PlayerCharacter.
+//
+// Assumes that Lua has pushed c_values onto stack - as is the case for joining
+// characters from the game (see corresponding Lua people-files).  If no c_values on
+// the Lua stack, represented as argument L, this method will cause a crash!
 
 std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 {
@@ -892,15 +896,19 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_gettable(L, -2);
 	std::string race = lua_tostring(L, -1);
 	if (race == "HUMAN")
-		player->set_race(HUMAN);
+		player->set_race(RACE::HUMAN);
 	else if (race == "ELF")
-		player->set_race(ELF);
+		player->set_race(RACE::ELF);
 	else if (race == "HALF_ELF")
-		player->set_race(HALF_ELF);
+		player->set_race(RACE::HALF_ELF);
 	else if (race == "HOBBIT")
-		player->set_race(HOBBIT);
-	else // if (race == "DWARF")
-		player->set_race(DWARF);
+		player->set_race(RACE::HOBBIT);
+	else if (race == "DWARF")
+		player->set_race(RACE::DWARF);
+	else if (race == "DOG")
+		player->set_race(RACE::DOG);
+	else
+		std::cerr << "ERROR: luaapi.cc: a MapObj/NPC has an undefined race: " << race << ". Not setting it!\n";
 	lua_pop(L,1);
 
 	lua_pushstring(L, "ep");
@@ -975,8 +983,12 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 	lua_pushstring(L, "profession");
 	lua_gettable(L, -2);
 	std::string prof_string = lua_tostring(L, -1);
-	prof_string = boost::to_upper_copy(prof_string);
-	player->set_profession(stringToProfession.at(prof_string));
+	if (prof_string.length() > 0) {
+		prof_string = boost::to_upper_copy(prof_string);
+		player->set_profession(stringToProfession.at(prof_string));
+	}
+	else
+		std::cout << "INFO: luaapi.cc: no profession found for NPC. Either bug or animal. (Assuming animal, and continue.)\n";
 	lua_pop(L,1);
 
 	LuaWrapper lua(L);
@@ -1003,8 +1015,10 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 
 int l_join(lua_State* L)
 {
-	if (Party::Instance().party_size() >= 6)
+	if (Party::Instance().party_size() >= 6) {
 		lua_pushboolean(L, false);
+		return 1;
+	}
 
 	std::shared_ptr<PlayerCharacter> player = create_character_values_from_lua(L);
 

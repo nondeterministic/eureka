@@ -126,7 +126,7 @@ bool GameEventHandler::handle_event_add_object(std::shared_ptr<Map> map, MapObj 
 
 bool GameEventHandler::handle_event_lua_script(std::shared_ptr<EventLuaScript> event, std::shared_ptr<Map> map)
 {
-	if (luaL_dofile(_lua_state, (conf_world_path / "maps" / event->file_name).c_str())) {
+	if (luaL_dofile(global_lua_state, (conf_world_path / "maps" / event->file_name).c_str())) {
 		std::cerr << "ERROR: gameeventhandler.cc: Couldn't execute lua file: " << (conf_world_path / "maps" / event->file_name).string() << "\n";
 		return false;
 	}

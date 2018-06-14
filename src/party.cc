@@ -191,7 +191,7 @@ std::string Party::map_name()
 void Party::add_player(PlayerCharacter player)
 {
 	_players.push_back(player);
-	std::cout << "INFO: party.cc: Added player " << player.name() << " to roaster.\n";
+	std::cout << "INFO: party.cc: Added player '" << player.name() << "' to roaster.\n";
 }
 
 PlayerCharacter* Party::get_player(int number)
@@ -653,4 +653,12 @@ int Party::decrease_immunity_from_fields()
 int Party::immune_from_fields()
 {
 	return _rounds_immune_to_fields;
+}
+
+PlayerCharacter* Party::get_npc_or_null()
+{
+	for (auto player: _players)
+		if (player.is_npc())
+			return &player;
+	return NULL;
 }

@@ -484,7 +484,7 @@ void World::init_lua_arrays(lua_State* L)
 
 	for (int i = 0; i < number_of_elems; i++) {
 		if (luaL_dofile(L, (conf_world_path / elems[i] / "defs.lua").c_str())) {
-			cerr << "WARNING: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
+			std::cerr << "WARNING: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
 			continue;
 		}
 
@@ -496,7 +496,7 @@ void World::init_lua_arrays(lua_State* L)
 
 			if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
 				if (luaL_dofile(L, (conf_world_path / elems[i] / fname).c_str())) {
-					cerr << "WARNING: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
+					std::cerr << "WARNING: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
 					continue;
 				}
 			}
@@ -565,7 +565,7 @@ std::vector<Spell> World::load_lua_spells(lua_State* L)
 {
 	std::vector<Spell> spells;
 
-	cout << "INFO: world.cc: Loading spells...\n";
+	std::cout << "INFO: world.cc: Loading spells...\n";
 	try {
 		boost::filesystem::path targetDir(conf_world_path / "spells");
 		boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
@@ -578,7 +578,7 @@ std::vector<Spell> World::load_lua_spells(lua_State* L)
 		}
 	}
 	catch (...) {
-		cerr << "WARNING: world.cc: Loading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
+		std::cerr << "WARNING: world.cc: Loading of spells from: " << (conf_world_path / "spells").string() << " failed. Game not properly installed or incomplete?\n";
 	}
 
 	return spells;

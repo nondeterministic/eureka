@@ -20,18 +20,26 @@
 #ifndef __CONVERSATION_HH
 #define __CONVERSATION_HH
 
-#include "mapobj.hh"
 #include <string>
+#include <memory>
+#include <lua.h>
+#include "mapobj.hh"
 
 class Conversation
 {
 private:
-	MapObj& obj;
+	lua_State* _lua_state = NULL;
+	std::shared_ptr<LuaWrapper> _lua;
+	MapObj& _map_obj;
+
 	void printcon(std::string, bool = false);
+	bool load_lua_conversation_file();
 
 public:
 	Conversation(MapObj& mo);
+	~Conversation();
 	void initiate();
+	void initiate_with_animal();
 };
 
 #endif

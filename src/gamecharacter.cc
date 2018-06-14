@@ -366,8 +366,11 @@ int GameCharacter::base_ac()
 	case DWARF:
 		ac = 17;
 		break;
+	case DOG:
+		ac = 14;
+		break;
 	default:
-		std::cerr << "Error: No armour class defined for " << race() << std::endl;
+		std::cerr << "ERROR: gamecharacter.cc: No armour class defined for unknown race " << race() << std::endl;
 	}
 
 	return ac;

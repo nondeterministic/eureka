@@ -259,11 +259,11 @@ std::shared_ptr<Arena> GameControl::get_arena()
 
 bool GameControl::game_won()
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(global_lua_state);
 
 	if (!lua.is_defined("game_won")) {
-		if (luaL_dofile(_lua_state, (conf_world_path / "game_won.lua").c_str())) {
-			std::cerr << "WARNING: gamecontrol.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << ". Game not properly installed or incomplete?\n";
+		if (luaL_dofile(global_lua_state, (conf_world_path / "game_won.lua").c_str())) {
+			std::cerr << "WARNING: gamecontrol.cc: Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << ". Game not properly installed or incomplete?\n";
 			return false;
 		}
 	}
@@ -335,10 +335,10 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Decrease duration of ongoing spells
-	Party::Instance().decrease_spells(_lua_state);
+	Party::Instance().decrease_spells(global_lua_state);
 	for (int i = 0; i < Party::Instance().party_size(); i++) {
 		PlayerCharacter* pl = Party::Instance().get_player(i);
-		pl->decrease_spells(_lua_state, pl->name());
+		pl->decrease_spells(global_lua_state, pl->name());
 	}
 
 	// Restore spell points
@@ -447,7 +447,7 @@ void GameControl::do_turn(bool resting)
 	//	_lua_state = luaL_newstate();
 	//	luaL_openlibs(_lua_state);
 	//	publicize_api(_lua_state);
-	//	World::Instance().load_world_elements(_lua_state);
+	//  World::Instance().init_lua_arrays(_lua_state);
 	/////////////////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -634,7 +634,7 @@ void GameControl::keypress_cast()
 		std::string spell_file_path = select_spell(cplayer);
 
 		if (spell_file_path.length() > 0)
-			cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, _lua_state));
+			cast_spell(cplayer, Spell::spell_from_file_path(spell_file_path, global_lua_state));
 		else
 			printcon("Never mind.");
 	}
@@ -653,7 +653,7 @@ void GameControl::cast_spell(int player_no, Spell spell)
 	else if (player->level() < spell.level)
 		printcon("A player with level " + std::to_string(player->level()) + " cannot cast spells that require level " + std::to_string(spell.level) + ".");
 	else {
-		SpellCastHelper sch(player_no, _lua_state);
+		SpellCastHelper sch(player_no, global_lua_state);
 		sch.set_spell_path(spell.full_file_path);
 
 		if (sch.is_attack_spell_only()) {
@@ -770,7 +770,7 @@ void GameControl::keypress_mix_reagents()
 	}
 
 	std::vector<std::string> ingredient_names;
-	std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(_lua_state); // Don't forget to delete those temporary potions later!
+	std::vector<Potion*> all_potions = PotionsHelper::get_loaded_lua_potions(global_lua_state); // Don't forget to delete those temporary potions later!
 
 	for (Item* item: ingredients)
 		ingredient_names.push_back(item->name());
@@ -1234,25 +1234,25 @@ void GameControl::keypress_use()
 		Item* selected_item = selected_items[0];
 		printcon(selected_item->name());
 
-		if (WeaponHelper::existsInLua(selected_item->name(), _lua_state))
+		if (WeaponHelper::existsInLua(selected_item->name(), global_lua_state))
 			printcon("Try to (r)eady a weapon instead.");
-		else if (ShieldHelper::existsInLua(selected_item->name(), _lua_state))
+		else if (ShieldHelper::existsInLua(selected_item->name(), global_lua_state))
 			printcon("Try to (r)eady a shield instead.");
-		else if (ArmourHelper::existsInLua(selected_item->name(), _lua_state))
+		else if (ArmourHelper::existsInLua(selected_item->name(), global_lua_state))
 			printcon("Try to (r)eady an armour instead.");
 		else if (selected_item->name() == "jimmy lock" || selected_item->name() == "key") {
 			if (unlock_item())
 				_party->rm_jimmylock();
 		}
-		else if (PotionsHelper::existsInLua(selected_item->name(), _lua_state)) {
+		else if (PotionsHelper::existsInLua(selected_item->name(), global_lua_state)) {
 			PotionsHelper potions_helper;
 			printcon("Drink potion - select player");
-			potions_helper.drink((Potion*)selected_item, _lua_state);
+			potions_helper.drink((Potion*)selected_item, global_lua_state);
 
 			// Remove potion from inventory
 			_party->inventory()->remove(selected_item->name(), selected_item->description());
 		}
-		else if (EdiblesHelper::existsInLua(selected_item->name(), _lua_state)) {
+		else if (EdiblesHelper::existsInLua(selected_item->name(), global_lua_state)) {
 			EdiblesHelper edibles_helper;
 			edibles_helper.eat_party((Edible*)selected_item);
 
@@ -1296,8 +1296,8 @@ std::string GameControl::keypress_ready_item(int selected_player)
 				Item* selected_item = selected_items[0];
 				std::string selected_item_name = selected_item->name();
 
-				if (WeaponHelper::existsInLua(selected_item_name, _lua_state)) {
-					Weapon* weapon = WeaponHelper::createFromLua(selected_item_name, _lua_state);
+				if (WeaponHelper::existsInLua(selected_item_name, global_lua_state)) {
+					Weapon* weapon = WeaponHelper::createFromLua(selected_item_name, global_lua_state);
 
 					if (player->weapon() != NULL) {
 						printcon("Yielding " + player->weapon()->name());
@@ -1319,8 +1319,8 @@ std::string GameControl::keypress_ready_item(int selected_player)
 					_party->inventory()->remove(weapon->name(), weapon->description());
 					player->set_weapon(weapon);
 				}
-				else if (ShieldHelper::existsInLua(selected_item_name, _lua_state)) {
-					Shield* shield = ShieldHelper::createFromLua(selected_item_name, _lua_state);
+				else if (ShieldHelper::existsInLua(selected_item_name, global_lua_state)) {
+					Shield* shield = ShieldHelper::createFromLua(selected_item_name, global_lua_state);
 
 					if (player->shield() != NULL) {
 						printcon("Yielding " + player->shield()->name());
@@ -1336,8 +1336,8 @@ std::string GameControl::keypress_ready_item(int selected_player)
 					_party->inventory()->remove(shield->name(), shield->description());
 					player->set_shield(shield);
 				}
-				else if (ArmourHelper::existsInLua(selected_item_name, _lua_state)) {
-					Armour* armour = ArmourHelper::createFromLua(selected_item_name, _lua_state);
+				else if (ArmourHelper::existsInLua(selected_item_name, global_lua_state)) {
+					Armour* armour = ArmourHelper::createFromLua(selected_item_name, global_lua_state);
 
 					if (armour->is_gloves()) {
 						if (player->armour_hands() != NULL)
@@ -1622,23 +1622,23 @@ void GameControl::create_random_monsters_in_dungeon()
 						monster.is_random_monster = true;
 
 						// Determine type of monster using Lua
-						LuaWrapper lua(_lua_state);
+						LuaWrapper lua(global_lua_state);
 						lua.push_fn_arg(std::string("dungeon"));
 						lua.call_fn_leave_ret_alone("rand_encounter");
 
 						// Iterate through result table (see also combat.cc for where I originally copied this more or less from)
-						lua_pushnil(_lua_state);
-						while (lua_next(_lua_state, -2) != 0) {
-							lua_pushnil(_lua_state);
-							while (lua_next(_lua_state, -2) != 0) {
+						lua_pushnil(global_lua_state);
+						while (lua_next(global_lua_state, -2) != 0) {
+							lua_pushnil(global_lua_state);
+							while (lua_next(global_lua_state, -2) != 0) {
 								// Only create first monster, in case bestiary/defs.lua spits out a whole array of monsters...
 								// So as soon as combat script is defined, skip the rest of the result set.
 								if (monster.get_combat_script_path().length() == 0) {
-									string __key = lua_tostring(_lua_state, -2);
+									string __key = lua_tostring(global_lua_state, -2);
 
 									// Name of monster
 									if (__key == "__name") {
-										std::string __name = lua_tostring(_lua_state, -1);
+										std::string __name = lua_tostring(global_lua_state, -1);
 
 										// ***********************************************************************************
 										// TODO: When switching to Boost 3, use boost::filesystem::relative instead!
@@ -1657,14 +1657,14 @@ void GameControl::create_random_monsters_in_dungeon()
 
 										// TODO: Can we simply do lua_settop(L, 0); instead
 										// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
-										lua_settop(_lua_state, 0);
+										lua_settop(global_lua_state, 0);
 
 										return;
 									}
 								}
-								lua_pop(_lua_state, 1);
+								lua_pop(global_lua_state, 1);
 							}
-							lua_pop(_lua_state, 1);
+							lua_pop(global_lua_state, 1);
 						}
 					}
 				}
@@ -1846,9 +1846,25 @@ void GameControl::keypress_talk()
 					return;
 				}
 				else {
-					printcon("You use your charms, but there is no response");
+					printcon("You use your charms, but there is no response.");
 					return;
 				}
+			}
+			else if (the_obj.get_type() == MAPOBJ_ANIMAL) {
+				std::cout << "REMOVEME: " << the_obj.get_init_script_path() << "\n";
+				if (the_obj.get_init_script_path().length() > 0) {
+					Conversation conv(the_obj);
+					conv.initiate_with_animal();
+					return;
+				}
+				else {
+					printcon("There's something soothing in talking to animals...");
+					return;
+				}
+			}
+			else if (the_obj.get_type() == MAPOBJ_MONSTER) {
+				printcon("Is that a good idea?");
+				return;
 			}
 		}
 	}

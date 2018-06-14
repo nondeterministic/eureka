@@ -92,7 +92,7 @@ Combat_Return_Codes Combat::initiate()
 		mwin.display_texture(foes.pic(mwin.get_renderer()));
 
 		std::stringstream ss;
-		ss << "\nYou're faced with "
+		ss << "You're faced with "
 				<< foes.to_string() << ".\n"
 				<< "Do you wish to "
 				<< (foes.closest_range() > 10 ? "(a)dvance, " : "")
@@ -281,7 +281,7 @@ std::vector<AttackOption*> Combat::attack_options()
 		char input = em->get_key(key_inputs.c_str());
 
 		if (input == 'a') {
-			attackOptions[player_no] = new AttackOption(player_no, _lua_state);
+			attackOptions[player_no] = new AttackOption(player_no, global_lua_state);
 
 			if (foes.count()->size() == 1) {
 				attackOptions[player_no]->set_target(1);
@@ -311,9 +311,9 @@ std::vector<AttackOption*> Combat::attack_options()
 			}
 			else {
 				std::string defend_message = "";
-				LuaWrapper lua(_lua_state);
-				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, _lua_state);
-				SpellCastHelper* spellCastHelper = new SpellCastHelper(player_no, _lua_state);
+				LuaWrapper lua(global_lua_state);
+				Spell tmp_spell = Spell::spell_from_file_path(spell_file_path, global_lua_state);
+				SpellCastHelper* spellCastHelper = new SpellCastHelper(player_no, global_lua_state);
 				spellCastHelper->set_spell_path(spell_file_path);
 
 				// Convert the this-pointer to string and push it to Lua-land
@@ -497,7 +497,7 @@ void Combat::victory()
 
 int Combat::foes_fight()
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(global_lua_state);
 	boost::unordered_set<std::string> moved;
 
 	for (int i = 0; i < foes.size(); i++) {
@@ -560,7 +560,7 @@ int Combat::foes_fight()
 				i--;
 			fled = false;
 		} catch (...) {
-			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << endl;
 			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
 
 			if (lua.call_fn<bool>("attack") && !fled)
@@ -677,11 +677,11 @@ boost::unordered_set<std::string> Combat::advance_foes()
 
 bool Combat::create_monsters_from_init_path(std::string script_file)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(global_lua_state);
 
 	// Load corresponding Lua conversation file
-	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str())) {
-		std::cerr << "ERROR: combat.cc::create_monsters_from_init_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+	if (luaL_dofile(global_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str())) {
+		std::cerr << "ERROR: combat.cc::create_monsters_from_init_path(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -693,11 +693,11 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 	// Push c_values table onto Lua stack...
 	// In fact, pushes only one cell to stack, which is then popped below,
 	// cf. http://stackoverflow.com/questions/1217423/how-to-use-lua-pop-function-correctly
-	lua_getglobal(_lua_state, "c_values");
+	lua_getglobal(global_lua_state, "c_values");
 	// ...then access its values
-    std::shared_ptr<GameCharacter> foe = std::static_pointer_cast<GameCharacter>(create_character_values_from_lua(_lua_state));
+    std::shared_ptr<GameCharacter> foe = std::static_pointer_cast<GameCharacter>(create_character_values_from_lua(global_lua_state));
     // Pop Lua stack!
-    lua_pop(_lua_state, 1);
+    lua_pop(global_lua_state, 1);
 
     // Turn GameCharacter, foe, into Creature, creature; that is, enrich foe with the missing informations.
     Creature creature(*(foe.get()));
@@ -714,11 +714,11 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 
 bool Combat::create_monsters_from_combat_path(std::string script_file)
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(global_lua_state);
 
 	// Load corresponding Lua combat file (i.e., a monster definition)
-	if (luaL_dofile(_lua_state, ((conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str()))) {
-		std::cerr << "ERROR: combat.cc::create_monsters_from_combat_path(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+	if (luaL_dofile(global_lua_state, ((conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str()))) {
+		std::cerr << "ERROR: combat.cc::create_monsters_from_combat_path(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -753,7 +753,7 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 
 		// If Lua-land returns empty string, then the monster has no weapon!
 		if (lua.call_fn<std::string>("get_weapon").length() > 0) {
-			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
+			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), global_lua_state);
 			monster->set_weapon(wep);
 		}
 
@@ -768,7 +768,7 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 
 bool Combat::create_random_monsters()
 {
-	LuaWrapper lua(_lua_state);
+	LuaWrapper lua(global_lua_state);
 	std::pair<int,int> coords = party->get_coords();
 	int icon_no = GameControl::Instance().get_arena()->get_map()->get_tile(coords.first, coords.second);
 	std::string icon_descr = "plain"; // Useless default icon description/name
@@ -784,30 +784,30 @@ bool Combat::create_random_monsters()
 	int __distance = -1;
 
 	// Iterate through result table
-	lua_pushnil(_lua_state);
-	while (lua_next(_lua_state, -2) != 0) {
+	lua_pushnil(global_lua_state);
+	while (lua_next(global_lua_state, -2) != 0) {
 		string __name = "";
 		int __number = -1;
 
-		lua_pushnil(_lua_state);
-		while (lua_next(_lua_state, -2) != 0) {
-			string __key = lua_tostring(_lua_state, -2);
+		lua_pushnil(global_lua_state);
+		while (lua_next(global_lua_state, -2) != 0) {
+			string __key = lua_tostring(global_lua_state, -2);
 
 			// Name of monster
 			if (__key == "__name") {
-				__name = lua_tostring(_lua_state, -1);
+				__name = lua_tostring(global_lua_state, -1);
 			}
 			// Distance, we only determine one and then derive the others below
 			else if (__key == "__distance") {
 				if (__distance < 0) {
-					if (lua_tonumber(_lua_state, -1) > 0)
-						__distance = lua_tonumber(_lua_state, -1);
+					if (lua_tonumber(global_lua_state, -1) > 0)
+						__distance = lua_tonumber(global_lua_state, -1);
 					else
-						cerr << "ERROR: combat.cc: Lua error: " << lua_tostring(_lua_state, -1) << endl;
+						cerr << "ERROR: combat.cc: Lua error: " << lua_tostring(global_lua_state, -1) << endl;
 				}
 			} // How many of the monster attack?
 			else if (__key == "__number") {
-				__number = lua_tonumber(_lua_state, -1);
+				__number = lua_tonumber(global_lua_state, -1);
 				if (__number > 0)
 					foes.count()->insert(std::make_pair(Util::capitalise_first_letter(__name), __number));
 			}
@@ -815,10 +815,10 @@ bool Combat::create_random_monsters()
 				cerr << "ERROR: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
 				exit(EXIT_FAILURE);
 			}
-			lua_pop(_lua_state, 1);
+			lua_pop(global_lua_state, 1);
 		}
 
-		lua_pop(_lua_state, 1);
+		lua_pop(global_lua_state, 1);
 	}
 
 	// Now populate foe data structure with some further monster stats
@@ -837,8 +837,8 @@ bool Combat::create_random_monsters()
 			// Load corresponding Lua monster definition
 			boost::filesystem::path beast_path(conf_world_path / "bestiary");
 			beast_path /= World::Instance().get_monster_filename(__name);
-			if (luaL_dofile(_lua_state, beast_path.c_str())) {
-				cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << endl;
+			if (luaL_dofile(global_lua_state, beast_path.c_str())) {
+				cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << endl;
 				exit(EXIT_FAILURE);
 			}
 
@@ -864,7 +864,7 @@ bool Combat::create_random_monsters()
 
 			// If Lua-land returns empty string, then the monster has no weapon!
 			if (lua.call_fn<std::string>("get_weapon").length() > 0) {
-				Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), _lua_state);
+				Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), global_lua_state);
 				monster->set_weapon(wep);
 			}
 

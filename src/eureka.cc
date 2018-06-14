@@ -79,7 +79,7 @@ extern "C" {
 // Global variables and definitions
 // ******************************************************************************
 
-lua_State* _lua_state = NULL;
+lua_State* global_lua_state = NULL;
 
 /// Create a custom TICK-event, which can then be received in the event loop
 /// and reacted upon, e.g., to redraw icons.  grep for TICK, if you want to see
@@ -260,11 +260,11 @@ int main(int argc, char *argv[])
 	std::srand(std::time(NULL));
 
 	// Initialise Lua engine
-	_lua_state = luaL_newstate();
-	luaL_openlibs(_lua_state); /* Load Lua libraries */
+	global_lua_state = luaL_newstate();
+	luaL_openlibs(global_lua_state); /* Load Lua libraries */
 
 	// Make the eureka API visible to Lua
-	publicize_api(_lua_state);
+	publicize_api(global_lua_state);
 
 	// Init sound and video, show intro
 	intro(res_w, res_h);
@@ -469,8 +469,8 @@ int init_game_env(int res_w, int res_h)
 	}
 
 	// Load Lua scripts, basically.
-	World::Instance().init_lua_arrays(_lua_state);
-	World::Instance().set_spells(World::Instance().load_lua_spells(_lua_state));
+	World::Instance().init_lua_arrays(global_lua_state);
+	World::Instance().set_spells(World::Instance().load_lua_spells(global_lua_state));
 
 
 	// It is important to do this once!
@@ -719,27 +719,27 @@ int setup_dummy_game()
 	PlayerCharacter p1("Bilbo Baggins", 20, 0, 9, 16, 12, 15, 11, 16, 8, true, 1, HOBBIT, THIEF);
 	// PlayerCharacter p1("Bilbo Baggins", 2, 0, 9, 16, 12, 15, 11, 16, 8, true, HOBBIT, THIEF);
 	party->add_player(p1);
-	party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield", _lua_state));
+	party->get_player(0)->set_shield(ShieldHelper::createFromLua("small shield", global_lua_state));
 	PlayerCharacter p2("Gandalf", 12, 18, 10, 15, 12, 18, 16, 18, 12, true, 1, HUMAN, MAGE);
 	// PlayerCharacter p2("Gandalf", 1, 18, 10, 15, 12, 18, 16, 18, 12, true, HUMAN, MAGE);
 	party->add_player(p2);
-	party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword", _lua_state));
+	party->get_player(1)->set_weapon(WeaponHelper::createFromLua("sword", global_lua_state));
 	// PlayerCharacter p3("Aragorn", 2, 0, 17, 13, 13, 11, 14, 13, 15, true, HUMAN, FIGHTER);
 	PlayerCharacter p3("Aragorn", 23, 0, 17, 13, 13, 11, 14, 13, 15, true, 1, HUMAN, FIGHTER);
 	party->add_player(p3);
-	party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe", _lua_state));
+	party->get_player(2)->set_weapon(WeaponHelper::createFromLua("axe", global_lua_state));
 	ZtatsWin::Instance().update_player_list();
 
 	// Add some stuff to the inventory
-	party->inventory()->add(WeaponHelper::createFromLua("sword", _lua_state));
-	party->inventory()->add(WeaponHelper::createFromLua("sword", _lua_state));
-	party->inventory()->add(WeaponHelper::createFromLua("sword", _lua_state));
-	party->inventory()->add(WeaponHelper::createFromLua("sword", _lua_state));
-	party->inventory()->add(WeaponHelper::createFromLua("axe", _lua_state));
-	party->inventory()->add(ShieldHelper::createFromLua("small shield", _lua_state));
-	party->inventory()->add(EdiblesHelper::createFromLua("garlic", _lua_state));
-	party->inventory()->add(EdiblesHelper::createFromLua("sulphur", _lua_state));
-	party->inventory()->add(EdiblesHelper::createFromLua("nightshade", _lua_state));
+	party->inventory()->add(WeaponHelper::createFromLua("sword", global_lua_state));
+	party->inventory()->add(WeaponHelper::createFromLua("sword", global_lua_state));
+	party->inventory()->add(WeaponHelper::createFromLua("sword", global_lua_state));
+	party->inventory()->add(WeaponHelper::createFromLua("sword", global_lua_state));
+	party->inventory()->add(WeaponHelper::createFromLua("axe", global_lua_state));
+	party->inventory()->add(ShieldHelper::createFromLua("small shield", global_lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("garlic", global_lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("sulphur", global_lua_state));
+	party->inventory()->add(EdiblesHelper::createFromLua("nightshade", global_lua_state));
 	party->add_jimmylock();
 	party->add_jimmylock();
 	party->add_jimmylock();
@@ -758,7 +758,7 @@ int recreate_old_game_state()
 	std::shared_ptr<Map> cur_map;
 
 	// Load game state from disk
-	if (gstate->load(_lua_state))
+	if (gstate->load(global_lua_state))
 		gstate->apply();
 	else {
 		std::cerr << "ERROR: eureka.cc: Loading of game file failed.\n";
@@ -927,7 +927,7 @@ int start_game()
 
 	// Close the game
 	gc->close_win();
-	lua_close(_lua_state);
+	lua_close(global_lua_state);
 
 	return 0;
 }

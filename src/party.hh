@@ -102,6 +102,8 @@ public:
   void immunize_from_fields(int);
   int decrease_immunity_from_fields();
   int immune_from_fields();
+
+  PlayerCharacter* get_npc_or_null();
 };
 
 #endif

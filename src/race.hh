@@ -21,7 +21,7 @@
 #define RACE_HH
 
 enum RACE {
-  HUMAN, ELF, HOBBIT, HALF_ELF, DWARF
+  HUMAN, ELF, HOBBIT, HALF_ELF, DWARF, DOG
 };
 
 #endif

@@ -27,6 +27,7 @@ extern "C"
 #include <boost/algorithm/string.hpp>
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "config.h"
 #include "luawrapper.hh"
@@ -34,10 +35,22 @@ extern "C"
 #include "charset.hh"
 #include "console.hh"
 #include "conversation.hh"
+#include "world.hh"
 #include "eureka.hh"
+#include "party.hh"
 
-Conversation::Conversation(MapObj& mo) : obj(mo)
+Conversation::Conversation(MapObj& mo) : _map_obj(mo)
 {
+	// Make conversation self-contained, use a fresh Lua state!
+	_lua_state = luaL_newstate();
+	luaL_openlibs(_lua_state);
+	publicize_api(_lua_state);
+	World::Instance().init_lua_arrays(_lua_state);
+}
+
+Conversation::~Conversation()
+{
+    lua_close(_lua_state);
 }
 
 /**
@@ -48,18 +61,10 @@ Conversation::Conversation(MapObj& mo) : obj(mo)
 
 void Conversation::initiate()
 {
-	LuaWrapper lua(_lua_state);
-	std::string lua_conversation_file = obj.get_init_script_path();
-
-	// Load corresponding Lua conversation file
-	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(lua_conversation_file)).c_str())) {
-		std::cerr << "ERROR: conversation.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
-		printcon("It seems the person can hear you, but cannot be bothered to respond...");
+	if (!load_lua_conversation_file())
 		return;
-		// exit(EXIT_FAILURE);
-	}
 
-	lua.call_void_fn("description");
+	_lua->call_void_fn("description");
 
 	std::string reply;
 	do {
@@ -67,30 +72,72 @@ void Conversation::initiate()
 
 		if (reply == "job") {
 			printcon(reply + " ");
-			lua.call_void_fn("job");
+			_lua->call_void_fn("job");
 		}
 		else if (reply == "name") {
 			printcon(reply + " ");
-			lua.call_void_fn("name");
+			_lua->call_void_fn("name");
 		}
 		else if (reply == "join") {
 			printcon(reply + " ");
-			if (lua.call_fn<bool>("join"))
+			if (_lua->call_fn<bool>("join"))
 				return;
 		}
 		else if (!(reply == "bye" || reply.length() == 0)) {
 			printcon(reply + " ");
-			lua.push_fn_arg(reply);
-			lua.call_void_fn("otherwise");
+			_lua->push_fn_arg(reply);
+			_lua->call_void_fn("otherwise");
 		}
 
-		if (lua.call_fn<bool>("conversation_over"))
+		if (_lua->call_fn<bool>("conversation_over"))
 			return;
 
 	} while (!(reply == "bye" || reply.length() == 0));
 
 	printcon("bye ");
-	lua.call_void_fn("bye");
+	_lua->call_void_fn("bye");
+}
+
+/// This lets dogs join the party, basically.
+
+void Conversation::initiate_with_animal()
+{
+	if (!load_lua_conversation_file())
+		return;
+
+	// Create temporary character to get c_values from NPC...
+	std::shared_ptr<PlayerCharacter> npc = create_character_values_from_lua(_lua_state);
+
+	if (npc->race() == RACE::DOG && !Party::Instance().get_npc_or_null()) {
+		if (npc->name().length() == 0) {
+			printcon("The dog has taken a shine on you. Would you like him to join your party? (y/n)");
+		}
+		else {
+			printcon(npc->name() + " has taken a shine on you. Would you like him to join your party? (y/n)");
+		}
+	}
+	else {
+		std::cerr << "ERROR: conversation.cc: It seems an animal conversation file is missing for " <<
+				_map_obj.lua_name << "/ " << _map_obj.description() << "\n";
+		printcon("Talking to animals can be so soothing...");
+	}
+}
+
+/// Internal method to initialise the conversation files, lua stuff, etc.  Call first, converse later!
+
+bool Conversation::load_lua_conversation_file()
+{
+	_lua = std::make_shared<LuaWrapper>(_lua_state);
+	std::string lua_conversation_file = _map_obj.get_init_script_path();
+
+	// Load corresponding Lua conversation file
+	if (luaL_dofile(_lua_state, (conf_world_path / boost::algorithm::to_lower_copy(lua_conversation_file)).c_str())) {
+		std::cerr << "ERROR: conversation.cc: Couldn't execute Lua file: " << lua_tostring(_lua_state, -1) << std::endl;
+		printcon("You get no response.");
+		return false;
+	}
+
+	return true;
 }
 
 void Conversation::printcon(const std::string s, bool wait)
