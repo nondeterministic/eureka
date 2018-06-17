@@ -300,8 +300,8 @@ bool GameState::load_party(lua_State* lua_state)
 									player.set_sex(sex);
 								}
 								else if (reader.get_name() == "is_npc") {
-									int sex = std::atoi(reader.read_string().c_str())? 1 : 0;
-									if (sex == 1)
+									int npc = std::atoi(reader.read_string().c_str())? 1 : 0;
+									if (npc == 1)
 										player.set_npc();
 								}
 								else if (reader.get_name().lowercase() == "level")
