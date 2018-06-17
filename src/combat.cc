@@ -880,8 +880,8 @@ bool Combat::create_random_monsters()
 	return foes.count()->size() > 0;
 }
 
-// Returns the name of a player, if the player noticed nearby monsters
-// (before they noticed him).  Otherwise an empty string is returned.
+/// Returns the name of a player, if the player noticed nearby monsters
+/// (before they noticed him).  Otherwise an empty string is returned.
 
 std::string Combat::noticed_monsters()
 {

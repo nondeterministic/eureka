@@ -303,6 +303,7 @@ std::string Party::to_xml()
 		playerEl->add_child("sex")->add_child_text(player.sex()? "1":"0");
 		playerEl->add_child("race")->add_child_text(std::to_string(player.race()));
 		playerEl->add_child("level")->add_child_text(std::to_string(player.level()));
+		playerEl->add_child("is_npc")->add_child_text(player.is_npc()? "1":"0");
 
 		if (player.weapon() != NULL)
 			playerEl->add_child("weapon")->add_child_text(player.weapon()->get_lua_name());
