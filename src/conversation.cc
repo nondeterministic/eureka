@@ -38,6 +38,8 @@ extern "C"
 #include "world.hh"
 #include "eureka.hh"
 #include "party.hh"
+#include "eventmanager.hh"
+#include "ztatswin.hh"
 
 Conversation::Conversation(MapObj& mo) : _map_obj(mo)
 {
@@ -99,28 +101,62 @@ void Conversation::initiate()
 }
 
 /// This lets dogs join the party, basically.
+///
+/// Unless this is not possible, e.g., if already an NPC is present.  Then just some silly output
+/// is returned on the console.
 
-void Conversation::initiate_with_animal()
+void Conversation::initiate_with_animal(std::shared_ptr<Map> map)
 {
 	if (!load_lua_conversation_file())
 		return;
 
+	lua_getglobal(_lua_state, "c_values");
+	if (!lua_istable(_lua_state, -1)) {
+		std::cerr << "ERROR: conversation.cc: Cannot access c_values of NPC. Could be a broken NPC-file in people/.\n";
+		lua_pop(_lua_state, 1);
+		return;
+	}
+
 	// Create temporary character to get c_values from NPC...
 	std::shared_ptr<PlayerCharacter> npc = create_character_values_from_lua(_lua_state);
+	npc->set_npc();
+	std::string pronoun = + npc->sex()? "him" : "her";
 
-	if (npc->race() == RACE::DOG && !Party::Instance().get_npc_or_null()) {
-		if (npc->name().length() == 0) {
-			printcon("The dog has taken a shine on you. Would you like him to join your party? (y/n)");
-		}
-		else {
-			printcon(npc->name() + " has taken a shine on you. Would you like him to join your party? (y/n)");
+	if (npc->race() == RACE::DOG
+			&& !Party::Instance().get_npc_or_null()
+			&& Party::Instance().party_size() < 6)
+	{
+		if (npc->name().length() == 0)
+			printcon("The animal has taken a shine on you. Would you like " +
+					pronoun + " to join your party? (y/n)");
+		else
+			printcon("The lovely " + npc->name() + " has taken a shine on you. Would you like " +
+					pronoun + " to join your party? (y/n)");
+
+		if (EventManager::Instance().get_key("yn") == 'y') {
+			if (npc->name().length() == 0) {
+				std::string name = "";
+				while (name.length() == 0) {
+					printcon("What would you like to call " + pronoun + "?");
+					name = Console::Instance().gets();
+					if (name.length() > 0) {
+						name[0] = std::toupper(name[0]);
+						npc->set_name(name);
+						printcon("Added " + name + " to party.");
+					}
+					else
+						continue;
+				}
+			}
+			Party::Instance().add_player(*(npc.get()));
+			ZtatsWin::Instance().update_player_list();
+			// TODO: Right now, we can only have NPCs joining, but not leaving.
+			// For leaving, we'd need to store the map_obj in the party, write it to XML, be able to re-read it, etc.
+			map->pop_obj_animate(_map_obj.get_coords());
 		}
 	}
-	else {
-		std::cerr << "ERROR: conversation.cc: It seems an animal conversation file is missing for " <<
-				_map_obj.lua_name << "/ " << _map_obj.description() << "\n";
+	else
 		printcon("Talking to animals can be so soothing...");
-	}
 }
 
 /// Internal method to initialise the conversation files, lua stuff, etc.  Call first, converse later!

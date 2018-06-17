@@ -882,6 +882,9 @@ int l_party_size(lua_State* L)
 // Assumes that Lua has pushed c_values onto stack - as is the case for joining
 // characters from the game (see corresponding Lua people-files).  If no c_values on
 // the Lua stack, represented as argument L, this method will cause a crash!
+//
+// (In other words, the least you must do is call lua_getglobal(_lua_state, "c_values")
+// before using it.)
 
 std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 {
@@ -1011,7 +1014,7 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 //
 // Returns true if join successful, false otherwise
 //
-// IMPORTANT: This sunction has the c_values table on the Lua stack when called!
+// IMPORTANT: This function has the c_values table on the Lua stack when called!
 
 int l_join(lua_State* L)
 {

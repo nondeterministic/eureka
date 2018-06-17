@@ -22,8 +22,11 @@
 
 #include <string>
 #include <memory>
+
 #include <lua.h>
+
 #include "mapobj.hh"
+#include "map.hh"
 
 class Conversation
 {
@@ -39,7 +42,7 @@ public:
 	Conversation(MapObj& mo);
 	~Conversation();
 	void initiate();
-	void initiate_with_animal();
+	void initiate_with_animal(std::shared_ptr<Map>);
 };
 
 #endif

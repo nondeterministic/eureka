@@ -62,6 +62,8 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 	_sex = sex;
 	_level = level;
 
+	_is_npc = false; // Default
+
 	_condition = GOOD;
 	_ep = 0;
 	// TODO: active_spells?
@@ -74,6 +76,7 @@ PlayerCharacter::PlayerCharacter(const PlayerCharacter& p) : GameCharacter(p)
 	_prof = p._prof;
 	_level = p._level;
 	_ep = p._ep;
+	_is_npc = p._is_npc;
 
 	BOOST_FOREACH(active_spell::value_type spell, p._active_spells) {
 		_active_spells[spell.first] = spell.second;

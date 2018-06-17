@@ -286,12 +286,12 @@ void GameControl::do_turn(bool resting)
 
 	// Consume food when not resting
 	if (!resting) {
-		if (Party::Instance().food() == 0) {
+		if (_party->food() == 0) {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
 					bool starving = false;
-					for (int i = 0; i < Party::Instance().party_size(); i++) {
-						PlayerCharacter* pl = Party::Instance().get_player(i);
+					for (int i = 0; i < _party->party_size(); i++) {
+						PlayerCharacter* pl = _party->get_player(i);
 						pl->set_hp(max(0, pl->hp() - 1));
 						starving = true;
 					}
@@ -305,8 +305,8 @@ void GameControl::do_turn(bool resting)
 			else {
 				if (_turns%40 == 0) {
 					bool starving = false;
-					for (int i = 0; i < Party::Instance().party_size(); i++) {
-						PlayerCharacter* pl = Party::Instance().get_player(i);
+					for (int i = 0; i < _party->party_size(); i++) {
+						PlayerCharacter* pl = _party->get_player(i);
 						pl->set_hp(max(0, pl->hp() - 2));
 						starving = true;
 					}
@@ -321,13 +321,13 @@ void GameControl::do_turn(bool resting)
 		else {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
-					Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size() * 2));
+					_party->set_food(max(0, _party->food() - _party->party_size() * 2));
 					zwin.update_player_list();
 				}
 			}
 			else {
 				if (_turns%40 == 0) {
-					Party::Instance().set_food(max(0, Party::Instance().food() - Party::Instance().party_size()));
+					_party->set_food(max(0, _party->food() - _party->party_size()));
 					zwin.update_player_list();
 				}
 			}
@@ -335,17 +335,17 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Decrease duration of ongoing spells
-	Party::Instance().decrease_spells(global_lua_state);
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
-		PlayerCharacter* pl = Party::Instance().get_player(i);
+	_party->decrease_spells(global_lua_state);
+	for (int i = 0; i < _party->party_size(); i++) {
+		PlayerCharacter* pl = _party->get_player(i);
 		pl->decrease_spells(global_lua_state, pl->name());
 	}
 
 	// Restore spell points
 	if (is_arena_outdoors()) {
 		if (_turns%20 == 0) {
-			for (int i = 0; i < Party::Instance().party_size(); i++) {
-				PlayerCharacter* pl = Party::Instance().get_player(i);
+			for (int i = 0; i < _party->party_size(); i++) {
+				PlayerCharacter* pl = _party->get_player(i);
 				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
 					pl->set_sp(pl->sp() + 1);
 					zwin.update_player_list();
@@ -355,8 +355,8 @@ void GameControl::do_turn(bool resting)
 	}
 	else {
 		if (_turns%40 == 0) {
-			for (int i = 0; i < Party::Instance().party_size(); i++) {
-				PlayerCharacter* pl = Party::Instance().get_player(i);
+			for (int i = 0; i < _party->party_size(); i++) {
+				PlayerCharacter* pl = _party->get_player(i);
 				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
 					pl->set_sp(pl->sp() + 1);
 					zwin.update_player_list();
@@ -366,7 +366,7 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Is party starved to death?
-	if (Party::Instance().party_alive() == 0)
+	if (_party->party_alive() == 0)
 		game_over();
 
 	// Check if random combat ensues and handle it in case
@@ -392,8 +392,8 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Check if torches, etc. need to be destroyed
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
-		PlayerCharacter* pl = Party::Instance().get_player(i);
+	for (int i = 0; i < _party->party_size(); i++) {
+		PlayerCharacter* pl = _party->get_player(i);
 		if (pl->weapon() != NULL) {
 			if (pl->weapon()->destroy_after() == 1) {
 				printcon(pl->name() + " throws away the " + pl->weapon()->name() + " as it no longer fulfills its purpose.");
@@ -411,18 +411,18 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Check intoxication
-	if (Party::Instance().rounds_intoxicated > 0)
-		Party::Instance().rounds_intoxicated--;
+	if (_party->rounds_intoxicated > 0)
+		_party->rounds_intoxicated--;
 
 	// Reduce immunised from (magic/poison/etc) fields in each round.
-	if (Party::Instance().immune_from_fields() > 0)
-		if (Party::Instance().decrease_immunity_from_fields() == 0)
+	if (_party->immune_from_fields() > 0)
+		if (_party->decrease_immunity_from_fields() == 0)
 			printcon("Your party feels somehow less protected again...");
 
 	// Check poisoned status
 	if (_turns % 2 == 0 && random(1,2) == 2) {
-		for (int i = 0; i < Party::Instance().party_size(); i++) {
-			PlayerCharacter* pl = Party::Instance().get_player(i);
+		for (int i = 0; i < _party->party_size(); i++) {
+			PlayerCharacter* pl = _party->get_player(i);
 
 			if (pl->condition() == POISONED) {
 				pl->set_hp(max(0, pl->hp() - 1));
@@ -435,7 +435,7 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Has party been poisoned to death?
-	if (Party::Instance().party_alive() == 0)
+	if (_party->party_alive() == 0)
 		game_over();
 
 	redraw_graphics_status();
@@ -618,7 +618,7 @@ void GameControl::keypress_cast()
 	printcon("Cast spell - select player");
 	int cplayer = zwin.select_player();
 
-	if (cplayer >= 0) {
+	if (cplayer >= 0 && !_party->get_player(cplayer)->is_npc()) {
 		PlayerCharacter* player = _party->get_player(cplayer);
 
 		if (player->condition() == DEAD) {
@@ -638,6 +638,8 @@ void GameControl::keypress_cast()
 		else
 			printcon("Never mind.");
 	}
+	else if (cplayer >= 0 && _party->get_player(cplayer)->is_npc())
+		printcon("Cannot control NPCs.");
 	else
 		printcon("Never mind.");
 }
@@ -682,7 +684,7 @@ std::string GameControl::select_spell(unsigned player_no)
 {
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
-	PlayerCharacter* player = Party::Instance().get_player(player_no);
+	PlayerCharacter* player = _party->get_player(player_no);
 
 	std::shared_ptr<ZtatsWinContentSelectionProvider<Spell>> content_selection_provider = player->create_spells_content_selection_provider();
 
@@ -749,6 +751,11 @@ void GameControl::keypress_mix_reagents()
 
 	if (selected_player == -1) {
 		printcon("Changed your mind then, I guess?!");
+		return;
+	}
+
+	if (_party->get_player(selected_player)->is_npc()) {
+		printcon("Cannot control NPCs");
 		return;
 	}
 
@@ -897,7 +904,7 @@ void GameControl::keypress_yield_item(int selected_player)
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
-	if (selected_player >= 0) {
+	if (selected_player >= 0 && !_party->get_player(selected_player)->is_npc()) {
 		PlayerCharacter* player = _party->get_player(selected_player);
 
 		mwin.save_texture();
@@ -993,6 +1000,10 @@ void GameControl::keypress_yield_item(int selected_player)
 		printcon("Yielded " + selected_item->name());
 		return;
 	}
+	else if (selected_player >= 0 && _party->get_player(selected_player)->is_npc()) {
+		printcon("Cannot control NPCs.");
+		return;
+	}
 
 	printcon("Never mind...");
 	return;
@@ -1040,9 +1051,9 @@ void GameControl::keypress_hole_up()
 
 	// If player was chosen, set guard
 	if (selected_player != -1)
-		Party::Instance().set_guard(selected_player);
+		_party->set_guard(selected_player);
 
-	Party::Instance().is_resting = true;
+	_party->is_resting = true;
 
 	pair<int,int> old_time = _clock.time();
 	int rounds = 0;
@@ -1052,8 +1063,8 @@ void GameControl::keypress_hole_up()
 		do_turn(true);
 
 		// TODO: Do the actual healing of the party...
-		for (int i = 0; i < Party::Instance().party_size(); i++) {
-			PlayerCharacter* pl = Party::Instance().get_player(i);
+		for (int i = 0; i < _party->party_size(); i++) {
+			PlayerCharacter* pl = _party->get_player(i);
 
 			// Do actual party healing and spell point recharging
 			if (pl->condition() != DEAD) {
@@ -1085,8 +1096,8 @@ void GameControl::keypress_hole_up()
 	} while (_clock.time().first != (old_time.first + hours) % 24);
 
 	// Unset guard again
-	Party::Instance().unset_guard();
-	Party::Instance().is_resting = false;
+	_party->unset_guard();
+	_party->is_resting = false;
 
 	redraw_graphics_status(true);
 	zwin.update_player_list();
@@ -1185,6 +1196,11 @@ bool GameControl::unlock_item()
 		return false;
 	}
 
+	if (_party->get_player(chosen_player)->is_npc()) {
+		printcon("Cannot control NPCs.");
+		return false;
+	}
+
 	auto avail_objects = _arena->get_map()->objs()->equal_range(coords);
 	if (avail_objects.first != avail_objects.second) {
 		for (auto curr_obj = avail_objects.first; curr_obj != avail_objects.second; curr_obj++) {
@@ -1280,7 +1296,7 @@ std::string GameControl::keypress_ready_item(int selected_player)
 	MiniWin& mwin = MiniWin::Instance();
 	ZtatsWin& zwin = ZtatsWin::Instance();
 
-	if (selected_player >= 0) {
+	if (selected_player >= 0 && !_party->get_player(selected_player)->is_npc()) {
 		mwin.save_texture();
 		mwin.clear();
 		mwin.println(0, "Ready item", CENTERALIGN);
@@ -1373,6 +1389,10 @@ std::string GameControl::keypress_ready_item(int selected_player)
 				return selected_item_name;
 			}
 		}
+	}
+	else if (selected_player >= 0 && _party->get_player(selected_player)->is_npc()) {
+		printcon("Cannot control NPCs.");
+		return "";
 	}
 	else
 		std::cerr << "INFO: gamecontrol.cc: Contentprovider was empty, while your inventory probably wasn't? Smells like a (harmless) program error.\n";
@@ -1851,10 +1871,9 @@ void GameControl::keypress_talk()
 				}
 			}
 			else if (the_obj.get_type() == MAPOBJ_ANIMAL) {
-				std::cout << "REMOVEME: " << the_obj.get_init_script_path() << "\n";
 				if (the_obj.get_init_script_path().length() > 0) {
 					Conversation conv(the_obj);
-					conv.initiate_with_animal();
+					conv.initiate_with_animal(get_map());
 					return;
 				}
 				else {
@@ -2460,7 +2479,7 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 void GameControl::keypress_move_party(LDIR dir)
 {
-	if (Party::Instance().rounds_intoxicated > 0) {
+	if (_party->rounds_intoxicated > 0) {
 		bool move_random = random(0,10) >= 7;
 
 		if (move_random) {

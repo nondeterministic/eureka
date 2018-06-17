@@ -83,7 +83,7 @@
     <object x="29" y="23" ox="29" oy="23" icon_no="271" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_jester.lua"/>
     <object x="31" y="36" ox="0" oy="0" icon_no="1102" layer="0" id="food" lua_name="edibles::iron ration" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="12" y="19" ox="12" oy="19" icon_no="58" layer="0" id="Tinker" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/lendom_blacksmith.lua"/>
-    <object x="34" y="5" ox="34" oy="5" icon_no="999" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal" init_script="people/lendom_dog.lua"/>
+    <object x="34" y="5" ox="34" oy="5" icon_no="999" layer="0" id="dog1" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal" init_script="people/lendom_dog.lua"/>
     <object x="10" y="41" ox="0" oy="0" icon_no="88" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="10" y="39" ox="0" oy="0" icon_no="110" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="item"/>
     <object x="4" y="39" ox="4" oy="39" icon_no="137" layer="0" id="" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>

@@ -446,7 +446,7 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 
 		// Name
 		// lines.push_back(boost::tuple<player->name(), CENTERALIGN>);
-		lines.push_back(StringAlignmentTuple(player.name(), CENTERALIGN));
+		lines.push_back(StringAlignmentTuple(player.name() + (player.is_npc()? " (NPC)" : ""), CENTERALIGN));
 
 		// Race, Profession
 		switch (player.race()) {
@@ -465,45 +465,52 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 		case DWARF:
 			string_to_be_added << "Dwarf ";
 			break;
-		}
-		switch (player.profession()) {
-		case FIGHTER:
-			string_to_be_added << "Fighter";
-			break;
-		case PALADIN:
-			string_to_be_added << "Paladin";
-			break;
-		case THIEF:
-			string_to_be_added << "Thief";
-			break;
-		case BARD:
-			string_to_be_added << "Bard";
-			break;
-		case MAGE:
-			string_to_be_added << "Mage";
-			break;
-		case CLERIC:
-			string_to_be_added << "Cleric";
-			break;
-		case DRUID:
-			string_to_be_added << "Druid";
-			break;
-		case NECROMANCER:
-			string_to_be_added << "Necromancer";
-			break;
-		case ARCHMAGE:
-			string_to_be_added << "Archmage";
-			break;
-		case GEOMANCER:
-			string_to_be_added << "Geomancer";
-			break;
-		case SHEPHERD:
-			string_to_be_added << "Shepherd";
-			break;
-		case TINKER:
-			string_to_be_added << "Tinker";
+		case DOG:
+			string_to_be_added << "Dog ";
 			break;
 		}
+
+		if (player.race() != DOG) {
+			switch (player.profession()) {
+			case FIGHTER:
+				string_to_be_added << "Fighter";
+				break;
+			case PALADIN:
+				string_to_be_added << "Paladin";
+				break;
+			case THIEF:
+				string_to_be_added << "Thief";
+				break;
+			case BARD:
+				string_to_be_added << "Bard";
+				break;
+			case MAGE:
+				string_to_be_added << "Mage";
+				break;
+			case CLERIC:
+				string_to_be_added << "Cleric";
+				break;
+			case DRUID:
+				string_to_be_added << "Druid";
+				break;
+			case NECROMANCER:
+				string_to_be_added << "Necromancer";
+				break;
+			case ARCHMAGE:
+				string_to_be_added << "Archmage";
+				break;
+			case GEOMANCER:
+				string_to_be_added << "Geomancer";
+				break;
+			case SHEPHERD:
+				string_to_be_added << "Shepherd";
+				break;
+			case TINKER:
+				string_to_be_added << "Tinker";
+				break;
+			}
+		}
+
 		string_to_be_added << " (";
 		if (player.sex())
 			string_to_be_added << (char)16;
@@ -526,105 +533,108 @@ std::shared_ptr<ZtatsWinContentProvider> Party::create_party_content_provider()
 			string_to_be_added << "Good";
 			break;
 		}
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << " Strength: " << player.str();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
 
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << "       Level: " << player.level();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << "Dexterity: " << player.dxt();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << "  Experience: " << player.ep();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << "  Stamina: " << player.end();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << "  Hit Points: " << player.hp() << "/" << player.hpm();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << "     Luck: " << player.luck();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << "Spell Points: " << player.sp() << "/" << player.spm();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << "   Wisdom: " << player.wis();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << "Armour class: ";
-		string_to_be_added << player.armour_class();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << " Charisma: " << player.charr();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		for (int i = string_to_be_added.str().length(); i < second_col; i++)
-			string_to_be_added << " ";
-		string_to_be_added << "Intellig.: " << player.iq();
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		string_to_be_added.str(""); string_to_be_added.clear();
-		string_to_be_added << " Hands: ";
-		if (player.weapon() != NULL && player.weapon()->hands() > 1)
-			string_to_be_added << player.weapon()->name();
-		else if (player.shield() != NULL)
-			string_to_be_added << player.shield()->name() << " (l), ";
-		else
-			string_to_be_added << "empty (l), ";
-		if (player.weapon() != NULL && player.weapon()->hands() == 1)
-			string_to_be_added << player.weapon()->name() << " (r)";
-		else
-			string_to_be_added << "empty (r)";
-
-		lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-
-		if (player.armour() != NULL) {
-			string_to_be_added.str(""); string_to_be_added.clear();
-			string_to_be_added << "Armour: ";
-			string_to_be_added << player.armour()->name();
+		if (!player.is_npc()) {
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << " Strength: " << player.str();
 			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-		}
-		else
-			lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
 
-		if (player.armour_head() != NULL) {
 			string_to_be_added.str(""); string_to_be_added.clear();
-			string_to_be_added << "  Head: ";
-			string_to_be_added << player.armour_head()->name();
+			string_to_be_added << "       Level: " << player.level();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << "Dexterity: " << player.dxt();
 			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-		}
-		else
-			lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
 
-		if (player.armour_hands() != NULL) {
 			string_to_be_added.str(""); string_to_be_added.clear();
-			string_to_be_added << "Gloves: ";
-			string_to_be_added << player.armour_hands()->name();
+			string_to_be_added << "  Experience: " << player.ep();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << "  Stamina: " << player.end();
 			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-		}
-		else
-			lines.push_back(StringAlignmentTuple("Gloves: ", LEFTALIGN));
 
-		if (player.armour_feet() != NULL) {
 			string_to_be_added.str(""); string_to_be_added.clear();
-			string_to_be_added << "  Feet: ";
-			string_to_be_added << player.armour_feet()->name();
+			string_to_be_added << "  Hit Points: " << player.hp() << "/" << player.hpm();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << "     Luck: " << player.luck();
 			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
-		}
-		else
-			lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
 
-		lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "Spell Points: " << player.sp() << "/" << player.spm();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << "   Wisdom: " << player.wis();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << "Armour class: ";
+			string_to_be_added << player.armour_class();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << " Charisma: " << player.charr();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+			string_to_be_added.str(""); string_to_be_added.clear();
+			for (int i = string_to_be_added.str().length(); i < second_col; i++)
+				string_to_be_added << " ";
+			string_to_be_added << "Intellig.: " << player.iq();
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+			string_to_be_added.str(""); string_to_be_added.clear();
+			string_to_be_added << " Hands: ";
+			if (player.weapon() != NULL && player.weapon()->hands() > 1)
+				string_to_be_added << player.weapon()->name();
+			else if (player.shield() != NULL)
+				string_to_be_added << player.shield()->name() << " (l), ";
+			else
+				string_to_be_added << "empty (l), ";
+			if (player.weapon() != NULL && player.weapon()->hands() == 1)
+				string_to_be_added << player.weapon()->name() << " (r)";
+			else
+				string_to_be_added << "empty (r)";
+
+			lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+
+			if (player.armour() != NULL) {
+				string_to_be_added.str(""); string_to_be_added.clear();
+				string_to_be_added << "Armour: ";
+				string_to_be_added << player.armour()->name();
+				lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+			}
+			else
+				lines.push_back(StringAlignmentTuple("Armour: ", LEFTALIGN));
+
+			if (player.armour_head() != NULL) {
+				string_to_be_added.str(""); string_to_be_added.clear();
+				string_to_be_added << "  Head: ";
+				string_to_be_added << player.armour_head()->name();
+				lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+			}
+			else
+				lines.push_back(StringAlignmentTuple("  Head: ", LEFTALIGN));
+
+			if (player.armour_hands() != NULL) {
+				string_to_be_added.str(""); string_to_be_added.clear();
+				string_to_be_added << "Gloves: ";
+				string_to_be_added << player.armour_hands()->name();
+				lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+			}
+			else
+				lines.push_back(StringAlignmentTuple("Gloves: ", LEFTALIGN));
+
+			if (player.armour_feet() != NULL) {
+				string_to_be_added.str(""); string_to_be_added.clear();
+				string_to_be_added << "  Feet: ";
+				string_to_be_added << player.armour_feet()->name();
+				lines.push_back(StringAlignmentTuple(string_to_be_added.str(), LEFTALIGN));
+			}
+			else
+				lines.push_back(StringAlignmentTuple("  Feet: ", LEFTALIGN));
+
+			lines.push_back(StringAlignmentTuple("Skills: ", LEFTALIGN));
+		}
 
 		content_provider->add_content_page(lines);
 	}

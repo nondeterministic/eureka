@@ -255,6 +255,10 @@ std::vector<AttackOption*> Combat::attack_options()
 
 	for (int player_no = 0; player_no < party->party_size(); player_no++) {
 		PlayerCharacter* player = party->get_player(player_no);
+
+		if (player->is_npc())
+			continue;
+
 		std::string key_inputs = "adr";
 		attackOptions[player_no] = NULL; // Initialise to NULL, in case player is dead and nothing else is set.
 
@@ -419,7 +423,7 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 	// The party's moves...
 	int i = 0;
 	for (auto player = party->begin(); player != party->end(); i++, player++) {
-		if (player->condition() == DEAD)
+		if (player->condition() == DEAD || player->is_npc())
 			continue;
 		attacks[i]->execute(this);
 	}

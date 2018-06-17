@@ -9,7 +9,7 @@ do
    -- --------------------------------------------------------
 
    c_values = { 
-      name = "a", race = "DOG", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
+      name = "", race = "DOG", ep = 0, hp = 10, hpm = 10, sp = 0, spm = 0, str = 7, luck = 15, dxt = 15, wis = 4, charr = 14, 
       iq = 15, endd = 7, sex = "MALE", profession = "", weapon = Weapons["axe"], shield = Shields["small shield"] 
    } 
  
@@ -33,6 +33,4 @@ do
       dofile(name) -- To enable combat, must be inserted AFTER c_values is defined!
    end
 
-   -- Default behaviour for dogs:
-   simpl_join(c_values);
 end

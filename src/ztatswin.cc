@@ -477,7 +477,7 @@ void ZtatsWin::update_player_list()
 		}
 
 		ostringstream name, name_stats;
-		name << (i + 2)/2 << "-" << player->name() << " (" << condition << ")";
+		name << (i + 2)/2 << "-" << player->name() << " (" << condition << (player->is_npc()? ", NPC" : "") << ")";
 		println(i, name.str());
 
 		name_stats << "  AC: " << player->armour_class();
