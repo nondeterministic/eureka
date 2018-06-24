@@ -291,7 +291,6 @@ std::vector<AttackOption*> Combat::attack_options()
 				attackOptions[player_no]->set_target(1);
 			}
 			else {
-				// int attacked = select_enemy(i);
 				int attacked = select_enemy();
 
 				string attacked_name;
@@ -423,9 +422,16 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 	// The party's moves...
 	int i = 0;
 	for (auto player = party->begin(); player != party->end(); i++, player++) {
-		if (player->condition() == DEAD || player->is_npc())
+		if (player->condition() == DEAD)
 			continue;
-		attacks[i]->execute(this);
+
+		if (player->is_npc()) {
+			AttackOption ao(i, global_lua_state);
+			ao.set_target(1);
+			ao.execute(this);
+		}
+		else
+			attacks[i]->execute(this);
 	}
 
 	return 0;
