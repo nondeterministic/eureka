@@ -64,6 +64,9 @@ void AttackOption::execute(Combat* combat)
 {
 	static SoundSample sample;
 	LuaWrapper lua(_L);
+	stringstream ss;
+	bool enemy_is_hit = false;
+	int damage = 0;
 
 	// Choose weapon to attack with
 	Weapon* wep = _player->weapon();
@@ -93,7 +96,6 @@ void AttackOption::execute(Combat* combat)
 	}
 
 	if (wep != NULL && opponent->distance() <= wep->range()) {
-		stringstream ss;
 		if (wep->range() <= 10)
 			ss << _player->name() << " swings the " << wep->name() <<  " at " << opponent->name();
 		else if (wep->range() > 10) {
@@ -112,97 +114,61 @@ void AttackOption::execute(Combat* combat)
 		}
 
 		// TODO: Check if this works, determining the opponents right AC, etc.!
-		int  enemy_ac     = GameRules::armour_class(opponent);
-		bool enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac;
-
-		if (enemy_is_hit) {
-			int damage = std::max(1, random(wep->dmg_min(), wep->dmg_max())  +  GameRules::bonus(_player->str())); // Cannot hit with NO damage at all!
-
-			ss << " and hits for " << damage << " points of damage.";
-			if (opponent->hp() - damage > 0) {
-				opponent->set_hp(opponent->hp() - damage);
-				lua.push_fn_arg((double)(opponent->hp() - damage));
-				lua.call_void_fn("set_hp");
-			}
-			else {
-				ss << " killing the " << opponent->name() << ".";
-				combat->get_foes().remove(opponent_offset);
-
-				// Add experience points to player's balance
-				_player->inc_ep(lua.call_fn<double>("get_ep"));
-
-				// Now add monster's items to bounty items to be collected
-				// by party in case of battle victory.
-				if (opponent->weapon() != NULL)
-					combat->add_to_bounty(opponent->weapon());
-
-				// Add monster's gold
-				int gold_coins = lua.call_fn<double>("get_gold");
-				for (int ii = 0; ii < gold_coins; ii++)
-					combat->add_to_bounty(new Gold());
-			}
-			printcon(ss.str(), true);
-			MiniWin::Instance().alarm();
-			sample.play_predef(FOE_HIT);
-		}
-		else {
-			ss << " and misses.";
-			printcon(ss.str(), true);
-		}
+		int  enemy_ac = GameRules::armour_class(opponent);
+		if ((enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac))
+			damage = std::max(1, random(wep->dmg_min(), wep->dmg_max())  +  GameRules::bonus(_player->str())); // Cannot hit with NO damage at all!
 	}
 	else if (wep != NULL) {
-		stringstream ss;
 		ss << _player->name() << " tries to attack " << opponent->name() << " but this opponent is out of reach.";
 		printcon(ss.str(), true);
+		return;
 	}
 	// Attack with bare hands...
 	else if (wep == NULL && opponent->distance() <= 10) {
-		stringstream ss;
 		ss << _player->name() << " lands an attack at " << opponent->name();
 
 		// TODO: Check if this works, determining the opponents right AC, etc.!
-		int  enemy_ac     = GameRules::armour_class(opponent);
-		bool enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac;
-
-		if (enemy_is_hit) {
-			int damage = std::max(1, random(1, 4)  +  GameRules::bonus(_player->str())); // Cannot hit with NO damage at all!
-
-			ss << " and hits for " << damage << " points of damage.";
-			if (opponent->hp() - damage > 0) {
-				opponent->set_hp(opponent->hp() - damage);
-				lua.push_fn_arg((double)(opponent->hp() - damage));
-				lua.call_void_fn("set_hp");
-			}
-			else {
-				ss << " killing the " << opponent->name() << ".";
-				combat->get_foes().remove(opponent_offset);
-
-				// Add experience points to player's balance
-				_player->inc_ep(lua.call_fn<double>("get_ep"));
-
-				// Now add monster's items to bounty items to be collected
-				// by party in case of battle victory.
-				if (opponent->weapon() != NULL)
-					combat->add_to_bounty(opponent->weapon());
-
-				// Add monster's gold
-				int gold_coins = lua.call_fn<double>("get_gold");
-				for (int ii = 0; ii < gold_coins; ii++)
-					combat->add_to_bounty(new Gold());
-			}
-			printcon(ss.str(), true);
-			MiniWin::Instance().alarm();
-			sample.play_predef(FOE_HIT);
-		}
-		else {
-			ss << " and misses.";
-			printcon(ss.str(), true);
-		}
+		int  enemy_ac = GameRules::armour_class(opponent);
+		if ((enemy_is_hit = random(1,20) - GameRules::bonus(_player->dxt()) - GameRules::bonus(_player->luck()) < enemy_ac))
+			damage = std::max(1, random(1, 4)  +  GameRules::bonus(_player->str())); // Cannot hit with NO damage at all!
 	}
 	// Attack with bare hands and enemy out of reach...
 	else {
-		stringstream ss;
 		ss << _player->name() << " lands a futile attack at " << opponent->name() << " without any noticable effect.";
+		printcon(ss.str(), true);
+		return;
+	}
+
+	if (enemy_is_hit) {
+		ss << " and hits for " << damage << " points of damage.";
+		if (opponent->hp() - damage > 0) {
+			opponent->set_hp(opponent->hp() - damage);
+			lua.push_fn_arg((double)(opponent->hp() - damage));
+			lua.call_void_fn("set_hp");
+		}
+		else {
+			ss << " killing the " << opponent->name() << ".";
+			combat->get_foes().remove(opponent_offset);
+
+			// Add experience points to player's balance
+			_player->inc_ep(lua.call_fn<double>("get_ep"));
+
+			// Now add monster's items to bounty items to be collected
+			// by party in case of battle victory.
+			if (opponent->weapon() != NULL)
+				combat->add_to_bounty(opponent->weapon());
+
+			// Add monster's gold
+			int gold_coins = lua.call_fn<double>("get_gold");
+			for (int ii = 0; ii < gold_coins; ii++)
+				combat->add_to_bounty(new Gold());
+		}
+		printcon(ss.str(), true);
+		MiniWin::Instance().alarm();
+		sample.play_predef(FOE_HIT);
+	}
+	else {
+		ss << " and misses.";
 		printcon(ss.str(), true);
 	}
 }
