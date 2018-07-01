@@ -22,8 +22,8 @@ before_install:
  - sudo apt-get install -qq ncompress
  - sudo apt-get install -qq libgtkmm-3.0-dev
  - sudo apt-get install -y  libboost-all-dev
- - sudo apt-get install -qq lua5.1
- - sudo apt-get install -qq liblua5.1-0-dev
+ - sudo apt-get install -qq lua5.3
+ - sudo apt-get install -qq liblua5.3-0-dev
  - sudo apt-get install -qq g++-7
  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
