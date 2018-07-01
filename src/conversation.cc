@@ -124,7 +124,7 @@ void Conversation::initiate_with_animal(std::shared_ptr<Map> map)
 
 	if (npc->race() == RACE::DOG
 			&& !Party::Instance().get_npc_or_null()
-			&& Party::Instance().party_size() < 6)
+			&& Party::Instance().size() < 6)
 	{
 		if (npc->name().length() == 0)
 			printcon("The animal has taken a shine on you. Would you like " +

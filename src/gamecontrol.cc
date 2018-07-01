@@ -291,7 +291,7 @@ void GameControl::do_turn(bool resting)
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
 					bool starving = false;
-					for (int i = 0; i < _party->party_size(); i++) {
+					for (int i = 0; i < _party->size(); i++) {
 						PlayerCharacter* pl = _party->get_player(i);
 						pl->set_hp(max(0, pl->hp() - 1));
 						starving = true;
@@ -306,7 +306,7 @@ void GameControl::do_turn(bool resting)
 			else {
 				if (_turns%40 == 0) {
 					bool starving = false;
-					for (int i = 0; i < _party->party_size(); i++) {
+					for (int i = 0; i < _party->size(); i++) {
 						PlayerCharacter* pl = _party->get_player(i);
 						pl->set_hp(max(0, pl->hp() - 2));
 						starving = true;
@@ -322,13 +322,13 @@ void GameControl::do_turn(bool resting)
 		else {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
-					_party->set_food(max(0, _party->food() - _party->party_size() * 2));
+					_party->set_food(max(0, _party->food() - _party->size() * 2));
 					zwin.update_player_list();
 				}
 			}
 			else {
 				if (_turns%40 == 0) {
-					_party->set_food(max(0, _party->food() - _party->party_size()));
+					_party->set_food(max(0, _party->food() - _party->size()));
 					zwin.update_player_list();
 				}
 			}
@@ -337,7 +337,7 @@ void GameControl::do_turn(bool resting)
 
 	// Decrease duration of ongoing spells
 	_party->decrease_spells(global_lua_state);
-	for (int i = 0; i < _party->party_size(); i++) {
+	for (int i = 0; i < _party->size(); i++) {
 		PlayerCharacter* pl = _party->get_player(i);
 		pl->decrease_spells(global_lua_state, pl->name());
 	}
@@ -345,7 +345,7 @@ void GameControl::do_turn(bool resting)
 	// Restore spell points
 	if (is_arena_outdoors()) {
 		if (_turns%20 == 0) {
-			for (int i = 0; i < _party->party_size(); i++) {
+			for (int i = 0; i < _party->size(); i++) {
 				PlayerCharacter* pl = _party->get_player(i);
 				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
 					pl->set_sp(pl->sp() + 1);
@@ -356,7 +356,7 @@ void GameControl::do_turn(bool resting)
 	}
 	else {
 		if (_turns%40 == 0) {
-			for (int i = 0; i < _party->party_size(); i++) {
+			for (int i = 0; i < _party->size(); i++) {
 				PlayerCharacter* pl = _party->get_player(i);
 				if (pl->is_spell_caster() && pl->sp() < pl->spm()) {
 					pl->set_sp(pl->sp() + 1);
@@ -393,7 +393,7 @@ void GameControl::do_turn(bool resting)
 	}
 
 	// Check if torches, etc. need to be destroyed
-	for (int i = 0; i < _party->party_size(); i++) {
+	for (int i = 0; i < _party->size(); i++) {
 		PlayerCharacter* pl = _party->get_player(i);
 		if (pl->weapon() != NULL) {
 			if (pl->weapon()->destroy_after() == 1) {
@@ -422,7 +422,7 @@ void GameControl::do_turn(bool resting)
 
 	// Check poisoned status
 	if (_turns % 2 == 0 && random(1,2) == 2) {
-		for (int i = 0; i < _party->party_size(); i++) {
+		for (int i = 0; i < _party->size(); i++) {
 			PlayerCharacter* pl = _party->get_player(i);
 
 			if (pl->condition() == POISONED) {
@@ -1103,7 +1103,7 @@ void GameControl::keypress_hole_up()
 		do_turn(true);
 
 		// TODO: Do the actual healing of the party...
-		for (int i = 0; i < _party->party_size(); i++) {
+		for (int i = 0; i < _party->size(); i++) {
 			PlayerCharacter* pl = _party->get_player(i);
 
 			// Do actual party healing and spell point recharging

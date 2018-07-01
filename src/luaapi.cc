@@ -536,7 +536,7 @@ int l_level_up(lua_State* L)
 {
 	int leveled_up = 0;
 
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
+	for (int i = 0; i < Party::Instance().size(); i++) {
 		PlayerCharacter* pl = Party::Instance().get_player(i);
 
 		if (pl->condition() != DEAD && pl->hp() > 0 &&  // Cannot level up dead players
@@ -691,7 +691,7 @@ int l_bonus(lua_State* L)
 
 int l_get_partysize(lua_State* L)
 {
-	lua_pushnumber(L, Party::Instance().party_size());
+	lua_pushnumber(L, Party::Instance().size());
 	return 1;
 }
 
@@ -699,7 +699,7 @@ int l_get_level(lua_State* L)
 {
   int player_number = lua_tonumber(L, 1);
 
-  if (player_number < 0 || player_number >= Party::Instance().party_size()) {
+  if (player_number < 0 || player_number >= Party::Instance().size()) {
 	  std::cerr << "ERROR: luaapi.cc: Cannot determine level of player " << player_number << "\n";
 	  lua_pushnumber(L, 0);
 	  return 1;
@@ -798,10 +798,10 @@ int l_rand_player(lua_State* L)
 {
   boost::unordered_set<PlayerCharacter*> players;
   int requested = (int)lua_tonumber(L, 1);
-  int count = min(min(Party::Instance().party_size(), 3), requested);
+  int count = min(min(Party::Instance().size(), 3), requested);
 
   while ((int)players.size() < count) {
-    int rnd = GameControl::Instance().random(0, min(Party::Instance().party_size() - 1, 2));
+    int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
     PlayerCharacter* p = Party::Instance().get_player(rnd);
     if (p->condition() != DEAD)
     	players.insert(p);
@@ -871,7 +871,7 @@ int l_get_gold(lua_State* L)
 
 int l_party_size(lua_State* L)
 {
-	lua_pushnumber(L, Party::Instance().party_size());
+	lua_pushnumber(L, Party::Instance().size());
 	return 1;
 }
 
@@ -1018,7 +1018,7 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 
 int l_join(lua_State* L)
 {
-	if (Party::Instance().party_size() >= 6) {
+	if (Party::Instance().size() >= 6) {
 		lua_pushboolean(L, false);
 		return 1;
 	}

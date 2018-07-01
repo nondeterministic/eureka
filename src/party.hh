@@ -68,7 +68,7 @@ public:
   PlayerCharacter* get_player(std::string);
   std::vector<PlayerCharacter>::iterator begin();
   std::vector<PlayerCharacter>::iterator end();
-  int party_size();
+  int size();
   unsigned party_alive();
   bool is_entered();
   int get_entered_icon();

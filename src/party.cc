@@ -205,7 +205,7 @@ PlayerCharacter* Party::get_player(int number)
 
 PlayerCharacter* Party::get_guard()
 {
-	if (_guard >= 0 && _guard < party_size() && get_player(_guard)->condition() != DEAD)
+	if (_guard >= 0 && _guard < size() && get_player(_guard)->condition() != DEAD)
 		return get_player(_guard);
 	else {
 		return NULL;
@@ -214,7 +214,7 @@ PlayerCharacter* Party::get_guard()
 
 void Party::set_guard(int g)
 {
-	if (g >= 0 && g < party_size() && get_player(g)->condition() != DEAD)
+	if (g >= 0 && g < size() && get_player(g)->condition() != DEAD)
 		_guard = g;
 	else {
 		std::cerr << "WARNING: party.cc: Trying to set player " << g << " to be guard, but either dead or out of bounds.\n";
@@ -224,7 +224,7 @@ void Party::set_guard(int g)
 
 void Party::set_guard(PlayerCharacter* p)
 {
-	for (int i = 0; i < party_size(); i++) {
+	for (int i = 0; i < size(); i++) {
 		if (p->name() == get_player(i)->name()) {
 			set_guard(i);
 			return;
@@ -300,7 +300,7 @@ void Party::dec_player_pos(int old_pos)
 
 void Party::rm_npc(int player_no)
 {
-	if (player_no < 0 || player_no >= party_size()) {
+	if (player_no < 0 || player_no >= size()) {
 		std::cerr << "WARNING: party.cc: Cannot remove NPC with invalid index " << player_no << ".\n";
 		return;
 	}
@@ -430,7 +430,7 @@ std::vector<PlayerCharacter>::iterator Party::end()
   return _players.end();
 }
 
-int Party::party_size()
+int Party::size()
 {
   return _players.size();
 }

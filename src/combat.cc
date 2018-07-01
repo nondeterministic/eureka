@@ -250,10 +250,10 @@ Combat_Return_Codes Combat::initiate()
 std::vector<AttackOption*> Combat::attack_options()
 {
 	std::vector<AttackOption*> attackOptions;
-	attackOptions.reserve(party->party_size());
-	attackOptions.resize(party->party_size());
+	attackOptions.reserve(party->size());
+	attackOptions.resize(party->size());
 
-	for (int player_no = 0; player_no < party->party_size(); player_no++) {
+	for (int player_no = 0; player_no < party->size(); player_no++) {
 		PlayerCharacter* player = party->get_player(player_no);
 
 		if (player->is_npc())
@@ -416,7 +416,7 @@ void Combat::add_to_bounty(Item* i)
 
 int Combat::party_fight(std::vector<AttackOption*> attacks)
 {
-	if ((int)attacks.size() < party->party_size())
+	if ((int)attacks.size() < party->size())
 		std::cerr << "ERROR: combat.cc: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
@@ -570,8 +570,8 @@ int Combat::foes_fight()
 				i--;
 			fled = false;
 		} catch (...) {
-			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << endl;
-			cout << "Assuming instead that we're fighting with someone from an indoors map...\n";
+			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) <<
+					". Assuming instead that we're fighting with someone from an indoors map...\n";
 
 			if (lua.call_fn<bool>("attack") && !fled)
 				lua.call_fn<double>("fight");

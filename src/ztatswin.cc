@@ -160,7 +160,7 @@ int ZtatsWin::select_player()
 						player--;
 					break;
 				case SDLK_DOWN:
-					if (player < Party::Instance().party_size() - 1)
+					if (player < Party::Instance().size() - 1)
 						player++;
 					break;
 				case SDLK_RETURN:
@@ -192,7 +192,7 @@ void ZtatsWin::rearrange()
 	SDL_Event event;
 
 	// Remember old player positions: make copy of party members in correct order.
-	for (int i = 0; i < Party::Instance().party_size(); i++)
+	for (int i = 0; i < Party::Instance().size(); i++)
 		prev_party.push_back(*(Party::Instance().get_player(i)));
 
 	highlight_lines(cursor_on_player_slot*2, cursor_on_player_slot*2 + 2);
@@ -213,7 +213,7 @@ void ZtatsWin::rearrange()
 					}
 					break;
 				case SDLK_DOWN:
-					if (cursor_on_player_slot < Party::Instance().party_size() - 1) {
+					if (cursor_on_player_slot < Party::Instance().size() - 1) {
 						if (player_selected >= 0) {
 							Party::Instance().inc_player_pos(cursor_on_player_slot);
 							update_player_list();

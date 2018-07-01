@@ -171,7 +171,7 @@ void EdiblesHelper::eat_party(Edible* item)
 	}
 
 	// Getting poisoned
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
+	for (int i = 0; i < Party::Instance().size(); i++) {
 		PlayerCharacter* pl = Party::Instance().get_player(i);
 		bool poisoned = false;
 
@@ -202,7 +202,7 @@ void EdiblesHelper::eat_party(Edible* item)
 	}
 
 	// Poison healing
-	for (int i = 0; i < Party::Instance().party_size(); i++) {
+	for (int i = 0; i < Party::Instance().size(); i++) {
 		PlayerCharacter* pl = Party::Instance().get_player(i);
 		bool phealed = false;
 
@@ -253,7 +253,7 @@ void EdiblesHelper::eat_party(Edible* item)
 			break;
 		}
 
-		for (int i = 0; i < Party::Instance().party_size(); i++) {
+		for (int i = 0; i < Party::Instance().size(); i++) {
 			PlayerCharacter* pl = Party::Instance().get_player(i);
 			if (healed) {
 				if (pl->hp() < pl->hpm()) {
