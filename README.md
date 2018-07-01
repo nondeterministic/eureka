@@ -25,8 +25,7 @@ Right now, there is only a pre-release, which you can obtain from the releases
 section on this page and then install like any other GNU-software package (that
 is, configure, make, make install). Alternatively, you can pull the C++ sources
 from here, and call autogen.sh to create a configure script and Makefile for you.
-You will need to have SDL2, Boost >= 1.58, GTKMM-3.x, libxml++ (version 2.6 for
-the relase and version 3.0 for the sources currently on master) and Lua5.1
+You will need to have SDL2, Boost >= 1.58, GTKMM-3.x, libxml++-3.0 and Lua5.3
 installed in order to build it.
 
 After you did a 'make install', you can play the demo game by invoking
