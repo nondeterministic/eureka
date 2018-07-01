@@ -4,11 +4,11 @@ dist: trusty
 
 install:
  - export CXX="g++-7"
+ - wget http://ftp.gnome.org/pub/GNOME/sources/libxml++/3.0/libxml++-3.0.1.tar.xz && tar xf libxml++-3.0.1.tar.xz && ./configure --prefix=/usr && make && sudo make install && popd;
  - wget http://github.com/glennrp/libpng-releases/raw/master/libpng-1.6.34.tar.gz && tar xzf libpng-1.6.34.tar.gz && pushd libpng-1.6.34 && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make && sudo make install && popd;
  - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz && tar -xzvf SDL2-2.0.7.tar.gz && pushd SDL2-2.0.7 && ./configure --prefix=/usr && make && sudo make install && popd;
  - wget https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.tar.gz && tar -xzvf SDL2_mixer-2.0.2.tar.gz && pushd SDL2_mixer-2.0.2 && ./configure --prefix=/usr && make && sudo make install && popd;
  - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz && tar -xzvf SDL2_image-2.0.2.tar.gz && pushd SDL2_image-2.0.2 && ./configure --enable-png --prefix=/usr && make && sudo make install && popd;
- - wget http://ftp.gnome.org/pub/GNOME/sources/libxml++/3.0/libxml++-3.0.0.tar.xz && tar xf libxml++-3.0.1.tar.xz && ./configure --prefix=/usr && make && sudo make install && popd;
 
 before_install:
  - sudo add-apt-repository -y ppa:team-xbmc/ppa
@@ -20,7 +20,6 @@ before_install:
  - sudo apt-get install -qq doxygen
  - sudo apt-get install -qq ncompress
  - sudo apt-get install -qq libgtkmm-3.0-dev
- - sudo apt-get install -qq libxml++2.6-dev
  - sudo apt-get install -y  libboost-all-dev
  - sudo apt-get install -qq lua5.1
  - sudo apt-get install -qq liblua5.1-0-dev
