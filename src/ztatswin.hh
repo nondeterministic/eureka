@@ -55,6 +55,7 @@ protected:
 public:
 	static ZtatsWin& Instance();
 
+	void rearrange();
 	void update_player_list();
 	void highlight_lines(int, int);
 	void unhighlight_lines(int, int);

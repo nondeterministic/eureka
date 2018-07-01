@@ -36,6 +36,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
@@ -76,11 +77,14 @@ ZtatsWin& ZtatsWin::Instance()
 	return inst;
 }
 
-/// Highlights lines from to to in the ztats window.  Players in the
-/// standard view, e.g., occupy two lines each.
-///
-/// This function will be used to let players move the cursor up and
-/// down, selecting stuff from the ztats window.
+
+/**
+ * Highlights lines from to to in the ztats window.  Players in the
+ * standard view, e.g., occupy two lines each.
+ *
+ * This function will be used to let players move the cursor up and
+ * down, selecting stuff from the ztats window.
+ */
 
 void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 {
@@ -99,14 +103,6 @@ void ZtatsWin::highlight_lines(int from_top, int to_bottom)
 	SDLWindow::Instance().blit_entire_window_texture();
 }
 
-//void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
-//{
-//	change_bg_colour(from_top, to_bottom, _bgcolour_standard, _bgcolour_highlight);
-//
-//	blit();
-//	SDLWindow::Instance().blit_entire_window_texture();
-//}
-
 void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 {
 	SDL_SetRenderTarget(_renderer, _texture);
@@ -115,13 +111,6 @@ void ZtatsWin::unhighlight_lines(int from_top, int to_bottom)
 	blit();
 	SDLWindow::Instance().blit_entire_window_texture();
 }
-
-//void ZtatsWin::unhighlight_all()
-//{
-//	unhighlight_lines(-1, -1);
-//	blit();
-//	SDLWindow::Instance().blit_entire_window_texture();
-//}
 
 /// Swaps background colour A for B in lines from_top to to_bottom in the ztats window.
 /// Negative values swap entire window's colors.
@@ -193,6 +182,71 @@ int ZtatsWin::select_player()
 	}
 
 	return -1;
+}
+
+void ZtatsWin::rearrange()
+{
+	std::vector<PlayerCharacter> prev_party;
+	int player_selected = -1;
+	int cursor_on_player_slot = 0;
+	SDL_Event event;
+
+	// Remember old player positions: make copy of party members in correct order.
+	for (int i = 0; i < Party::Instance().party_size(); i++)
+		prev_party.push_back(*(Party::Instance().get_player(i)));
+
+	highlight_lines(cursor_on_player_slot*2, cursor_on_player_slot*2 + 2);
+
+	while (1) {
+		if ( SDL_WaitEvent(&event) ) {
+			if (event.type == SDL_KEYDOWN) {
+				unhighlight_lines(cursor_on_player_slot*2, cursor_on_player_slot*2 + 2);
+
+				switch(event.key.keysym.sym) {
+				case SDLK_UP:
+					if (cursor_on_player_slot > 0) {
+						if (player_selected >= 0) {
+							Party::Instance().dec_player_pos(cursor_on_player_slot);
+							update_player_list();
+						}
+						cursor_on_player_slot--;
+					}
+					break;
+				case SDLK_DOWN:
+					if (cursor_on_player_slot < Party::Instance().party_size() - 1) {
+						if (player_selected >= 0) {
+							Party::Instance().inc_player_pos(cursor_on_player_slot);
+							update_player_list();
+						}
+						cursor_on_player_slot++;
+					}
+					break;
+				case SDLK_RETURN:
+					if (player_selected < 0) {
+						player_selected = cursor_on_player_slot;
+						break;
+					}
+					else {
+						update_player_list();
+						SDLWindow::Instance().blit_arena();
+						SDLWindow::Instance().blit_entire_window_texture();
+						return;
+					}
+				case SDLK_ESCAPE:
+				case SDLK_q:
+					Party::Instance().set_party(prev_party);
+					update_player_list();
+					SDLWindow::Instance().blit_arena();
+					SDLWindow::Instance().blit_entire_window_texture();
+					return;
+				default:
+					break;
+				}
+
+				highlight_lines(cursor_on_player_slot*2, cursor_on_player_slot*2 + 2);
+			}
+		}
+	}
 }
 
 std::vector<int> ZtatsWin::select_items()
@@ -459,10 +513,7 @@ void ZtatsWin::update_player_list()
 
 	clear();
 
-	for (std::vector<PlayerCharacter>::iterator player = Party::Instance().begin();
-			player != Party::Instance().end();
-			player++, i++, i++)
-	{
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++, i++) {
 		std::string condition = "G";
 		switch (player->condition()) {
 		case GOOD:

@@ -46,9 +46,9 @@ class PlayerCharacter : public GameCharacter
 {
 private:
   PROFESSION  _prof;
+  bool 	      _is_npc;
   int         _ep;
   int         _level;
-  bool 	      _is_npc;
   boost::unordered_map<std::string, int> _active_spells;
 
 public:

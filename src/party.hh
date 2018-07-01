@@ -64,6 +64,7 @@ public:
   int light_radius();
   void add_player(PlayerCharacter);
   PlayerCharacter* get_player(int);
+  void set_party(std::vector<PlayerCharacter>);
   PlayerCharacter* get_player(std::string);
   std::vector<PlayerCharacter>::iterator begin();
   std::vector<PlayerCharacter>::iterator end();
@@ -96,8 +97,10 @@ public:
   void add_jimmylock();
   int jimmylock_count();
   void set_magic_light_radius(int);
-  // bool level_up();
   std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
+  void rm_npc(int);
+  void inc_player_pos(int);
+  void dec_player_pos(int);
 
   void immunize_from_fields(int);
   int decrease_immunity_from_fields();

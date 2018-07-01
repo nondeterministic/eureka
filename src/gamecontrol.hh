@@ -106,6 +106,8 @@ public:
 	void keypress_look();
 	void keypress_get_item();
 	void keypress_mix_reagents();
+	void keypress_wave_goodbye();
+	void keypress_sort();
 
 	std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
 	/// Makes all guards of a town turn hostile (e.g., after committing a crime), or neutral, etc.

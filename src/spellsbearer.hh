@@ -40,6 +40,9 @@ private:
 	std::vector<int> _additional_walkable_icons;
 
 public:
+	SpellsBearer();
+	SpellsBearer(const SpellsBearer&);
+
 	void add_active_spell(std::string, int);
 	// The string contains the name of the player, if any, whose spell effects need to be reversed when the spell duration has run out.
 	void decrease_spells(lua_State*, std::string = "");

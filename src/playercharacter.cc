@@ -38,6 +38,7 @@
 PlayerCharacter::PlayerCharacter(): _is_npc(false), _ep(0), _level(1)
 {
 	_condition = GOOD;
+	_prof = FIGHTER; // Bogus value, which will be overwritten
 }
 
 PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm, 
@@ -71,36 +72,10 @@ PlayerCharacter::PlayerCharacter(const char* name, int hpm, int spm,
 
 PlayerCharacter::PlayerCharacter(const PlayerCharacter& p) : GameCharacter(p)
 {
-	// std::cout << "DEEP PLAYERCHARACTER COPY MOTHERFUCKER\n";
-
 	_prof = p._prof;
 	_level = p._level;
 	_ep = p._ep;
 	_is_npc = p._is_npc;
-
-	BOOST_FOREACH(active_spell::value_type spell, p._active_spells) {
-		_active_spells[spell.first] = spell.second;
-	}
-
-	//	_race = p._race;
-	//  _name = p._name;
-	//	_hp_max = p._hp_max;
-	//	_hp = p._hp;
-	//	_sp = p._sp;
-	//	_sp_max = p._sp_max;
-	//	_str = p._str;
-	//	_luck = p._luck;
-	//	_dxt = p._dxt;
-	//	_wis = p._wis;
-	//	_char = p._char;
-	//	_iq = p._iq;
-	//	_end = p._end;
-	//	_condition = p._condition;
-	//	_att = p._att;
-	//	_sex = p._sex;
-	//	_rh_item = p._rh_item;
-	//	_lh_item = p._lh_item;
-	//	_armour = p._armour;
 }
 
 bool PlayerCharacter::is_spell_caster()

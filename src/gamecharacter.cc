@@ -64,10 +64,8 @@ GameCharacter::~GameCharacter()
 	//   delete _lh_item;
 }
 
-GameCharacter::GameCharacter(const GameCharacter& p)
+GameCharacter::GameCharacter(const GameCharacter& p) : SpellsBearer(p)
 {
-	// std::cout << "DEEP COPY OF GAMECHARACTER\n";
-
 	_name = p._name;
 	_plural_name = p._plural_name;
 

@@ -102,6 +102,7 @@ GameControl::GameControl()
 {
 	_normal_font = &Charset::Instance();
 
+	_game_music = NULL;
 	_em = &EventManager::Instance();
 	_party = &Party::Instance();
 	_turn_passed = 0;
@@ -564,6 +565,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					printcon("Ready item - select player");
 					keypress_ready_item(zwin.select_player());
 					break;
+				case SDLK_s:
+					keypress_sort();
+					break;
 				case SDLK_t:
 					keypress_talk();
 					break;
@@ -573,6 +577,9 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					break;
 				case SDLK_u:
 					keypress_use();
+					break;
+				case SDLK_w:
+					keypress_wave_goodbye();
 					break;
 				case SDLK_x:
 					keypress_xit();
@@ -609,6 +616,13 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 		}
 	}
 	return 0;
+}
+
+void GameControl::keypress_sort()
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+	printcon("Sort party - select player");
+	zwin.rearrange();
 }
 
 void GameControl::keypress_cast()
@@ -821,6 +835,33 @@ void GameControl::keypress_ztats()
 
 		mwin.display_last();
 	}
+}
+
+void GameControl::keypress_wave_goodbye()
+{
+	ZtatsWin& zwin = ZtatsWin::Instance();
+	printcon("Wave good-bye - select NPC");
+
+	int chosen_player = zwin.select_player();
+	if (chosen_player < 0) {
+		printcon("Changed your mind then?");
+		return;
+	}
+
+	auto player = _party->get_player(chosen_player);
+	if (player->is_npc()) {
+		printcon("Are you sure you want to let " + player->name() + " go? This is irreversible! (y/n)");
+
+		switch (_em->get_key("yn")) {
+		case 'n':
+			return;
+		case 'y':
+			_party->rm_npc(chosen_player);
+			zwin.update_player_list();
+		}
+	}
+	else
+		printcon("Sorry, this is only applicable to NPCs.");
 }
 
 void GameControl::keypress_xit()
@@ -1045,7 +1086,6 @@ void GameControl::keypress_hole_up()
 	case 'y':
 		printcon("y");
 		printcon("Select a guard");
-		selected_player = zwin.select_player();
 		break;
 	}
 
@@ -2141,7 +2181,7 @@ void GameControl::keypress_look()
 
 bool GameControl::is_arena_outdoors() const
 {
-  return std::dynamic_pointer_cast<HexArena>(_arena) != NULL;
+	return std::dynamic_pointer_cast<HexArena>(_arena) != NULL;
 }
 
 bool GameControl::walkable(int x, int y) const

@@ -36,6 +36,19 @@ extern "C"
 #include <lauxlib.h>
 }
 
+SpellsBearer::SpellsBearer()
+{
+}
+
+SpellsBearer::SpellsBearer(const SpellsBearer& s)
+{
+	_additional_walkable_icons = s._additional_walkable_icons;
+	BOOST_FOREACH(active_spell::value_type spell, s._active_spells) {
+		_active_spells[spell.first] = spell.second;
+	}
+}
+
+
 void SpellsBearer::add_active_spell(std::string spell_file_path, int duration)
 {
 	_active_spells[spell_file_path] = duration;

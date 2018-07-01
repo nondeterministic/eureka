@@ -115,7 +115,7 @@ void Party::add_jimmylock()
 void Party::rm_jimmylock()
 {
 	if (_jlocks <= 0) {
-		std::cerr << "ERROR: Tried to remove jimmy lock from inventory although there doesn't seem to be one.\n";
+		std::cerr << "ERROR: party.cc: Tried to remove jimmy lock from inventory although there doesn't seem to be one.\n";
 		return;
 	}
 
@@ -217,7 +217,7 @@ void Party::set_guard(int g)
 	if (g >= 0 && g < party_size() && get_player(g)->condition() != DEAD)
 		_guard = g;
 	else {
-		std::cerr << "WARNING: Trying to set player " << g << " to be guard, but either dead or out of bounds.\n";
+		std::cerr << "WARNING: party.cc: Trying to set player " << g << " to be guard, but either dead or out of bounds.\n";
 		_guard = -1;
 	}
 }
@@ -231,7 +231,7 @@ void Party::set_guard(PlayerCharacter* p)
 		}
 	}
 
-	std::cerr << "WARNING: Trying to set player " << p->name() << " to be guard, but is probably dead.\n";
+	std::cerr << "WARNING: party.cc: Trying to set player " << p->name() << " to be guard, but is probably dead.\n";
 	_guard = -1;
 }
 
@@ -248,12 +248,77 @@ PlayerCharacter* Party::get_player(std::string name)
 	return NULL;
 }
 
+void Party::set_party(std::vector<PlayerCharacter> new_party)
+{
+	_players.clear();
+	_players.swap(new_party);
+}
+
+void Party::inc_player_pos(int old_pos)
+{
+	if (old_pos < 0 || old_pos >= (int)_players.size() - 1)
+		return;
+
+	int new_pos = old_pos + 1;
+	std::vector<PlayerCharacter> new_player_vector;
+	new_player_vector.resize(_players.size());
+
+	int i = 0;
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++) {
+		if (i == new_pos)
+			new_player_vector[i] = _players[old_pos];
+		else if (i == old_pos)
+			new_player_vector[i] = _players[new_pos];
+		else
+			new_player_vector[i] = _players[i];
+	}
+
+	set_party(new_player_vector);
+}
+
+void Party::dec_player_pos(int old_pos)
+{
+	if (old_pos <= 0 || old_pos >= (int)_players.size())
+		return;
+
+	int new_pos = old_pos - 1;
+	std::vector<PlayerCharacter> new_player_vector;
+	new_player_vector.resize(_players.size());
+
+	int i = 0;
+	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++, i++) {
+		if (i == new_pos)
+			new_player_vector[i] = _players[old_pos];
+		else if (i == old_pos)
+			new_player_vector[i] = _players[new_pos];
+		else
+			new_player_vector[i] = _players[i];
+	}
+
+	set_party(new_player_vector);
+}
+
+void Party::rm_npc(int player_no)
+{
+	if (player_no < 0 || player_no >= party_size()) {
+		std::cerr << "WARNING: party.cc: Cannot remove NPC with invalid index " << player_no << ".\n";
+		return;
+	}
+
+	auto player = get_player(player_no);
+	if (player->is_npc()) {
+		_players.erase(_players.begin() + player_no);
+	}
+	else
+		std::cerr << "WARNING: party.cc: Cannot remove NPC with index " << player_no << " as it is no NPC.\n";
+}
+
 // Returns the number of alive party members
 unsigned Party::party_alive()
 {
 	unsigned i = 0;
-	for (auto player = Party::Instance().begin(); player != Party::Instance().end(); player++)
-		if (player->hp() > 0)
+	for (auto player : _players)
+		if (player.hp() > 0)
 			i++;
 	return i;
 }
