@@ -367,7 +367,7 @@ std::string Party::to_xml()
 		playerEl->add_child_element("sex")->add_child_text(player.sex()? "1":"0");
 		playerEl->add_child_element("race")->add_child_text(std::to_string(player.race()));
 		playerEl->add_child_element("level")->add_child_text(std::to_string(player.level()));
-		playerEl->add_child("is_npc")->add_child_text(player.is_npc()? "1":"0");
+		playerEl->add_child_element("is_npc")->add_child_text(player.is_npc()? "1":"0");
 
 		if (player.weapon() != NULL)
 			playerEl->add_child_element("weapon")->add_child_text(player.weapon()->get_lua_name());
@@ -732,8 +732,8 @@ int Party::immune_from_fields()
 
 PlayerCharacter* Party::get_npc_or_null()
 {
-	for (auto player: _players)
-		if (player.is_npc())
-			return &player;
+	for (unsigned i = 0; i < _players.size(); i++)
+		if (_players[i].is_npc())
+			return &(_players[i]);
 	return NULL;
 }
