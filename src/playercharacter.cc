@@ -289,6 +289,9 @@ int PlayerCharacter::potential_level()
 		if (_ep >= 10000)
 			lev = 10;
 		break;
+	default:
+		std::cerr << "WARNING: playercharacter.cc: animals do not have a potential level, no?!\n";
+		break;
 	}
 
 	return lev;

@@ -296,7 +296,7 @@ std::vector<int> ZtatsWin::select_items()
 						line--;
 						offset--;
 						clear();
-						for (int i = offset; i < page.size(); i++)
+						for (int i = offset; i < (int)(page.size()); i++)
 							println_noblit(i - offset, page[i].get<0>(), page[i].get<1>());
 						blit();
 						highlight_lines(line, line + 1);

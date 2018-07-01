@@ -445,14 +445,14 @@ void World::set_icon_attributes(xmlpp::Element* icon_node, IconProps* prop)
 		icon_node->set_attribute("trans", "not");
 
 	if (prop ->_is_walkable == PropertyStrength::Full)
-        icon_node->set_attribute("walk", "full");
-    else if (prop ->_is_walkable == PropertyStrength::Some)
-        icon_node->set_attribute("walk", "slow");
-    else
-    	icon_node->set_attribute("walk", "not");
+		icon_node->set_attribute("walk", "full");
+	else if (prop ->_is_walkable == PropertyStrength::Some)
+		icon_node->set_attribute("walk", "slow");
+	else
+		icon_node->set_attribute("walk", "not");
 
 	if (prop ->_is_enterable)
-    	icon_node->set_attribute("enterable", "yes");
+		icon_node->set_attribute("enterable", "yes");
 
 	if (prop ->_poisonous == PropertyStrength::Full)
         icon_node->set_attribute("poison", "full");

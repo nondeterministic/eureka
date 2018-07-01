@@ -125,14 +125,15 @@ void StartupWin::on_button_reopen(void)
 		// boost::regex regex(".*(?:\\|\/)([^\\\/]+)\.xml", boost::regex::perl|boost::regex::icase);
 
 		// Extract world name from filename
-		boost::regex regex("([^\\\/]+)\.xml", boost::regex::perl|boost::regex::icase);
+		// boost::regex regex("([^\\\/]+)\.xml", boost::regex::perl|boost::regex::icase);
+		boost::regex regex("([^\\/]+)\\.xml", boost::regex::perl|boost::regex::icase);
 		boost::match_results<std::string::const_iterator> results;
 
 		if (boost::regex_search(filename, results, regex)) {
 			world_name = results[1];
 		}
 		else {
-			std::cerr << "ERROR: Could not extract world name of path '" << filename << "'. Did you use spaces or hidden characters?\n";
+			std::cerr << "ERROR: startupwin.cc: Could not extract world name of path '" << filename << "'. Did you use spaces or hidden characters?\n";
 			exit(0);
 		}
 
@@ -144,7 +145,7 @@ void StartupWin::on_button_reopen(void)
 			hide();
 
 			if (world_name != World::Instance().get_name()) {
-				std::cerr << "ERROR: The world name in the world XML file is not the same as it's file name. (Did you manually edit the world XML file?)\n";
+				std::cerr << "ERROR: startupwin.cc: The world name in the world XML file is not the same as it's file name. (Did you manually edit the world XML file?)\n";
 				break;
 			}
 
@@ -256,7 +257,7 @@ void StartupWin::on_button_new(void)
 			Gtk::Main::run(editor_win);
 		}
 	} catch (...) {
-		std::cerr << "ERROR: startupwin.cc:on_button_new() failed." << std::endl;
+		std::cerr << "ERROR: startupwin.cc: on_button_new() failed." << std::endl;
 	}
 }
 

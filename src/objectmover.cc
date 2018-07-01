@@ -99,7 +99,7 @@ void ObjectMover::do_actual_moving(MapObj* map_obj, std::vector<std::pair<int,in
 		// First check if everything is within bounds...
 		if (obj_x > 0 && obj_x < gc->get_map()->width() - 1 && obj_y > 0 && obj_y < gc->get_map()->height() - 1 &&
 				std::abs((int)obj_x - (int)ox + (int)x_off) <= 2 && std::abs((int)obj_y - (int)oy + (int)y_off) <= 2 &&
-				(obj_x + x_off != party->x || obj_y + y_off != party->y))
+				((int)obj_x + x_off != party->x || (int)obj_y + y_off != party->y))
 		{
 			// Now check "walkability properties" of icon in detail...
 			if (gc->walkable(obj_x + x_off, obj_y + y_off) &&

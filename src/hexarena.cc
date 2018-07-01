@@ -355,7 +355,7 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
 		}
 	}
 	else {
-		int last_x = xp, last_y = yp;
+		int /* last_x = xp, */ last_y = yp;
 		for (int x_temp = xp, y_temp = yp;
 				cond_cmp(x_temp, xi, xsign) || cond_cmp(y_temp, yi, ysign);) {
 			// Treat current coordinate
@@ -373,7 +373,7 @@ bool HexArena::in_los(int xi, int yi, int xp, int yp)
 			// previous ones, if so, treat adjacent coordinates in between
 			if (abs(last_y - y_temp) > 2)
 				ADD_ICON(x_temp, last_y + ystep);
-			last_x = x_temp; last_y = y_temp;
+			/* last_x = x_temp; */ last_y = y_temp;
 		}
 	}
 

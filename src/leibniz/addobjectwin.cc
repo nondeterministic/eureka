@@ -24,18 +24,18 @@
 #include "../indoorsicons.hh"
 #include "addobjectwin.hh"
 
-AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no) 
-: id_lbl("ID:"),
-  lua_name_lbl("default_lua_name:"),
-  action_lbl("Action:"),
-  object_lbl("Select type of object:"),
-  icon_lbl("undef icon no."),
-  // cb_removable("removable?"),
-  rb_type_frame("Object type"),
-  rb_type_item("Item"),
-  rb_type_person("Person"),
-  rb_type_monster("Monster"),
-  rb_type_animal("Animal")
+AddObjectWin::AddObjectWin(Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_no) :
+	id_lbl("ID:"),
+	object_lbl("Select type of object:"),
+	icon_lbl("undef icon no."),
+	action_lbl("Action:"),
+	lua_name_lbl("default_lua_name:"),
+	// cb_removable("removable?"),
+	rb_type_frame("Object type"),
+	rb_type_item("Item"),
+	rb_type_person("Person"),
+	rb_type_monster("Monster"),
+	rb_type_animal("Animal")
 {
 	// removable = false;
 	_object_no = 0;

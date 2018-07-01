@@ -714,9 +714,9 @@ void EditorWin::add_object(int x, int y)
 		newObj.lua_name = obj_win.default_lua_name;
 
 		// Auto-roam if type is person, animal or monster
-		switch (newObj.get_type()) {
-		unsigned x, y;
+		unsigned x = 0, y = 0;
 		newObj.get_coords(x, y);
+		switch (newObj.get_type()) {
 		case MAPOBJ_ANIMAL:
 		case MAPOBJ_PERSON:
 			newObj.move_mode = ROAM;

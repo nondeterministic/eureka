@@ -353,7 +353,7 @@ bool SquareArena::is_illuminated(int x, int y)
 			int check_x = x + xoff;
 			int check_y = y + yoff;
 
-			if (check_x >= 0 && check_y >= 0 && check_x < _map->width() && check_y < _map->height()) {
+			if (check_x >= 0 && check_y >= 0 && check_x < (int)(_map->width()) && check_y < (int)(_map->height())) {
 				int radius = IndoorsIcons::Instance().get_props(_map->get_tile((unsigned)check_x, (unsigned)check_y))->light_radius();
 
 				if (radius > 0) {

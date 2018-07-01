@@ -121,7 +121,7 @@ char EventManager::get_key(const char* valid_inputs)
 				if (input == -1)
 					/* Do nothing. */ ;
 				else if ((!valid_inputs && isalnum(input)) ||
-						(!valid_inputs && (input == SDLK_RETURN || SDLK_BACKSPACE || SDLK_SPACE)) ||
+						(!valid_inputs && (input == SDLK_RETURN || input == SDLK_BACKSPACE || input == SDLK_SPACE)) ||
 						(valid_inputs && valid_inputs_str.find(input) != std::string::npos))
 				{
 					Console::Instance().remove_cursor(_normal_font);

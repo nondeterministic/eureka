@@ -88,7 +88,7 @@ void Console::print(Type* font, const std::string s, bool wait)
 		// Check if we have to blit and write into the next line
 		if ( s[i] == '\n' ||
 				// Automatic line break at long words:
-				x + (get_word(s, i).length() * font->char_width()) >= (get_size().first - 1 - font->char_width()) )
+				(int)(x + (get_word(s, i).length() * font->char_width())) >= (get_size().first - 1 - font->char_width()) )
 		{
 			j = 0;
 			x = offset;
