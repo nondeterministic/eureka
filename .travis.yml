@@ -4,7 +4,6 @@ dist: trusty
 
 install:
  - export CXX="g++-7"
- - wget http://www.lua.org/ftp/lua-5.3.4.tar.gz && tar xf lua-5.3.4.tar.gz && pushd lua-5.3.4 && make linux && sudo make install INSTALL_TOP=/usr && popd;
  - wget http://ftp.gnome.org/pub/GNOME/sources/libxml++/3.0/libxml++-3.0.1.tar.xz && tar xf libxml++-3.0.1.tar.xz && pushd libxml++-3.0.1 && ./configure --prefix=/usr && make && sudo make install && popd;
  - wget http://github.com/glennrp/libpng-releases/raw/master/libpng-1.6.34.tar.gz && tar xzf libpng-1.6.34.tar.gz && pushd libpng-1.6.34 && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make && sudo make install && popd;
  - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz && tar -xzvf SDL2-2.0.7.tar.gz && pushd SDL2-2.0.7 && ./configure --prefix=/usr && make && sudo make install && popd;
@@ -14,8 +13,10 @@ install:
 before_install:
  - sudo add-apt-repository -y ppa:team-xbmc/ppa
  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
- - sudo apt-add-repository -y ppa:zoogie/sdl2-snapshots 
+ - sudo apt-add-repository -y ppa:zoogie/sdl2-snapshots
+ - sudo add-apt-repository -y ppa:ukplc-team/ppa
  - sudo apt-get update  -qq
+ - sudo apt-get install -qq liblua5.3-dev
  - sudo apt-get install -qq xsltproc
  - sudo apt-get purge   -y libpng12-dev
  - sudo apt-get install -qq libegl1-mesa-dev
