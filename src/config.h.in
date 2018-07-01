@@ -15,8 +15,8 @@
 /* Define to 1 if you have <boost/regex.hpp> */
 #undef HAVE_BOOST_REGEX_HPP
 
-/* Define to 1 if you have <boost/signal.hpp> */
-#undef HAVE_BOOST_SIGNAL_HPP
+/* Define to 1 if you have <boost/signals2.hpp> */
+#undef HAVE_BOOST_SIGNALS2_HPP
 
 /* Define to 1 if you have <boost/system/error_code.hpp> */
 #undef HAVE_BOOST_SYSTEM_ERROR_CODE_HPP

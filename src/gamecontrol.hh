@@ -26,7 +26,7 @@
 #include <utility>
 #include <memory>
 
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 #include <boost/random.hpp>
 
 #include "sdlwindow.hh"

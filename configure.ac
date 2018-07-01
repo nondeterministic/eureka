@@ -49,18 +49,18 @@ BOOST_REQUIRE([1.54.0])
 BOOST_FILESYSTEM
 BOOST_REGEX
 BOOST_STRING_ALGO
-BOOST_SIGNALS
+BOOST_SIGNALS2
 BOOST_BIND
 BOOST_SYSTEM
 AC_SUBST(BOOST_CPPFLAGS)
 AC_SUBST(BOOST_CXXFLAGS)
 
-## Checking for Lua 5.1
+## Checking for Lua 5.3.1
 PKG_CHECK_MODULES(
 	[LUA],
-	[lua5.1 >= 5.1.3],
+	[lua5.3 >= 5.3.],
 	[], ## do nothing special
-	[PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.3], [])])
+	[PKG_CHECK_MODULES([LUA], [lua5.3 >= 5.3.1], [])])
 AC_MSG_CHECKING(for lua libraries)
 AC_MSG_RESULT($LUA_LIBS)
 AC_SUBST([LUA_CFLAGS])
@@ -101,8 +101,7 @@ echo "
 		   XML++: $LIBXMLPP_CFLAGS
   Linker.........:        $LD $LDFLAGS
   		     SDL: $SDL_LIBS 
-  		   Boost: $BOOST_SIGNALS_LIBS
-  		          $BOOST_FILESYSTEM_LIBS 
+  		   Boost: $BOOST_FILESYSTEM_LIBS 
 		          $BOOST_SYSTEM_LIBS
 			  $BOOST_REGEX_LIBS
 		     Lua: $LUA_LIBS

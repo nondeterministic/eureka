@@ -23,7 +23,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 #include <boost/bind.hpp>
 
 #include "eventmanager.hh"

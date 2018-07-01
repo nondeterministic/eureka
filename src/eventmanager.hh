@@ -22,7 +22,7 @@
 
 #include <list>
 
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 
 #include <SDL2/SDL.h>
 

@@ -55,7 +55,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/algorithm/string.hpp>
 
