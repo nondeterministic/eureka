@@ -40,7 +40,7 @@
 #include "iconprops.hh"
 
 extern "C" {
-#include <lua5.1/lua.h>
+#include <lua.h>
 }
 
 class MapNotFound 
