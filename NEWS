@@ -5,11 +5,14 @@ eureka 0.0.2                  under development
 -----------------------------------------------
 - Updated build dependencies: Lua5.3, libxml++-3.0, and Boost Signals2 are now required
 - Added NPCs to game (try talking to dogs!)
+- Added feature that dogs ALWAYS hear monsters first, naturally.
 - Added sorting of party (press 's'!)
 - Added entering of objects (you can enter a ship now, but not do anything with it)
 - Added damage taking when walking through fire place (acts same as magic force field)
+- Added animation to indoors deep water
 - Bug fix: bare-handed battle would cause no damage
 - Bug fix: battles with town folk would crash
+- Bug fix: one could walk over unwalkable icons when walkable objects were on top
 
 eureka 0.0.1      Sat May 12 12:05:17 CEST 2018
 -----------------------------------------------

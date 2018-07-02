@@ -125,10 +125,10 @@ Combat_Return_Codes Combat::initiate()
 
 	// Monster nearby...
 	if (create_random_monsters()) {
-		string _name = noticed_monsters();
-		if (_name.length() > 0) {
+		std::string nameWhoNoticedMonsters = noticed_monsters();
+		if (nameWhoNoticedMonsters.length() > 0) {
 			if (party->is_resting) {
-				printcon(_name + (std::string)" heard some suspicious " +
+				printcon(nameWhoNoticedMonsters + (std::string)" heard some suspicious " +
 						(std::string)"noise nearby. Do you wish to " +
 						(std::string)"(i)nvestigate or (k)eep still?");
 
@@ -139,7 +139,7 @@ Combat_Return_Codes Combat::initiate()
 				}
 			}
 			else {
-				printcon(_name + (std::string)" heard some suspicious " +
+				printcon(nameWhoNoticedMonsters + (std::string)" heard some suspicious " +
 						(std::string)"noise nearby. Do you wish to " +
 						(std::string)"(i)nvestigate or (m)ove on?");
 
@@ -891,21 +891,25 @@ bool Combat::create_random_monsters()
 
 std::string Combat::noticed_monsters()
 {
-	// Determine who sees the other first, try each player,
-	// individually. (TODO: Dogs are to be handled separately.)
-	std::string _name = "";
+	// Determine who sees the other first, try each player, individually.
+	std::string name = "";
+
+	// If a dog is in the party, it will ALWAYS hear the enemy first - obviously.
+	PlayerCharacter* npc = party->get_npc_or_null();
+	if (npc != NULL && npc->race() == RACE::DOG)
+		return npc->name();
 
 	// When resting only that player may notice monsters...
 	if (party->is_resting) {
 		PlayerCharacter* p = party->get_guard();
 
 		if (p == NULL)
-			return _name;
+			return name;
 
 		if (p->condition() != DEAD && GameRules::bonus(p->luck()) + random(1, 12) >= 9)
-			_name = p->name();
+			name = p->name();
 
-		return _name;
+		return name;
 	}
 	// When not resting, we can try whole party...
 	else {
@@ -914,12 +918,12 @@ std::string Combat::noticed_monsters()
 				continue;
 
 			if (GameRules::bonus(curr_player->luck()) + random(1, 12) >= 9) {
-				_name = curr_player->name();
+				name = curr_player->name();
 				break;
 			}
 		}
 	}
-	return _name;
+	return name;
 }
 
 int Combat::random(int min, int max)

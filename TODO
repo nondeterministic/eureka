@@ -1,8 +1,6 @@
 TODO
 =====
 
-- NPCs & dogs (prio med, skill high)
-
 - Make game characters definable in Lua
 
 - Problem is: coord selection and other keyboard input sometimes seems sluggish.  It's not cause the game is slow, but because
@@ -17,81 +15,8 @@ IN PROGRESS
 
 - Implement service purchase such as healing
 
-DONE
-=====
-
-- Select multiple items cannot select multiple items in multiple quantities. Change return value of select_items to pair of ints!
-
-- In game music (prio low, skill low)
-
-- Separate music channels in soundsample automatically (music has one, with defined volume, samples have one with defined volume; prio: low, skill: low)
-
-- Level up (already started in party.cc)
-
-- Luaapi.cc sell items doesn't work with new item desc showing up in inventory. String breakup probably wrong inside the method! [prio high, skill low]
-
-- Check that save-game still works - perhaps write test for it? [prio med, skill med]
-
-- FIX SAVE GAME. Also: When saving a game, first delete old save game or previously lying around map data may be outdated.
-  (This only happens when a new game is created. Perhaps store a hex to compare if new game was created, and then create new dir, otherwise use existing dir?)
-
-- Potions [prio med, skill med]
-
-- Buy remedies for magic (e.g., herbs, magic potions) and healing (i.e., implement healer and reanimator shop) (prio high, skill low)
-
-- Shift load stuff into GameState, where it belongs and free eureka.cc
-
-- Magic system (prio high, skill high)
-
-- Change all paths to boost::filesystem::path for modularity and allowing new worlds to be included as well as future OS interoperability
-
-- Create different foes inside combat.cc rather than just one type (prio low, skill med)
-
-- Appearance of random monsters in dungeon (prio low, skill med)
-
-- Spell points recover from walking + resting (prio: med, skill low)
-
-- Level up (prio high, skill med) (DONE: Monk in Stadtkarte is an example)
-
-- AFTER TAXING TO TAXER AND PISSING HIM OFF, THE GUARD FOLLOW MECHANISM LEADS TO STACK OVERFLOW [SEVERE]
-
-- Locks and lock shop (prio high, skill med)
-
-- Rest party
-
-- Consume (DONE)/buy (DONE) food
-
-- Close cities at night, make radius smaller (DONE, except radius should be round rather than squared)
-
-- DONE: Save/load game.  Store modified city maps?
-  (Add additional items, TODO)
-
-- Switches and other items that are scripted. (sort of, DONE, via events; won't attach events directly to objects though for now)
- 
-- Add weapons, arms, etc. from elements.xml.old to main elements.xml
-  and extend world.cc to read and use these properties.  [DONE]
-
-- Add icon property which is a number in the sequence of animations,
-  so that icons animate automatically.  Store the animation sequences
-  in hash table.  [DONE]
-
-- Leibniz does not yet save monster data and similar game data,
-  so far only reading of data is possible via world.cc. 
-
-  Put such files in separate XML file which is NOT read by editor
-  but only by game.  So nothing gets overwritten inside the world
-  file. [DONE - elements.xml]
-
-- Inventory weight, etc. (DONE)
-
 BUGS
 =====
-
-- GameState does not save games properly and cannot do indoors game saving...
-
-- Game crashes after conversations with town folks
-
-- Save T.O.D. with game status
 
 - Do not let players ready an item like a jimmy lock! [MED]
 
