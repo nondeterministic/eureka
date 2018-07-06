@@ -65,8 +65,6 @@ extern "C"
 #define SLOWPRINT true
 #endif
 
-using namespace std;
-
 Combat::Combat()
 {
 	party = &Party::Instance();
@@ -791,17 +789,17 @@ bool Combat::create_random_monsters()
 	lua.push_fn_arg(icon_descr); // The type of terrain the party is on...
 	lua.call_fn_leave_ret_alone("rand_encounter");
 
-	int __distance = -1;
+	int monsterDistance = -1;
 
 	// Iterate through result table
 	lua_pushnil(global_lua_state);
 	while (lua_next(global_lua_state, -2) != 0) {
-		string __name = "";
+		std::string __name = "";
 		int __number = -1;
 
 		lua_pushnil(global_lua_state);
 		while (lua_next(global_lua_state, -2) != 0) {
-			string __key = lua_tostring(global_lua_state, -2);
+			std::string __key = lua_tostring(global_lua_state, -2);
 
 			// Name of monster
 			if (__key == "__name") {
@@ -809,11 +807,11 @@ bool Combat::create_random_monsters()
 			}
 			// Distance, we only determine one and then derive the others below
 			else if (__key == "__distance") {
-				if (__distance < 0) {
+				if (monsterDistance < 0) {
 					if (lua_tonumber(global_lua_state, -1) > 0)
-						__distance = lua_tonumber(global_lua_state, -1);
+						monsterDistance = lua_tonumber(global_lua_state, -1);
 					else
-						cerr << "ERROR: combat.cc: Lua error: " << lua_tostring(global_lua_state, -1) << endl;
+						std::cerr << "ERROR: combat.cc: Lua error: " << lua_tostring(global_lua_state, -1) << std::endl;
 				}
 			} // How many of the monster attack?
 			else if (__key == "__number") {
@@ -822,8 +820,8 @@ bool Combat::create_random_monsters()
 					foes.count()->insert(std::make_pair(Util::capitalise_first_letter(__name), __number));
 			}
 			else {
-				cerr << "ERROR: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
-				exit(EXIT_FAILURE);
+				std::cerr << "ERROR: combat.cc: Did you fiddle with the bestiary/defs.lua file?\n";
+				std::exit(EXIT_FAILURE);
 			}
 			lua_pop(global_lua_state, 1);
 		}
@@ -836,8 +834,8 @@ bool Combat::create_random_monsters()
 
 	// TODO: The way we iterate through the monsters means they always
 	// appear in the same order when attacking in groups
-	for (auto foe = foes.count()->begin(); foe != foes.count()->end(); foe++, __distance += 10) {
-		std::string __name = foe->first;
+	for (auto foe = foes.count()->begin(); foe != foes.count()->end(); foe++, monsterDistance += 10) {
+		std::string monsterName = foe->first;
 		int count = foe->second;
 
 		// Create count many monsters named name, respectively
@@ -846,15 +844,16 @@ bool Combat::create_random_monsters()
 
 			// Load corresponding Lua monster definition
 			boost::filesystem::path beast_path(conf_world_path / "bestiary");
-			beast_path /= World::Instance().get_monster_filename(__name);
+			beast_path /= World::Instance().get_monster_filename(monsterName);
 			if (luaL_dofile(global_lua_state, beast_path.c_str())) {
-				cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << endl;
-				exit(EXIT_FAILURE);
+				std::cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: "
+						<< lua_tostring(global_lua_state, -1) << std::endl;
+				std::exit(EXIT_FAILURE);
 			}
 
 			// Set distance
-			monster->set_distance(__distance);
-			lua.push_fn_arg((double)__distance);
+			monster->set_distance(monsterDistance);
+			lua.push_fn_arg((double)monsterDistance);
 			lua.call_void_fn("set_distance");
 
 			// Set rest of params
@@ -897,7 +896,7 @@ std::string Combat::noticed_monsters()
 	// If a dog is in the party, it will ALWAYS hear the enemy first - obviously.
 	PlayerCharacter* npc = party->get_npc_or_null();
 	if (npc != NULL && npc->race() == RACE::DOG)
-		return npc->name();
+		return "Your good dog " + npc->name();
 
 	// When resting only that player may notice monsters...
 	if (party->is_resting) {
