@@ -842,6 +842,18 @@ bool Combat::create_random_monsters()
 		for (int i = 0; i < count; i++) {
 			std::shared_ptr<Creature> monster(new Creature());
 
+			// TODO: The following is an ugly work around for
+			// terminate called after throwing an instance of 'std::runtime_error'
+			// what():  : no such monster name known.
+			// But because this bug is difficult to reproduce, will keep this for now.
+			// Could be that this happens, when called with an already corrupted Lua state above...
+			// Try out if we can't use a fresh Lua state for this method instead.
+			if (monsterName.length() == 0) {
+				std::cerr << "combat.cc: create_random_monsters(): monsterName is empty. This is serious and will corrupt the Lua stack! "
+						<< "You probably want to save the game state and reload it as the game is likely to crash soon. Sorry. :-(\n";
+				return false;
+			}
+
 			// Load corresponding Lua monster definition
 			boost::filesystem::path beast_path(conf_world_path / "bestiary");
 			beast_path /= World::Instance().get_monster_filename(monsterName);

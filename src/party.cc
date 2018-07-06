@@ -194,6 +194,9 @@ void Party::add_player(PlayerCharacter player)
 	std::cout << "INFO: party.cc: Added player '" << player.name() << "' to roaster.\n";
 }
 
+/**
+ * Returns NULL upon invalid number, otherwise party member at the number.
+ */
 PlayerCharacter* Party::get_player(int number)
 {
 	int i = 0;
@@ -207,9 +210,8 @@ PlayerCharacter* Party::get_guard()
 {
 	if (_guard >= 0 && _guard < size() && get_player(_guard)->condition() != DEAD)
 		return get_player(_guard);
-	else {
+	else
 		return NULL;
-	}
 }
 
 void Party::set_guard(int g)
