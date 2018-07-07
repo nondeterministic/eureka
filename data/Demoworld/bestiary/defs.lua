@@ -60,43 +60,43 @@ end
 
 function rand_encounter(terrain)
    random = simpl_rand(1, 100)
-
+   
    if (terrain == "plain" and plain_encounter()) then
       if (math.random(1,2) == 1) then
-	 return {
-	    { __name = "Orc",
-	      __distance = simpl_rand(1, 4) * 10,
-	      __number = simpl_rand(1, 3) },
-	    { __name = "Dark Knight", 
-	      __distance = math.random(1, 4) * 10, 
-	      __number = math.random(0, 2) },
-	    { __name = "Troll",
-	      __distance = -1,
-	      __number = math.random(0, 2) }
-	 }
+         return {
+            { __name = "Orc",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(1, 3) },
+            { __name = "Dark Knight", 
+              __distance = math.random(1, 4) * 10, 
+              __number = math.random(0, 2) },
+            { __name = "Troll",
+              __distance = -1,
+              __number = math.random(0, 2) }
+         }
       else
-	 return {
-	    { __name = "Wolf",
-	      __distance = simpl_rand(1, 4) * 10,
-	      __number = simpl_rand(2, 5) }
-	 }
+         return {
+            { __name = "Wolf",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(2, 5) }
+         }
       end
    elseif ((terrain == "forest" or terrain == "rocks") and forest_encounter()) then
       if (math.random(1,2) == 1) then
-	 return { 
-	    { __name = "Orc", 
-	      __distance = simpl_rand(1, 4) * 10, 
-	      __number = simpl_rand(1, 5) },
-	    { __name = "Troll", 
-	      __distance = -1, 
-	      __number = math.random(0, 2) }
-	 }
+         return { 
+            { __name = "Orc", 
+              __distance = simpl_rand(1, 4) * 10, 
+              __number = simpl_rand(1, 5) },
+            { __name = "Troll", 
+              __distance = -1, 
+              __number = math.random(0, 2) }
+         }
       else
-	 return {
-	    { __name = "Wolf",
-	      __distance = simpl_rand(1, 4) * 10,
-	      __number = simpl_rand(2, 5) }
-	 }
+         return {
+            { __name = "Wolf",
+              __distance = simpl_rand(1, 4) * 10,
+              __number = simpl_rand(2, 5) }
+         }
       end
    elseif (terrain == "dungeon" and dungeon_encounter()) then
       if (random <= 30) then

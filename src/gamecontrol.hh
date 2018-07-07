@@ -51,6 +51,7 @@ class GameControl
 {
 public:
 	enum Walking { Whole_Party, Individual_Game_Character };
+	enum Resting { Yes, No };
 
 protected:
 	RandomNumberGenerator _generator;
@@ -120,7 +121,7 @@ public:
 	void set_map_name(const char*);
 	void start_turns();
 	void stop_turns();
-	void do_turn(bool = false);
+	void do_turn(Resting = Resting::No);
 	bool game_won();
 	int random(int, int);
 	void printcon(const std::string, bool = false);

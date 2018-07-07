@@ -65,7 +65,7 @@
         </action>
       </actions>
     </object>
-    <object x="10" y="12" ox="10" oy="12" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal"/>
+    <object x="10" y="12" ox="10" oy="12" icon_no="998" layer="0" id="dog" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="animal" init_script="people/sarsen_dog.lua"/>
     <object x="13" y="10" ox="13" oy="10" icon_no="52" layer="0" id="ignaz" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="roam" type="person" init_script="people/sarsen_ignaz.lua"/>
     <object x="14" y="16" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="animal"/>
     <object x="13" y="18" ox="0" oy="0" icon_no="137" layer="0" id="cow" lua_name="" how_many="1" random_monster="no" personality="neutral" move_mode="static" type="animal"/>

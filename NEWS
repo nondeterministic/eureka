@@ -1,7 +1,7 @@
 NEWS eureka
 ===========
 
-eureka 0.0.2                  under development
+eureka 0.1.0                  under development
 -----------------------------------------------
 - Updated build dependencies: Lua5.3, libxml++-3.0, and Boost Signals2 are now required
 - Added NPCs to game (try talking to dogs!)
@@ -13,6 +13,7 @@ eureka 0.0.2                  under development
 - Bug fix: bare-handed battle would cause no damage
 - Bug fix: battles with town folk would crash
 - Bug fix: one could walk over unwalkable icons when walkable objects were on top
+- Bug fix: setting guard for hole-up & camp would not work
 
 eureka 0.0.1      Sat May 12 12:05:17 CEST 2018
 -----------------------------------------------

@@ -272,7 +272,7 @@ bool GameControl::game_won()
 	return lua.call_fn<bool>("game_won");
 }
 
-void GameControl::do_turn(bool resting)
+void GameControl::do_turn(Resting resting)
 {
 	if (game_won()) {
 		printcon("CONGRAULATIONS! YOU HAVE WON THE GAME. PRESS SPACE TO EXIT.");
@@ -286,7 +286,7 @@ void GameControl::do_turn(bool resting)
 	_turn_passed = 0;
 
 	// Consume food when not resting
-	if (!resting) {
+	if (resting == No) {
 		if (_party->food() == 0) {
 			if (is_arena_outdoors()) {
 				if (_turns%20 == 0) {
@@ -376,16 +376,19 @@ void GameControl::do_turn(bool resting)
 		if (_turns % 10 == 0)
 			_clock.inc(30);
 
-		Combat combat;
-		Combat_Return_Codes combat_result = combat.initiate();
-		if (combat_result == Combat_Return_Codes::VICTORY ||
-			combat_result == Combat_Return_Codes::FLED ||
-			combat_result == Combat_Return_Codes::OTHER)
-		{
-			redraw_graphics_status(true);
+		// Significantly lower the chances of unwanted combat when party is resting
+		if ((resting == Yes && random(1,6) == 1) || resting == No) {
+			Combat combat;
+			Combat_Return_Codes combat_result = combat.initiate();
+			if (combat_result == Combat_Return_Codes::VICTORY ||
+				combat_result == Combat_Return_Codes::FLED ||
+				combat_result == Combat_Return_Codes::OTHER)
+			{
+				redraw_graphics_status(true);
+			}
+			else
+				redraw_graphics_status();
 		}
-		else
-			redraw_graphics_status();
 	}
 	else {
 		if (_turns%35 == 0)
@@ -1086,23 +1089,32 @@ void GameControl::keypress_hole_up()
 	case 'y':
 		printcon("y");
 		printcon("Select a guard");
+		selected_player = zwin.select_player();
 		break;
 	}
 
 	// If player was chosen, set guard
-	if (selected_player != -1)
-		_party->set_guard(selected_player);
+	PlayerCharacter* guard = NULL;
+	if ((guard = _party->get_player(selected_player)) != NULL) {
+		if (guard->condition() == PlayerCondition::DEAD)
+			printcon("Cannot choose dead player. No one will stand guard.");
+		else if (guard->is_npc())
+			printcon("Cannot choose NPC. No one will stand guard.");
+		else {
+			printcon(_party->get_player(selected_player)->name() + " will stand guard.");
+			_party->set_guard(selected_player);
+		}
+	}
+	else
+		printcon("No guard - at your own risk!");
 
 	_party->is_resting = true;
 
 	pair<int,int> old_time = _clock.time();
 	int rounds = 0;
 	do {
-		// TODO: Alternative do_turn without food consumption and to reflect guarding to defend attacks?  Parameterized do_turn?
-		// TODO: Update, if true, then we tell do_turn that we're resting
-		do_turn(true);
+		do_turn(Resting::Yes);
 
-		// TODO: Do the actual healing of the party...
 		for (int i = 0; i < _party->size(); i++) {
 			PlayerCharacter* pl = _party->get_player(i);
 

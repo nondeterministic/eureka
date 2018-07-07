@@ -49,8 +49,8 @@ Attackers::Attackers(const Attackers& a)
 		_enemies.push_back(e);
 
 	// Copy "boost::unordered_map<std::string, int> _enemies_count":
-	BOOST_FOREACH(auto ec, a._enemies_count) {
-		_enemies_count[ec.first] = ec.second;
+	BOOST_FOREACH(auto ec, a._enemies_amount) {
+		_enemies_amount[ec.first] = ec.second;
     }
 }
 
@@ -88,14 +88,14 @@ void Attackers::remove(int enemies_offset)
 	_enemies.erase(_enemies.begin() + enemies_offset);
 	// std::cout << "Enemies  after: " << _enemies.size() << "\n";
 
-	for (auto e = _enemies_count.begin(); e != _enemies_count.end(); e++) {
+	for (auto e = _enemies_amount.begin(); e != _enemies_amount.end(); e++) {
 		if (e->first == erased_name) {
 			if (e->second > 1) {
 				e->second--;
 				return;
 			}
 			else {
-				_enemies_count.erase(e);
+				_enemies_amount.erase(e);
 				return;
 			}
 		}
@@ -111,14 +111,14 @@ void Attackers::remove(std::vector<int>& enemies_offsets)
 	for (int i = enemies_offsets.size() - 1; i >= 0; i--) {
 		std::string erased_name = _enemies.at(enemies_offsets[i])->name();
 
-		for (auto e = _enemies_count.begin(); e != _enemies_count.end(); e++) {
+		for (auto e = _enemies_amount.begin(); e != _enemies_amount.end(); e++) {
 			if (e->first == erased_name) {
 				if (e->second > 1) {
 					e->second--;
 					break;
 				}
 				else {
-					_enemies_count.erase(e);
+					_enemies_amount.erase(e);
 					break;
 				}
 			}
@@ -204,9 +204,9 @@ void Attackers::move(const char* name, int dist)
 	}
 }
 
-boost::unordered_map<std::string, int>* Attackers::count()
+boost::unordered_map<std::string, int>* Attackers::amount()
 {
-	return &_enemies_count;
+	return &_enemies_amount;
 }
 
 std::shared_ptr<SDL_Texture> Attackers::pic(SDL_Renderer* renderer)
@@ -226,7 +226,7 @@ std::string Attackers::to_string()
 	std::map<int, std::string> ordered_attackers;
 
 	// First sort output by the enemy that is closest to the one furthest away from party
-	for (auto itr = _enemies_count.begin(); itr != _enemies_count.end(); itr++) {
+	for (auto itr = _enemies_amount.begin(); itr != _enemies_amount.end(); itr++) {
 		ordered_attackers.insert(make_pair(get_distance(itr->first), itr->first));
 	}
 
@@ -238,13 +238,13 @@ std::string Attackers::to_string()
 		ss << "a group of ";
 		unsigned i = 0;
 		for (auto itr = ordered_attackers.begin(); itr != ordered_attackers.end(); itr++, i++) {
-			int count = _enemies_count.find(itr->second)->second;
+			int count = _enemies_amount.find(itr->second)->second;
 			ss << count << " "
 					<< (count > 1? get_plural_name(itr->second) : itr->second) << " ("
 					<< get_distance(itr->second) << "')";
-			if (i <= _enemies_count.size() - 2 && _enemies_count.size() > 2)
+			if (i <= _enemies_amount.size() - 2 && _enemies_amount.size() > 2)
 				ss << ", ";
-			else if (i < _enemies_count.size() - 1)
+			else if (i < _enemies_amount.size() - 1)
 				ss << " and ";
 		}
 	}

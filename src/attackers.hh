@@ -36,7 +36,7 @@ class Attackers
 {
 private:
   std::vector<std::shared_ptr<Creature>> _enemies;
-  boost::unordered_map<std::string, int> _enemies_count;
+  boost::unordered_map<std::string, int> _enemies_amount;
 
 public:
   Attackers();
@@ -54,7 +54,7 @@ public:
   std::shared_ptr<SDL_Texture> pic(SDL_Renderer*);
   int get_distance(const std::string&);
   Creature* get_attacker(int distance);
-  boost::unordered_map<std::string, int>* count();
+  boost::unordered_map<std::string, int>* amount();
   int size() const;
   int closest_range();
   bool vowel(const char);

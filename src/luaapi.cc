@@ -1210,7 +1210,7 @@ int l_get_single_monster_name(lua_State* L)
 	std::string attacked_single_name = "";
 
 	int j = 1;
-	for (auto foe : *(combat->get_foes().count())) {
+	for (auto foe : *(combat->get_foes().amount())) {
 		if (group == j)
 			attacked_single_name = foe.first;
 		j++;
@@ -1244,7 +1244,7 @@ int l_magic_attack(lua_State* L)
 	std::vector<std::pair<Creature*, int>> opponents;
 
 	int j = 1;
-	for (auto foe_group : *(combat->get_foes().count())) {
+	for (auto foe_group : *(combat->get_foes().amount())) {
 		if (j == targets) {
 			int k = 0;
 			for (auto curr_foe = combat->get_foes().begin(); curr_foe != combat->get_foes().end(); curr_foe++, k++) {

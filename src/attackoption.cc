@@ -76,7 +76,7 @@ void AttackOption::execute(Combat* combat)
 	int opponent_offset = 0;
 
 	int j = 1;
-	for (auto foe : *(combat->get_foes().count())) {
+	for (auto foe : *(combat->get_foes().amount())) {
 		if (j == _target) {
 			int k = 0;
 			for (auto _foe = combat->get_foes().begin(); _foe != combat->get_foes().end(); _foe++, k++) {
