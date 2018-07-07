@@ -1,9 +1,11 @@
 NEWS eureka
 ===========
 
-eureka 0.1.0                  under development
+eureka 0.1.0      Sat Jul  7 20:28:37 CEST 2018
 -----------------------------------------------
 - Updated build dependencies: Lua5.3, libxml++-3.0, and Boost Signals2 are now required
+- Added a tad bit more colour to outside tiles as old ones were extremely difficult
+  to distinguish (not sure, if this is a change for the better or worse though)
 - Added NPCs to game (try talking to dogs!)
 - Added feature that dogs ALWAYS hear monsters first, naturally.
 - Added sorting of party (press 's'!)
