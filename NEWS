@@ -1,6 +1,10 @@
 NEWS eureka
 ===========
 
+eureka 0.1.1                  under development
+-----------------------------------------------
+- Updated/coloured outdoor tiles a bit as they were too difficult to differentiate
+
 eureka 0.1.0      Sun Jul  8 14:52:23 CEST 2018
 -----------------------------------------------
 - Updated build dependencies: Lua5.3, libxml++-3.0, and Boost Signals2 are now required
