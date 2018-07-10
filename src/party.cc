@@ -157,7 +157,6 @@ bool Party::restore_outside_coords()
 	if (prev_x >= 0 && prev_y >= 0) {
 		x = prev_x;
 		y = prev_y;
-		std::cout << "OLD COORDS RESTORED: " << x << ", " << y << "\n";
 		return true;
 	}
 
