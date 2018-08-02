@@ -49,14 +49,14 @@ Service* ServicesHelper::createFromLua(std::string array_name, lua_State* lua_st
 	LuaWrapper lua(lua_state);
 	Service *w = new Service();
 
-	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
-	w->heal        = (int)(lua.get_item_prop<double>(globArrayName, array_name, "heal"));
-	w->heal_poison = lua.get_item_prop<bool>(globArrayName, array_name, "heal_poison");
-	w->resurrect   = lua.get_item_prop<bool>(globArrayName, array_name, "resurrect");
-	w->print_after = lua.get_item_prop<std::string>(globArrayName, array_name, "print_after");
-	w->level_up    = lua.get_item_prop<bool>(globArrayName, array_name, "level_up");
+	w->name(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "name" }));
+	w->heal        = (int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "heal" }));
+	w->heal_poison = lua.get_item_prop<bool>(std::vector<std::string> { globArrayName, array_name, "heal_poison" });
+	w->resurrect   = lua.get_item_prop<bool>(std::vector<std::string> { globArrayName, array_name, "resurrect" });
+	w->print_after = lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "print_after" });
+	w->level_up    = lua.get_item_prop<bool>(std::vector<std::string> { globArrayName, array_name, "level_up" });
 
-	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
+	w->gold((int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "gold" })));
 
 	return w;
 }
@@ -100,5 +100,5 @@ void ServicesHelper::apply(Service* s, int party_member)
 bool ServicesHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry("Services", item_name);
+	return !lua.check_item_prop_is_nilornone(std::vector<std::string> { "Services", item_name });
 }

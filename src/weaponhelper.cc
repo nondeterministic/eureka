@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <iostream>
+#include <cmath>
 
 #include <lua.h>
 #include <lualib.h>
@@ -45,25 +46,30 @@ Weapon* WeaponHelper::createFromLua(std::string array_name, lua_State* lua_state
 {
 	LuaWrapper lua(lua_state);
 	Weapon *w = new Weapon();
+	int stack_size = lua_gettop(lua_state);
 
 	try {
-		w->name(lua.get_item_prop<std::string>("Weapons", array_name, "name"));
-		w->plural_name(lua.get_item_prop<std::string>("Weapons", array_name, "plural_name"));
-		w->hands((int)(lua.get_item_prop<double>("Weapons", array_name, "hands")));
-		w->range((int)(lua.get_item_prop<double>("Weapons", array_name, "range")));
+		w->name(lua.get_item_prop<std::string>(std::vector<std::string> { "Weapons", array_name, "name" }));
+		w->plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { "Weapons", array_name, "plural_name" }));
+		w->hands((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "hands" })));
+		w->range((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "range" })));
 		if (w->range() > 10)
-			w->ammo(lua.get_item_prop<std::string>("Weapons", array_name, "ammo"));
-		w->dmg_min((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_min")));
-		w->dmg_max((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_max")));
-		w->dmg_bonus((int)(lua.get_item_prop<double>("Weapons", array_name, "damage_bonus")));
-		w->icon = (int)(lua.get_item_prop<double>("Weapons", array_name, "icon"));
-		w->weight((int)(lua.get_item_prop<double>("Weapons", array_name, "weight")));
-		w->gold((int)(lua.get_item_prop<double>("Weapons", array_name, "gold")));
-		w->light_radius((int)(lua.get_item_prop<double>("Weapons", array_name, "light_radius")));
-		w->destroy_after((int)(lua.get_item_prop<double>("Weapons", array_name, "destroy_after")));
+			w->ammo(lua.get_item_prop<std::string>(std::vector<std::string> { "Weapons", array_name, "ammo" }));
+		w->dmg_min((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "damage_min" })));
+		w->dmg_max((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "damage_max" })));
+		w->dmg_bonus((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "damage_bonus" })));
+		w->icon = (int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "icon" }));
+		w->weight((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "weight" })));
+		w->gold((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "gold" })));
+		w->light_radius((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "light_radius" })));
+		w->destroy_after((int)(lua.get_item_prop<double>(std::vector<std::string> { "Weapons", array_name, "destroy_after" })));
 	} catch (...) {
 		throw;
 	}
+
+	if (lua_gettop(lua_state) != stack_size)
+		std::cerr << "WARNING: weaponhelper.cc: createFromLua() changed Lua stack by "
+				  << std::abs(std::abs(lua_gettop(lua_state)) - std::abs(stack_size)) << ".\n";
 
 	return w;
 }
@@ -73,5 +79,5 @@ Weapon* WeaponHelper::createFromLua(std::string array_name, lua_State* lua_state
 bool WeaponHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry("Weapons", item_name);
+	return !lua.check_item_prop_is_nilornone(std::vector<std::string> { "Weapons", item_name });
 }

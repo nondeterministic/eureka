@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
 
+#include <cstdio>
 #include <cctype>
 #include <vector>
 #include <string>
@@ -24,8 +25,38 @@
 #include <cstddef>        // std::size_t
 #include <iostream>
 
+#include <lua.h>
+
 #include "util.hh"
 #include "eureka.hh"
+
+// https://szpg1108.wordpress.com/2013/08/08/understanding-the-lua-stack-pt-2-viewing-the-stack/
+void strace(lua_State* l)
+{
+	int i;
+	int top = lua_gettop(l); // Get current stack size
+	std::cout << "---- Begin Stack ----\n";
+	std::cout << "Stack size:" << top << "\n\n";
+	for (i = top; i >= 1; i--) {
+		int t = lua_type(l, i);
+		switch (t) {
+		case LUA_TSTRING:
+			printf("%i -- (%i) ---- `%s'", i, i - (top + 1), lua_tostring(l, i));
+			break;
+		case LUA_TBOOLEAN:
+			printf("%i -- (%i) ---- %s", i, i - (top + 1), lua_toboolean(l, i) ? "true" : "false");
+			break;
+		case LUA_TNUMBER:
+			printf("%i -- (%i) ---- %g", i, i - (top + 1), lua_tonumber(l, i));
+			break;
+		default:
+			printf("%i -- (%i) ---- %s", i, i - (top + 1), lua_typename(l, t));
+			break;
+		}
+		std::cout << "\n";
+	}
+	std::cout << "---- End Stack ----\n\n";
+}
 
 bool Util::vowel(const char c)
 {

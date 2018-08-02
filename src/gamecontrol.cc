@@ -262,7 +262,7 @@ bool GameControl::game_won()
 {
 	LuaWrapper lua(global_lua_state);
 
-	if (!lua.is_defined("game_won")) {
+	if (lua.check_item_prop_is_nilornone(std::vector<std::string> { "game_won" })) {
 		if (luaL_dofile(global_lua_state, (conf_world_path / "game_won.lua").c_str())) {
 			std::cerr << "WARNING: gamecontrol.cc: Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << ". Game not properly installed or incomplete?\n";
 			return false;
@@ -400,9 +400,9 @@ void GameControl::do_turn(Resting resting)
 		PlayerCharacter* pl = _party->get_player(i);
 		if (pl->weapon() != NULL) {
 			if (pl->weapon()->destroy_after() == 1) {
-				printcon(pl->name() + " throws away the " + pl->weapon()->name() + " as it no longer fulfills its purpose.");
-
-				// TODO: Ask user to confirm by pressing SPACE bar.
+				printcon(pl->name() + " throws away the " + pl->weapon()->name() + " as it no longer fulfills its purpose. (PRESS SPACE BAR TO CONFIRM!)");
+				_em->get_key(" ");
+				printcon("OK, burnt down torch is gone. (Beware: " + pl->name() + "is now empty-handed...)");
 
 				// Now delete memory of item
 				Weapon* wep = pl->weapon();
@@ -1696,7 +1696,7 @@ void GameControl::create_random_monsters_in_dungeon()
 						// Determine type of monster using Lua
 						LuaWrapper lua(global_lua_state);
 						lua.push_fn_arg(std::string("dungeon"));
-						lua.call_fn_leave_ret_alone("rand_encounter");
+						lua.call_fn_leave_ret_alone(std::vector<std::string> { "rand_encounter" });
 
 						// Iterate through result table (see also combat.cc for where I originally copied this more or less from)
 						lua_pushnil(global_lua_state);

@@ -28,6 +28,7 @@
 #include "mischelper.hh"
 #include "util.hh"
 #include "world.hh"
+#include "luaapi.hh"
 
 #include <lua.h>
 #include <lualib.h>
@@ -63,6 +64,7 @@ Item* ItemFactory::create(std::string lua_name, MapObj* obj)
 
 	lua_State* lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
+	publicize_api(lua_state);
 	World::Instance().init_lua_arrays(lua_state);
 
 	if (lname_split.size() > 0) {

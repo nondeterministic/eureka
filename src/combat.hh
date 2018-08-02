@@ -45,11 +45,11 @@ class Combat
 {
 protected:
   Inventory _bounty_items;
+  Attackers _foes;
+  EventManager* _em;
+  Party* _party;
+  bool _fled;
   int random(int, int);
-  Attackers foes;
-  EventManager* em;
-  Party* party;
-  bool fled;
 
 public:
   Combat();

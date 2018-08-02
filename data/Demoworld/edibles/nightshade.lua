@@ -14,7 +14,7 @@ Edibles["nightshade"]  = {
    magic_herb             = true,
    intoxicating_effect    = "none",
 
-   gold          = 1,
+   gold          = 5,
    weight        = 0,
    icon          = 988
 }

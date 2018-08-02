@@ -472,7 +472,6 @@ int init_game_env(int res_w, int res_h)
 	World::Instance().init_lua_arrays(global_lua_state);
 	World::Instance().set_spells(World::Instance().load_lua_spells(global_lua_state));
 
-
 	// It is important to do this once!
 	if (IndoorsIcons::Instance().convert_icons_to_textures(win->get_renderer()) < 0) {
 		std::cerr << "ERROR: Initialisation error. Could not convert indoors icons to textures.\n";
@@ -483,7 +482,7 @@ int init_game_env(int res_w, int res_h)
 		exit(-1);
 	}
 
-	World::Instance().scan_monster_definition_files();
+	World::Instance().scan_monster_definition_files(global_lua_state);
 
 	return 0;
 }

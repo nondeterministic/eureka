@@ -7,7 +7,7 @@ Edibles["chamomilla"]  = {
    name          = "chamomilla", 
    plural_name   = "chamomillas", 
 
-   food_up                = 1,
+   food_up                = 5,
    healing_power          = "some",
    poison_healing_power   = "some",
    poisonous              = "none",

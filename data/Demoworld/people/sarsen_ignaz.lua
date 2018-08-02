@@ -77,7 +77,7 @@ do
          simpl_printcon("I will join thee. I know that my daughter Inge will cope until we return. She has grown up a lot " ..
                            "and the enemy hordes shall not return so soon again. We did not beat them, but gave them a huge blow, " ..
                            "from which they will need to recover. But let us go now and not loose any further time!")
-         join_successful = simpl_join(c_values)
+         join_successful = simpl_join()
          simpl_remove_from_current_map("ignaz")
          conv_over = true
          return true

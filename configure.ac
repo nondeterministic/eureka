@@ -82,11 +82,14 @@ AC_CONFIG_FILES([Makefile \
 		 data/Demoworld/armour/Makefile \
 		 data/Demoworld/shields/Makefile \
 		 data/Demoworld/bestiary/Makefile \
+		 data/Demoworld/bestiary/attacks/Makefile \
+		 data/Demoworld/bestiary/spells/Makefile \
 		 data/Demoworld/miscitems/Makefile \
 		 data/Demoworld/edibles/Makefile \
 		 data/Demoworld/people/Makefile \
 		 data/Demoworld/spells/Makefile \
 		 data/Demoworld/potions/Makefile \
+		 data/Demoworld/doc/Makefile \
 		 data/Demoworld/spells/mage/Makefile])
 AC_OUTPUT
 

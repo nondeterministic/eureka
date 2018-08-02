@@ -80,7 +80,7 @@ public:
   void xml_write_world_data(boost::filesystem::path);
   std::vector<Spell>* get_spells();
   void set_spells(std::vector<Spell>);
-  void scan_monster_definition_files();
+  void scan_monster_definition_files(lua_State* = nullptr);
   std::string get_monster_filename(std::string);
   std::string get_monster_name(std::string);
 

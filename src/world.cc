@@ -478,24 +478,22 @@ void World::init_lua_arrays(lua_State* L)
 	LuaWrapper lua(L);
 
 	// First load those which are defined in terms of Lua tables and therefore defs.lua files inside their corresponding subdirectories inside data/
+	std::vector<std::string> elems = { "weapons", "armour", "shields", "bestiary", "edibles", "services", "miscitems", "potions" };
 
-	std::string elems[] = { "weapons", "armour", "shields", "bestiary", "edibles", "services", "miscitems", "potions" };
-	int number_of_elems = sizeof(elems) / sizeof(std::string);
-
-	for (int i = 0; i < number_of_elems; i++) {
-		if (luaL_dofile(L, (conf_world_path / elems[i] / "defs.lua").c_str())) {
+	for (std::string elem: elems) {
+		if (luaL_dofile(L, (conf_world_path / elem/ "defs.lua").c_str())) {
 			std::cerr << "WARNING: world.cc: Couldn't execute Lua file: " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
 			continue;
 		}
 
-		for (boost::filesystem::directory_iterator itr((conf_world_path / elems[i]).string());
+		for (boost::filesystem::directory_iterator itr((conf_world_path / elem).string());
 				itr != boost::filesystem::directory_iterator();
 				++itr)
 		{
 			const string fname = itr->path().filename().string();
 
 			if (fname.compare("defs.lua") != 0 && fname.find(".lua") != string::npos) {
-				if (luaL_dofile(L, (conf_world_path / elems[i] / fname).c_str())) {
+				if (luaL_dofile(L, (conf_world_path / elem / fname).c_str())) {
 					std::cerr << "WARNING: world.cc: Couldn't execute Lua file " << fname << ": " << lua_tostring(L, -1) << " Game not properly installed or incomplete?\n";
 					continue;
 				}
@@ -506,36 +504,54 @@ void World::init_lua_arrays(lua_State* L)
 
 /// Scan all monster definitions to get a mapping from monster- to file-name.
 /// Function is completley side-effect free as it uses a fresh Lua state.
+///
+/// Function can be called with nullptr, but then the monster definition files
+/// may throw warnings for undefined stuff - and fail subsequently -, as a fresh Lua state will be created
+/// which, for example, doesn't know about Weapons, etc.  IF IN DOUBT, TRY TO CALL IT WITH A PROPER LUA STATE!
 
-void World::scan_monster_definition_files()
+void World::scan_monster_definition_files(lua_State* lua_state)
 {
 	_bestiary_names_and_paths.clear();
+	lua_State* l = lua_state;
 
 	for (boost::filesystem::directory_iterator itr((conf_world_path / "bestiary"));
 			itr != boost::filesystem::directory_iterator();
 			++itr)
 	{
-		lua_State* l = luaL_newstate();
-		luaL_openlibs(l);
+		// Only use a brandnew Lua state, if none was passed into function.
+		if (lua_state == nullptr) {
+			l = luaL_newstate();
+			luaL_openlibs(l);
+		}
+
 		LuaWrapper lua_wrapper(l);
 
-		if (itr->path().string().find(".lua") == std::string::npos)
+		if (itr->path().string().find(".lua") == std::string::npos) {
+			if (lua_state == nullptr)
+				lua_close(l);
 			continue;
+		}
 
 		if (luaL_dofile(l, itr->path().string().c_str())) {
 			std::cerr << "WARNING: world.cc: scan_monsters: Couldn't execute Lua file: " << lua_tostring(l, -1)
 					  << ". Game not properly installed or incomplete?\n";
+			if (lua_state == nullptr)
+				lua_close(l);
 			continue;
 		}
 
-		if (!lua_wrapper.is_defined("get_name"))
+		if (lua_wrapper.check_item_prop_is_nilornone(std::vector<std::string> { "get_name" })) {
+			if (lua_state == nullptr)
+				lua_close(l);
 			continue;
+		}
 
 		std::string name = lua_wrapper.call_fn<std::string>("get_name");
 		std::pair<std::string,std::string> pair(name, itr->path().filename().string());
 		_bestiary_names_and_paths.insert(pair);
 
-		lua_close(l);
+		if (lua_state == nullptr)
+			lua_close(l);
 	}
 }
 

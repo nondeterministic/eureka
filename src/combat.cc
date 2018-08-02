@@ -22,6 +22,7 @@
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <cmath>
 
 #include <boost/bind.hpp>
 #include <boost/unordered_set.hpp>
@@ -67,15 +68,15 @@ extern "C"
 
 Combat::Combat()
 {
-	party = &Party::Instance();
-	em = &EventManager::Instance();
-	fled = false;
-	party->is_in_combat = true;
+	_party = &Party::Instance();
+	_em = &EventManager::Instance();
+	_fled = false;
+	_party->is_in_combat = true;
 }
 
 Combat::~Combat()
 {
-	party->is_in_combat = false;
+	_party->is_in_combat = false;
 }
 
 // Returns true on victory, false otherwise.
@@ -86,20 +87,20 @@ Combat_Return_Codes Combat::initiate()
 
 	// This if-block is executed, when foes are left over from a previous encounter.
 	// Otherwise, the random monster generation below is executed first.
-	if (foes.size() > 0) {
-		mwin.display_texture(foes.pic(mwin.get_renderer()));
+	if (_foes.size() > 0) {
+		mwin.display_texture(_foes.pic(mwin.get_renderer()));
 
 		std::stringstream ss;
 		ss << "You're faced with "
-				<< foes.to_string() << ".\n"
+				<< _foes.to_string() << ".\n"
 				<< "Do you wish to "
-				<< (foes.closest_range() > 10 ? "(a)dvance, " : "")
+				<< (_foes.closest_range() > 10 ? "(a)dvance, " : "")
 				<< "(f)ight or attempt to (r)un?";
 		printcon(ss.str());
 
-		switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
+		switch (_em->get_key(_foes.closest_range() > 10 ? "afr" : "fr")) {
 		case 'a':
-			if (foes.closest_range() > 10) {
+			if (_foes.closest_range() > 10) {
 				advance_party();
 				foes_fight();
 				return initiate();
@@ -108,7 +109,7 @@ Combat_Return_Codes Combat::initiate()
 		case 'f':
 			fight(attack_options());
 
-			if (foes.size() > 0)
+			if (_foes.size() > 0)
 				return initiate();
 			else {
 				victory();
@@ -125,12 +126,12 @@ Combat_Return_Codes Combat::initiate()
 	if (create_random_monsters()) {
 		std::string nameWhoNoticedMonsters = noticed_monsters();
 		if (nameWhoNoticedMonsters.length() > 0) {
-			if (party->is_resting) {
+			if (_party->is_resting) {
 				printcon(nameWhoNoticedMonsters + (std::string)" heard some suspicious " +
 						(std::string)"noise nearby. Do you wish to " +
 						(std::string)"(i)nvestigate or (k)eep still?");
 
-				if (em->get_key("ik") == 'k') {
+				if (_em->get_key("ik") == 'k') {
 					printcon("Indeed, it seems it was nothing.");
 					mwin.display_last();
 					return NOT_INITIATED;
@@ -141,7 +142,7 @@ Combat_Return_Codes Combat::initiate()
 						(std::string)"noise nearby. Do you wish to " +
 						(std::string)"(i)nvestigate or (m)ove on?");
 
-				if (em->get_key("im") == 'm') {
+				if (_em->get_key("im") == 'm') {
 					printcon("You got away this time!");
 					mwin.display_last();
 					return NOT_INITIATED;
@@ -149,18 +150,18 @@ Combat_Return_Codes Combat::initiate()
 			}
 
 			mwin.save_texture();
-			mwin.display_texture(foes.pic(mwin.get_renderer()));
+			mwin.display_texture(_foes.pic(mwin.get_renderer()));
 			std::stringstream ss;
 			ss << "Upon getting closer you spotted "
-					<< foes.to_string() << ".\n"
+					<< _foes.to_string() << ".\n"
 					<< "Do you wish to "
-					<< (foes.closest_range() > 10 ? "(a)dvance, " : "")
+					<< (_foes.closest_range() > 10 ? "(a)dvance, " : "")
 					<< "(f)ight or attempt to (s)neak away?";
 			printcon(ss.str());
 
-			switch (em->get_key(foes.closest_range() > 10 ? "afs" : "fs")) {
+			switch (_em->get_key(_foes.closest_range() > 10 ? "afs" : "fs")) {
 			case 'a':
-				if (foes.closest_range() > 10) {
+				if (_foes.closest_range() > 10) {
 					advance_party();
 					foes_fight();
 					return initiate();
@@ -169,7 +170,7 @@ Combat_Return_Codes Combat::initiate()
 			case 'f':
 				fight(attack_options());
 
-				if (foes.size() <= 0) {
+				if (_foes.size() <= 0) {
 					victory();
 					return VICTORY;
 				}
@@ -185,21 +186,21 @@ Combat_Return_Codes Combat::initiate()
 		// Monsters were not noticed by party first...
 		else {
 			mwin.save_texture();
-			mwin.display_texture(foes.pic(mwin.get_renderer()));
+			mwin.display_texture(_foes.pic(mwin.get_renderer()));
 			std::stringstream ss;
-			if (party->is_resting)
+			if (_party->is_resting)
 				ss << "You suddenly find your camp surrounded by ";
 			else
 				ss << "Your stalwart party is brought to a halt by ";
-			ss << foes.to_string() << ".\n";
+			ss << _foes.to_string() << ".\n";
 			ss << "Do you wish to ";
-			ss << (foes.closest_range() > 10 ? "(a)dvance, " : "");
+			ss << (_foes.closest_range() > 10 ? "(a)dvance, " : "");
 			ss << "(f)ight or attempt to (r)un?";
 			printcon(ss.str());
 
-			switch (em->get_key(foes.closest_range() > 10 ? "afr" : "fr")) {
+			switch (_em->get_key(_foes.closest_range() > 10 ? "afr" : "fr")) {
 			case 'a':
-				if (foes.closest_range() > 10) {
+				if (_foes.closest_range() > 10) {
 					advance_party();
 					foes_fight();
 					return initiate();
@@ -208,7 +209,7 @@ Combat_Return_Codes Combat::initiate()
 			case 'f':
 				fight(attack_options());
 
-				if (foes.size() <= 0) {
+				if (_foes.size() <= 0) {
 					victory();
 					return VICTORY;
 				}
@@ -248,11 +249,11 @@ Combat_Return_Codes Combat::initiate()
 std::vector<AttackOption*> Combat::attack_options()
 {
 	std::vector<AttackOption*> attackOptions;
-	attackOptions.reserve(party->size());
-	attackOptions.resize(party->size());
+	attackOptions.reserve(_party->size());
+	attackOptions.resize(_party->size());
 
-	for (int player_no = 0; player_no < party->size(); player_no++) {
-		PlayerCharacter* player = party->get_player(player_no);
+	for (int player_no = 0; player_no < _party->size(); player_no++) {
+		PlayerCharacter* player = _party->get_player(player_no);
 
 		if (player->is_npc())
 			continue;
@@ -280,12 +281,12 @@ std::vector<AttackOption*> Combat::attack_options()
 		printcon(ss.str());
 		ss.str("");
 
-		char input = em->get_key(key_inputs.c_str());
+		char input = _em->get_key(key_inputs.c_str());
 
 		if (input == 'a') {
 			attackOptions[player_no] = new AttackOption(player_no, global_lua_state);
 
-			if (foes.amount()->size() == 1) {
+			if (_foes.amount()->size() == 1) {
 				attackOptions[player_no]->set_target(1);
 			}
 			else {
@@ -293,7 +294,7 @@ std::vector<AttackOption*> Combat::attack_options()
 
 				string attacked_name;
 				int j = 1;
-				for (auto foe : *(foes.amount())) {
+				for (auto foe : *(_foes.amount())) {
 					if (attacked == j)
 						attacked_name = foe.first;
 					j++;
@@ -414,12 +415,12 @@ void Combat::add_to_bounty(Item* i)
 
 int Combat::party_fight(std::vector<AttackOption*> attacks)
 {
-	if ((int)attacks.size() < party->size())
+	if ((int)attacks.size() < _party->size())
 		std::cerr << "ERROR: combat.cc: Attack choices < party size. This is serious.\n";
 
 	// The party's moves...
 	int i = 0;
-	for (auto player = party->begin(); player != party->end(); i++, player++) {
+	for (auto player = _party->begin(); player != _party->end(); i++, player++) {
 		if (player->condition() == DEAD)
 			continue;
 
@@ -446,7 +447,7 @@ void Combat::victory()
 		ZtatsWin& zwin = ZtatsWin::Instance();
 		printcon("As the dust of battle lifts, some items are left over. Dost thou wish to pick them up? (y/n)", true);
 
-		switch (em->get_key("yn")) {
+		switch (_em->get_key("yn")) {
 		case 'y': {
 			mwin.save_texture();
 			mwin.clear();
@@ -460,7 +461,7 @@ void Combat::victory()
 			for (auto item: selected_items) {
 				// Determine how many there are in the bounty of the current item...
 				for (unsigned i = 0; i < _bounty_items.how_many_of(item->name(), item->description()); i++) {
-					party->inventory()->add(item);
+					_party->inventory()->add(item);
 				}
 			}
 
@@ -508,12 +509,12 @@ int Combat::foes_fight()
 	LuaWrapper lua(global_lua_state);
 	boost::unordered_set<std::string> moved;
 
-	for (int i = 0; i < foes.size(); i++) {
+	for (int i = 0; i < _foes.size(); i++) {
 		boost::filesystem::path beast_path(conf_world_path);
 		beast_path /= "bestiary";
 
 		try {
-			Creature* foe = foes.get()->at(i).get();
+			Creature* foe = _foes.get()->at(i).get();
 			// This can throw an exception (see below!) If it doesn't, it means
 			// we're dealing with a monster from bestiary/.  (Otherwise, town folk.)
 			beast_path /= World::Instance().get_monster_filename(foe->name());
@@ -523,59 +524,61 @@ int Combat::foes_fight()
 			// to.  (I know, this is very crazy code, but life is crazy.)
 			std::ostringstream thiss;
 			thiss << (void const *)this;
+
 			lua.push_fn_arg((double)i);
 			lua.push_fn_arg((std::string)thiss.str());
-			lua.call_void_fn("set_combat_ptr");
+			lua.call_void_fn(std::vector<std::string> { "Bestiary", foe->name(), "set_combat_ptr" });
 
 			lua.push_fn_arg((double)foe->gold());
-			lua.call_void_fn("set_gold");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "gold" });
 
 			// There are monsters, such as spiders, that don't have a weapon!
 			if (foe->weapon() != NULL) {
 				lua.push_fn_arg((std::string)foe->weapon()->name());
-				lua.call_void_fn("set_weapon");
+				lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "weapon_name" });
 			}
 
 			lua.push_fn_arg((double)foe->luck());
-			lua.call_void_fn("set_luck");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "luck" });
 
 			lua.push_fn_arg((double)foe->dxt());
-			lua.call_void_fn("set_dxt");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "dxt" });
 
 			lua.push_fn_arg((double)foe->hp());
-			lua.call_void_fn("set_hp");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "hp" });
 
 			lua.push_fn_arg((double)foe->hpm());
-			lua.call_void_fn("set_hp_max");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "hp_max" });
 
 			lua.push_fn_arg((double)foe->distance());
-			lua.call_void_fn("set_distance");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", foe->name(), "distance" });
 
-			if (lua.call_fn<bool>("advance") &&                // Foes want to advance? - as opposed to, say, fight from the distance
+			if (lua.get_item_prop<bool>(std::vector<std::string> { "Bestiary", foe->name(), "advance" }) &&                // Foes want to advance? - as opposed to, say, fight from the distance
 					moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
 				moved = advance_foes();                        // Attempt to move
 
-			if (moved.find(foe->name()) == moved.end() && lua.call_fn<bool>("attack") && !fled)
-				lua.call_fn<double>("fight");
+			// If not moved and not fled, attack!
+			if (moved.find(foe->name()) == moved.end() && !_fled)
+				lua.call_void_fn(std::vector<std::string> { "Bestiary", foe->name(), "attack" });
 
 			// All of the party died of the attack?
-			if (party->party_alive() == 0) {
+			if (_party->party_alive() == 0) {
 				GameControl::Instance().game_over();
 				return 0;
 			}
 
-			if (fled)
+			if (_fled)
 				i--;
-			fled = false;
+			_fled = false;
 		} catch (...) {
-			cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) <<
-					". Assuming instead that we're fighting with someone from an indoors map...\n";
+			std::cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua fight-file, "
+					  << "assuming instead that we're fighting with someone from an indoors map.\n";
 
-			if (lua.call_fn<bool>("attack") && !fled)
-				lua.call_fn<double>("fight");
+			if (lua.call_fn<bool>("attack") && !_fled)
+				lua.call_void_fn("fight");
 
 			// All of the party died of the attack?
-			if (party->party_alive() == 0) {
+			if (_party->party_alive() == 0) {
 				GameControl::Instance().game_over();
 				return 0;
 			}
@@ -596,19 +599,19 @@ int Combat::select_enemy()
 	std::stringstream options;
 	int i = 0;
 
-	for (auto foe : *(foes.amount())) {
+	for (auto foe : *(_foes.amount())) {
 		options << ++i;
 		std::stringstream ss;
 		ss << i << ") " << foe.second << " ";
 		if (foe.second > 1)
-			ss << foes.get_plural_name(foe.first);
+			ss << _foes.get_plural_name(foe.first);
 		else
 			ss << foe.first;
-		ss << " (" << foes.get_distance(foe.first) << "')";
+		ss << " (" << _foes.get_distance(foe.first) << "')";
 		printcon(ss.str());
 	}
 
-	char pressed = em->get_key(options.str().c_str());
+	char pressed = _em->get_key(options.str().c_str());
 	return atoi(&pressed);
 }
 
@@ -618,24 +621,24 @@ int Combat::select_enemy()
 
 void Combat::flee_foe(int n)
 {
-  Creature* foe = foes.get()->at(n).get();
+  Creature* foe = _foes.get()->at(n).get();
   std::stringstream ss;
-  if (foes.amount()->at(foe->name()) == 1)
+  if (_foes.amount()->at(foe->name()) == 1)
     ss << "The " << foe->name() << " flees.";
   else
     ss << "A" << (Util::vowel(foe->name()[0])? "n " : " ")  << foe->name() << " flees.";
   printcon(ss.str(), true);
 
   std::cout << "About to remove " << n << "-th foe\n";
-  foes.remove(n);
-  fled = true;
+  _foes.remove(n);
+  _fled = true;
 }
 
 /// Called advance party, but really decreases monsters' distances.
 
 void Combat::advance_party()
 {
-  for (auto itr = foes.begin(); itr != foes.end(); itr++) {
+  for (auto itr = _foes.begin(); itr != _foes.end(); itr++) {
     if ((*itr)->distance() > 10)
       (*itr)->set_distance((*itr)->distance() - 10);
   }
@@ -644,12 +647,12 @@ void Combat::advance_party()
 
 Attackers& Combat::get_foes()
 {
-	return foes;
+	return _foes;
 }
 
 void Combat::set_foes(Attackers new_foes)
 {
-	foes = new_foes;
+	_foes = new_foes;
 }
 
 /// Advances the foes by 10' and returns the name of the foes that have moved.
@@ -657,8 +660,8 @@ void Combat::set_foes(Attackers new_foes)
 boost::unordered_set<std::string> Combat::advance_foes()
 {
   boost::unordered_set<string> moved;
-  boost::unordered_map<int, std::string> distances = foes.distances();
-  for (auto foe = foes.begin(); foe != foes.end(); foe++) {
+  boost::unordered_map<int, std::string> distances = _foes.distances();
+  for (auto foe = _foes.begin(); foe != _foes.end(); foe++) {
     if ((*foe)->distance() >= 20 && moved.find((*foe)->name()) == moved.end()) {
       try {
         // See if foe can move backwards or if this slot is blocked by other foes.
@@ -666,10 +669,10 @@ boost::unordered_set<std::string> Combat::advance_foes()
         distances.at((*foe)->distance() - 10);
       }
       catch (std::out_of_range& oor) {
-        foes.move((*foe)->name().c_str(), -10);
+        _foes.move((*foe)->name().c_str(), -10);
         moved.insert((*foe)->name());
-        distances = foes.distances();
-        if (foes.amount()->at((*foe)->name()) == 1)
+        distances = _foes.distances();
+        if (_foes.amount()->at((*foe)->name()) == 1)
           printcon("The " + (*foe)->name() + " advances.", true);
         else
           printcon("The " + (*foe)->plural_name() + " advance.", true);
@@ -696,24 +699,16 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 	// Load generic Lua script for fighting which is referenced by every town folk
 	// Town folk don't have dedicated combat functions as it's not the norm that the party will attack town people.
 	lua.push_fn_arg((std::string)((conf_world_path / "people" / "generic_fight.lua").c_str()));
-	lua.call_fn_leave_ret_alone("load_generic_fight_file");
-
-	// Push c_values table onto Lua stack...
-	// In fact, pushes only one cell to stack, which is then popped below,
-	// cf. http://stackoverflow.com/questions/1217423/how-to-use-lua-pop-function-correctly
-	lua_getglobal(global_lua_state, "c_values");
-	// ...then access its values
+	lua.call_void_fn(std::vector<std::string> { "load_generic_fight_file" });
     std::shared_ptr<GameCharacter> foe = std::static_pointer_cast<GameCharacter>(create_character_values_from_lua(global_lua_state));
-    // Pop Lua stack!
-    lua_pop(global_lua_state, 1);
 
     // Turn GameCharacter, foe, into Creature, creature; that is, enrich foe with the missing informations.
     Creature creature(*(foe.get()));
     creature.set_img(lua.call_fn<std::string>("img_path"));
 	creature.set_distance(10);
 
-    foes.amount()->insert(std::make_pair(foe->name(), 1));
-    foes.add(std::make_shared<Creature>(creature));
+    _foes.amount()->insert(std::make_pair(foe->name(), 1));
+    _foes.add(std::make_shared<Creature>(creature));
 
 	return true;
 }
@@ -736,7 +731,7 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 
 	int number_of_enemies = random(1, 6);
 	int distance = random(1,3) * 10;
-	std::string name = lua.call_fn<std::string>("get_name");
+	std::string name = lua.call_fn<std::string>(std::vector<std::string> { "get_name" });
 
 	for (int i = 0; i < number_of_enemies; i++) {
 		std::shared_ptr<Creature> monster(new Creature());
@@ -744,32 +739,33 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 		// Set distance
 		monster->set_distance(distance);
 		lua.push_fn_arg((double)distance);
-		lua.call_void_fn("set_distance");
+		lua.set_item_prop(std::vector<std::string> { "Bestiary", name, "distance" });
 
 		// Set rest of params
-		monster->set_img(lua.call_fn<std::string>("img_path"));
-		monster->set_name(lua.call_fn<std::string>("get_name"));
-		monster->set_plural_name(lua.call_fn<std::string>("get_plural_name"));
+		monster->set_name(name);
+		monster->set_img(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "img_path" }));
+		monster->set_plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "plural_name" }));
 
 		// Create lua instance of monster and set further params
-		lua.call_void_fn("create_instance");
-		monster->set_hp(lua.call_fn<double>("get_hp"));
-		monster->set_hpm(lua.call_fn<double>("get_hp_max"));
-		monster->set_str(lua.call_fn<double>("get_strength"));
-		monster->set_luck(lua.call_fn<double>("get_luck"));
-		monster->set_gold(lua.call_fn<double>("get_gold"));
+		lua.call_void_fn(std::vector<std::string> { "Bestiary", name, "create_instance" });
+		monster->set_hp(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "hp" }));
+		monster->set_hpm(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "hp_max" }));
+		monster->set_str(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "strength" }));
+		monster->set_luck(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "luck" }));
+		monster->set_gold(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "gold" }));
 
 		// If Lua-land returns empty string, then the monster has no weapon!
-		if (lua.call_fn<std::string>("get_weapon").length() > 0) {
-			Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), global_lua_state);
+		std::string weapon_name = lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "weapon_name" });
+		if (weapon_name.length() > 0) {
+			Weapon* wep = WeaponHelper::createFromLua(weapon_name, global_lua_state);
 			monster->set_weapon(wep);
 		}
 
 		// Add monster to rooster of attackers
-		foes.add(monster);
+		_foes.add(monster);
 	}
 
-    foes.amount()->insert(std::make_pair(name, number_of_enemies));
+    _foes.amount()->insert(std::make_pair(name, number_of_enemies));
 
 	return true;
 }
@@ -777,7 +773,7 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 bool Combat::create_random_monsters()
 {
 	LuaWrapper lua(global_lua_state);
-	std::pair<int,int> coords = party->get_coords();
+	std::pair<int,int> coords = _party->get_coords();
 	int icon_no = GameControl::Instance().get_arena()->get_map()->get_tile(coords.first, coords.second);
 	std::string icon_descr = "plain"; // Useless default icon description/name
 
@@ -786,8 +782,10 @@ bool Combat::create_random_monsters()
 	else
 		icon_descr = IndoorsIcons::Instance().get_props(icon_no)->get_name();
 
+	int stack_size_before_result = lua_gettop(global_lua_state);
+
 	lua.push_fn_arg(icon_descr); // The type of terrain the party is on...
-	lua.call_fn_leave_ret_alone("rand_encounter"); // leave_ret_alone because the return type is complex and needs manual dissection
+	lua.call_fn_leave_ret_alone(std::vector<std::string> { "rand_encounter" }); // leave_ret_alone because the return type is complex and needs manual dissection
 
 	int monsterDistance = -1;
 
@@ -824,7 +822,7 @@ bool Combat::create_random_monsters()
 
 			// If everything was set, add monster to datastructure...
 			if (__name.length() > 0 && __number >= 0) {
-				foes.amount()->insert(std::make_pair(Util::capitalise_first_letter(__name), __number));
+				_foes.amount()->insert(std::make_pair(Util::capitalise_first_letter(__name), __number));
 				// std::cout << "Inserting: " << __name << ": " << __number << "\n";
 			}
 
@@ -833,13 +831,34 @@ bool Combat::create_random_monsters()
 
 		lua_pop(global_lua_state, 1);
 	}
+	lua_pop(global_lua_state, 1);
+
+	// TODO: In production code, such Lua stack size checks should be unnecessary. For now, keep!  (See also, below!)
+	if (lua_gettop(global_lua_state) != stack_size_before_result) {
+		int stack_difference = std::abs(std::abs(stack_size_before_result) - std::abs(lua_gettop(global_lua_state)));
+		std::cout << "WARNING: combat.cc: create_random_monsters(): Due to incorrect Lua stack size, popping "
+				  << stack_difference << " off the Lua stack.\n";
+		lua_pop(global_lua_state, stack_difference);
+	}
+
+	// Remove all occurrences of monsters with count 0.  These may be returned by the Lua
+	// defs file for bookkeeping reasons, but we should eliminate them before we create
+	// monster instances.
+	for (auto foe = _foes.amount()->begin(); foe != _foes.amount()->end(); foe++) {
+		std::string monsterName = foe->first;
+		int count = foe->second;
+
+		if (count == 0) {
+			foe = _foes.amount()->erase(foe);
+		}
+	}
 
 	// Now populate foe data structure with some further monster stats
 	// according to the individual lua monster definitions
 
 	// TODO: The way we iterate through the monsters means they always
 	// appear in the same order when attacking in groups
-	for (auto foe = foes.amount()->begin(); foe != foes.amount()->end(); foe++, monsterDistance += 10) {
+	for (auto foe = _foes.amount()->begin(); foe != _foes.amount()->end(); foe++, monsterDistance += 10) {
 		std::string monsterName = foe->first;
 		int count = foe->second;
 
@@ -858,47 +877,67 @@ bool Combat::create_random_monsters()
 				// But because this bug is difficult to reproduce, will keep this for now.
 				// Could be that this happens, when called with an already corrupted Lua state above...
 				// Try out if we can't use a fresh Lua state for this method instead.
-				std::cerr << "combat.cc: create_random_monsters(): monsterName is empty. This is serious and could mean the Lua stack is corrupted. "
-						<< "You probably want to save the game state and reload it as the game could crash soon. Sorry. :-(\n";
+				std::cerr << "combat.cc: create_random_monsters: get_monster_filename() for '" << monsterName
+						<< "' failed. (This is serious and could mean the Lua stack is corrupted. "
+						<< "You probably want to save the game state and reload it as the game could crash soon.)\n";
 				return false;
 			}
 
+			int stack_size_before_monster_def = lua_gettop(global_lua_state);
+
 			if (luaL_dofile(global_lua_state, beast_path.c_str())) {
-				std::cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file: "
-						<< lua_tostring(global_lua_state, -1) << std::endl;
+				std::cerr << "ERROR: combat.cc::create_random_monsters(): Couldn't execute Lua file "
+						  << beast_path << ": "
+						  << lua_tostring(global_lua_state, -1) << std::endl;
 				std::exit(EXIT_FAILURE);
 			}
+			else
+				std::cout << "INFO: combat.cc: loaded " << beast_path.c_str() << ".\n";
+
+			int stack_size_after_monster_def = lua_gettop(global_lua_state);
 
 			// Set distance
 			monster->set_distance(monsterDistance);
 			lua.push_fn_arg((double)monsterDistance);
-			lua.call_void_fn("set_distance");
+			lua.set_item_prop(std::vector<std::string> { "Bestiary", monsterName, "distance" });
 
 			// Set rest of params
-			monster->set_img(lua.call_fn<std::string>("img_path"));
-			monster->set_name(lua.call_fn<std::string>("get_name"));
-			monster->set_plural_name(lua.call_fn<std::string>("get_plural_name"));
+			monster->set_name(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", monsterName, "name" }));
+			monster->set_plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", monsterName, "plural_name" }));
 
 			// Create lua instance of monster and set further params
-			lua.call_void_fn("create_instance");
-			monster->set_hp(lua.call_fn<double>("get_hp"));
-			monster->set_hpm(lua.call_fn<double>("get_hp_max"));
-			monster->set_str(lua.call_fn<double>("get_strength"));
-			monster->set_luck(lua.call_fn<double>("get_luck"));
-			monster->set_gold(lua.call_fn<double>("get_gold"));
+			lua.call_void_fn(std::vector<std::string> { "Bestiary", monsterName, "create_instance" });
+			monster->set_hp(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", monsterName, "hp" }));
+			monster->set_hpm(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", monsterName, "hp_max" }));
+			monster->set_str(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", monsterName, "strength" }));
+			monster->set_luck(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", monsterName, "luck" }));
+			monster->set_gold(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", monsterName, "gold" }));
+			monster->set_img(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", monsterName, "img_path" }));
 
-			// If Lua-land returns empty string, then the monster has no weapon!
-			if (lua.call_fn<std::string>("get_weapon").length() > 0) {
-				Weapon* wep = WeaponHelper::createFromLua(lua.call_fn<std::string>("get_weapon"), global_lua_state);
+			// Check if monster has weapon
+			if (!lua.check_item_prop_is_nilornone(std::vector<std::string> { "Bestiary", monsterName, "weapon" })) {
+				Weapon* wep = WeaponHelper::createFromLua(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", monsterName, "weapon", "name" }), global_lua_state);
 				monster->set_weapon(wep);
 			}
 
+			// Now, for sanity, we do some Lua stack size checking...
+			// TODO: This should not be necessary and can later be removed.
+			if (lua_gettop(global_lua_state) != stack_size_after_monster_def)
+				std::cerr << "WARNING: combat.cc: create_random_monsters() changed Lua stack by "
+						  << std::abs(std::abs(lua_gettop(global_lua_state)) - std::abs(stack_size_after_monster_def)) << ".\n";
+
+			int stack_difference = std::abs(std::abs(stack_size_after_monster_def) - std::abs(stack_size_before_monster_def));
+			if (stack_difference != 0) {
+				std::cout << "INFO: combat.cc: create_random_monsters(): popping " << stack_difference << " off the Lua stack.\n";
+				lua_pop(global_lua_state, stack_difference);
+			}
+
 			// Add monster to rooster of attackers
-			foes.add(monster);
+			_foes.add(monster);
 		}
 	}
 
-	return foes.amount()->size() > 0;
+	return _foes.amount()->size() > 0;
 }
 
 /// Returns the name of a player, if the player noticed nearby monsters
@@ -910,13 +949,13 @@ std::string Combat::noticed_monsters()
 	std::string name = "";
 
 	// If a dog is in the party, it will ALWAYS hear the enemy first - obviously.
-	PlayerCharacter* npc = party->get_npc_or_null();
+	PlayerCharacter* npc = _party->get_npc_or_null();
 	if (npc != NULL && npc->race() == RACE::DOG)
 		return "Your good dog " + npc->name();
 
 	// When resting only that player may notice monsters...
-	if (party->is_resting) {
-		PlayerCharacter* p = party->get_guard();
+	if (_party->is_resting) {
+		PlayerCharacter* p = _party->get_guard();
 
 		if (p == NULL)
 			return name;
@@ -928,7 +967,7 @@ std::string Combat::noticed_monsters()
 	}
 	// When not resting, we can try whole party...
 	else {
-		for (auto curr_player = party->begin(); curr_player != party->end(); curr_player++) {
+		for (auto curr_player = _party->begin(); curr_player != _party->end(); curr_player++) {
 			if (curr_player->condition() == DEAD)
 				continue;
 

@@ -10,7 +10,7 @@ Potions["healing potion"]  = {
    
    food_up                = 0,
    healing_power          = "some",
-   poison_healing_power   = "some",
+   poison_healing_power   = "none",
    poisonous              = "none",
    magic_herb             = false,
    intoxicating_effect    = "none",

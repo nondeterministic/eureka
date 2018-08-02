@@ -66,7 +66,7 @@ do
       
       if (answer == "y") then
          simpl_printcon("I knew you had a good heart and would not let the others down. I shall join thee in that fight and way back to the surface.")
-         join_successful = simpl_join(c_values)
+         join_successful = simpl_join()
          simpl_remove_from_current_map("wife")
          conv_over = true
          return true

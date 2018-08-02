@@ -29,6 +29,7 @@
 #include "gold.hh"
 #include "creature.hh"
 #include "gamerules.hh"
+#include "world.hh"
 
 extern "C"
 {
@@ -140,14 +141,24 @@ void AttackOption::execute(Combat* combat)
 	}
 
 	if (enemy_is_hit) {
-		ss << " and hits for " << damage << " points of damage.";
+		ss << " and hits for " << damage << " points of damage";
+
 		if (opponent->hp() - damage > 0) {
+			ss << ".";
 			opponent->set_hp(opponent->hp() - damage);
 			lua.push_fn_arg((double)(opponent->hp() - damage));
-			lua.call_void_fn("set_hp");
+
+			// Check, if we're fighting town folk or a predefined monster, and set HP accordingly.
+			// TODO: Not sure, if we need to set HP for town folks at all though...
+			try {
+				World::Instance().get_monster_filename(opponent->name());
+				lua.set_item_prop(std::vector<std::string> { "Bestiary", opponent->name(), "hp" }); // ordinary monster
+			} catch (...) {
+				lua.set_item_prop(std::vector<std::string> { "c_values", "hp" }); // town folk
+			}
 		}
 		else {
-			ss << " killing the " << opponent->name() << ".";
+			ss << ", killing the " << opponent->name() << ".";
 			combat->get_foes().remove(opponent_offset);
 
 			// Add experience points to player's balance

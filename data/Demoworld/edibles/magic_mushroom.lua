@@ -14,7 +14,7 @@ Edibles["magic mushroom"]  = {
    magic_herb             = false,
    intoxicating_effect    = "very_strong",
 
-   gold          = 1,
+   gold          = 50,
    weight        = 1,
    icon          = 1059
 }

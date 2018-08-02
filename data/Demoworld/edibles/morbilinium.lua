@@ -14,7 +14,7 @@ Edibles["morbilinium"]  = {
    magic_herb             = true,
    intoxicating_effect    = "none",
 
-   gold          = 1,
+   gold          = 3,
    weight        = 0,
    icon          = 909
 }

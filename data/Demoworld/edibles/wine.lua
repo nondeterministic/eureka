@@ -14,7 +14,7 @@ Edibles["wine"]  = {
    magic_herb             = false,
    intoxicating_effect    = "some",     -- see eureka.hh
 
-   gold          = 1,
+   gold          = 3,
    weight        = 1,
    icon          = 1129
 }

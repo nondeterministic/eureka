@@ -1019,7 +1019,7 @@
       <icon no="1006" trans="full" walk="full">nothing special</icon>
       <icon no="1007" trans="full" walk="full">nothing special</icon>
       <icon no="1008" trans="full" walk="full">nothing special</icon>
-      <icon no="1009" trans="full" walk="full">nothing special</icon>
+      <icon no="1009" trans="full" walk="full" default_lua_name="edibles::rosaceae">a rosaceae flower</icon>
       <icon no="1010" trans="full" walk="full">nothing special</icon>
       <icon no="1011" trans="full" walk="full">nothing special</icon>
       <icon no="1012" trans="full" walk="full">nothing special</icon>
@@ -1070,9 +1070,9 @@
       <icon no="1057" trans="full" walk="full">nothing special</icon>
       <icon no="1058" trans="full" walk="full">nothing special</icon>
       <icon no="1059" trans="full" walk="full" default_lua_name="edibles::magic mushroom">some magic mushrooms</icon>
-      <icon no="1060" trans="full" walk="full">nothing special</icon>
-      <icon no="1061" trans="full" walk="full">nothing special</icon>
-      <icon no="1062" trans="full" walk="full">nothing special</icon>
+      <icon no="1060" trans="full" walk="full" default_lua_name="edibles::anthurium">an anthurium flower</icon>
+      <icon no="1061" trans="full" walk="full" default_lua_name="edibles::bellis perennis">a bellis perennis flower</icon>
+      <icon no="1062" trans="full" walk="full" default_lua_name="edibles::scleranthus">a scleranthus flower</icon>
       <icon no="1063" trans="full" walk="full">nothing special</icon>
       <icon no="1064" trans="full" walk="full">nothing special</icon>
       <icon no="1065" trans="full" walk="full">nothing special</icon>

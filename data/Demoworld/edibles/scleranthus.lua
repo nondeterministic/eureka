@@ -3,18 +3,18 @@
 -- Copyright (c) Andreas Bauer <a@pspace.org>
 -- -----------------------------------------------
 
-Edibles["sulphur"]  = { 
-   name          = "sulphur", 
-   plural_name   = "sulphur", 
+Edibles["scleranthus"]  = { 
+   name          = "scleranthus", 
+   plural_name   = "scleranthus", 
 
    food_up                = 0,
    healing_power          = "none",
    poison_healing_power   = "very_little",
-   poisonous              = "some",
+   poisonous              = "very_little",
    magic_herb             = true,
    intoxicating_effect    = "none",
 
-   gold          = 5,
+   gold          = 3,
    weight        = 0,
-   icon          = 1084
+   icon          = 1062
 }

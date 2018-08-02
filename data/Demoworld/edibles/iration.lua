@@ -14,7 +14,7 @@ Edibles["iron ration"]  = {
    magic_herb             = false,
    intoxicating_effect    = "none",
 
-   gold                   = 3,
+   gold                   = 20,
    weight                 = 2,
    icon                   = 5
 }

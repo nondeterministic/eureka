@@ -1,22 +1,3 @@
-// This source file is part of eureka
-//
-// Copyright (c) 2007-2018 Andreas Bauer <a@pspace.org>
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-// USA.
-
 #ifndef __LUAWRAPPER_HH
 #define __LUAWRAPPER_HH
 
@@ -25,11 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-
-extern "C"
-{
 #include <lua.h>
-}
 #include <boost/variant.hpp>
 
 typedef boost::variant<std::string, double, bool> LuaT;
@@ -37,7 +14,7 @@ typedef boost::variant<std::string, double, bool> LuaT;
 class visitor : public boost::static_visitor<>
 {
 private:
-	lua_State* l;
+	lua_State* _ll;
 
 public:
 	visitor(lua_State* ll);
@@ -50,26 +27,39 @@ public:
 class LuaWrapper
 {
 private:
-	lua_State* l;
-	std::list<LuaT> args;
+	lua_State* _l;
+	std::list<LuaT> _args;
+	int _initial_stack_size;
 
-	void get_item_prop_getter(std::string item_array, std::string item_id, std::string prop);
-	void get_item_prop_cleaner();
-	void make_fn_call(std::string fn_name, int arguments, int return_values, int error = 0);
-	void handle_error(std::string);
+	int get_item_prop_getter(std::vector<std::string>);
+	int make_fn_call(std::vector<std::string>, int);
+	void handle_error(std::vector<std::string>);
+	std::string object_path_to_string(std::vector<std::string>);
 
 public:
 	LuaWrapper(lua_State* state);
-	bool hasEntry(std::string, std::string);
-	void push_fn_arg(LuaT arg);
-	template <class T> T call_fn(std::string fn_name, unsigned ret_vals = 1, bool handle_return = true);
-	template <class T> T get_item_prop(std::string item_array, std::string item_id, std::string prop);
-	std::vector<std::string> get_strings_from_subtable(std::string item_array, std::string item_id, std::string prop);
-	std::vector<std::string> get_itemids_from_itemarray(std::string item_array);
-	void call_void_fn(std::string fn_name);
-	void call_fn_leave_ret_alone(std::string fn_name, int ret_vals = 1);
-	bool is_defined(std::string);
+	~LuaWrapper();
 
+	int get_stack_difference();
+	void push_fn_arg(LuaT arg);
+	template <class T> T call_fn(std::string, unsigned ret_vals = 1, bool handle_return = true);
+	template <class T> T call_fn(std::vector<std::string>, unsigned ret_vals = 1, bool handle_return = true);
+	void call_void_fn(std::vector<std::string>);
+	void call_void_fn(std::string);
+	int call_fn_leave_ret_alone(std::vector<std::string>, unsigned ret_vals = 1);
+
+	template <class T> T get_item_prop(std::vector<std::string>);
+
+	void set_item_prop(std::vector<std::string>);
+
+	bool check_item_prop_is_nilornone(std::vector<std::string>);
+
+	std::vector<std::string> get_strings_from_subtable(std::vector<std::string>);
+
+	// bool is_defined(std::vector<std::string>);
+	// bool hasEntry(std::vector<std::string>); // TODO: Rename!
+	// std::vector<std::string> get_itemids_from_itemarray(std::string item_array); // TODO: Fix later!
+	// std::vector<std::string> get_strings_from_subtable(std::string item_array, std::string item_id, std::string prop);
 };
 
 #endif

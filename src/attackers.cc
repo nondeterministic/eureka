@@ -138,7 +138,14 @@ int Attackers::get_distance(const string& single_name)
 			return c->distance();
 		}
 	}
-	std::cerr << "ERROR: attackers.cc: get_distance(" << single_name << ") failed. No such monster?!\n";
+	std::cerr << "ERROR: attackers.cc: get_distance('" << single_name << "') failed. No such monster?!\n";
+
+	// Additional error output
+	for (unsigned i = 0; i < _enemies.size(); i++) {
+		Creature* c = _enemies.at(i).get();
+		std::cerr << "ERROR: enemy name: " << c->name() << "\n";
+	}
+
 	throw single_name + " cannot compute distance.";
 }
 

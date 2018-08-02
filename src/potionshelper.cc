@@ -83,21 +83,21 @@ Potion* PotionsHelper::createFromLua(std::string array_name, lua_State* lua_stat
 	LuaWrapper lua(lua_state);
 	Potion *potion = new Potion();
 
-	potion->name(lua.get_item_prop<std::string>(_glob_array_name, array_name, "name"));
-	potion->plural_name(lua.get_item_prop<std::string>(_glob_array_name, array_name, "plural_name"));
+	potion->name(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "name" }));
+	potion->plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "plural_name" }));
 
-	potion->food_up = (int)(lua.get_item_prop<double>(_glob_array_name, array_name, "food_up"));
-	potion->healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(_glob_array_name, array_name, "healing_power")));
-	potion->poison_healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(_glob_array_name, array_name, "poison_healing_power")));
-	potion->poisonous = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(_glob_array_name, array_name, "poisonous")));
-	potion->is_magic_herb = lua.get_item_prop<bool>(_glob_array_name, array_name, "magic_herb");
-	potion->intoxicating = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(_glob_array_name, array_name, "intoxicating_effect")));
+	potion->food_up = (int)(lua.get_item_prop<double>(std::vector<std::string> { _glob_array_name, array_name, "food_up" }));
+	potion->healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "healing_power" })));
+	potion->poison_healing_power = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "poison_healing_power" })));
+	potion->poisonous = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "poisonous" })));
+	potion->is_magic_herb = lua.get_item_prop<bool>(std::vector<std::string> { _glob_array_name, array_name, "magic_herb" });
+	potion->intoxicating = stringToEmphasis.at(boost::to_upper_copy<std::string>(lua.get_item_prop<std::string>(std::vector<std::string> { _glob_array_name, array_name, "intoxicating_effect" })));
 
-	potion->weight((int)(lua.get_item_prop<double>(_glob_array_name, array_name, "weight")));
-	potion->icon = (int)(lua.get_item_prop<double>(_glob_array_name, array_name, "icon"));
-	potion->gold((int)(lua.get_item_prop<double>(_glob_array_name, array_name, "gold")));
+	potion->weight((int)(lua.get_item_prop<double>(std::vector<std::string> { _glob_array_name, array_name, "weight" })));
+	potion->icon = (int)(lua.get_item_prop<double>(std::vector<std::string> { _glob_array_name, array_name, "icon" }));
+	potion->gold((int)(lua.get_item_prop<double>(std::vector<std::string> { _glob_array_name, array_name, "gold" })));
 
-	potion->set_ingredient_names(lua.get_strings_from_subtable(_glob_array_name, array_name, "ingredients"));
+	potion->set_ingredient_names(lua.get_strings_from_subtable(std::vector<std::string> { _glob_array_name, array_name, "ingredients" }));
 
 	return potion;
 }
@@ -107,7 +107,7 @@ Potion* PotionsHelper::createFromLua(std::string array_name, lua_State* lua_stat
 bool PotionsHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry(_glob_array_name, item_name);
+	return !(lua.check_item_prop_is_nilornone(std::vector<std::string> { _glob_array_name, item_name }));
 }
 
 /**
@@ -120,7 +120,8 @@ std::vector<Potion*> PotionsHelper::get_loaded_lua_potions(lua_State* L)
 	std::vector<Potion*> potions;
 
 	LuaWrapper lua(L);
-	std::vector<std::string> potion_names = lua.get_itemids_from_itemarray(_glob_array_name);
+	// std::vector<std::string> potion_names = lua.get_itemids_from_itemarray(_glob_array_name);
+	std::vector<std::string> potion_names = lua.get_strings_from_subtable(std::vector<std::string> { _glob_array_name });
 
 	for (std::string potion_name: potion_names) {
 		Potion* potion = PotionsHelper::createFromLua(potion_name, L);

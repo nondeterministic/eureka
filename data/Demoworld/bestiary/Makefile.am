@@ -1,3 +1,5 @@
+SUBDIRS = attacks spells
+
 EXTRA_DIST = $(wildcard *.lua) $(wildcard *.png)
 
 bestiarydir = $(datadir)/eureka/data/Demoworld/bestiary

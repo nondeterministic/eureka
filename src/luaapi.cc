@@ -789,37 +789,21 @@ int l_notify_party_hit(lua_State* L)
 	return 0;
 }
 
-// Returns the names of at most n randomly chosen players from the
-// front row of the party (by putting them on the Lua stack).
-// If the party is smaller, it still returns n strings, some of which
-// are empty.
+/// Only the first three players of the party can be attacked.  So this function
+/// always returns the name of a player from party position 0-2.
 
 int l_rand_player(lua_State* L)
 {
-  boost::unordered_set<PlayerCharacter*> players;
-  int requested = (int)lua_tonumber(L, 1);
-  int count = min(min(Party::Instance().size(), 3), requested);
+	int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
+	PlayerCharacter* p = Party::Instance().get_player(rnd);
+	while (p->condition() == DEAD) // Don't hit the dead, it's not nice.
+		p = Party::Instance().get_player(rnd);
 
-  while ((int)players.size() < count) {
-    int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
-    PlayerCharacter* p = Party::Instance().get_player(rnd);
-    if (p->condition() != DEAD)
-    	players.insert(p);
-  }
-
-  // Prepare return values
-  for (auto player = players.begin(); player != players.end(); player++)
-    lua_pushstring(L, (*player)->name().c_str());
-
-  // If more players than available were requested, "pad" the result with empty strings
-  int diff = requested - players.size();
-  for (int i = 0; i < diff; i++)
-    lua_pushstring(L, "");
-
-  return requested;
+    lua_pushstring(L, p->name().c_str());
+    return 1;
 }
 
-// Advances foes, if possible, and returns true on success, false otherwise.
+/// Advances foes, if possible, and returns true on success, false otherwise.
 
 int l_advance_foes(lua_State* L)
 {
@@ -878,26 +862,14 @@ int l_party_size(lua_State* L)
 // THIS METHOD IS NOT VISIBLE TO LUA.  IT IS USED INTERNALLY ONLY, e.g., by l_join().
 // Basically extracts the c_values field from a city person or the like and creates an
 // according PlayerCharacter.
-//
-// Assumes that Lua has pushed c_values onto stack - as is the case for joining
-// characters from the game (see corresponding Lua people-files).  If no c_values on
-// the Lua stack, represented as argument L, this method will cause a crash!
-//
-// (In other words, the least you must do is call lua_getglobal(_lua_state, "c_values")
-// before using it.)
 
 std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 {
+	LuaWrapper lua(L);
 	std::shared_ptr<PlayerCharacter> player(new PlayerCharacter());
 
-	lua_pushstring(L, "name");
-	lua_gettable(L, -2);
-	player->set_name(lua_tostring(L, -1)); // Extract result, which is now on the stack
-	lua_pop(L,1);                          // Tidy up stack by getting rid of the extra we just put on
-
-	lua_pushstring(L, "race");
-	lua_gettable(L, -2);
-	std::string race = lua_tostring(L, -1);
+	player->set_name(lua.get_item_prop<std::string>(std::vector<std::string> { "c_values", "name" }));
+	std::string race = lua.get_item_prop<std::string>(std::vector<std::string> { "c_values", "race" });
 	if (race == "HUMAN")
 		player->set_race(RACE::HUMAN);
 	else if (race == "ELF")
@@ -912,89 +884,34 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 		player->set_race(RACE::DOG);
 	else
 		std::cerr << "ERROR: luaapi.cc: a MapObj/NPC has an undefined race: " << race << ". Not setting it!\n";
-	lua_pop(L,1);
 
-	lua_pushstring(L, "ep");
-	lua_gettable(L, -2);
-	player->inc_ep(lua_tonumber(L, -1));
-	lua_pop(L,1);
+	player->inc_ep(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "ep" }));
+	player->set_hp(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "hp" }));
+	player->set_hpm(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "hpm" }));
+	player->set_sp(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "sp" }));
+	player->set_spm(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "spm" }));
+	player->set_str(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "str" }));
+	player->set_luck(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "luck" }));
+	player->set_dxt(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "dxt" }));
+	player->set_wis(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "wis" }));
+	player->set_char(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "charr" }));
+	player->set_iq(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "iq" }));
+	player->set_end(lua.get_item_prop<double>(std::vector<std::string> { "c_values", "endd" }));
 
-	lua_pushstring(L, "hp");
-	lua_gettable(L, -2);
-	player->set_hp(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "hpm");
-	lua_gettable(L, -2);
-	player->set_hpm(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "sp");
-	lua_gettable(L, -2);
-	player->set_sp(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "spm");
-	lua_gettable(L, -2);
-	player->set_spm(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "str");
-	lua_gettable(L, -2);
-	player->set_str(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "luck");
-	lua_gettable(L, -2);
-	player->set_luck(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "dxt");
-	lua_gettable(L, -2);
-	player->set_dxt(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "wis");
-	lua_gettable(L, -2);
-	player->set_wis(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "charr");
-	lua_gettable(L, -2);
-	player->set_char(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "iq");
-	lua_gettable(L, -2);
-	player->set_iq(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "endd");
-	lua_gettable(L, -2);
-	player->set_end(lua_tonumber(L, -1));
-	lua_pop(L,1);
-
-	lua_pushstring(L, "sex");
-	lua_gettable(L, -2);
-	std::string sex_str = lua_tostring(L, -1);
+	std::string sex_str = lua.get_item_prop<std::string>(std::vector<std::string> { "c_values", "sex" });
 	bool sex = false; // sex == false == female. (SJWs, please do not hurt me!)
 	if (boost::to_upper_copy(sex_str) == "MALE")
 		sex = true;
 	player->set_sex(sex);
-	lua_pop(L,1);
 
-	lua_pushstring(L, "profession");
-	lua_gettable(L, -2);
-	std::string prof_string = lua_tostring(L, -1);
+	std::string prof_string = lua.get_item_prop<std::string>(std::vector<std::string> { "c_values", "profession" });
 	if (prof_string.length() > 0) {
 		prof_string = boost::to_upper_copy(prof_string);
 		player->set_profession(stringToProfession.at(prof_string));
 	}
 	else
 		std::cout << "INFO: luaapi.cc: no profession found for NPC. Either bug or animal. (Assuming animal, and continue.)\n";
-	lua_pop(L,1);
 
-	LuaWrapper lua(L);
 	// Only if Lua-land returns non-empty weapon-descriptions, set one accordingly.
 	// Otherwise monster has none.
 	// (Default values should be NULL for weapon etc. anyway, indicating, None.)

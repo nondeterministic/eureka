@@ -42,12 +42,12 @@ Shield* ShieldHelper::createFromLua(std::string array_name, lua_State* lua_state
 	LuaWrapper lua(lua_state);
 	Shield *w = new Shield();
 
-	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
-	w->plural_name(lua.get_item_prop<std::string>(globArrayName, array_name, "plural_name"));
-	w->protection((int)(lua.get_item_prop<double>(globArrayName, array_name, "protection")));
-	w->weight((int)(lua.get_item_prop<double>(globArrayName, array_name, "weight")));
-	w->icon = (int)(lua.get_item_prop<double>(globArrayName, array_name, "icon"));
-	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
+	w->name(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "name" }));
+	w->plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "plural_name" }));
+	w->protection((int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "protection" })));
+	w->weight((int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "weight" })));
+	w->icon = (int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "icon" }));
+	w->gold((int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "gold" })));
 	return w;
 }
 
@@ -57,5 +57,5 @@ Shield* ShieldHelper::createFromLua(std::string array_name, lua_State* lua_state
 bool ShieldHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry("Shields", item_name);
+	return !lua.check_item_prop_is_nilornone(std::vector<std::string> { "Shields", item_name });
 }

@@ -3,18 +3,18 @@
 -- Copyright (c) Andreas Bauer <a@pspace.org>
 -- -----------------------------------------------
 
-Edibles["sulphur"]  = { 
-   name          = "sulphur", 
-   plural_name   = "sulphur", 
+Edibles["bellis perennis"]  = { 
+   name          = "bellis perennis", 
+   plural_name   = "bellis perennis", 
 
-   food_up                = 0,
+   food_up                = 5,
    healing_power          = "none",
    poison_healing_power   = "very_little",
-   poisonous              = "some",
+   poisonous              = "none",
    magic_herb             = true,
    intoxicating_effect    = "none",
 
-   gold          = 5,
+   gold          = 1,
    weight        = 0,
-   icon          = 1084
+   icon          = 1009
 }

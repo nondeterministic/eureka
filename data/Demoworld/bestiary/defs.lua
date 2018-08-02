@@ -1,3 +1,7 @@
+if (Bestiary == nil) then
+   Bestiary = {}
+end
+
 function plain_encounter()
    -- 3 - 10% chance for an encounter in the plain terrain
    

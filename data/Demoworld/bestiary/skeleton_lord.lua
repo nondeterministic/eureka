@@ -7,204 +7,69 @@ require "string"
 require "math"
 
 do
-   local hp          = 0
-   local hp_max      = 0
-   local weapon      = nil
-   local strength    = 16
-   local luck        = 7
-   local dxt         = 8
-   local distance    = 0
-   local gold        = 10
-   local ep          = 18
-   local sp          = 20
+   local monster = {}
+
+   monster.name        = "Skeleton Lord"
+   monster.plural_name = "Skeleton Lords"
+   monster.img_path    = ""
+
+   monster.hp          = 0
+   monster.hp_max      = 0
+   monster.weapon      = Weapons["sword"]
+   monster.strength    = 16
+   monster.luck        = 12
+   monster.dxt         = 12
+   monster.distance    = 0
+   monster.gold        = 5
+   monster.ep          = 10
+   monster.sp          = 25
+   monster.sp_max      = 25
    
-   local name        = "Skeleton Lord"
-   local plural_name = "Skeleton Lords"
-   local distance    = 0
-   
-   local combat      = ""
-   local nth_foe     = 0
+   monster.distance    = 0
+   monster.combat      = ""
+   monster.nth_foe     = 0
 
-   local attacked_players = {} -- Names of party members who are attacked
-
-   function create_instance()
-      hp_max   = simpl_rand(5, 15) + 5
-      hp       = hp_max
-      if (simpl_rand(1,2) == 2) then
-	 weapon   = Weapons["double-sided axe"]
-      else
-	 weapon   = Weapons["mace"]
-      end
-      strength = simpl_rand(5, 15) + 5
-      luck     = simpl_rand(5, 12)
-      gold     = simpl_rand(5, 10)
-   end
-
-   function set_combat_ptr(ptr, number)
-      combat  = ptr
-      nth_foe = number
-      simpl_set_combat_ptr(combat)
-   end
-
-   function get_name() 
-      return name
-   end
-
-   function get_plural_name()      
-      return plural_name
-   end
-
-   function get_ep()
-      return ep
-   end
-
-   function set_gold(new_gold)
-      gold = new_gold
-   end
-
-   function get_gold()
-      return gold
-   end
-
-   function get_distance()
-      return distance
-   end
-
-   function set_distance(new_dist)
-      distance = new_dist
-   end
-
-   function img_path()
-      return simpl_datapath() .. "/bestiary/skeleton.png"
-   end
-   
-   function get_hp()
-      return hp
-   end
-
-   function set_hp(new_hp)
-      hp = new_hp
-   end
-
-   function get_hp_max()
-      return hp_max
-   end
-
-   function set_hp_max(new_hp_max)
-      hp_max = new_hp_max
-   end
-
-   function get_strength()
-      return strength
-   end
-
-   function get_luck()
-      return luck
-   end
-
-   function set_luck(new_luck)
-      luck = new_luck
-   end
-
-   function get_dxt()
-      return dxt
-   end
-
-   function set_dxt(newdxt)
-      dxt = newdxt
-   end
-
-   function get_weapon()
-      return weapon.name
-   end
-
-   function set_weapon(name)
-      weapon = Weapons[name]
-   end
-
-   -- Return true if, when given a chance to, the foe rather advances
-   -- than fights.  If false is returned, it indicates that the foe
+   -- ---------------------------------------------------------------------
+   -- true if, when given a chance to, the foe rather advances
+   -- than fights.  If false, it indicates that the foe
    -- can actually fight from the distance, say, with a long range
    -- weapon or with a magic spell, etc.
+   monster.advance     = true
 
-   function advance()
-      return false
+   -- Every monster, right now, needs a carbon copy of this function.
+   function get_name()
+      return monster.name
    end
-
-   function flee()
-      simpl_flee(nth_foe)
-   end
-
-   function attack()
-      if (get_hp() < get_hp_max() / 100 * 20) then
-	 flee()
-	 return false
-      end
-
-      attacked_players = {}
-      number_of_attacked_players = 0
-      
-      -- Determine who gets potentially attacked by, say, an odem spell.
-      for i=1,(simpl_get_partysize() - 1) do
-	 if (simpl_rand(1,10) < 6 and simpl_get_player_is_alive(simpl_get_player_name(i))) then
-	    -- -10 is a magic bonus by the skeleton lord to make the spell more effective
-	    random = simpl_rand(1,20) + simpl_bonus(get_luck()) - 10
-	    if (random < simpl_get_ac(simpl_get_player_name(i))) then -- TODO: add magic-protection bonus for player!
-	       attacked_players[simpl_get_player_name(i)] = true
-	       number_of_attacked_players = number_of_attacked_players + 1
-	    end
-	 end
-      end
-
-      if (number_of_attacked_players == 0) then
-	 simpl_printcon(string.format("A %s casts a spell, but nothing happens.", get_name()), true)
-      end
-      
-      return (number_of_attacked_players > 0)
-   end
-
-   function fight()
-      if (sp < 5) then -- Fight with weapon, if spell points are low
-	 wep = Weapons[get_weapon()]
-
-	 if (distance > 10) then
-	    simpl_printcon(string.format("A %s tries to attack with an %s, but cannot reach.",
-					 get_name(), wep.name), true)
-	    return
-	 else
-	    player_name = simpl_rand_player(1)
-
-	    r = simpl_rand(1, 20) - simpl_bonus(get_luck()) - simpl_bonus(get_dxt())
-	    attack_successful = r < simpl_get_ac(player_name)
-	    
-	    if (attack_successful == true) then
-	       damage = simpl_rand(wep.damage_min, wep.damage_max)
-	       simpl_printcon(string.format("A %s swings his %s and hits %s for %d points of damage.",
-					    get_name(), wep.name, player_name, damage), true)
-	       simpl_player_change_hp(player_name, -damage)
-	       simpl_notify_party_hit()
-	    else
-	       simpl_printcon(string.format("A %s swings his %s at %s but missed.",
-					    get_name(), wep.name, player_name), true)	       
-	    end	    
-	 end
-      else -- Cast spell
-	 simpl_printcon(string.format("A %s casts a magic arrows spell...", get_name()), true)
-	 sp = sp - 5
-	 for k, v in pairs(attacked_players) do
-	    r = simpl_rand(1, 20) - 10
-	    attack_successful = r < simpl_get_ac(k)
-	    
-	    if (attack_successful == true) then
-	       damage = simpl_rand(1, 8)
-	       simpl_printcon(string.format("%s takes %d points of damage.", k, damage), true)
-	       simpl_player_change_hp(k, -damage)
-	       simpl_notify_party_hit()
-	    else
-	       simpl_printcon(string.format("%s, who was directly targetted, managed to evade the attack.", k), true)
-	    end
-	 end
-      end
-   end
+   -- ---------------------------------------------------------------------
    
+   monster.create_instance = function()
+      monster.hp_max   = simpl_rand(3, 18)
+      monster.hp       = monster.hp_max
+      monster.strength = simpl_rand(3, 18)
+      monster.luck     = simpl_rand(3, 18)
+      monster.dxt      = simpl_rand(3, 18) + 3
+      monster.img_path = simpl_datapath() .. "/bestiary/skeleton.png"
+   end
+
+   monster.set_combat_ptr = function(ptr, number)
+      monster.combat  = ptr
+      monster.nth_foe = number
+      simpl_set_combat_ptr(monster.combat)
+   end
+
+   monster.attack = function() 
+      dofile(simpl_datapath() .. "/bestiary/attacks/fleeing.lua")
+      if (fleeing(monster) == true) then
+         return
+      end
+
+      if (monster.sp > 0) then
+         dofile(simpl_datapath() .. "/bestiary/spells/fireball.lua")
+         cast_fireball(monster)
+      else
+         dofile(simpl_datapath() .. "/bestiary/attacks/with_weapon.lua")
+         attacked_player_name = simpl_rand_player()
+         with_weapon(monster, attacked_player_name)
+      end
+   end
 end

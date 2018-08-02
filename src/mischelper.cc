@@ -49,16 +49,16 @@ MiscItem* MiscHelper::createFromLua(std::string array_name, lua_State* lua_state
 	LuaWrapper lua(lua_state);
 	MiscItem *w = new MiscItem();
 
-	w->name(lua.get_item_prop<std::string>(globArrayName, array_name, "name"));
-	w->plural_name(lua.get_item_prop<std::string>(globArrayName, array_name, "plural_name"));
-	w->icon = (int)(lua.get_item_prop<double>(globArrayName, array_name, "icon"));
-	w->gold((int)(lua.get_item_prop<double>(globArrayName, array_name, "gold")));
+	w->name(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "name" }));
+	w->plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "plural_name" }));
+	w->icon = (int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "icon" }));
+	w->gold((int)(lua.get_item_prop<double>(std::vector<std::string> { globArrayName, array_name, "gold" })));
 
 	// If an object was passed, use its description.
 	if (mo != NULL)
 		w->description(mo->description());
 	else
-		w->description(lua.get_item_prop<std::string>(globArrayName, array_name, "description"));
+		w->description(lua.get_item_prop<std::string>(std::vector<std::string> { globArrayName, array_name, "description" }));
 
 	// Sometimes we want to create an item FROM a MapObj and need the MapObj's properties, so that when the player drops the item,
 	// it can be restored with all the MapObj properties.
@@ -73,5 +73,5 @@ MiscItem* MiscHelper::createFromLua(std::string array_name, lua_State* lua_state
 bool MiscHelper::existsInLua(std::string item_name, lua_State* lua_state)
 {
 	LuaWrapper lua(lua_state);
-	return lua.hasEntry("MiscItems", item_name);
+	return !lua.check_item_prop_is_nilornone(std::vector<std::string> { "MiscItems", item_name });
 }

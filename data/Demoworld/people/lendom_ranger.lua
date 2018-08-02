@@ -79,7 +79,7 @@ do
 
       if (highest_level >= 3 and simpl_partysize() < 6) then
          simpl_printcon("You appear to be serious in your undertaking. I shall be honoured to join thee!")
-         simpl_join(c_values)
+         simpl_join()
          simpl_remove_from_current_map("alvar")
          conv_over = true
          return true

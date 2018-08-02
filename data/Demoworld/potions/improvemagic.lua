@@ -19,7 +19,9 @@ Potions["improve-magic potion"]  = {
    weight                 = 0,
    icon                   = 703,
 
-   ingredients            = { Edibles.garlic.name, Edibles.arnica.name, Edibles.sulphur.name, Edibles.thuja.name, Edibles.gelsemium.name },
+   ingredients            = { Edibles.garlic.name, Edibles.arnica.name,
+                              Edibles.sulphur.name, Edibles.thuja.name,
+                              Edibles.gelsemium.name },
 
    -- The above data entries are identical to Edibles, hence Potions is derived from Edibles in the code.
 

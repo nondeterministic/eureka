@@ -1,15 +1,19 @@
 NEWS eureka
 ===========
 
-eureka 0.1.1                  under development
------------------------------------------------
+eureka 0.2.0                                                               under development
+--------------------------------------------------------------------------------------------
 - Updated/coloured outdoor tiles a bit as they were too difficult to differentiate
+- Updated monster definition files completely in order to achieve more Lua code reuse
+- Added some new herbs and potions that can be mixed up from them (see data/Demoworld/potions and data/Demoworld/edibles)
+- Added outline of a rulebook for Demoworld (see data/Demoworld/doc/rules.md)
+- Bug fix: a lot of Lua memory leaks are fixed
 
-eureka 0.1.0      Sun Jul  8 14:52:23 CEST 2018
------------------------------------------------
+eureka 0.1.0                                                   Sun Jul  8 14:52:23 CEST 2018
+--------------------------------------------------------------------------------------------
 - Updated build dependencies: Lua5.3, libxml++-3.0, and Boost Signals2 are now required
 - Added NPCs to game (try talking to dogs!)
-- Added feature that dogs ALWAYS hear monsters first, naturally.
+- Added feature that dogs ALWAYS hear monsters first, naturally
 - Added sorting of party (press 's'!)
 - Added entering of objects (you can enter a ship now, but not do anything with it)
 - Added damage taking when walking through fire place (acts same as magic force field)
@@ -19,7 +23,6 @@ eureka 0.1.0      Sun Jul  8 14:52:23 CEST 2018
 - Bug fix: one could walk over unwalkable icons when walkable objects were on top
 - Bug fix: setting guard for hole-up & camp would not work
 
-eureka 0.0.1      Sat May 12 12:05:17 CEST 2018
------------------------------------------------
+eureka 0.0.1                                                   Sat May 12 12:05:17 CEST 2018
+--------------------------------------------------------------------------------------------
 - Initial release
-
