@@ -15,7 +15,7 @@ do
 
    monster.hp          = 0
    monster.hp_max      = 0
-   monster.weapon      = Weapon.mace
+   monster.weapon      = Weapons.mace
    monster.strength    = 16
    monster.luck        = 12
    monster.dxt         = 12
