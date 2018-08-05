@@ -24,6 +24,7 @@
 #include <memory>
 #include <cmath>
 
+#include <boost/regex.hpp>
 #include <boost/bind.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/algorithm/string.hpp>
@@ -717,10 +718,9 @@ bool Combat::create_monsters_from_init_path(std::string script_file)
 
 bool Combat::create_monsters_from_combat_path(std::string script_file)
 {
-	LuaWrapper lua(global_lua_state);
-
 	// Load corresponding Lua combat file (i.e., a monster definition)
-	if (luaL_dofile(global_lua_state, ((conf_world_path / boost::algorithm::to_lower_copy(script_file)).c_str()))) {
+	std::string monster_file_path = (conf_world_path / boost::algorithm::to_lower_copy(script_file)).string();
+	if (luaL_dofile(global_lua_state, monster_file_path.c_str())) {
 		std::cerr << "ERROR: combat.cc::create_monsters_from_combat_path(): Couldn't execute Lua file: " << lua_tostring(global_lua_state, -1) << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -731,7 +731,25 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 
 	int number_of_enemies = random(1, 6);
 	int distance = random(1,3) * 10;
-	std::string name = lua.call_fn<std::string>(std::vector<std::string> { "get_name" });
+
+	// Determine from PATH/bestiary/monster.lua the monster.lua bit and use it to get monster name property later.
+	boost::regex expr {"[^\\/]+\\.lua$"};
+	boost::smatch what;
+	std::string monster_file_name;
+
+	if (boost::regex_search(monster_file_path, what, expr)) {
+		monster_file_name = what[0];
+	}
+	else {
+		std::cerr << "ERROR: combat.cc: Monster file name for '" << monster_file_path << "' could not be determined.\n";
+		return false;
+	}
+
+	std::string name = World::Instance().get_monster_name(monster_file_name);
+	LuaWrapper lua(global_lua_state);
+
+	// Create lua instance of monster and set further params
+	lua.call_void_fn(std::vector<std::string> { "Bestiary", name, "create_instance" });
 
 	for (int i = 0; i < number_of_enemies; i++) {
 		std::shared_ptr<Creature> monster(new Creature());
@@ -745,9 +763,6 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 		monster->set_name(name);
 		monster->set_img(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "img_path" }));
 		monster->set_plural_name(lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "plural_name" }));
-
-		// Create lua instance of monster and set further params
-		lua.call_void_fn(std::vector<std::string> { "Bestiary", name, "create_instance" });
 		monster->set_hp(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "hp" }));
 		monster->set_hpm(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "hp_max" }));
 		monster->set_str(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "strength" }));
