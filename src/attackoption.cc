@@ -162,7 +162,7 @@ void AttackOption::execute(Combat* combat)
 			combat->get_foes().remove(opponent_offset);
 
 			// Add experience points to player's balance
-			_player->inc_ep(lua.call_fn<double>("get_ep"));
+			_player->inc_ep(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", opponent->name(), "ep" }));
 
 			// Now add monster's items to bounty items to be collected
 			// by party in case of battle victory.
@@ -170,7 +170,7 @@ void AttackOption::execute(Combat* combat)
 				combat->add_to_bounty(opponent->weapon());
 
 			// Add monster's gold
-			int gold_coins = lua.call_fn<double>("get_gold");
+			int gold_coins = lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", opponent->name(), "gold" });
 			for (int ii = 0; ii < gold_coins; ii++)
 				combat->add_to_bounty(new Gold());
 		}

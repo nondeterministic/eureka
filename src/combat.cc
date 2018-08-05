@@ -517,7 +517,8 @@ int Combat::foes_fight()
 		try {
 			Creature* foe = _foes.get()->at(i).get();
 			// This can throw an exception (see below!) If it doesn't, it means
-			// we're dealing with a monster from bestiary/.  (Otherwise, town folk.)
+			// we're dealing with a random outdoor monster from bestiary/.
+			// Otherwise, we're dealing with town folk.
 			beast_path /= World::Instance().get_monster_filename(foe->name());
 
 			// Convert the this-pointer to string and push it to Lua-Land
@@ -573,7 +574,7 @@ int Combat::foes_fight()
 			_fled = false;
 		} catch (...) {
 			std::cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua fight-file, "
-					  << "assuming instead that we're fighting with someone from an indoors map.\n";
+					  << "assuming instead that we're fighting with some town folk in an indoors map.\n";
 
 			if (lua.call_fn<bool>("attack") && !_fled)
 				lua.call_void_fn("fight");

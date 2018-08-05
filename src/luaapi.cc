@@ -1208,7 +1208,7 @@ int l_magic_attack(lua_State* L)
 					offsets_of_killed_enemies.push_back(opponent.second); // Remove specific opponent within a group of foes based on previously determined offset.
 
 					// Add experience points to player's balance
-					player->inc_ep(lua.call_fn<double>("get_ep"));
+					player->inc_ep(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", opponent.first->name(), "ep" }));
 
 					MiniWin::Instance().alarm();
 					sample.play_predef(FOE_HIT);
@@ -1218,7 +1218,7 @@ int l_magic_attack(lua_State* L)
 						combat->add_to_bounty(opponent.first->weapon());
 
 					// Add monster's gold
-					int gold_coins = lua.call_fn<double>("get_gold");
+					int gold_coins = lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", opponent.first->name(), "gold" });
 					for (int ii = 0; ii < gold_coins; ii++)
 						combat->add_to_bounty(new Gold());
 				}
