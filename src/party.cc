@@ -319,7 +319,7 @@ unsigned Party::party_alive()
 {
 	unsigned i = 0;
 	for (auto player : _players)
-		if (player.hp() > 0)
+		if (player.hp() > 0 && !player.is_npc())
 			i++;
 	return i;
 }
