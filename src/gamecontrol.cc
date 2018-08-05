@@ -1684,63 +1684,69 @@ void GameControl::create_random_monsters_in_dungeon()
 			int monst_x = _party->x + xoff;
 			int monst_y = _party->y + yoff;
 
-			// X% chance of a new monster each turn
-			if (random(1,100) <= 10) {
-				if (abs(_party->x - monst_x) >= min_distance_to_party || abs(_party->y - monst_y) >= min_distance_to_party) {
-					if (walkable(monst_x, monst_y)) {
-						MapObj monster;
-						monster.set_origin(monst_x, monst_y);
-						monster.set_coords((unsigned)monst_x, (unsigned)monst_y);
-						monster.is_random_monster = true;
+			// 10% chance of a new monster each turn
+			if (random(1,100) > 10)
+				continue;
 
-						// Determine type of monster using Lua
-						LuaWrapper lua(global_lua_state);
-						lua.push_fn_arg(std::string("dungeon"));
-						lua.call_fn_leave_ret_alone(std::vector<std::string> { "rand_encounter" });
+			// Monsters should not directly pop up next to the party
+			if (abs(_party->x - monst_x) >= min_distance_to_party || abs(_party->y - monst_y) < min_distance_to_party)
+				continue;
 
-						// Iterate through result table (see also combat.cc for where I originally copied this more or less from)
-						lua_pushnil(global_lua_state);
-						while (lua_next(global_lua_state, -2) != 0) {
-							lua_pushnil(global_lua_state);
-							while (lua_next(global_lua_state, -2) != 0) {
-								// Only create first monster, in case bestiary/defs.lua spits out a whole array of monsters...
-								// So as soon as combat script is defined, skip the rest of the result set.
-								if (monster.get_combat_script_path().length() == 0) {
-									string __key = lua_tostring(global_lua_state, -2);
+			if (!walkable(monst_x, monst_y))
+				continue;
 
-									// Name of monster
-									if (__key == "__name") {
-										std::string __name = lua_tostring(global_lua_state, -1);
+			MapObj monster;
+			monster.set_origin(monst_x, monst_y);
+			monster.set_coords((unsigned)monst_x, (unsigned)monst_y);
+			monster.is_random_monster = true;
 
-										// ***********************************************************************************
-										// TODO: When switching to Boost 3, use boost::filesystem::relative instead!
-										// http://www.boost.org/doc/libs/1_61_0/libs/filesystem/doc/reference.html#op-relative
-										monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(Util::spaces_to_underscore(__name)) + ".lua");
-										// ***********************************************************************************
+			// Determine type of monster using Lua
+			LuaWrapper lua(global_lua_state);
+			lua.push_fn_arg(std::string("dungeon"));
+			int stack_change = lua.call_fn_leave_ret_alone(std::vector<std::string> { "rand_encounter" });
 
-										monster.move_mode = FOLLOWING;
-										monster.personality = HOSTILE;
-										monster.set_type(MAPOBJ_MONSTER);
+			// Iterate through result table (see also combat.cc for where I originally copied this more or less from)
+			lua_pushnil(global_lua_state);
+			while (lua_next(global_lua_state, -2) != 0) {
+				lua_pushnil(global_lua_state);
+				while (lua_next(global_lua_state, -2) != 0) {
+					// Only create first monster, in case bestiary/defs.lua spits out a whole array of monsters...
+					// So as soon as combat script is defined, skip the rest of the result set.
+					if (monster.get_combat_script_path().length() == 0) {
+						string __key = lua_tostring(global_lua_state, -2);
 
-										lua.push_fn_arg(boost::to_lower_copy(__name));
-										monster.set_icon(lua.call_fn<double>("get_default_icon"));
+						// Name of monster
+						if (__key == "__name") {
+							std::string __name = lua_tostring(global_lua_state, -1);
 
-										_arena->get_map()->push_obj(monster);
+							// ***********************************************************************************
+							// TODO: When switching to Boost 3, use boost::filesystem::relative instead!
+							// http://www.boost.org/doc/libs/1_61_0/libs/filesystem/doc/reference.html#op-relative
+							monster.set_combat_script_path("bestiary/" + boost::to_lower_copy(Util::spaces_to_underscore(__name)) + ".lua");
+							// ***********************************************************************************
 
-										// TODO: Can we simply do lua_settop(L, 0); instead
-										// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
-										lua_settop(global_lua_state, 0);
+							monster.move_mode = FOLLOWING;
+							monster.personality = HOSTILE;
+							monster.set_type(MAPOBJ_MONSTER);
 
-										return;
-									}
-								}
-								lua_pop(global_lua_state, 1);
-							}
-							lua_pop(global_lua_state, 1);
+							lua.push_fn_arg(boost::to_lower_copy(__name));
+							monster.set_icon(lua.call_fn<double>("get_default_icon"));
+
+							_arena->get_map()->push_obj(monster);
+
+							// TODO: Can we simply do lua_settop(L, 0); instead
+							// as suggested here: http://stackoverflow.com/questions/13404810/how-to-pop-clean-lua-call-stack-from-c
+							lua_settop(global_lua_state, 0);
+
+							return;
 						}
 					}
+					lua_pop(global_lua_state, 1);
 				}
+				lua_pop(global_lua_state, 1);
 			}
+
+			lua_pop(global_lua_state, stack_change);
 		}
 	}
 }
