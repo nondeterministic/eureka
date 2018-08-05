@@ -754,9 +754,8 @@ bool Combat::create_monsters_from_combat_path(std::string script_file)
 		monster->set_luck(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "luck" }));
 		monster->set_gold(lua.get_item_prop<double>(std::vector<std::string> { "Bestiary", name, "gold" }));
 
-		// If Lua-land returns empty string, then the monster has no weapon!
-		std::string weapon_name = lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "weapon_name" });
-		if (weapon_name.length() > 0) {
+		if (!lua.check_item_prop_is_nilornone(std::vector<std::string> { "Bestiary", name, "weapon" })) {
+			std::string weapon_name = lua.get_item_prop<std::string>(std::vector<std::string> { "Bestiary", name, "weapon", "name" });
 			Weapon* wep = WeaponHelper::createFromLua(weapon_name, global_lua_state);
 			monster->set_weapon(wep);
 		}
