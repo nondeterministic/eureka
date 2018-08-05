@@ -713,7 +713,7 @@
       <icon no="700" trans="full" walk="full">nothing special</icon>
       <icon no="701" trans="full" walk="full">nothing special</icon>
       <icon no="702" trans="full" walk="full" default_lua_name="potions::heal-poison potion">a heal-poison potion</icon>
-      <icon no="703" trans="full" walk="full" default_lua_name="potions::improve-magic potion">nothing special</icon>
+      <icon no="703" trans="full" walk="full" default_lua_name="potions::improve-magic potion">an improve-magic potion</icon>
       <icon no="704" trans="full" walk="full">nothing special</icon>
       <icon no="705" trans="full" walk="full" default_lua_name="potions::healing potion">a healing potion</icon>
       <icon no="706" trans="full" walk="full" default_lua_name="potions::potion of invincibility">a potion of invincibility</icon>
