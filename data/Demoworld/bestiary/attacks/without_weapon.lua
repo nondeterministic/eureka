@@ -14,7 +14,7 @@ function without_weapon(monster, attacked_player_name, poison_attack)
          simpl_player_change_hp(attacked_player_name, -damage)
 
          -- Check if unpoisoned player received a poison attack...
-         if (poison_attack == true and simpl_rand(1,6) <= 3 and not(string.find(simpl_get_player_condition(), "POISON"))) then
+         if (poison_attack == true and simpl_rand(1,6) <= 3 and not(string.find(simpl_get_player_condition(attacked_player_name), "POISON"))) then
             simpl_printcon(string.format("%s is starting to feel seriously ill...", attacked_player_name), true)
             simpl_set_player_condition(attacked_player_name, "POISONED")
          end

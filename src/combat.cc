@@ -513,6 +513,7 @@ int Combat::foes_fight()
 	for (int i = 0; i < _foes.size(); i++) {
 		boost::filesystem::path beast_path(conf_world_path);
 		beast_path /= "bestiary";
+		moved.clear();
 
 		try {
 			Creature* foe = _foes.get()->at(i).get();
@@ -557,11 +558,12 @@ int Combat::foes_fight()
 
 			if (lua.get_item_prop<bool>(std::vector<std::string> { "Bestiary", foe->name(), "advance" }) &&                // Foes want to advance? - as opposed to, say, fight from the distance
 					moved.find(foe->name()) == moved.end())    // Foes haven't yet advanced in this round?
-				moved = advance_foes();                        // Attempt to move
+				moved = advance_foes();                        // Attempt to movej
 
 			// If not moved and not fled, attack!
-			if (moved.find(foe->name()) == moved.end() && !_fled)
+			if (moved.find(foe->name()) == moved.end() && !_fled) {
 				lua.call_void_fn(std::vector<std::string> { "Bestiary", foe->name(), "attack" });
+			}
 
 			// All of the party died of the attack?
 			if (_party->party_alive() == 0) {
@@ -572,9 +574,10 @@ int Combat::foes_fight()
 			if (_fled)
 				i--;
 			_fled = false;
-		} catch (...) {
+		} catch (const runtime_error& err) {
 			std::cout << "INFO: combat.cc::foes_fight(): Couldn't execute Lua fight-file, "
-					  << "assuming instead that we're fighting with some town folk in an indoors map.\n";
+					  << "assuming instead that we're fighting with some town folk in an indoors map: '"
+					  << err.what() << "'\n";
 
 			if (lua.call_fn<bool>("attack") && !_fled)
 				lua.call_void_fn("fight");
@@ -584,6 +587,12 @@ int Combat::foes_fight()
 				GameControl::Instance().game_over();
 				return 0;
 			}
+		} catch (...) {
+			std::cerr << "ERROR: combat.cc: foes_fight(): unforeseen exception.  In all likelyhood, "
+					  << "Lua attack() function is buggered somewhere...\n";
+			// TODO: When Boost > 1.65, this will be useful! std::cout << boost::stacktrace::stacktrace();
+			// Alternatively, comment out entire catch clause and get stacktrace via gdb.
+			return 0;
 		}
 
 		ZtatsWin::Instance().update_player_list();
@@ -661,7 +670,7 @@ void Combat::set_foes(Attackers new_foes)
 
 boost::unordered_set<std::string> Combat::advance_foes()
 {
-  boost::unordered_set<string> moved;
+  boost::unordered_set<std::string> moved;
   boost::unordered_map<int, std::string> distances = _foes.distances();
   for (auto foe = _foes.begin(); foe != _foes.end(); foe++) {
     if ((*foe)->distance() >= 20 && moved.find((*foe)->name()) == moved.end()) {
