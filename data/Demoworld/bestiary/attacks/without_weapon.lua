@@ -1,3 +1,5 @@
+require "math"
+
 function without_weapon(monster, attacked_player_name, poison_attack)
    poison_attack = poison_attack or false -- default argument for poison attack, cf. https://stackoverflow.com/questions/6022519/define-default-values-for-function-arguments
    
@@ -7,17 +9,18 @@ function without_weapon(monster, attacked_player_name, poison_attack)
 
       if (attack_successful) then
          simpl_notify_party_hit()
-         damage = simpl_rand(1,6) + simpl_bonus(monster.strength)
+         damage = math.max(1, simpl_rand(1,6) + simpl_bonus(monster.strength))
          simpl_printcon(string.format("A %s hits %s for %d points of damage.",
                                       monster.name, attacked_player_name, damage),
                         true)
-         simpl_player_change_hp(attacked_player_name, -damage)
 
          -- Check if unpoisoned player received a poison attack...
          if (poison_attack == true and simpl_rand(1,6) <= 3 and not(string.find(simpl_get_player_condition(attacked_player_name), "POISON"))) then
             simpl_printcon(string.format("%s is starting to feel seriously ill...", attacked_player_name), true)
             simpl_set_player_condition(attacked_player_name, "POISONED")
          end
+
+         simpl_player_change_hp(attacked_player_name, -damage)
       else
          simpl_printcon(string.format("A %s tries to hit %s but misses.",
                                       monster.name, attacked_player_name),

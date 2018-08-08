@@ -425,7 +425,7 @@ int Combat::party_fight(std::vector<AttackOption*> attacks)
 		if (player->condition() == DEAD)
 			continue;
 
-		if (player->is_npc()) {
+		if (player->is_npc() && player->condition() != PlayerCondition::DEAD) {
 			AttackOption ao(i, global_lua_state);
 			ao.set_target(1);
 			ao.execute(this);
@@ -974,7 +974,7 @@ std::string Combat::noticed_monsters()
 
 	// If a dog is in the party, it will ALWAYS hear the enemy first - obviously.
 	PlayerCharacter* npc = _party->get_npc_or_null();
-	if (npc != NULL && npc->race() == RACE::DOG)
+	if (npc != NULL && npc->race() == RACE::DOG && npc->condition() != PlayerCondition::DEAD)
 		return "Your good dog " + npc->name();
 
 	// When resting only that player may notice monsters...

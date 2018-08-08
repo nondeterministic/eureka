@@ -1,3 +1,5 @@
+require "math"
+
 function with_weapon(monster, attacked_player_name)
    if (monster.distance <= monster.weapon.range) then
       r = simpl_rand(1, 20) - simpl_bonus(monster.luck) - simpl_bonus(monster.dxt)
@@ -5,9 +7,9 @@ function with_weapon(monster, attacked_player_name)
       
       if (attack_successful) then
          simpl_notify_party_hit()
-         damage = simpl_rand(monster.weapon.damage_min, monster.weapon.damage_max) +
-            simpl_bonus(monster.strength) +
-            simpl_bonus(monster.weapon.damage_bonus)
+         damage = math.max(1, simpl_rand(monster.weapon.damage_min, monster.weapon.damage_max) +
+                              simpl_bonus(monster.strength) +
+                              simpl_bonus(monster.weapon.damage_bonus))
          simpl_printcon(string.format("A %s hits %s with a %s for %d points of damage.",
                                       monster.name, attacked_player_name, monster.weapon.name, damage),
                         true)

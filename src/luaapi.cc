@@ -794,10 +794,12 @@ int l_notify_party_hit(lua_State* L)
 
 int l_rand_player(lua_State* L)
 {
-	int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
-	PlayerCharacter* p = Party::Instance().get_player(rnd);
-	while (p->condition() == DEAD) // Don't hit the dead, it's not nice.
+	PlayerCharacter* p = nullptr;
+
+	do {
+		int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
 		p = Party::Instance().get_player(rnd);
+	} while (p->condition() == DEAD);
 
     lua_pushstring(L, p->name().c_str());
     return 1;
