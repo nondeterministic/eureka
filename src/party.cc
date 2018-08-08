@@ -314,7 +314,7 @@ void Party::rm_npc(int player_no)
 		std::cerr << "WARNING: party.cc: Cannot remove NPC with index " << player_no << " as it is no NPC.\n";
 }
 
-// Returns the number of alive party members
+// Returns the number of non-NPC alive party members
 unsigned Party::party_alive()
 {
 	unsigned i = 0;

@@ -799,6 +799,10 @@ int l_rand_player(lua_State* L)
 	do {
 		int rnd = GameControl::Instance().random(0, min(Party::Instance().size() - 1, 2));
 		p = Party::Instance().get_player(rnd);
+
+		// Hopefully, this never happens, but if it does, this message will be very useful!
+		if (Party::Instance().party_alive() == 0)
+			std::cerr << "ERROR: luaapi.cc: Endless loop due to a dead party!\n";
 	} while (p->condition() == DEAD);
 
     lua_pushstring(L, p->name().c_str());
@@ -1200,7 +1204,7 @@ int l_magic_attack(lua_State* L)
 					ss << "...causing " << (Util::vowel(opponent.first->name()[0])? "an " : "a ") << opponent.first->name() << " " << damage << " points of damage.";
 					opponent.first->set_hp(opponent.first->hp() - damage);
 					lua.push_fn_arg((double)(opponent.first->hp() - damage));
-					lua.call_void_fn("set_hp");
+					lua.set_item_prop(std::vector<std::string> { "Bestiary", opponent.first->name(), "hp" });
 
 					MiniWin::Instance().alarm();
 					sample.play_predef(FOE_HIT);
