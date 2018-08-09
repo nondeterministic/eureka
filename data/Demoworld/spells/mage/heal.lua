@@ -65,15 +65,15 @@ do
    
    function cast()
       if (targets >= 0) then
-	 player_name = simpl_get_player_name(targets)
-	 
-	 simpl_play_sound(get_sound_path())
-	 simpl_add_hp(targets, simpl_rand(1, 5))
-	 
-	 -- If in combat, then the printcon is showing letter by letter, otherwise all at once.
-	 simpl_printcon(caster .. " casts a spell, and " .. player_name .. " feels much better.", simpl_party_in_combat())
+         player_name = simpl_get_player_name(targets)
+         
+         simpl_play_sound(get_sound_path())
+         simpl_add_hp(targets, simpl_rand(1, 5))
+         
+         -- If in combat, then the printcon is showing letter by letter, otherwise all at once.
+         simpl_printcon(caster .. " casts a spell, and " .. player_name .. " feels much better.", simpl_party_in_combat())
       else
-	 simpl_printcon("Something went wrong, casting the spell. It is a program error.")
+         simpl_printcon("No suitable recipient chosen.")
       end
    end
 
@@ -81,26 +81,26 @@ do
 
    function choose()
       chosen_player = simpl_choose_player()
-       
+      
       if (chosen_player >= 0) then
          if (not(simpl_is_dead(chosen_player))) then
-	    targets = chosen_player
-	 else
-	    simpl_printcon("That would require more than healing of light wounds...")
-	 end
+            targets = chosen_player
+         else
+            simpl_printcon("That would require more than healing of light wounds...")
+         end
       else
-	 simpl_printcon("Changed your mind then?")
+         simpl_printcon("Changed your mind then?")
       end
    end
-
+   
    -- Spells that have a duration for multiple rounds need to define the following 'constructor' and 'destructor' functions. Other spells leave this blank!
-
+   
    function init()
    end
    
    function finish(player)
    end
-
+   
    -- ---------------------------------------------------------------------------------
-
+   
 end

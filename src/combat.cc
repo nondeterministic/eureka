@@ -640,7 +640,7 @@ void Combat::flee_foe(int n)
     ss << "A" << (Util::vowel(foe->name()[0])? "n " : " ")  << foe->name() << " flees.";
   printcon(ss.str(), true);
 
-  std::cout << "About to remove " << n << "-th foe\n";
+  std::cout << "INFO: combat.cc: About to remove " << n << "-th foe\n";
   _foes.remove(n);
   _fled = true;
 }
