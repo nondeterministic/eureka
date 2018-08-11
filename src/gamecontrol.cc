@@ -1684,10 +1684,6 @@ void GameControl::create_random_monsters_in_dungeon()
 			int monst_x = _party->x + xoff;
 			int monst_y = _party->y + yoff;
 
-			// 10% chance of a new monster each turn
-			if (random(1,100) > 10)
-				continue;
-
 			// Monsters should not directly pop up next to the party
 			if (abs(_party->x - monst_x) >= min_distance_to_party || abs(_party->y - monst_y) < min_distance_to_party)
 				continue;

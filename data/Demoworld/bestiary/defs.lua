@@ -30,8 +30,8 @@ function water_encounter()
 end
 
 function dungeon_encounter()
-   -- 15% chance for an encounter in the dungeon
-   return simpl_rand(1,100) <= 15
+   -- 20% chance for an encounter in the dungeon
+   return simpl_rand(1,100) <= 20
 end
 
 function deep_water_encounter()
