@@ -27,6 +27,7 @@ Service::Service()
   
   heal = 0;
   heal_poison = false;
+  level_up = false;
   resurrect = false;
   print_after = "";
 }
@@ -42,6 +43,7 @@ Service::Service(const Service& s): Item(s)
   heal_poison = s.heal_poison;
   resurrect = s.resurrect;
   print_after = s.print_after;
+  level_up = s.level_up;
 }
 
 std::string Service::luaName()

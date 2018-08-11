@@ -22,6 +22,7 @@
 #include "luawrapper.hh"
 #include "party.hh"
 #include "gamecontrol.hh"
+#include "ztatswin.hh"
 
 #include <string>
 #include <iostream>
@@ -33,12 +34,10 @@
 
 ServicesHelper::ServicesHelper()
 {
-/*	globArrayName = "Shields";*/
 }
 
 ServicesHelper::~ServicesHelper()
 {
-	// TODO Auto-generated destructor stub
 }
 
 // See ShieldHelper.
@@ -71,13 +70,14 @@ void ServicesHelper::apply(Service* s, int party_member)
 		GameControl::Instance().printcon(pl->name() + " is dead. Choose someone else, please.");
 		return;
 	}
+	else if (pl->hp() <= 0 && s->resurrect) {
+		pl->set_condition(GOOD);
+		pl->set_hp(pl->hpm());
+	}
 	else if (s->heal > 0 && pl->hp() < pl->hpm()) {
 		pl->set_hp(min(pl->hpm(), pl->hp() + s->heal));
 	}
 	else if (s->heal_poison && pl->condition() == PlayerCondition::POISONED) {
-		pl->set_condition(GOOD);
-	}
-	else if (pl->hp() <= 0 && s->resurrect) {
 		pl->set_condition(GOOD);
 	}
 	else if (s->level_up) {
@@ -93,6 +93,8 @@ void ServicesHelper::apply(Service* s, int party_member)
 
 	// In the end, pay for service
 	p.set_gold(p.gold() - s->gold());
+
+	ZtatsWin::Instance().update_player_list();
 }
 
 // Returns true if the Lua array has an entry named item_name, false otherwise.

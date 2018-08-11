@@ -47,6 +47,7 @@ do
    items[0] = Services["heal light wounds"]
    items[1] = Services["heal"]
    items[2] = Services["heal poisonous state"]
+   items[3] = Services["resurrection"]
 
    function description()
       simpl_printcon("You see serious but friendly looking priest.")
