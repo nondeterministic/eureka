@@ -110,13 +110,6 @@ void Conversation::initiate_with_animal(std::shared_ptr<Map> map)
 	if (!load_lua_conversation_file())
 		return;
 
-	lua_getglobal(_lua_state, "c_values");
-	if (!lua_istable(_lua_state, -1)) {
-		std::cerr << "ERROR: conversation.cc: Cannot access c_values of NPC. Could be a broken NPC-file in people/.\n";
-		lua_pop(_lua_state, 1);
-		return;
-	}
-
 	// Create temporary character to get c_values from NPC...
 	std::shared_ptr<PlayerCharacter> npc = create_character_values_from_lua(_lua_state);
 	npc->set_npc();

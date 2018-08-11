@@ -70,72 +70,6 @@ using namespace std;
 
 Combat* combat;
 
-// ///////////////////////////////////////////////////
-// "Private" helper functions.
-// ///////////////////////////////////////////////////
-
-std::string get_string_from_table(lua_State* L, const std::string& str)
-{
-  lua_pushstring(L, str.c_str());
-  lua_gettable(L, -2);
-  std::string result = lua_tostring(L, -1);
-  lua_pop(L,1);
-
-  return result;
-}
-
-int get_int_from_table(lua_State* L, const std::string& str)
-{
-  lua_pushstring(L, str.c_str());
-  lua_gettable(L, -2);
-  lua_Number result = lua_tonumber(L, -1);
-  lua_pop(L,1);
-
-  return (int)result;
-}
-
-// ///////////////////////////////////////////////////
-// "Public" functions.
-// ///////////////////////////////////////////////////
-
-// Assumption here is that l_pushweapon is called from Lua with a
-// Weapon table as argument.  Argument L will refer to the table that
-// Lua's call to simpl_pushfunction will contain.
-
-/*
-int l_pushweapon(lua_State* L)
-{
-  Weapon weap;
-
-  weap.name(get_string_from_table(L, "name"));
-  weap.plural_name(get_string_from_table(L, "plural_name"));
-  weap.hands(get_int_from_table(L, "hands"));
-  weap.dmg_min(get_int_from_table(L, "damage_min"));
-  weap.dmg_max(get_int_from_table(L, "damage_max"));
-  weap.dmg_bonus(get_int_from_table(L, "damage_bonus"));
-  weap.range(get_int_from_table(L, "range"));
-  weap.weight(get_int_from_table(L, "weight"));
-  weap.icon = get_int_from_table(L, "icon");
-
-  weapons_map.insert(std::make_pair(weap.name(), weap));
-  return 0;
-}
-
-int l_pushshield(lua_State* L)
-{
-  Shield shield;
-
-  shield.name(get_string_from_table(L, "name"));
-  shield.plural_name(get_string_from_table(L, "plural_name"));
-  shield.protection(get_int_from_table(L, "protection"));
-  shield.weight(get_int_from_table(L, "weight"));
-  shield.icon = get_int_from_table(L, "icon");
-
-  shields_map.insert(std::make_pair(shield.name(), shield));
-  return 0;
-}
-*/
-
 int l_printcon(lua_State* L)
 {
 	// First argument MUST be a string, so check it
@@ -597,73 +531,6 @@ int l_buyservice(lua_State* L)
 	return 1;
 }
 
-/**
-  * Topmost on the Lua stack is a Lua-table-element of type "Service", when this
-  * function is called, and below that a player number to perform this service to.
-  * (I.e., it was called like this simpl_buyservice(player, item).)
-  * If this isn't the case, bad things will happen...
-  *
-  * On success, 0 is returned.
-  * -1 is returned if the party doesn't have enough money to afford the service.
-  */
-
-int l_buyservice_old(lua_State* L)
-{
-    int heal                = 0;
-    bool heal_poison        = 0;
-    bool resurrect          = false;
-    std::string print_after = "";
-    int gold                = 0;
-
-    // //////////////////////////////////////////////////////////////////////////////////////
-    // INFO:
-    // In Lua we count down from the current stack pointer and up from the bottom.
-    // I.e., -1 refers to one below the SP (= topmost element), and 1 refers to the oldest
-    // element on the stack.
-    // //////////////////////////////////////////////////////////////////////////////////////
-
-    std::cout << "BUYSERVICE CALLED WITH " << lua_gettop(L) << " ARGUMENTS\n";
-
-    // Push nil on top of stack and set Lua stack pointer to top.
-    lua_pushnil(L);
-
-	// The table begins two below the stack pointer...
-    while (lua_next(L, -2) != 0) {
-    	std::string key = lua_tostring(L, -2);
-
-        std::cout << "LOOP...\n";
-
-    	if (key == "heal")
-    		heal = lua_tonumber(L, -1);
-    	else if (key == "heal_poison")
-    		heal_poison = lua_toboolean(L, -1);
-    	else if (key == "resurrect")
-    		resurrect = lua_toboolean(L, -1);
-    	else if (key == "print_after")
-    		print_after = lua_tostring(L, -1);
-    	else if (key == "gold")
-    		gold = lua_tonumber(L, -1);
-    	else
-    		std::cerr << "ERROR: luaapi.cc: Unknown service bought: " << key << "\n";
-
-    	lua_pop(L, 1);
-    }
-
-    // The bottom-most (i.e., oldest) argument is the player number.
-    int selected_player = lua_tonumber(L, 1);
-    std::cout << "Selected PLAYER " << selected_player << "\n";
-
-    // Now change party stats according to the values
-    // TODO
-
-	// Now print successful response of purchased service
-	GameControl::Instance().printcon(print_after);
-
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
 // Pass current datapath to Lua-land
 
 int l_datapath(lua_State* L)
@@ -936,8 +803,6 @@ std::shared_ptr<PlayerCharacter> create_character_values_from_lua(lua_State* L)
 // http://www.wellho.net/mouth/1845_Passing-a-table-from-Lua-into-C.html
 //
 // Returns true if join successful, false otherwise
-//
-// IMPORTANT: This function has the c_values table on the Lua stack when called!
 
 int l_join(lua_State* L)
 {

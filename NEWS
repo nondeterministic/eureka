@@ -8,6 +8,7 @@ eureka 0.2.0                                                               under
 - Added some new herbs and potions that can be mixed up from them (see data/Demoworld/potions and data/Demoworld/edibles)
 - Added outline of a rulebook for Demoworld (see data/Demoworld/doc/rules.md)
 - Bug fix: a lot of Lua memory leaks are fixed
+- Bug fix: resurrection as a service works now
 
 eureka 0.1.0                                                   Sun Jul  8 14:52:23 CEST 2018
 --------------------------------------------------------------------------------------------
