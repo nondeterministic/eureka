@@ -553,12 +553,12 @@ std::pair<int, int> SquareArena::show_party(int x, int y)
 {
 	// Right now, if party has entered an object, e.g., a ship, don't draw
 	// the icon, only the object.
-	if (Party::Instance().is_entered()) {
-		std::pair<int, int> new_coords;
-		new_coords.first = x;
-		new_coords.second = y;
-		return new_coords;
-	}
+//	if (Party::Instance().is_entered()) {
+//		std::pair<int, int> new_coords;
+//		new_coords.first = x;
+//		new_coords.second = y;
+//		return new_coords;
+//	}
 
 	// Draw party in the middle on default values
 	if (x == -1 && y == -1)
@@ -567,21 +567,22 @@ std::pair<int, int> SquareArena::show_party(int x, int y)
 	// TODO: else draw custom position
 	// ...
 
-	if (!_party_is_moving)
-	{
-		switch (_party_anim)
-		{
-		case 40:
-			_party_anim = 191;
-			break;
-		default:
-			_party_anim = 40;
-			break;
-		}
-	}
+//	if (!_party_is_moving)
+//	{
+//		switch (_party_anim)
+//		{
+//		case 40:
+//			_party_anim = 191;
+//			break;
+//		default:
+//			_party_anim = 40;
+//			break;
+//		}
+//	}
 
 	// 40 and 191 are the party icon
-	put_tile(x, y, IndoorsIcons::Instance().get_sdl_icon(_party_anim));
+	// put_tile(x, y, IndoorsIcons::Instance().get_sdl_icon(_party_anim));
+	put_tile(x, y, IndoorsIcons::Instance().get_sdl_icon(Party::Instance().get_party_icon()));
 
 	int mx, my;
 	screen_to_map(x, y, mx, my);

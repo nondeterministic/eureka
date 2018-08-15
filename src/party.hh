@@ -32,81 +32,87 @@
 #include "spellsbearer.hh"
 #include "ztatswincontentprovider.hh"
 #include "partyrules.hh"
+#include "arena.hh"
 
 class Party : public SpellsBearer, public PartyRules
 {
-protected:
-  std::vector<PlayerCharacter> _players;
-  int prev_x, prev_y;
-  bool prev_indoors, _indoors;
-  std::string prev_map_name, _map_name;
-  Inventory _inv;
-  int _gold, _food;
-  int _guard;
-  int _jlocks;
-  int _magic_light_radius;
-  int _rounds_immune_to_fields;
+public:
+	enum EnterableObject { Ship }; // TODO: more to come :-)
 
-  Party();
+protected:
+	std::vector<PlayerCharacter> _players;
+	int prev_x, prev_y;
+	bool prev_indoors, _indoors;
+	std::string prev_map_name, _map_name;
+	Inventory _inv;
+	int _gold, _food;
+	int _guard;
+	int _jlocks;
+	int _magic_light_radius;
+	int _rounds_immune_to_fields;
+	int _party_icon;
+	bool _is_entered;
+	EnterableObject _enterable_object;
+
+	Party();
 
 public:
-  // The absolute party coordinates on a map.  Use map->screen to get relative coords!
-  int x, y;
-  int rounds_intoxicated;
-  bool is_resting;
-  bool is_in_combat;
-  int  _entered; // Positive, if entered an object, e.g., a ship or balloon.
+	// The absolute party coordinates on a map.  Use map->screen to get relative coords!
+	int x, y;
+	int rounds_intoxicated;
+	bool is_resting;
+	bool is_in_combat;
 
-  // >0 if, e.g., torch is carried and lit.
-  // int light_radius;
-  
-  static Party& Instance();
-  int light_radius();
-  void add_player(PlayerCharacter);
-  PlayerCharacter* get_player(int);
-  void set_party(std::vector<PlayerCharacter>);
-  PlayerCharacter* get_player(std::string);
-  std::vector<PlayerCharacter>::iterator begin();
-  std::vector<PlayerCharacter>::iterator end();
-  int size();
-  unsigned party_alive();
-  bool is_entered();
-  int get_entered_icon();
-  void set_entered(int);
-  void set_guard(int);
-  PlayerCharacter* get_guard();
-  void set_guard(PlayerCharacter*);
-  void unset_guard();
-  void set_coords(int, int);
-  void set_coords(std::pair<int, int>);
-  std::pair<int, int> get_coords();
-  void store_outside_coords();
-  bool restore_outside_coords();
-  bool indoors();
-  void set_indoors(bool);
-  void set_map_name(const char*);
-  std::string map_name();
-  Inventory* inventory();
-  int gold();
-  void set_gold(int);
-  int food();
-  void set_food(int);
-  std::string to_xml();
-  int max_carrying_capacity();
-  void rm_jimmylock();
-  void add_jimmylock();
-  int jimmylock_count();
-  void set_magic_light_radius(int);
-  std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
-  void rm_npc(int);
-  void inc_player_pos(int);
-  void dec_player_pos(int);
+	static Party& Instance();
+	void set_party_icon(LDIR);
+	int get_party_icon();
+	int light_radius();
+	void add_player(PlayerCharacter);
+	PlayerCharacter* get_player(int);
+	void set_party(std::vector<PlayerCharacter>);
+	PlayerCharacter* get_player(std::string);
+	std::vector<PlayerCharacter>::iterator begin();
+	std::vector<PlayerCharacter>::iterator end();
+	int size();
+	unsigned party_alive();
+	bool is_entered();
+	void set_entered(bool);
+	EnterableObject get_currently_entered_object();
+	void set_entered_object(EnterableObject);
+	void set_guard(int);
+	PlayerCharacter* get_guard();
+	void set_guard(PlayerCharacter*);
+	void unset_guard();
+	void set_coords(int, int);
+	void set_coords(std::pair<int, int>);
+	std::pair<int, int> get_coords();
+	void store_outside_coords();
+	bool restore_outside_coords();
+	bool indoors();
+	void set_indoors(bool);
+	void set_map_name(const char*);
+	std::string map_name();
+	Inventory* inventory();
+	int gold();
+	void set_gold(int);
+	int food();
+	void set_food(int);
+	std::string to_xml();
+	int max_carrying_capacity();
+	void rm_jimmylock();
+	void add_jimmylock();
+	int jimmylock_count();
+	void set_magic_light_radius(int);
+	std::shared_ptr<ZtatsWinContentProvider> create_party_content_provider();
+	void rm_npc(int);
+	void inc_player_pos(int);
+	void dec_player_pos(int);
 
-  void immunize_from_fields(int);
-  int decrease_immunity_from_fields();
-  int immune_from_fields();
+	void immunize_from_fields(int);
+	int decrease_immunity_from_fields();
+	int immune_from_fields();
 
-  PlayerCharacter* get_npc_or_null();
+	PlayerCharacter* get_npc_or_null();
 };
 
 #endif

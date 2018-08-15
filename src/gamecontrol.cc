@@ -867,6 +867,9 @@ void GameControl::keypress_wave_goodbye()
 		printcon("Sorry, this is only applicable to NPCs.");
 }
 
+// So far, we can only exit boats!
+// If we can exit other stuff, too, this method needs to be extended.
+
 void GameControl::keypress_xit()
 {
 	if (!_party->is_entered()) {
@@ -874,10 +877,12 @@ void GameControl::keypress_xit()
 		return;
 	}
 
-	std::cout <<_party->get_entered_icon() <<"\n";
-	IconProps* icon_props = IndoorsIcons::Instance().get_props(_party->get_entered_icon());
-	printcon("Leaving " + icon_props->get_name());
-	_party->set_entered(-1);
+	switch (_party->get_currently_entered_object()) {
+	case Party::EnterableObject::Ship:
+		printcon("Leaving ship");
+		_party->set_entered(false);
+		break;
+	}
 }
 
 void GameControl::keypress_enter()
@@ -890,7 +895,9 @@ void GameControl::keypress_enter()
 
 		if (icon_props->is_enterable()) {
 			printcon("Entering " + icon_props->get_name());
-			_party->set_entered(icon_props->get_icon());
+			// TODO: Only ship is supported so far
+			_party->set_entered_object(Party::EnterableObject::Ship);
+			_party->set_party_icon(LDIR::DIR_RIGHT);
 			return;
 		}
 	}
@@ -2221,6 +2228,21 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 			return false;
 	}
 
+	if (_party->is_entered()) {
+		switch (_party->get_currently_entered_object()) {
+		case Party::EnterableObject::Ship:
+			if (is_arena_outdoors()) {
+				std::string icon_name = boost::to_upper_copy(OutdoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->get_name());
+				return icon_name.find("WATER") != std::string::npos;
+			}
+			else {
+				std::string icon_name = boost::to_upper_copy(IndoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->get_name());
+				return icon_name.find("WATER") != std::string::npos;
+			}
+			break;
+		}
+	}
+
 	bool icon_is_walkable = false;
 
 	if (is_arena_outdoors())
@@ -2303,12 +2325,7 @@ PropertyStrength GameControl::get_forcefieldstrength(int x, int y)
 
 bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 {
-	// Right now, when party has entered an object, e.g., a ship, it can't move.
-	if (_party->is_entered()) {
-		printcon("You do not know how to move this thing.");
-		std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
-		return false;
-	}
+	_party->set_party_icon(dir);
 
 	ZtatsWin& zwin = ZtatsWin::Instance();
 	int x_diff = 0, y_diff = 0;

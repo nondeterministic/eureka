@@ -531,7 +531,8 @@ std::pair<int, int> HexArena::show_party(int x, int y)
 	// TODO: else draw custom position
 	// ...
 
-	if (put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20)) != 0)
+	// if (put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(20)) != 0)
+	if (put_tile_hex(x, y, OutdoorsIcons::Instance().get_sdl_icon(Party::Instance().get_party_icon())) != 0)
 		std::cerr << "ERROR: hexarena.cc: put_tile returned failure when trying to show party.\n";
 
 	int mx, my;

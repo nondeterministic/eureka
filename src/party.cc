@@ -74,7 +74,9 @@ Party::Party()
 	_magic_light_radius = 0;
 	prev_x = -1;
 	prev_y = -1;
-	_entered = -1;
+	_is_entered = false;
+	_enterable_object = EnterableObject::Ship;
+	_party_icon = 40;
 }
 
 Party& Party::Instance()
@@ -88,22 +90,72 @@ int Party::jimmylock_count()
 	return _jlocks;
 }
 
+Party::EnterableObject Party::get_currently_entered_object()
+{
+	return _enterable_object;
+}
+
+void Party::set_entered_object(EnterableObject obj)
+{
+	_enterable_object = obj;
+	_is_entered = true;
+}
+
 bool Party::is_entered()
 {
-	return _entered >= 0;
+	return _is_entered;
 }
 
-int Party::get_entered_icon()
+void Party::set_entered(bool e)
 {
-	return _entered;
+	_is_entered = e;
 }
 
-/// -1 for not having entered any object. 0 or greater for having entered
-/// an icon with icon number entered_icon_no.
-
-void Party::set_entered(int entered_icon_no)
+void Party::set_party_icon(LDIR direction)
 {
-	_entered = entered_icon_no;
+	// Outdoors icon...
+	if (!indoors()) {
+		_party_icon = 20;
+		return;
+	}
+
+	// Boat icon...
+	if (is_entered() && get_currently_entered_object() == EnterableObject::Ship) {
+		switch (direction) {
+		case LDIR::DIR_UP:
+			_party_icon = 25;
+			break;
+		case LDIR::DIR_DOWN:
+			_party_icon = 28;
+			break;
+		case LDIR::DIR_LEFT:
+			_party_icon = 26;
+			break;
+		case LDIR::DIR_RIGHT:
+			_party_icon = 27;
+			break;
+		default: // Diagonal indoor movement not allowed, so case should never arise.
+			_party_icon = 25;
+			break;
+		}
+
+		return;
+	}
+
+	// Animation of main indoors party icon...
+	switch (_party_icon) {
+	case 40:
+		_party_icon = 191;
+		break;
+	default:
+		_party_icon = 40;
+		break;
+	}
+}
+
+int Party::get_party_icon()
+{
+	return _party_icon;
 }
 
 void Party::add_jimmylock()
