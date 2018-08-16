@@ -123,9 +123,16 @@ bool GameState::save_misc(boost::filesystem::path fullFilePath)
 	// Create XML
 	xmlpp::Document xml_doc;
 	xmlpp::Element* partyNd = xml_doc.create_root_node("misc");
+
 	xmlpp::Element* tod = partyNd->add_child_element("timeofday");
 	tod->set_attribute("hour", std::to_string(GameControl::Instance().get_clock()->time().first));
 	tod->set_attribute("minute", std::to_string(GameControl::Instance().get_clock()->time().second));
+
+	xmlpp::Element* party_entered_in = partyNd->add_child_element("party_entered_in");
+	if (Party::Instance().is_entered())
+		party_entered_in->set_first_child_text(Party::Instance().enterableObjectToString.at(Party::Instance().get_currently_entered_object()));
+	else
+		party_entered_in->set_first_child_text("");
 
 	// Write XML
 	std::cout << "INFO: gamestate.cc: Writing misc information to " << the_file.string() << std::endl;
@@ -367,6 +374,17 @@ bool GameState::load_misc(lua_State* lua_state)
 				int hour   = std::atoi(reader.get_attribute("hour").c_str());
 				int minute = std::atoi(reader.get_attribute("minute").c_str());
 				GameControl::Instance().get_clock()->set(hour, minute);
+			}
+			else if (reader.get_name() == "party_entered_in") {
+				std::string entered_object = reader.read_string();
+
+				if (entered_object.length() > 0) {
+					Party::EnterableObject enterableObject = Party::Instance().stringToEnterableObject.at(entered_object);
+					Party::Instance().set_entered_object(enterableObject);
+					std::cout << "INFO: gamestate.cc: party has entered " << entered_object << ".\n";
+				}
+				else
+					Party::Instance().set_entered(false);
 			}
 		}
 	}

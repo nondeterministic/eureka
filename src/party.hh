@@ -26,6 +26,9 @@
 #include <memory>
 #include <map>
 
+#include <boost/assign/list_of.hpp>
+#include <boost/unordered_map.hpp>
+
 #include "playercharacter.hh"
 #include "weapon.hh"
 #include "inventory.hh"
@@ -38,6 +41,8 @@ class Party : public SpellsBearer, public PartyRules
 {
 public:
 	enum EnterableObject { Ship }; // TODO: more to come :-)
+	const boost::unordered_map<EnterableObject, std::string> enterableObjectToString = boost::assign::map_list_of(Ship, "Ship");
+	const boost::unordered_map<std::string, EnterableObject> stringToEnterableObject = boost::assign::map_list_of("Ship", Ship);
 
 protected:
 	std::vector<PlayerCharacter> _players;
