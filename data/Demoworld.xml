@@ -1573,7 +1573,7 @@
       <icon no="58" trans="full" walk="full">nothing special</icon>
       <icon no="59" trans="full" walk="full">nothing special</icon>
       <icon no="60" trans="full" walk="full">nothing special</icon>
-      <icon no="61" trans="full" walk="full">nothing special</icon>
+      <icon no="61" trans="full" walk="full" enterable="yes">a ship</icon>
       <icon no="62" trans="full" walk="full">nothing special</icon>
       <icon no="63" trans="full" walk="full">nothing special</icon>
       <icon no="64" trans="full" walk="full">nothing special</icon>

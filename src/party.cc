@@ -115,7 +115,11 @@ void Party::set_party_icon(LDIR direction)
 {
 	// Outdoors icon...
 	if (!indoors()) {
-		_party_icon = 20;
+		if (is_entered() && get_currently_entered_object() == EnterableObject::Ship)
+			_party_icon = 61;
+		else
+			_party_icon = 20;
+
 		return;
 	}
 
