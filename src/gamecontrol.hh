@@ -42,6 +42,7 @@
 #include "spell.hh"
 #include "soundsample.hh"
 #include "iconprops.hh"
+#include "icons.hh"
 
 typedef boost::uniform_int<> NumberDistribution; 
 typedef boost::mt19937       RandomNumberGenerator; 
@@ -135,6 +136,7 @@ public:
 	void create_random_monsters_in_dungeon();
 	void set_game_started(bool);
 	bool get_game_started();
+	Icons* get_icons() const;
 };
 
 #endif

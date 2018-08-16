@@ -62,7 +62,7 @@ GameState& GameState::Instance()
 	return _inst;
 }
 
-void GameState::add_map(std::shared_ptr<IndoorsMap> map)
+void GameState::add_map(std::shared_ptr<Map> map)
 {
 	// First delete map, if already exists in game state
 	for (auto b = _maps.begin(); b != _maps.end(); b++) {
@@ -77,7 +77,7 @@ void GameState::add_map(std::shared_ptr<IndoorsMap> map)
 	_maps.push_back(map);
 }
 
-std::shared_ptr<IndoorsMap> GameState::get_map(std::string map_name)
+std::shared_ptr<Map> GameState::get_map(std::string map_name)
 {
 	for (auto map: _maps) {
 		if (map->get_name() == map_name)

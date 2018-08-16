@@ -64,6 +64,7 @@ extern "C" {
 #include "iconprops.hh"
 #include "outdoorsicons.hh"
 #include "indoorsicons.hh"
+#include "icons.hh"
 #include "console.hh"
 #include "eventmanager.hh"
 #include "actiononenter.hh"
@@ -897,7 +898,7 @@ void GameControl::keypress_enter()
 	auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(_party->x,_party->y));
 	for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
 		MapObj& map_obj = curr_obj->second;
-		IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+		IconProps* icon_props = get_icons()->get_props(map_obj.get_icon());
 
 		if (icon_props->is_enterable()) {
 			printcon("Entering " + icon_props->get_name());
@@ -2107,6 +2108,11 @@ void GameControl::keypress_get_item()
 	}
 }
 
+Icons* GameControl::get_icons() const
+{
+	return _arena->get_map()->is_outdoors()? (Icons*)&OutdoorsIcons::Instance() : (Icons*)&IndoorsIcons::Instance();
+}
+
 void GameControl::keypress_look()
 {
 	GameEventHandler gh;
@@ -2119,13 +2125,7 @@ void GameControl::keypress_look()
 		std::stringstream lookstr;
 		lookstr << "You see ";
 
-		if (_arena->get_map()->is_outdoors()) {
-			lookstr << OutdoorsIcons::Instance().get_props(icon_no)->get_name();
-			printcon(lookstr.str());
-			return;
-		}
-
-		lookstr << IndoorsIcons::Instance().get_props(icon_no)->get_name();
+		lookstr << get_icons()->get_props(icon_no)->get_name();
 		printcon(lookstr.str());
 
 		// Return range of found objects at given location
@@ -2151,7 +2151,7 @@ void GameControl::keypress_look()
 					catch (std::exception const& e) {
 						// This case here isn't actually an error: it merely means there is no Lua object for the tile looked at.
 						// TODO: However, we should really have a Lua correspondence for all objects that can lie around in many...
-						ss << map_obj.how_many << " " << IndoorsIcons::Instance().get_props(map_obj.get_icon())->get_name();
+						ss << map_obj.how_many << " " << get_icons()->get_props(map_obj.get_icon())->get_name();
 						if (++curr_obj != found_obj.second)
 							ss << ", ";
 					    continue;
@@ -2163,7 +2163,7 @@ void GameControl::keypress_look()
 				}
 				else {
 					int obj_icon_no = map_obj.get_icon();
-					std::string icon_name = IndoorsIcons::Instance().get_props(obj_icon_no)->get_name();
+					std::string icon_name = get_icons()->get_props(obj_icon_no)->get_name();
 					// ss << (Util::vowel(icon_name[0])? "an " : "a ") << icon_name;
 					ss << icon_name;
 				}
@@ -2227,72 +2227,58 @@ bool GameControl::walkable_for_party(int x, int y) const
 
 bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 {
-	// TODO: These bounds only work indoors, as outdoors we have a jump of 2 between hex.  Do we need to check the boundaries outdoors at all?
-	if (!is_arena_outdoors()) {
-		if (x >= (int)(_arena->get_map()->width()) || x < 0)
-			return false;
-		if (y >= (int)(_arena->get_map()->height()) || y < 0)
-			return false;
-	}
+	if (x >= (int)(_arena->get_map()->width()) || x < 0)
+		return false;
+	if (y >= (int)(_arena->get_map()->height()) || y < 0)
+		return false;
 
 	if (_party->is_entered()) {
 		switch (_party->get_currently_entered_object()) {
 		case Party::EnterableObject::Ship:
-			if (is_arena_outdoors()) {
-				std::string icon_name = boost::to_upper_copy(OutdoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->get_name());
-				return icon_name.find("WATER") != std::string::npos;
-			}
-			else {
-				std::string icon_name = boost::to_upper_copy(IndoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->get_name());
-				return icon_name.find("WATER") != std::string::npos;
-			}
+			std::string icon_name = boost::to_upper_copy(get_icons()->get_props(_arena->get_map()->get_tile(x, y))->get_name());
+			return icon_name.find("WATER") != std::string::npos;
 			break;
 		}
 	}
 
 	bool icon_is_walkable = false;
+	auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
+	int tile = _arena->get_map()->get_tile(x, y);
+	icon_is_walkable = get_icons()->get_props(tile)->_is_walkable != PropertyStrength::None;
 
-	if (is_arena_outdoors())
-		icon_is_walkable = OutdoorsIcons::Instance().get_props(_arena->get_map()->get_tile(x, y))->_is_walkable != PropertyStrength::None;
-	else {
-		int tile = _arena->get_map()->get_tile(x, y);
-		icon_is_walkable = IndoorsIcons::Instance().get_props(tile)->_is_walkable != PropertyStrength::None;
+	// But don't walk over monsters...
+	if (icon_is_walkable) {
+		for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
+			MapObj& map_obj = curr_obj->second;
+			IconProps* icon_props = get_icons()->get_props(map_obj.get_icon());
 
-		// But don't walk over monsters...
-		auto found_objs = _arena->get_map()->objs()->equal_range(std::make_pair(x,y));
-		if (icon_is_walkable) {
-			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
-				MapObj& map_obj = curr_obj->second;
-				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
+			if (icon_props->_is_walkable == PropertyStrength::None)
+				return false;
 
-				if (icon_props->_is_walkable == PropertyStrength::None)
-					return false;
-
-				if (map_obj.get_type() == MAPOBJ_MONSTER)
-					return false;
-				else if (map_obj.get_type() == MAPOBJ_ANIMAL)
-					return false;
-				else if (map_obj.get_type() == MAPOBJ_PERSON)
-					return false;
-			}
+			if (map_obj.get_type() == MAPOBJ_MONSTER)
+				return false;
+			else if (map_obj.get_type() == MAPOBJ_ANIMAL)
+				return false;
+			else if (map_obj.get_type() == MAPOBJ_PERSON)
+				return false;
 		}
-		else if (the_walker == Whole_Party) {
-			// Spells may get the party to be able to walk over water, through fire, etc.
-			vector<int> additional_walkable_icons = _party->get_additional_walkable_icons();
+	}
+	else if (the_walker == Whole_Party) {
+		// Spells may get the party to be able to walk over water, through fire, etc.
+		vector<int> additional_walkable_icons = _party->get_additional_walkable_icons();
 
-			// If the tile in question is in the list of additionally walkable icons...
-			if (std::find(additional_walkable_icons.begin(), additional_walkable_icons.end(), tile) != additional_walkable_icons.end())
+		// If the tile in question is in the list of additionally walkable icons...
+		if (std::find(additional_walkable_icons.begin(), additional_walkable_icons.end(), tile) != additional_walkable_icons.end())
+			return true;
+
+		// The opposite of the above case: if the background icon is non-walkable, but there
+		// is a walkable AND ENTERABLE object, e.g., a ship in the water, then we can walk on
+		// that icon.
+		for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
+			MapObj& map_obj = curr_obj->second;
+			IconProps* icon_props = get_icons()->get_props(map_obj.get_icon());
+			if (icon_props->_is_walkable != PropertyStrength::None && icon_props->is_enterable())
 				return true;
-
-			// The opposite of the above case: if the background icon is non-walkable, but there
-			// is a walkable AND ENTERABLE object, e.g., a ship in the water, then we can walk on
-			// that icon.
-			for (auto curr_obj = found_objs.first; curr_obj != found_objs.second; curr_obj++) {
-				MapObj& map_obj = curr_obj->second;
-				IconProps* icon_props = IndoorsIcons::Instance().get_props(map_obj.get_icon());
-				if (icon_props->_is_walkable != PropertyStrength::None && icon_props->is_enterable())
-					return true;
-			}
 		}
 	}
 

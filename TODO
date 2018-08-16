@@ -13,8 +13,6 @@ TODO
 IN PROGRESS
 ============
 
-- Implement service purchase such as healing
-
 BUGS
 =====
 
@@ -25,4 +23,3 @@ BUGS
 
 - Inside gamecontrol::ready_item do not recreate readied items or the number of turns that a torch
   lasts will be reset each time it is unreadied/readied. (Is this fixed? CHECK!)
-

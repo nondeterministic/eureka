@@ -24,6 +24,7 @@
 #include "map.hh"
 #include "mapobj.hh"
 #include "indoorsmap.hh"
+#include "outdoorsmap.hh"
 #include "eventermap.hh"
 #include "eventprintcon.hh"
 #include "eventluascript.hh"
@@ -336,6 +337,12 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 		IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
 		std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
 		GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
+	}
+	else {
+		std::shared_ptr<Map> new_map = current_map;
+		OutdoorsMap tmp_map = *(std::dynamic_pointer_cast<OutdoorsMap>(new_map).get());
+		std::shared_ptr<OutdoorsMap> out_map = std::make_shared<OutdoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
+		GameState::Instance().add_map(out_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
 	}
 
 	// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...

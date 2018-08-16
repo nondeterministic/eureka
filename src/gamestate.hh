@@ -20,6 +20,7 @@
 #ifndef GAMESTATE_HH_
 #define GAMESTATE_HH_
 
+#include "map.hh"
 #include "indoorsmap.hh"
 #include "playercharacter.hh"
 #include "inventory.hh"
@@ -42,7 +43,7 @@ protected:
 	bool load_party(lua_State*);
 	bool load_misc(lua_State*);
 
-	std::vector<std::shared_ptr<IndoorsMap>> _maps;
+	std::vector<std::shared_ptr<Map>> _maps;
 	bool _cur_outdoors;
 	std::string _cur_map_name;
 	std::vector<PlayerCharacter> _players;
@@ -59,8 +60,8 @@ public:
 	bool load(lua_State*);
 	bool apply();
 	bool reset();
-	void add_map(std::shared_ptr<IndoorsMap>);
-	std::shared_ptr<IndoorsMap> get_map(std::string);
+	void add_map(std::shared_ptr<Map>);
+	std::shared_ptr<Map> get_map(std::string);
 	std::string get_cur_map_name();
 	bool is_cur_map_outdoors();
 };

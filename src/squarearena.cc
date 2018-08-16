@@ -320,6 +320,8 @@ bool SquareArena::in_los(int xi, int yi, int xp, int yp)
 }
 
 // Returns true if tile x,y is within the radius of a light source, false otherwise
+// TODO: This is thoroughly broken!  Can be best seen if in velnebras a boat is taken and cruising around
+// the north part of the harbour at night...
 
 bool SquareArena::is_illuminated(int x, int y)
 {
