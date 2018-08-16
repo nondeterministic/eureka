@@ -881,6 +881,12 @@ void GameControl::keypress_xit()
 	case Party::EnterableObject::Ship:
 		printcon("Leaving ship");
 		_party->set_entered(false);
+
+		MapObj obj;
+		obj.set_coords(_party->x, _party->y);
+		obj.set_icon(_party->get_party_icon());
+		_arena->get_map()->push_obj(obj);
+
 		break;
 	}
 }
@@ -898,6 +904,7 @@ void GameControl::keypress_enter()
 			// TODO: Only ship is supported so far
 			_party->set_entered_object(Party::EnterableObject::Ship);
 			_party->set_party_icon(LDIR::DIR_RIGHT);
+			_arena->get_map()->rm_obj(&map_obj);
 			return;
 		}
 	}
