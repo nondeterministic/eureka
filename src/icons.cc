@@ -69,7 +69,14 @@ IconProps* Icons::get_props(int icon_no)
 {
 	try {
 		if (icon_no >= 0 && icon_no < (int)_icons_props.size()) {
-			return &_icons_props.at(icon_no);
+			IconProps* props = &_icons_props.at(icon_no);
+
+			if (props == NULL) {
+				std::cerr << "icons.cc: get_props: props == NULL.\n";
+				return NULL;
+			}
+			else
+				return props;
 		}
 		else {
 			// std::cerr << "WARNING: icons.cc: get_props(" << icon_no << ") yields no sensible result (_icons_props.size: " << _icons_props.size() << ").\n";

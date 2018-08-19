@@ -785,9 +785,20 @@ int recreate_old_game_state()
 		exit(EXIT_FAILURE);
 	}
 
-	// Load current map's data
-	if (!arena->get_map()->xml_load_map_data())
-		std::cerr << "ERROR: eureka.cc: Could not load map data2.\n";
+	// Load saved map data
+	boost::filesystem::path dir((std::string(getenv("HOME")) + "/.eureka/" + World::Instance().get_name() + "/maps/"));
+	std::string old_map_file = dir.string() + arena->get_map()->get_name() + ".xml";
+	if (boost::filesystem::exists(old_map_file)) {
+		arena->get_map()->xml_load_map_data(old_map_file);
+		std::cout << "INFO: eureka.cc: Using save game map: " << arena->get_map()->get_name() << ".\n";
+		GameState::Instance().add_map(arena->get_map());
+	}
+	else { // This case shouldn't trigger as game state can only saved outdoors and hence, landscape.xml must always exist...
+		std::cerr << "WARNING: eureka.cc: Using fresh map. This should not have happened.\n";
+		arena->set_map(cur_map);
+		arena->get_map()->xml_load_map_data();
+		return -1;
+	}
 
 	return 0;
 }

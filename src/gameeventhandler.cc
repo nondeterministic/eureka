@@ -40,6 +40,7 @@
 #include "luaapi.hh"
 #include "luawrapper.hh"
 #include "playlist.hh"
+#include "hexarena.hh"
 #include "config.h"
 
 extern "C"
@@ -277,7 +278,16 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 	if (!gc->get_arena()->get_map())
 		std::cerr << "WARNING: gameeventhandler.cc: gc->get_arena()->get_map == NULL\n";
 
-	gc->get_arena()->get_map()->xml_load_map_data();
+
+	std::shared_ptr<Map> saved_map = GameState::Instance().get_map(gc->get_arena()->get_map()->get_name());
+	if (saved_map != NULL) {
+		// std::cout << "Using gamestate map.\n";
+		gc->get_arena()->set_map(saved_map);
+	}
+	else {
+		// std::cout << "Using fresh map.\n";
+		gc->get_arena()->get_map()->xml_load_map_data();
+	}
 
 	// Restore previously saved state to remember party position, etc. in old map.
 	std::pair<int,int> old_coords;
@@ -289,7 +299,7 @@ bool GameEventHandler::handle_event_leave_map(std::shared_ptr<EventLeaveMap> eve
 		}
 		catch (...) {
 			std::cerr << "ERROR: gameeventhandler.cc: The current map should have initial coordinates defined, but doesn't. Not sure where to put party on map. Bye, bye!\n";
-			exit(-1);
+			exit(EXIT_FAILURE);
 		}
 	}
 	else {
@@ -331,19 +341,19 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	MiniWin* mw = &MiniWin::Instance();
 	std::string map_long_name = event->get_map_name();
 
-	// Before changing map, when indoors (e.g. climb down a ladder), store state
+	// Before changing map, store state
 	if (party->indoors()) {
-		std::shared_ptr<Map> new_map = current_map;
-		IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
-		std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
-		GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
-	}
-	else {
-		std::shared_ptr<Map> new_map = current_map;
-		OutdoorsMap tmp_map = *(std::dynamic_pointer_cast<OutdoorsMap>(new_map).get());
-		std::shared_ptr<OutdoorsMap> out_map = std::make_shared<OutdoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
-		GameState::Instance().add_map(out_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
-	}
+	   std::shared_ptr<Map> new_map = current_map;
+	   IndoorsMap tmp_map = *(std::dynamic_pointer_cast<IndoorsMap>(new_map).get()); // Use it to create IndoorsMap (i.e., deep copy of Map())
+	   std::shared_ptr<IndoorsMap> ind_map = std::make_shared<IndoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
+	   GameState::Instance().add_map(ind_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
+   }
+   else {
+	   std::shared_ptr<Map> new_map = current_map;
+	   OutdoorsMap tmp_map = *(std::dynamic_pointer_cast<OutdoorsMap>(new_map).get()); // Deep copy of Map
+	   std::shared_ptr<OutdoorsMap> out_map = std::make_shared<OutdoorsMap>(tmp_map); // Create a shared_ptr of IndoorsMap
+	   GameState::Instance().add_map(out_map); // Add to GameState; TODO: What happens when tmp_map falls off the stack? Is the shared_ptr still valid?
+   }
 
 	// TODO: It is not nice to create an entire map just to test for a flag, but it works for now...
 	// TODO: We're now using this code for a bit more: to find out if there is a longname tag, and if so, use it!
@@ -390,7 +400,7 @@ bool GameEventHandler::handle_event_enter_map(std::shared_ptr<EventEnterMap> eve
 	boost::filesystem::path dir((std::string(getenv("HOME")) + "/.eureka/" + World::Instance().get_name() + "/maps/"));
 	std::string old_map_file = dir.string() + gc->get_arena()->get_map()->get_name() + ".xml";
 
-	std::shared_ptr<IndoorsMap> saved_map = GameState::Instance().get_map(gc->get_arena()->get_map()->get_name());
+	std::shared_ptr<Map> saved_map = GameState::Instance().get_map(gc->get_arena()->get_map()->get_name());
 	if (saved_map != NULL) {
 		// std::cout << "Using gamestate map.\n";
 		gc->get_arena()->set_map(saved_map);

@@ -484,10 +484,13 @@ void HexArena::show_map(int x_width, int y_width)
 			if (_show_obj) {
 				std::pair<unsigned, unsigned> coords(x, y);
 				auto found_obj = _map->objs()->equal_range(coords);
+				int party_x = Party::Instance().x, party_y = Party::Instance().y;
 
 				for (auto curr_obj = found_obj.first; curr_obj != found_obj.second; curr_obj++) {
-					if (put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(((MapObj)curr_obj->second).get_icon())) != 0)
-						std::cerr << "ERROR: hexarena.cc: put_tile returned error when trying to draw objects.\n";
+					if (in_los(x, y, party_x, party_y)) {
+						if (put_tile_hex(x2, y2, OutdoorsIcons::Instance().get_sdl_icon(((MapObj)curr_obj->second).get_icon())) != 0)
+							std::cerr << "ERROR: hexarena.cc: put_tile returned error when trying to draw objects.\n";
+					}
 				}
 			}
 		}

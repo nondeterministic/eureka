@@ -80,11 +80,11 @@ std::shared_ptr<Arena> Arena::create(std::string type, std::string name)
 		}
 	}
 	catch (MapNotFound& e) {
-		std::cerr << "Creation of arena failed: " << e.print() << "\n";
+		std::cerr << "ERROR: arena.cc: Creation of arena failed (I): " << e.print() << "\n";
 		return NULL;
 	}
 	catch (std::exception& e) {
-		std::cerr << "Creation of arena failed: " << e.what() << "\n";
+		std::cerr << "ERROR: arena.cc: Creation of arena failed (II): " << e.what() << "\n";
 		return NULL;
 	}
 }
@@ -169,7 +169,7 @@ void Arena::set_SDLWindow_object(SDLWindow* win)
 int Arena::put_tile(int x, int y, SDL_Texture* tile)
 {
 	if (x < 0 || y < 0) {
-		std::cerr << "WARNING: arena.cc: put_tile called with negative coords." << std::endl;
+		std::cerr << "WARNING: arena.cc: put_tile called with negative coords: x: " << x << ", y: " << y << std::endl;
 		return -1;
 	}
 

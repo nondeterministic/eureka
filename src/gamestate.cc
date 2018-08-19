@@ -104,7 +104,6 @@ bool GameState::save_party(boost::filesystem::path fullFilePath)
     out.open(the_file.string());
     out << party_xml;
     out.close();
-	std::cout << "INFO: gamestate.cc: Written.\n";
 
 	return true;
 }
@@ -140,7 +139,6 @@ bool GameState::save_misc(boost::filesystem::path fullFilePath)
     out.open(the_file.string());
     out << xml_doc.write_to_string_formatted().c_str();
     out.close();
-	std::cout << "INFO: gamestate.cc: Written.\n";
 
 	return true;
 }
@@ -159,18 +157,17 @@ bool GameState::save()
 	if (!boost::filesystem::create_directory(dir / World::Instance().get_name() / "maps"))
 		std::cerr << "WARNING: gamestate.cc: Could not create config directory: " << (dir / World::Instance().get_name() / "maps").string() << ". Might already exist." << std::endl;
 
-	// Store indoors maps
+	// Store maps
 	for (auto map: _maps) {
 		boost::filesystem::path file = dir / "maps" / (map->get_name() + ".xml");
 
 		if (boost::filesystem::exists(file)) {
-			std::cout << "INFO: gamestate.cc: gamestate.cc: Removing file " << file << ".\n";
+			std::cout << "INFO: gamestate.cc: gamestate.cc: Removing old file " << file << ".\n";
 			boost::filesystem::remove(file);
 		}
 
 		std::cout << "INFO: gamestate.cc: Writing " << file << ".\n";
 		map->xml_write_map_data(dir);
-		std::cout << "INFO: gamestate.cc: Written.\n";
 	}
 
 	// Store party state
@@ -187,7 +184,7 @@ bool GameState::save()
 	// Clear map state again
 	// _maps.clear();
 
-	// Save world map
+	// Save world data
  	boost::filesystem::path world_file = dir / (World::Instance().get_name() + ".xml");
 	if (boost::filesystem::exists(world_file)) {
 		std::cout << "INFO: gamestate.cc: Removing file " << world_file << ".\n";
@@ -196,7 +193,6 @@ bool GameState::save()
 
 	std::cout << "INFO: gamestate.cc: Writing " << world_file << ".\n";
 	World::Instance().xml_write_world_data(dir.string());
-	std::cout << "INFO: gamestate.cc: Written.\n";
 
 	return true;
 }
