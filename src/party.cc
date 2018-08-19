@@ -159,6 +159,18 @@ void Party::set_party_icon(LDIR direction)
 
 int Party::get_party_icon()
 {
+	if (!is_entered() && indoors()) {
+		// Animation of main indoors party icon...
+		switch (_party_icon) {
+		case 40:
+			_party_icon = 191;
+			break;
+		default:
+			_party_icon = 40;
+			break;
+		}
+	}
+
 	return _party_icon;
 }
 

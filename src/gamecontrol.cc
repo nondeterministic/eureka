@@ -881,13 +881,13 @@ void GameControl::keypress_xit()
 	switch (_party->get_currently_entered_object()) {
 	case Party::EnterableObject::Ship:
 		printcon("Leaving ship");
-		_party->set_entered(false);
 
 		MapObj obj;
 		obj.set_coords(_party->x, _party->y);
 		obj.set_icon(_party->get_party_icon());
 		_arena->get_map()->push_obj(obj);
 
+		_party->set_entered(false);
 		break;
 	}
 }
