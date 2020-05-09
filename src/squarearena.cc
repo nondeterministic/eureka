@@ -413,6 +413,8 @@ void SquareArena::show_map(int x_width, int y_width)
 		}
 	}
 
+	std::vector<std::pair<int,int>> illuminated_icons;
+
 	// TODO: The upper bounds should be -1 in the foor loop?
 	for (unsigned x = _left_hidden / tile_size(), x2 = 0; x < _map->width() - _right_hidden / tile_size(); x++, x2++) {
 		for (unsigned y = _top_hidden / tile_size(), y2 = 0; y < _map->height() - _bot_hidden / tile_size(); y++, y2++) {
@@ -441,11 +443,15 @@ void SquareArena::show_map(int x_width, int y_width)
 
 			if (_show_map) {
 				// See comments in hexarena.cc at same position!  Second line of if-statement basically, to simulate night, torches, etc.
-				if (in_los(x, y, party_x, party_y) &&
-						  (((x_width == 0 && y_width == 0) ||
-						  (x-party_x + x_width / 2 <= (unsigned int)x_width && y-party_y + y_width / 2 <= (unsigned int)y_width)) ||
-						  is_illuminated((int)x, (int)y)))
+				if (( (x_width == 0 && y_width == 0) ||
+  				      (x-party_x + x_width / 2 <= (unsigned int)x_width && y-party_y + y_width / 2 <= (unsigned int)y_width) ) &&
+					  // || is_illuminated((int)x, (int)y) ) &&
+					in_los(x, y, party_x, party_y))
 				{
+					// Store all illuminated icons in vector so we can draw all icons between light source and party
+					if (is_illuminated((int)x, (int)y))
+						illuminated_icons.push_back(std::make_pair(x,y));
+
 					// Mirrors reflect, if an animate object is in front of it...
 					if (IndoorsIcons::Instance().get_props(tileno)->get_name().find("mirror") != std::string::npos) {
 						for (int offset = -1; offset <= 1; offset += 2) {
