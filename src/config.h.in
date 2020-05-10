@@ -21,6 +21,9 @@
 /* Define to 1 if you have <boost/regex.hpp> */
 #undef HAVE_BOOST_REGEX_HPP
 
+/* Define to 1 if you have <boost/signals2.hpp> */
+#undef HAVE_BOOST_SIGNALS2_HPP
+
 /* Defined if the Boost system library is available */
 #undef HAVE_BOOST_SYSTEM
 
