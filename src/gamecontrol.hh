@@ -108,6 +108,7 @@ public:
 	void keypress_look();
 	void keypress_get_item();
 	void keypress_mix_reagents();
+	void keypress_toggle_music();
 	void keypress_wave_goodbye();
 	void keypress_sort();
 

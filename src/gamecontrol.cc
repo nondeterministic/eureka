@@ -554,7 +554,10 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_look();
 					break;
 				case SDLK_m:
-					keypress_mix_reagents();
+					if ((SDL_GetModState() & KMOD_SHIFT) != KMOD_NONE)
+						keypress_toggle_music();
+					else
+						keypress_mix_reagents();
 					break;
 				case SDLK_o:
 					keypress_open_act();
@@ -576,8 +579,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_talk();
 					break;
 				case SDLK_EQUALS:
-					printcon("Toggling music");
-					_game_music->toggle();
+					keypress_toggle_music();
 					break;
 				case SDLK_u:
 					keypress_use();
@@ -748,6 +750,12 @@ void GameControl::keypress_quit()
 
 	if (really_quit == 'y')
 		exit(EXIT_SUCCESS);
+}
+
+void GameControl::keypress_toggle_music()
+{
+	printcon("Toggle game music");
+	_game_music->toggle();
 }
 
 void GameControl::keypress_mix_reagents()
