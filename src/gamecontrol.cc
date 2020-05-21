@@ -2251,7 +2251,8 @@ bool GameControl::check_walkable(int x, int y, Walking the_walker) const
 {
 	if (x >= (int)(_arena->get_map()->width()) || x < 0)
 		return false;
-	if (y >= (int)(_arena->get_map()->height()) || y < 0)
+
+	if (y >= (int)(_arena->get_map()->height()) * 2 || y < 0)
 		return false;
 
 	if (_party->is_entered()) {
@@ -2549,13 +2550,12 @@ bool GameControl::move_party(LDIR dir, bool ignore_walkable)
 
 			_party->set_coords(_party->x + x_diff, _party->y + y_diff);
 			_arena->map_to_screen(_party->x, _party->y, screen_pos_party.first, screen_pos_party.second);
-			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
+			// std::cout << "INFO: gamecontrol.cc: Party-coords: " << _party->x << ", " << _party->y << "\n";
 			return true;
 		}
 	}
 
-	// std::cout << "INFO: gamecontrol.cc: Party-coords: " << party->x << ", " << party->y << "\n";
-	std::cerr << "WARNING: gamecontrol.cc: move_party() failed.\n";
+	std::cerr << "WARNING: gamecontrol.cc: move_party() failed. Coords: (" << _party->x << ":" << _party->y << ").\n";
 
 	_sample.play_predef(HIT);
 	printcon("Blocked.");

@@ -1,14 +1,20 @@
 NEWS eureka
 ===========
 
-eureka 0.2.0                                                               under development
+eureka 0.2.0                                                Thu 21 May 2020 08:23:08 PM CEST
 --------------------------------------------------------------------------------------------
+- Updated program dependency of Boost library from v1.5.x to v1.7.x
 - Updated/coloured outdoor tiles a bit as they were too difficult to differentiate
 - Updated monster definition files completely in order to achieve more Lua code reuse
-- Added some new herbs and potions that can be mixed up from them (see data/Demoworld/potions and data/Demoworld/edibles)
+- Added possibility for people and NPCs (e.g., animals) to join the party
+- Added possibility to sail around with ship and leave town, set anchor outside, and leave it
+  again
+- Added some new herbs and potions that can be mixed up from them (see data/Demoworld/potions
+  and data/Demoworld/edibles)
 - Added outline of a rulebook for Demoworld (see data/Demoworld/doc/rules.md)
 - Bug fix: a lot of Lua memory leaks are fixed
 - Bug fix: resurrection as a service works now
+- Bug fix: door in Lendom's inn can now be unlocked with jimmy lock
 
 eureka 0.1.0                                                   Sun Jul  8 14:52:23 CEST 2018
 --------------------------------------------------------------------------------------------
