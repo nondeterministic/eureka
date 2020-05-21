@@ -104,6 +104,7 @@ GameControl::GameControl()
 	_normal_font = &Charset::Instance();
 
 	_game_music = NULL;
+	_music_is_on = false;
 	_em = &EventManager::Instance();
 	_party = &Party::Instance();
 	_turn_passed = 0;
@@ -271,6 +272,11 @@ bool GameControl::game_won()
 	}
 
 	return lua.call_fn<bool>("game_won");
+}
+
+bool GameControl::is_game_music_on()
+{
+	return _music_is_on;
 }
 
 void GameControl::do_turn(Resting resting)
@@ -554,10 +560,7 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_look();
 					break;
 				case SDLK_m:
-					if ((SDL_GetModState() & KMOD_SHIFT) != KMOD_NONE)
-						keypress_toggle_music();
-					else
-						keypress_mix_reagents();
+					keypress_mix_reagents();
 					break;
 				case SDLK_o:
 					keypress_open_act();
@@ -576,7 +579,10 @@ int GameControl::key_event_handler(SDL_Event* remove_this_argument)
 					keypress_sort();
 					break;
 				case SDLK_t:
-					keypress_talk();
+					if ((SDL_GetModState() & KMOD_SHIFT) != KMOD_NONE)
+						keypress_toggle_music();
+					else
+						keypress_talk();
 					break;
 				case SDLK_EQUALS:
 					keypress_toggle_music();
@@ -755,7 +761,15 @@ void GameControl::keypress_quit()
 void GameControl::keypress_toggle_music()
 {
 	printcon("Toggle game music");
-	_game_music->toggle();
+
+	if (_music_is_on) {
+		_music_is_on = false;
+		_game_music->audio_off();
+	}
+	else {
+		_music_is_on = true;
+		_game_music->audio_on();
+	}
 }
 
 void GameControl::keypress_mix_reagents()

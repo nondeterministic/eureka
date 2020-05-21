@@ -66,6 +66,7 @@ protected:
 	Clock _clock;
 	SoundSample* _game_music;
 	SoundSample _sample;
+	bool _music_is_on;
 	bool _game_is_started;
 	bool check_walkable(int, int, Walking) const;
 	GameControl();
@@ -90,6 +91,7 @@ public:
 	bool unlock_item();
 	void game_over();
 	PropertyStrength get_forcefieldstrength(int, int);
+	bool is_game_music_on();
 
 	void keypress_cast();
 	void keypress_talk();

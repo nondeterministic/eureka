@@ -179,6 +179,7 @@ bool GameEventHandler::handle_event_playsound(std::shared_ptr<EventPlaySound> ev
 
 bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> event, std::shared_ptr<Map> map)
 {
+	GameControl* gc = &GameControl::Instance();
 	static SoundSample song;        // If this isn't static, then the var
 	                                // gets discarded before the song has
                                     // finished playing
@@ -189,6 +190,10 @@ bool GameEventHandler::handle_event_playmusic(std::shared_ptr<EventPlayMusic> ev
 	if (boost::filesystem::exists(samples_path / event->filename)) {
 		song.set_loop(event->loop);
 		song.set_volume(event->volume);
+		if (gc->is_game_music_on())
+			song.audio_on();
+		else
+			song.audio_off();
 		song.play((samples_path / event->filename).c_str());
 		return true;
 	}

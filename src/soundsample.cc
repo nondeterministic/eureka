@@ -66,20 +66,18 @@ SoundSample::~SoundSample()
 		Mix_FreeChunk(_other_wav);
 }
 
-// Toggle all audio
-
-void SoundSample::toggle()
+void SoundSample::audio_on()
 {
-	if (_audio_on) {
-		Mix_Pause(_chan);
-		Mix_PauseMusic();
-		_audio_on = false;
-	}
-	else {
-		Mix_Resume(_chan);
-		Mix_ResumeMusic();
-		_audio_on = true;
-	}
+	_audio_on = true;
+	Mix_Resume(_chan);
+	Mix_ResumeMusic();
+}
+
+void SoundSample::audio_off()
+{
+	_audio_on = false;
+	Mix_Pause(_chan);
+	Mix_PauseMusic();
 }
 
 void SoundSample::play()
@@ -109,8 +107,6 @@ void SoundSample::play(std::string filename)
 		std::cout << "ERROR: soundsample.cc: Do recognise sound format of file: " << filename << ".\n";
 		return;
 	}
-
-	_audio_on = true;
 }
 
 // Play some standard, predefined samples (see enum above)
@@ -151,14 +147,11 @@ void SoundSample::set_loop(int loop)
 void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 {
 	if (wav != NULL) {
-		_audio_on = true;
 		if (_loop != default_loop)
 			_chan = Mix_PlayChannel(-1, wav, _loop);
 		else
 			_chan = Mix_PlayChannel(-1, wav, loop);
 		Mix_Volume(_chan, _vol);
-		// std::cout << "INFO: soundsample.cc: Playing sound chunk on channel: " << _chan << ": " << _filename << "\n";
-		// _chan = -1; // Reset channel so the next time, the next free channel is used.
 	}
 	else
 		std::cerr << "WARNING: soundsample.cc: Cannot play file '" << _filename << "'.\n";
@@ -169,12 +162,14 @@ void SoundSample::play_chunk(Mix_Chunk* wav, int loop)
 void SoundSample::play_music(Mix_Music* ogg, int loop)
 {
 	if (ogg != NULL) {
-		_audio_on = true;
 		_chan = Mix_PlayMusic(ogg, loop);
 		Mix_Volume(_chan, _vol);
+
+		if (!_audio_on)
+			audio_off();
 	}
 	else
-		std::cerr << "WARNING: soundsample.cc: Cannot play music file '" << _filename << "'.\n";
+		std::cout << "INFO: soundsample.cc: NOT playing music file '" << _filename << "'. Audio not toggled?\n";
 }
 
 void SoundSample::stop()

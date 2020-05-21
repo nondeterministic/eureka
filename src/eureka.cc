@@ -922,12 +922,14 @@ int start_game()
 	game_music.play((conf_world_path / "sound" / "travel.ogg").string());
 
 	gc->set_game_music(&game_music);
+	gc->keypress_toggle_music();
 
 	Console::Instance().
 			print(&normalFont,
 					"\nRemember, this is alpha-status software! Currently supported commands are:\n(a)ttack, (c)ast spell, "
 					"(d)rop item, (e)nter, (g)et, (i)nventory, (l)ook, (m)ix spell, (o)pen, (p)ull/push, (q)uit & save, "
-					"(r)eady item, (s)ort party, (t)alk, (u)se item, (w)ave good-bye, (y)ield item, e(x)it oject, (z)tats.\n");
+					"(r)eady item, (s)ort party, (T)oggle music, (t)alk, (u)se item, (w)ave good-bye, (y)ield item, e(x)it oject, "
+					"(z)tats.\n");
 
 	// Set "start game" flag
 	gc->set_game_started(true);

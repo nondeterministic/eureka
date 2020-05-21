@@ -37,7 +37,8 @@ public:
   SoundSample(std::string);
   virtual ~SoundSample();
 
-  void toggle();
+  void audio_on();
+  void audio_off();
   void stop();
   void set_volume(int);
   void set_loop(int);
